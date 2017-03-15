@@ -1,0 +1,24 @@
+package fi.fmi.avi.data.metar;
+
+import fi.fmi.avi.data.AviationCodeListUser;
+import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.AviationCodeListUser.MissingReason;
+import fi.fmi.avi.data.AviationCodeListUser.SeaSurfaceState;
+import fi.fmi.avi.data.PossiblyMissingContent;
+
+public interface SeaState extends AviationCodeListUser, PossiblyMissingContent {
+
+    NumericMeasure getSeaSurfaceTemperature();
+
+    NumericMeasure getSignificantWaveHeight();
+
+    SeaSurfaceState getSeaSurfaceState();
+
+
+    void setSeaSurfaceTemperature(NumericMeasure seaSurfaceTemperature);
+
+    void setSignificantWaveHeight(NumericMeasure significantWaveHeight);
+
+    void setSeaSurfaceState(SeaSurfaceState seaSurfaceState);
+
+}
