@@ -20,4 +20,5 @@ target/*
 
 # IDEA project file
 *.iml
+.idea
 /target/
