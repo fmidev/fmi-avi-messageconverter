@@ -3,9 +3,8 @@ package fi.fmi.avi.data.metar;
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.AviationCodeListUser.MissingReason;
-import fi.fmi.avi.data.PossiblyMissingContent;
 
-public interface ObservedSurfaceWind extends AviationCodeListUser, PossiblyMissingContent {
+public interface ObservedSurfaceWind extends AviationCodeListUser {
 
     boolean isVariableDirection();
 

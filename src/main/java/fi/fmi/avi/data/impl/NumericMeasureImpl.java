@@ -3,7 +3,7 @@ package fi.fmi.avi.data.impl;
 import fi.fmi.avi.data.NumericMeasure;
 
 
-public class NumericMeasureImpl extends PossiblyMissingContentImpl implements NumericMeasure {
+public class NumericMeasureImpl implements NumericMeasure {
 
     private Double value;
     private String uom;
@@ -11,14 +11,17 @@ public class NumericMeasureImpl extends PossiblyMissingContentImpl implements Nu
     public NumericMeasureImpl() {
     }
 
-    public NumericMeasureImpl(final Double value, final String uom, final MissingReason missingReason) {
-        super(missingReason);
+    public NumericMeasureImpl(final Double value, final String uom) {
         this.value = value;
         this.uom = uom;
     }
+    
+    public NumericMeasureImpl(final Integer value, final String uom) {
+        this(new Double(value), uom);
+    }
 
     public NumericMeasureImpl(final NumericMeasure measure) {
-        this(measure.getValue(), measure.getUom(), measure.getMissingReason());
+        this(measure.getValue(), measure.getUom());
     }
 
 

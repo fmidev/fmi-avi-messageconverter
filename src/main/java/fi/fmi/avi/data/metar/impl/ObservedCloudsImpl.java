@@ -9,7 +9,6 @@ import fi.fmi.avi.data.CloudLayer;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.CloudLayerImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.ObservedClouds;
 
 /**
@@ -18,7 +17,7 @@ import fi.fmi.avi.data.metar.ObservedClouds;
  * 
  */
 
-public class ObservedCloudsImpl extends PossiblyMissingContentImpl implements ObservedClouds {
+public class ObservedCloudsImpl implements ObservedClouds {
 
     private boolean amountAndHeightUnobservableByAutoSystem;
     private NumericMeasure verticalVisibility;
@@ -28,14 +27,11 @@ public class ObservedCloudsImpl extends PossiblyMissingContentImpl implements Ob
     }
 
     public ObservedCloudsImpl(final ObservedClouds input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.amountAndHeightUnobservableByAutoSystem = input.isAmountAndHeightUnobservableByAutoSystem();
-            this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
-            this.layers = new ArrayList<CloudLayer>();
-            for (CloudLayer layer:input.getLayers()) {
-                this.layers.add(new CloudLayerImpl(layer));
-            }
+        this.amountAndHeightUnobservableByAutoSystem = input.isAmountAndHeightUnobservableByAutoSystem();
+        this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
+        this.layers = new ArrayList<CloudLayer>();
+        for (CloudLayer layer:input.getLayers()) {
+            this.layers.add(new CloudLayerImpl(layer));
         }
     }
 

@@ -9,14 +9,13 @@ import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.CloudForecastImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.taf.TAFForecast;
 import fi.fmi.avi.data.taf.TAFSurfaceWind;
 
 /**
  * Created by rinne on 30/01/15.
  */
-public abstract class TAFForecastImpl extends PossiblyMissingContentImpl implements TAFForecast {
+public abstract class TAFForecastImpl implements TAFForecast {
 
     private boolean ceilingAndVisibilityOk;
     private NumericMeasure prevailingVisibility;
@@ -30,15 +29,12 @@ public abstract class TAFForecastImpl extends PossiblyMissingContentImpl impleme
     }
 
     public TAFForecastImpl(final TAFForecast input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
-            this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
-            this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
-            this.surfaceWind = new TAFSurfaceWindImpl(input.getSurfaceWind());
-            this.forecastWeather = new ArrayList<String>(input.getForecastWeather());
-            this.cloud = new CloudForecastImpl(input.getCloud());
-        }
+        this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
+        this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
+        this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
+        this.surfaceWind = new TAFSurfaceWindImpl(input.getSurfaceWind());
+        this.forecastWeather = new ArrayList<String>(input.getForecastWeather());
+        this.cloud = new CloudForecastImpl(input.getCloud());
     }
 
     @Override

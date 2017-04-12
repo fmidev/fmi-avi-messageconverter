@@ -5,9 +5,8 @@ import java.util.List;
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
-import fi.fmi.avi.data.PossiblyMissingContent;
 
-public interface TrendForecast extends AviationCodeListUser, PossiblyMissingContent {
+public interface TrendForecast extends AviationCodeListUser {
 
     List<String> getTimeGroups();
 

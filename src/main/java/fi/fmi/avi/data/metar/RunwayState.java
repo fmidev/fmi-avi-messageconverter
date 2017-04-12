@@ -5,9 +5,8 @@ import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.AviationCodeListUser.MissingReason;
 import fi.fmi.avi.data.AviationCodeListUser.RunwayContamination;
 import fi.fmi.avi.data.AviationCodeListUser.RunwayDeposit;
-import fi.fmi.avi.data.PossiblyMissingContent;
 
-public interface RunwayState extends AviationCodeListUser, PossiblyMissingContent {
+public interface RunwayState extends AviationCodeListUser {
 
     boolean isAllRunways();
 

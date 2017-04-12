@@ -2,7 +2,7 @@ package fi.fmi.avi.data;
 
 import java.util.List;
 
-public interface CloudForecast extends AviationCodeListUser, PossiblyMissingContent {
+public interface CloudForecast extends AviationCodeListUser {
 
     NumericMeasure getVerticalVisibility();
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.RunwayState;
 
 /**
@@ -13,7 +12,7 @@ import fi.fmi.avi.data.metar.RunwayState;
  * 
  */
 
-public class RunwayStateImpl extends PossiblyMissingContentImpl implements RunwayState {
+public class RunwayStateImpl implements RunwayState {
 
     private boolean allRunways;
     private boolean cleared;
@@ -29,18 +28,15 @@ public class RunwayStateImpl extends PossiblyMissingContentImpl implements Runwa
     }
     
     public RunwayStateImpl(final RunwayState input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.allRunways = input.isAllRunways();
-            this.cleared = input.isCleared();
-            this.estimatedSurfaceFrictionUnreliable = input.isEstimatedSurfaceFrictionUnreliable();
-            this.snowClosure = input.isSnowClosure();
-            this.runwayDirectionDesignator = input.getRunwayDirectionDesignator();
-            this.deposit = input.getDeposit();
-            this.contamination = input.getContamination();
-            this.depthOfDeposit = new NumericMeasureImpl(input.getDepthOfDeposit());
-            this.estimatedSurfaceFriction = input.getEstimatedSurfaceFriction();
-        }
+        this.allRunways = input.isAllRunways();
+        this.cleared = input.isCleared();
+        this.estimatedSurfaceFrictionUnreliable = input.isEstimatedSurfaceFrictionUnreliable();
+        this.snowClosure = input.isSnowClosure();
+        this.runwayDirectionDesignator = input.getRunwayDirectionDesignator();
+        this.deposit = input.getDeposit();
+        this.contamination = input.getContamination();
+        this.depthOfDeposit = new NumericMeasureImpl(input.getDepthOfDeposit());
+        this.estimatedSurfaceFriction = input.getEstimatedSurfaceFriction();
     }
 
     /* (non-Javadoc)

@@ -4,13 +4,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.taf.TAFAirTemperatureForecast;
 
 /**
  * Created by rinne on 30/01/15.
  */
-public class TAFAirTemperatureForecastImpl extends PossiblyMissingContentImpl implements TAFAirTemperatureForecast {
+public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast {
 
     private NumericMeasure maxTemperature;
     private int maxTemperatureDayOfMonth = -1;
@@ -23,15 +22,12 @@ public class TAFAirTemperatureForecastImpl extends PossiblyMissingContentImpl im
     }
 
     public TAFAirTemperatureForecastImpl(final TAFAirTemperatureForecast input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.maxTemperature = new NumericMeasureImpl(input.getMaxTemperature());
-            this.maxTemperatureDayOfMonth = input.getMaxTemperatureDayOfMonth();
-            this.maxTemperatureHour = input.getMaxTemperatureHour();
-            this.minTemperature = new NumericMeasureImpl(input.getMinTemperature());
-            this.minTemperatureDayOfMonth = input.getMinTemperatureDayOfMonth();
-            this.minTemperatureHour = input.getMinTemperatureHour();
-        }
+        this.maxTemperature = new NumericMeasureImpl(input.getMaxTemperature());
+        this.maxTemperatureDayOfMonth = input.getMaxTemperatureDayOfMonth();
+        this.maxTemperatureHour = input.getMaxTemperatureHour();
+        this.minTemperature = new NumericMeasureImpl(input.getMinTemperature());
+        this.minTemperatureDayOfMonth = input.getMinTemperatureDayOfMonth();
+        this.minTemperatureHour = input.getMinTemperatureHour();
     }
 
     @Override

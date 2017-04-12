@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.WindShear;
 
 /**
@@ -14,7 +13,7 @@ import fi.fmi.avi.data.metar.WindShear;
  * 
  */
 
-public class WindShearImpl extends PossiblyMissingContentImpl implements WindShear {
+public class WindShearImpl implements WindShear {
 
     private boolean allRunways;
     private List<String> runwayDirectionDesignators;
@@ -23,11 +22,8 @@ public class WindShearImpl extends PossiblyMissingContentImpl implements WindShe
     }
 
     public WindShearImpl(final WindShear input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.allRunways = input.isAllRunways();
-            this.runwayDirectionDesignators = new ArrayList<String>(input.getRunwayDirectionDesignators());
-        }
+        this.allRunways = input.isAllRunways();
+        this.runwayDirectionDesignators = new ArrayList<String>(input.getRunwayDirectionDesignators());
     }
 
     /* (non-Javadoc)

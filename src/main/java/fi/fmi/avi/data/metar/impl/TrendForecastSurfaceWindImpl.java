@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.TrendForecastSurfaceWind;
 
 /**
  *
  */
 
-public class TrendForecastSurfaceWindImpl extends PossiblyMissingContentImpl implements TrendForecastSurfaceWind {
+public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind {
 
     private NumericMeasure meanWindDirection;
     private NumericMeasure meanWindSpeed;
@@ -21,12 +20,9 @@ public class TrendForecastSurfaceWindImpl extends PossiblyMissingContentImpl imp
     }
 
     public TrendForecastSurfaceWindImpl(final TrendForecastSurfaceWind input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.meanWindDirection = new NumericMeasureImpl(input.getMeanWindDirection());
-            this.meanWindSpeed = new NumericMeasureImpl(input.getMeanWindSpeed());
-            this.windGust = new NumericMeasureImpl(input.getWindGust());
-        }
+        this.meanWindDirection = new NumericMeasureImpl(input.getMeanWindDirection());
+        this.meanWindSpeed = new NumericMeasureImpl(input.getMeanWindSpeed());
+        this.windGust = new NumericMeasureImpl(input.getWindGust());
     }
 
     /* (non-Javadoc)

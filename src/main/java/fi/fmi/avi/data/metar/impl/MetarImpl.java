@@ -21,9 +21,9 @@ public class MetarImpl implements Metar {
 
     private boolean automatedStation;
     private MetarStatus status;
-    private int dayOfMonth;
-    private int hour;
-    private int minute;
+    private int dayOfMonth = -1;
+    private int hour = -1;
+    private int minute = -1;
     private String timeZone;
     private String aerodromeDesignator;
     private boolean ceilingAndVisibilityOk;

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.SeaState;
 
 /**
@@ -13,7 +12,7 @@ import fi.fmi.avi.data.metar.SeaState;
  * 
  */
 
-public class SeaStateImpl extends PossiblyMissingContentImpl implements SeaState {
+public class SeaStateImpl implements SeaState {
 
     private NumericMeasure seaSurfaceTemperature;
     private NumericMeasure significantWaveHeight;
@@ -23,12 +22,9 @@ public class SeaStateImpl extends PossiblyMissingContentImpl implements SeaState
     }
 
     public SeaStateImpl(final SeaState input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.seaSurfaceTemperature = new NumericMeasureImpl(input.getSeaSurfaceTemperature());
-            this.significantWaveHeight = new NumericMeasureImpl(input.getSignificantWaveHeight());
-            this.seaSurfaceState = input.getSeaSurfaceState();
-        }
+        this.seaSurfaceTemperature = new NumericMeasureImpl(input.getSeaSurfaceTemperature());
+        this.significantWaveHeight = new NumericMeasureImpl(input.getSignificantWaveHeight());
+        this.seaSurfaceState = input.getSeaSurfaceState();
     }
 
     /* (non-Javadoc)

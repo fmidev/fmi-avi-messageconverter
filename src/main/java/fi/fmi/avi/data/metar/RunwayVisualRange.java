@@ -2,9 +2,8 @@ package fi.fmi.avi.data.metar;
 
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.NumericMeasure;
-import fi.fmi.avi.data.PossiblyMissingContent;
 
-public interface RunwayVisualRange extends AviationCodeListUser, PossiblyMissingContent {
+public interface RunwayVisualRange extends AviationCodeListUser {
 
     String getRunwayDirectionDesignator();
 

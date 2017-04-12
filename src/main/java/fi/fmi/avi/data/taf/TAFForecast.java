@@ -5,12 +5,11 @@ import java.util.List;
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
-import fi.fmi.avi.data.PossiblyMissingContent;
 
 /**
  * Created by rinne on 30/01/15.
  */
-public interface TAFForecast extends AviationCodeListUser, PossiblyMissingContent {
+public interface TAFForecast extends AviationCodeListUser {
 
     boolean isCeilingAndVisibilityOk();
 

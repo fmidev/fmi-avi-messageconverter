@@ -15,9 +15,7 @@ public class TAFSurfaceWindImpl extends TrendForecastSurfaceWindImpl implements 
 
     public TAFSurfaceWindImpl(final TAFSurfaceWind input) {
         super(input);
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.setVariableDirection(input.isVariableDirection());
-        }
+        this.setVariableDirection(input.isVariableDirection());
     }
 
     @Override

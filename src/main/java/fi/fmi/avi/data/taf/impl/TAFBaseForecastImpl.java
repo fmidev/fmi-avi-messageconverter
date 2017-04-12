@@ -20,11 +20,9 @@ public class TAFBaseForecastImpl extends TAFForecastImpl implements TAFBaseForec
 
     public TAFBaseForecastImpl(final TAFBaseForecast input) {
         super(input);
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.setTemperatures(new ArrayList<TAFAirTemperatureForecast>());
-            for (TAFAirTemperatureForecast airTemp:input.getTemperatures()) {
-                this.getTemperatures().add(new TAFAirTemperatureForecastImpl(airTemp));
-            }
+        this.setTemperatures(new ArrayList<TAFAirTemperatureForecast>());
+        for (TAFAirTemperatureForecast airTemp:input.getTemperatures()) {
+            this.getTemperatures().add(new TAFAirTemperatureForecastImpl(airTemp));
         }
     }
 

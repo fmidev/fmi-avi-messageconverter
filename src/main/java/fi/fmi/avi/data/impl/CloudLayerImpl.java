@@ -11,7 +11,7 @@ import fi.fmi.avi.data.NumericMeasure;
  * 
  */
 
-public class CloudLayerImpl extends PossiblyMissingContentImpl implements CloudLayer {
+public class CloudLayerImpl implements CloudLayer {
 
     private CloudAmount amount;
     private NumericMeasure base;
@@ -21,12 +21,9 @@ public class CloudLayerImpl extends PossiblyMissingContentImpl implements CloudL
     }
 
     public CloudLayerImpl(final CloudLayer input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.amount = input.getAmount();
-            this.base = new NumericMeasureImpl(input.getBase());
-            this.cloudType = input.getCloudType();
-        }
+        this.amount = input.getAmount();
+        this.base = new NumericMeasureImpl(input.getBase());
+        this.cloudType = input.getCloudType();
     }
 
     /* (non-Javadoc)

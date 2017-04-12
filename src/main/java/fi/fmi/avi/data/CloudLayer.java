@@ -1,6 +1,6 @@
 package fi.fmi.avi.data;
 
-public interface CloudLayer extends AviationCodeListUser, PossiblyMissingContent {
+public interface CloudLayer extends AviationCodeListUser {
 
     CloudAmount getAmount();
 

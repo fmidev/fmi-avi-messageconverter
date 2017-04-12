@@ -19,16 +19,14 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 
     public TAFChangeForecastImpl(final TAFChangeForecast input) {
         super(input);
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.setChangeIndicator(input.getChangeIndicator());
+        this.setChangeIndicator(input.getChangeIndicator());
 
-            this.setValidityStartDayOfMonth(input.getValidityStartDayOfMonth());
-            this.setValidityStartHour(input.getValidityStartHour());
-            this.setValidityStartMinute(input.getValidityStartMinute());
+        this.setValidityStartDayOfMonth(input.getValidityStartDayOfMonth());
+        this.setValidityStartHour(input.getValidityStartHour());
+        this.setValidityStartMinute(input.getValidityStartMinute());
 
-            this.setValidityEndDayOfMonth(input.getValidityEndDayOfMonth());
-            this.setValidityEndHour(input.getValidityEndHour());
-        }
+        this.setValidityEndDayOfMonth(input.getValidityEndDayOfMonth());
+        this.setValidityEndHour(input.getValidityEndHour());
     }
 
     @Override

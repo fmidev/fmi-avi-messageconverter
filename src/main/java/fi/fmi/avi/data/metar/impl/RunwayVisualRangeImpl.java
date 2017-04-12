@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.RunwayVisualRange;
 
 /**
@@ -13,7 +12,7 @@ import fi.fmi.avi.data.metar.RunwayVisualRange;
  * 
  */
 
-public class RunwayVisualRangeImpl extends PossiblyMissingContentImpl implements RunwayVisualRange {
+public class RunwayVisualRangeImpl implements RunwayVisualRange {
 
     private String runwayDirectionDesignator;
     private NumericMeasure meanRVR;
@@ -26,13 +25,10 @@ public class RunwayVisualRangeImpl extends PossiblyMissingContentImpl implements
     }
 
     public RunwayVisualRangeImpl(final RunwayVisualRange input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.runwayDirectionDesignator = input.getRunwayDirectionDesignator();
-            this.meanRVR = new NumericMeasureImpl(input.getMeanRVR());
-            this.meanRVROperator = input.getMeanRVROperator();
-            this.pastTendency = input.getPastTendency();
-        }
+        this.runwayDirectionDesignator = input.getRunwayDirectionDesignator();
+        this.meanRVR = new NumericMeasureImpl(input.getMeanRVR());
+        this.meanRVROperator = input.getMeanRVROperator();
+        this.pastTendency = input.getPastTendency();
     }
 
     /* (non-Javadoc)
@@ -95,11 +91,13 @@ public class RunwayVisualRangeImpl extends PossiblyMissingContentImpl implements
     }
 
     @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
     public void setVaryingRVRMinimum(final NumericMeasure minimum) {
         this.varyingMinRVR = minimum;
     }
 
     @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
     public void setVaryingRVRMaximum(final NumericMeasure maximum) {
         this.varyingMaxRVR = maximum;
     }

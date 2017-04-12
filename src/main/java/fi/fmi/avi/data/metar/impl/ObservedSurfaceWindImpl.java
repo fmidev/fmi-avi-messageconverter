@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.ObservedSurfaceWind;
 
 /**
@@ -14,7 +13,7 @@ import fi.fmi.avi.data.metar.ObservedSurfaceWind;
  * 
  */
 
-public class ObservedSurfaceWindImpl extends PossiblyMissingContentImpl implements ObservedSurfaceWind {
+public class ObservedSurfaceWindImpl implements ObservedSurfaceWind {
 
     private boolean variableDirection;
     private NumericMeasure meanWindDirection; // 0-359 degrees
@@ -27,15 +26,12 @@ public class ObservedSurfaceWindImpl extends PossiblyMissingContentImpl implemen
     }
 
     public ObservedSurfaceWindImpl(final ObservedSurfaceWind input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.variableDirection = input.isVariableDirection();
-            this.meanWindDirection = new NumericMeasureImpl(input.getMeanWindDirection());
-            this.meanWindSpeed = new NumericMeasureImpl(input.getMeanWindSpeed());
-            this.windGust = new NumericMeasureImpl(input.getWindGust());
-            this.extremeClockwiseWindDirection = new NumericMeasureImpl(input.getExtremeClockwiseWindDirection());
-            this.extremeCounterClockwiseWindDirection = new NumericMeasureImpl(input.getExtremeCounterClockwiseWindDirection());
-        }
+        this.variableDirection = input.isVariableDirection();
+        this.meanWindDirection = new NumericMeasureImpl(input.getMeanWindDirection());
+        this.meanWindSpeed = new NumericMeasureImpl(input.getMeanWindSpeed());
+        this.windGust = new NumericMeasureImpl(input.getWindGust());
+        this.extremeClockwiseWindDirection = new NumericMeasureImpl(input.getExtremeClockwiseWindDirection());
+        this.extremeCounterClockwiseWindDirection = new NumericMeasureImpl(input.getExtremeCounterClockwiseWindDirection());
     }
 
     /* (non-Javadoc)

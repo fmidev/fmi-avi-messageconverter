@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.HorizontalVisibility;
 
 /**
@@ -13,7 +12,7 @@ import fi.fmi.avi.data.metar.HorizontalVisibility;
  * 
  */
 
-public class HorizontalVisibilityImpl extends PossiblyMissingContentImpl implements HorizontalVisibility {
+public class HorizontalVisibilityImpl implements HorizontalVisibility {
 
     private NumericMeasure prevailingVisibility;
     private RelationalOperator prevailingVisibilityOperator;
@@ -24,13 +23,10 @@ public class HorizontalVisibilityImpl extends PossiblyMissingContentImpl impleme
     }
 
     public HorizontalVisibilityImpl(final HorizontalVisibility input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
-            this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
-            this.minimumVisibility = new NumericMeasureImpl(input.getMinimumVisibility());
-            this.minimumVisibilityDirection = new NumericMeasureImpl(input.getMinimumVisibilityDirection());
-        }
+        this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
+        this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
+        this.minimumVisibility = new NumericMeasureImpl(input.getMinimumVisibility());
+        this.minimumVisibilityDirection = new NumericMeasureImpl(input.getMinimumVisibilityDirection());
     }
 
     /* (non-Javadoc)

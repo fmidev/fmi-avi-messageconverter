@@ -2,12 +2,11 @@ package fi.fmi.avi.data.taf;
 
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.NumericMeasure;
-import fi.fmi.avi.data.PossiblyMissingContent;
 
 /**
  * Created by rinne on 30/01/15.
  */
-public interface TAFAirTemperatureForecast extends AviationCodeListUser, PossiblyMissingContent {
+public interface TAFAirTemperatureForecast extends AviationCodeListUser {
 
     NumericMeasure getMaxTemperature();
 

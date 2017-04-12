@@ -9,7 +9,6 @@ import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.impl.CloudForecastImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.PossiblyMissingContentImpl;
 import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.TrendForecastSurfaceWind;
 import fi.fmi.avi.data.metar.TrendTimeGroups;
@@ -18,7 +17,7 @@ import fi.fmi.avi.data.metar.TrendTimeGroups;
  * 
  */
 
-public class TrendForecastImpl extends PossiblyMissingContentImpl implements TrendForecast {
+public class TrendForecastImpl implements TrendForecast {
 
     private List<String> timeGroups;
     private boolean ceilingAndVisibilityOk;
@@ -33,7 +32,6 @@ public class TrendForecastImpl extends PossiblyMissingContentImpl implements Tre
     }
 
     public TrendForecastImpl(final TrendForecast input) {
-        super(input.getMissingReason());
         this.timeGroups = input.getTimeGroups();
         this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
         this.changeIndicator = input.getChangeIndicator();

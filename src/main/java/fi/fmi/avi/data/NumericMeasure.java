@@ -1,6 +1,6 @@
 package fi.fmi.avi.data;
 
-public interface NumericMeasure extends AviationCodeListUser, PossiblyMissingContent {
+public interface NumericMeasure extends AviationCodeListUser {
 
     Double getValue();
 

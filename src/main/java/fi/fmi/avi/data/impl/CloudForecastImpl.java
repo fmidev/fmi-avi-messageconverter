@@ -13,7 +13,7 @@ import fi.fmi.avi.data.NumericMeasure;
  *
  */
 
-public class CloudForecastImpl extends PossiblyMissingContentImpl implements CloudForecast {
+public class CloudForecastImpl implements CloudForecast {
 
     private NumericMeasure verticalVisibility; // only if no layers
     private List<CloudLayer> layers;
@@ -22,13 +22,11 @@ public class CloudForecastImpl extends PossiblyMissingContentImpl implements Clo
     }
 
     public CloudForecastImpl(final CloudForecast input) {
-        super(input.getMissingReason());
-        if (MissingReason.NOT_MISSING.equals(this.getMissingReason())) {
-            this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
-            this.layers = new ArrayList<CloudLayer>();
-            for (CloudLayer layer: input.getLayers()) {
-                this.layers.add(new CloudLayerImpl(layer));
-            }
+        
+        this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
+        this.layers = new ArrayList<CloudLayer>();
+        for (CloudLayer layer: input.getLayers()) {
+            this.layers.add(new CloudLayerImpl(layer));
         }
     }
 
