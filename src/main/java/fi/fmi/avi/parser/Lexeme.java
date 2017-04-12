@@ -23,7 +23,6 @@ public interface Lexeme {
         SURFACE_WIND,
         VARIABLE_WIND_DIRECTION,
         HORIZONTAL_VISIBILITY,
-        VERTICAL_VISIBILITY,
         CLOUD,
         FORECAST_CHANGE_INDICATOR, NO_SIGNIFICANT_WEATHER, CHANGE_FORECAST_TIME_GROUP,
         AUTOMATED,
@@ -72,6 +71,8 @@ public interface Lexeme {
     Map<ParsedValueName, Object> getParsedValues();
 
     Object getParsedValue(ParsedValueName name);
+    
+    <T> T getParsedValue(ParsedValueName name, Class<T> clz);
 
     String getTACToken();
 
