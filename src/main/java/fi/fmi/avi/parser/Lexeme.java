@@ -45,7 +45,7 @@ public interface Lexeme {
     enum ParsedValueName {
         COUNTRY, DAY1, DAY2, HOUR1, HOUR2, MINUTE1, MINUTE2, TYPE, COVER,
         VALUE,
-        UNIT,
+        UNIT, UNIT2,
         MAX_VALUE,
         MIN_VALUE,
         MEAN_VALUE,
@@ -67,6 +67,10 @@ public interface Lexeme {
     Status getStatus();
 
     String getLexerMessage();
+
+    int getStartIndex();
+
+    int getEndIndex();
 
     Map<ParsedValueName, Object> getParsedValues();
 

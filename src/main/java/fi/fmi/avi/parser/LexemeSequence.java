@@ -11,6 +11,8 @@ public interface LexemeSequence {
 
     Lexeme getFirstLexeme();
 
+    Lexeme getLastLexeme();
+
     Iterator<Lexeme> getLexemes();
 
     Iterator<Lexeme> getRecognizedLexemes();
