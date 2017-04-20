@@ -18,11 +18,16 @@ public class RunwayStateImpl implements RunwayState {
     private boolean cleared;
     private boolean estimatedSurfaceFrictionUnreliable;
     private boolean snowClosure;
+    private boolean repetition;
+    private boolean depthNotMeasurable;
+    private boolean runwayNotOperational;
     private String runwayDirectionDesignator;
     private RunwayDeposit deposit;
     private RunwayContamination contamination;
     private NumericMeasure depthOfDeposit;
+    private RelationalOperator depthOperator;
     private Double estimatedSurfaceFriction; // null=N/A, otherwise between 0.0 and 0.9
+    private BreakingAction breakingAction; // corresponds to code values 91 - 95
 
     public RunwayStateImpl() {
     }
@@ -32,11 +37,14 @@ public class RunwayStateImpl implements RunwayState {
         this.cleared = input.isCleared();
         this.estimatedSurfaceFrictionUnreliable = input.isEstimatedSurfaceFrictionUnreliable();
         this.snowClosure = input.isSnowClosure();
+        this.repetition = input.isRepetition();
         this.runwayDirectionDesignator = input.getRunwayDirectionDesignator();
         this.deposit = input.getDeposit();
         this.contamination = input.getContamination();
         this.depthOfDeposit = new NumericMeasureImpl(input.getDepthOfDeposit());
+        this.depthOperator = input.getDepthOperator();
         this.estimatedSurfaceFriction = input.getEstimatedSurfaceFriction();
+        this.breakingAction = input.getBreakingAction();
     }
 
     /* (non-Javadoc)
@@ -70,6 +78,22 @@ public class RunwayStateImpl implements RunwayState {
     public boolean isSnowClosure() {
         return snowClosure;
     }
+    
+    @Override
+    public boolean isRepetition() {
+    	return repetition;
+    }
+    
+    @Override
+    public boolean isDepthNotMeasurable() {
+    	return this.depthNotMeasurable;
+    }
+    
+    @Override
+    public boolean isRunwayNotOperational() {
+    	return this.runwayNotOperational;
+    }
+    
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#getRunwayDirectionDesignator()
@@ -102,6 +126,12 @@ public class RunwayStateImpl implements RunwayState {
     public NumericMeasure getDepthOfDeposit() {
         return depthOfDeposit;
     }
+    
+    @Override
+    public RelationalOperator getDepthOperator() {
+    	return this.depthOperator;
+    }
+    
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#getEstimatedSurfaceFriction()
@@ -110,6 +140,12 @@ public class RunwayStateImpl implements RunwayState {
     public Double getEstimatedSurfaceFriction() {
         return estimatedSurfaceFriction;
     }
+    
+    @Override
+    public BreakingAction getBreakingAction() {
+    	return this.breakingAction;
+    }
+
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#setAllRunways(boolean)
@@ -142,7 +178,21 @@ public class RunwayStateImpl implements RunwayState {
     public void setSnowClosure(final boolean snowClosure) {
         this.snowClosure = snowClosure;
     }
+    
+    @Override
+    public void setRepetition(final boolean repetition) {
+    	this.repetition = repetition;
+    }
+    
+    @Override
+    public void setDepthNotMeasurable(boolean notMeasurable) {
+    	this.depthNotMeasurable = notMeasurable;
+    }
 
+    @Override
+    public void setRunwayNotOperational(boolean notOperational) {
+    	this.runwayNotOperational = notOperational;
+    }
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#setRunwayDirectionDesignator(java.lang.String)
      */
@@ -175,6 +225,11 @@ public class RunwayStateImpl implements RunwayState {
     public void setDepthOfDeposit(final NumericMeasure depthOfDeposit) {
         this.depthOfDeposit = depthOfDeposit;
     }
+    
+    @Override
+    public void setDepthOperator(RelationalOperator operator) {
+    	this.depthOperator = operator;
+    }
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#setEstimatedSurfaceFriction(java.lang.Double)
@@ -182,6 +237,10 @@ public class RunwayStateImpl implements RunwayState {
     @Override
     public void setEstimatedSurfaceFriction(final Double estimatedSurfaceFriction) {
         this.estimatedSurfaceFriction = estimatedSurfaceFriction;
+    }
+    
+    public void setBreakingAction(final BreakingAction action) {
+    	this.breakingAction = action;
     }
 
 }

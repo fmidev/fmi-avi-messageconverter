@@ -2,9 +2,6 @@ package fi.fmi.avi.data.metar;
 
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.NumericMeasure;
-import fi.fmi.avi.data.AviationCodeListUser.MissingReason;
-import fi.fmi.avi.data.AviationCodeListUser.RunwayContamination;
-import fi.fmi.avi.data.AviationCodeListUser.RunwayDeposit;
 
 public interface RunwayState extends AviationCodeListUser {
 
@@ -15,6 +12,12 @@ public interface RunwayState extends AviationCodeListUser {
     boolean isEstimatedSurfaceFrictionUnreliable();
 
     boolean isSnowClosure();
+    
+    boolean isRepetition();
+    
+    boolean isDepthNotMeasurable();
+    
+    boolean isRunwayNotOperational();
 
     String getRunwayDirectionDesignator();
 
@@ -23,9 +26,13 @@ public interface RunwayState extends AviationCodeListUser {
     RunwayContamination getContamination();
 
     NumericMeasure getDepthOfDeposit();
+    
+    RelationalOperator getDepthOperator();
 
     Double getEstimatedSurfaceFriction();
-
+    
+    BreakingAction getBreakingAction();
+    
 
     void setAllRunways(boolean allRunways);
 
@@ -34,6 +41,12 @@ public interface RunwayState extends AviationCodeListUser {
     void setEstimatedSurfaceFrictionUnreliable(boolean estimatedSurfaceFrictionUnreliable);
 
     void setSnowClosure(boolean snowClosure);
+    
+    void setRepetition(boolean repetition);
+    
+    void setDepthNotMeasurable(boolean notMeasurable);
+    
+    void setRunwayNotOperational(boolean notOperational);
 
     void setRunwayDirectionDesignator(String runwayDirectionDesignator);
 
@@ -42,7 +55,11 @@ public interface RunwayState extends AviationCodeListUser {
     void setContamination(RunwayContamination contamination);
 
     void setDepthOfDeposit(NumericMeasure depthOfDeposit);
+   
+    void setDepthOperator(RelationalOperator operator); 
 
     void setEstimatedSurfaceFriction(Double estimatedSurfaceFriction);
+    
+    void setBreakingAction(BreakingAction action);
 
 }
