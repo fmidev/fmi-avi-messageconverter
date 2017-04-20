@@ -14,6 +14,10 @@ public interface RunwayVisualRange extends AviationCodeListUser {
     NumericMeasure getVaryingRVRMaximum();
 
     RelationalOperator getMeanRVROperator();
+    
+    RelationalOperator getVaryingRVRMinimumOperator();
+    
+    RelationalOperator getVaryingRVRMaximumOperator();
 
     VisualRangeTendency getPastTendency();
 
@@ -27,6 +31,10 @@ public interface RunwayVisualRange extends AviationCodeListUser {
     void setVaryingRVRMaximum(NumericMeasure maximum);
 
     void setMeanRVROperator(RelationalOperator meanRVROperator);
+    
+    void setVaryingRVRMinimumOperator(RelationalOperator minRVROperator);
+    
+    void setVaryingRVRMaximumOperator(RelationalOperator maxRVROperator);
 
     void setPastTendency(VisualRangeTendency pastTendency);
 

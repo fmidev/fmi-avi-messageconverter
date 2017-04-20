@@ -19,6 +19,8 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     private NumericMeasure varyingMinRVR;
     private NumericMeasure varyingMaxRVR;
     private RelationalOperator meanRVROperator;
+    private RelationalOperator minRVROperator;
+    private RelationalOperator maxRVROperator;
     private VisualRangeTendency pastTendency;
 
     public RunwayVisualRangeImpl() {
@@ -28,6 +30,8 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
         this.runwayDirectionDesignator = input.getRunwayDirectionDesignator();
         this.meanRVR = new NumericMeasureImpl(input.getMeanRVR());
         this.meanRVROperator = input.getMeanRVROperator();
+        this.minRVROperator = input.getVaryingRVRMinimumOperator();
+        this.maxRVROperator = input.getVaryingRVRMaximumOperator();
         this.pastTendency = input.getPastTendency();
     }
 
@@ -63,6 +67,16 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     @Override
     public RelationalOperator getMeanRVROperator() {
         return meanRVROperator;
+    }
+    
+    @Override
+    public RelationalOperator getVaryingRVRMinimumOperator() {
+        return minRVROperator;
+    }
+    
+    @Override
+    public RelationalOperator getVaryingRVRMaximumOperator() {
+        return maxRVROperator;
     }
 
     /* (non-Javadoc)
@@ -108,6 +122,16 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     @Override
     public void setMeanRVROperator(final RelationalOperator meanRVROperator) {
         this.meanRVROperator = meanRVROperator;
+    }
+    
+    @Override
+    public void setVaryingRVRMinimumOperator(final RelationalOperator minRVROperator) {
+        this.minRVROperator = minRVROperator;
+    }
+    
+    @Override
+    public void setVaryingRVRMaximumOperator(final RelationalOperator maxRVROperator) {
+        this.maxRVROperator = maxRVROperator;
     }
 
     /* (non-Javadoc)
