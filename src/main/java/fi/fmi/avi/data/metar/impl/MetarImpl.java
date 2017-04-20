@@ -3,10 +3,14 @@ package fi.fmi.avi.data.metar.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.Weather;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
+import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.metar.HorizontalVisibility;
 import fi.fmi.avi.data.metar.Metar;
 import fi.fmi.avi.data.metar.ObservedClouds;
@@ -33,9 +37,9 @@ public class MetarImpl implements Metar {
     private ObservedSurfaceWind surfaceWind;
     private HorizontalVisibility visibility;
     private List<RunwayVisualRange> runwayVisualRanges;
-    private List<String> presentWeatherCodes;
+    private List<Weather> presentWeather;
     private ObservedClouds clouds;
-    private List<String> recentWeatherCodes;
+    private List<Weather> recentWeather;
     private WindShear windShear;
     private SeaState seaState;
     private List<RunwayState> runwayStates;
@@ -63,9 +67,9 @@ public class MetarImpl implements Metar {
         for (RunwayVisualRange range : input.getRunwayVisualRanges()) {
             this.runwayVisualRanges.add(new RunwayVisualRangeImpl(range));
         }
-        this.presentWeatherCodes = input.getPresentWeatherCodes();
+        this.presentWeather = input.getPresentWeather();
         this.clouds = new ObservedCloudsImpl(input.getClouds());
-        this.recentWeatherCodes = input.getRecentWeatherCodes();
+        this.recentWeather = input.getRecentWeather();
         this.windShear = new WindShearImpl(input.getWindShear());
         this.seaState = new SeaStateImpl(input.getSeaState());
         this.runwayStates = new ArrayList<RunwayState>();
@@ -308,21 +312,44 @@ public class MetarImpl implements Metar {
     public void setRunwayVisualRanges(final List<RunwayVisualRange> runwayVisualRange) {
         this.runwayVisualRanges = runwayVisualRange;
     }
-
+    
+    @Override
+    public List<Weather> getPresentWeather() {
+    	return this.presentWeather;
+    }
+    
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.Metar#getPresentWeatherCodes()
      */
     @Override
+    @JsonIgnore
     public List<String> getPresentWeatherCodes() {
-        return presentWeatherCodes;
+    	if (this.presentWeather != null) {
+    		List<String> retval = new ArrayList<>(this.presentWeather.size());
+    		StringBuilder sb;
+    		for (Weather w:this.presentWeather) {
+    			sb = new StringBuilder();
+    			if (w.getIntensity() != null) {
+    				sb.append(w.getIntensity().getCode());
+    			}
+    			if (w.isInVicinity()) {
+    				sb.append("VI");
+    			}
+    			sb.append(w.getKind().getCode());
+    			retval.add(sb.toString());
+    		}
+    		return retval;
+    	}
+        return null;
     }
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.Metar#setPresentWeatherCodes(java.util.List)
      */
     @Override
-    public void setPresentWeatherCodes(final List<String> presentWeatherCodes) {
-        this.presentWeatherCodes = presentWeatherCodes;
+    @JsonDeserialize(contentAs = WeatherImpl.class)
+    public void setPresentWeather(final List<Weather> presentWeather) {
+        this.presentWeather = presentWeather;
     }
 
     /* (non-Javadoc)
@@ -342,20 +369,43 @@ public class MetarImpl implements Metar {
         this.clouds = clouds;
     }
 
+    public List<Weather> getRecentWeather() {
+    	return this.recentWeather;
+    }
+    
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.Metar#getRecentWeatherCodes()
      */
     @Override
+    @JsonIgnore
     public List<String> getRecentWeatherCodes() {
-        return recentWeatherCodes;
+    	if (this.recentWeather != null) {
+    		List<String> retval = new ArrayList<>(this.recentWeather.size());
+    		StringBuilder sb;
+    		for (Weather w:this.recentWeather) {
+    			sb = new StringBuilder();
+    			sb.append("RE");
+    			if (w.getIntensity() != null) {
+    				sb.append(w.getIntensity().getCode());
+    			}
+    			if (w.isInVicinity()) {
+    				sb.append("VI");
+    			}
+    			sb.append(w.getKind().getCode());
+    			retval.add(sb.toString());
+    		}
+    		return retval;
+    	}
+        return null;
     }
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.Metar#setRecentWeatherCodes(java.util.List)
      */
     @Override
-    public void setRecentWeatherCodes(final List<String> recentWeatherCodes) {
-        this.recentWeatherCodes = recentWeatherCodes;
+    @JsonDeserialize(contentAs = WeatherImpl.class)
+    public void setRecentWeather(final List<Weather> recentWeather) {
+        this.recentWeather = recentWeather;
     }
 
     /* (non-Javadoc)

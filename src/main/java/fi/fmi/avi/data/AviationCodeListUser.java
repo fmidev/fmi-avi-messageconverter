@@ -1,6 +1,5 @@
 package fi.fmi.avi.data;
 
-
 public interface AviationCodeListUser {
 
     String CODELIST_AERODROME_PRESENT_OR_FORECAST_WEATHER = "http://codes.wmo.int/49-2/AerodromePresentOrForecastWeather";
@@ -291,6 +290,31 @@ public interface AviationCodeListUser {
             return this.code;
         }
     }
+    
+    public enum BreakingAction {
+    	POOR(91), MEDIUM_POOR(92), MEDIUM(93), MEDIUM_GOOD(94), GOOD(95);
+    	
+    	private int code;
+    	
+    	public static BreakingAction fromInt(final int code) {
+    		switch(code) {
+    		case 91: return POOR;
+    		case 92: return MEDIUM_POOR;
+    		case 93: return BreakingAction.MEDIUM;
+    		case 94: return MEDIUM_GOOD;
+    		case 95: return GOOD;
+    		default: return null;
+    		}
+    	}
+    	
+    	BreakingAction(final int code) {
+    		this.code = code;
+    	}
+    	
+    	public int getCode() {
+    		return this.code;
+    	}
+    }
 
     public enum TrendForecastChangeIndicator {
         NO_SIGNIFICANT_CHANGES(0), BECOMING(1), TEMPORARY_FLUCTUATIONS(2);
@@ -346,5 +370,69 @@ public interface AviationCodeListUser {
         public int getCode() {
             return this.code;
         }
+    }
+    
+    public enum WeatherCodeKind {
+        SHALLOW("MI"),
+        PATCHES("BC"),
+        PARTIAL("PR"),
+        DRIFTING("DR"),
+        BLOWING("BL"),
+        SHOWER("SH"),
+        THUNDERSTORM("TS"),
+        FREEZING("FZ"),
+        DRIZZLE("DZ"),
+        RAIN("RA"),
+        SNOW("SN"),
+        SNOW_GRAINS("SG"),
+        ICE_CRYSTALS("IC"),
+        PELLETS("PL"),
+        HAIL("GR"),
+        SNOW_PELLETS("GS"),
+        UNKNOWN_PRECIPITATION("UP"),
+        MIST("BR"),
+        FOG("FG"),
+        SMOKE("FU"),
+        VOLCANIC_ASH("VA"),
+        DUST("DU"),
+        SAND("SA"),
+        HAZE("HZ"),
+        DUST_DEVILS("PO"),
+        SQUALLS("SQ"),
+        TORNADO_WATER_SPOUT("+FC"),
+        FUNNEL_CLOUD("FC"),
+        SANDSTORM("SS"),
+        DUSTSTORM("DS");
+    	
+    	private String code;
+    	
+    	WeatherCodeKind(final String code) {
+    		this.code = code;
+    	}
+    	
+    	public String getCode() {
+    		return this.code;
+    	}
+    	
+    	public static WeatherCodeKind forCode(final String code) {
+            for (WeatherCodeKind w : values()) {
+                if (w.code.equals(code)) {
+                    return w;
+                }
+            }
+            return null;
+        }
+    }
+    
+    public enum WeatherCodeIntensity {
+    	HIGH('+'), LOW('-');
+    	private char code;
+    	
+    	WeatherCodeIntensity(final char code) {
+    		this.code = code;
+    	}
+    	public char getCode() {
+    		return this.code;
+    	}
     }
 }

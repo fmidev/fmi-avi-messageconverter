@@ -5,6 +5,7 @@ import java.util.List;
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.AviationWeatherMessage;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.Weather;
 
 public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
 
@@ -28,10 +29,14 @@ public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
 
     List<RunwayVisualRange> getRunwayVisualRanges();
 
-    List<String> getPresentWeatherCodes();
+    List<Weather> getPresentWeather();
 
+    List<String> getPresentWeatherCodes();
+    
     ObservedClouds getClouds();
 
+    List<Weather> getRecentWeather();
+    
     List<String> getRecentWeatherCodes();
 
     WindShear getWindShear();
@@ -65,11 +70,11 @@ public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
 
     void setRunwayVisualRanges(List<RunwayVisualRange> runwayVisualRange);
 
-    void setPresentWeatherCodes(List<String> presentWeatherCodes);
+    void setPresentWeather(List<Weather> presentWeather);
 
     void setClouds(ObservedClouds clouds);
 
-    void setRecentWeatherCodes(List<String> recentWeatherCodes);
+    void setRecentWeather(List<Weather> recentWeather);
 
     void setWindShear(WindShear windShear);
 
