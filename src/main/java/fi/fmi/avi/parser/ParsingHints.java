@@ -16,6 +16,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
 
     public static final Key KEY_MESSAGE_TYPE;
     public static final Key KEY_REFERENCE_DATA;
+    public static final Key KEY_PARSING_MODE;
 
     public static final Object VALUE_MESSAGE_TYPE_METAR = "METAR";
     public static final Object VALUE_MESSAGE_TYPE_TAF = "TAF";
@@ -24,21 +25,35 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_MESSAGE_TYPE_AIRMET = "AIRMET";
     public static final Object VALUE_MESSAGE_TYPE_ARS = "ARS";
 
+    public static final Object VALUE_PARSING_MODE_STRICT = "STRICT";
+    public static final Object VALUE_PARSING_MODE_ALLOW_MISSING = "ALLOW_MISSING";
+    public static final Object VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS = "ALLOW_SYNTAX_ERRORS";
+    public static final Object VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS = "ALLOW_LOGICAL_ERRORS";
+    public static final Object VALUE_PARSING_MODE_ALLOW_ANY_ERRORS = "ALLOW_ANY_ERRORS";
+    
     public static final ParsingHints METAR;
     public static final ParsingHints TAF;
     public static final ParsingHints SPECI;
     public static final ParsingHints SIGMET;
     public static final ParsingHints ARS;
+    
+    public static final ParsingHints STRICT_PARSING;
+    public static final ParsingHints ALLOW_ERRORS;
 
     static {
         KEY_MESSAGE_TYPE = new KeyImpl(1, "Aviation message type hint", VALUE_MESSAGE_TYPE_METAR, VALUE_MESSAGE_TYPE_SPECI, VALUE_MESSAGE_TYPE_TAF,
                 VALUE_MESSAGE_TYPE_SIGMET, VALUE_MESSAGE_TYPE_AIRMET, VALUE_MESSAGE_TYPE_ARS);
         KEY_REFERENCE_DATA = new KeyImpl(2, "Java object providing extra information for parsing / serializing");
+        KEY_PARSING_MODE = new KeyImpl(3, "Parsing mode hint", VALUE_PARSING_MODE_STRICT, VALUE_PARSING_MODE_ALLOW_MISSING, VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS, VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
+        
         METAR = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
         TAF = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
         SPECI = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SPECI);
         SIGMET = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SIGMET);
         ARS = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_ARS);
+        
+        STRICT_PARSING = new ParsingHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
+        ALLOW_ERRORS = new ParsingHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
     }
 
     public abstract static class Key {
