@@ -5,12 +5,12 @@ import java.util.List;
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.Weather;
+
 
 public interface TrendForecast extends AviationCodeListUser {
 
-    List<String> getTimeGroups();
-
-    TrendTimeGroups getParsedTimeGroups();
+    TrendTimeGroups getTimeGroups();
 
     boolean isCeilingAndVisibilityOk();
 
@@ -22,11 +22,14 @@ public interface TrendForecast extends AviationCodeListUser {
 
     TrendForecastSurfaceWind getSurfaceWind();
 
-    List<String> getForecastWeather();
+    List<Weather> getForecastWeather();
+
+    List<String> getForecastWeatherCodes();
+
 
     CloudForecast getCloud();
 
-    void setTimeGroups(List<String> timeGroups);
+    void setTimeGroups(TrendTimeGroups timeGroups);
 
     void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
 
@@ -38,7 +41,7 @@ public interface TrendForecast extends AviationCodeListUser {
 
     void setSurfaceWind(TrendForecastSurfaceWind surfaceWind);
 
-    void setForecastWeather(List<String> forecastWeather);
+    void setForecastWeather(List<Weather> forecastWeather);
 
     void setCloud(CloudForecast cloud);
 

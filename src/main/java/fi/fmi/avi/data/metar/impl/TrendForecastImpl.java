@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.Weather;
 import fi.fmi.avi.data.impl.CloudForecastImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
 import fi.fmi.avi.data.metar.TrendForecast;
@@ -19,13 +20,13 @@ import fi.fmi.avi.data.metar.TrendTimeGroups;
 
 public class TrendForecastImpl implements TrendForecast {
 
-    private List<String> timeGroups;
+    private TrendTimeGroups timeGroups;
     private boolean ceilingAndVisibilityOk;
     private TrendForecastChangeIndicator changeIndicator;
     private NumericMeasure prevailingVisibility;
     private RelationalOperator prevailingVisibilityOperator;
     private TrendForecastSurfaceWind surfaceWind;
-    private List<String> forecastWeather;
+    private List<Weather> forecastWeather;
     private CloudForecast cloud;
 
     public TrendForecastImpl() {
@@ -38,7 +39,7 @@ public class TrendForecastImpl implements TrendForecast {
         this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
         this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
         this.surfaceWind = new TrendForecastSurfaceWindImpl(input.getSurfaceWind());
-        this.forecastWeather = new ArrayList<String>(input.getForecastWeather());
+        this.forecastWeather = new ArrayList<>(input.getForecastWeather());
         this.cloud = new CloudForecastImpl(input.getCloud());
     }
 
@@ -46,17 +47,8 @@ public class TrendForecastImpl implements TrendForecast {
      * @see fi.fmi.avi.data.TrendForecast#getTimeGroups()
      */
     @Override
-    public List<String> getTimeGroups() {
+    public TrendTimeGroups getTimeGroups() {
         return this.timeGroups;
-    }
-
-    @Override
-    public TrendTimeGroups getParsedTimeGroups() {
-        TrendTimeGroups retval = null;
-        if (this.timeGroups != null) {
-            retval = new TrendTimeGroups(this.timeGroups);
-        }
-        return retval;
     }
 
     /* (non-Javadoc)
@@ -103,13 +95,34 @@ public class TrendForecastImpl implements TrendForecast {
      * @see fi.fmi.avi.data.TrendForecast#getForecastWeather()
      */
     @Override
-    public List<String> getForecastWeather() {
+    public List<Weather> getForecastWeather() {
         return forecastWeather;
     }
 
+    @Override
+    public List<String> getForecastWeatherCodes() {
+        if (this.forecastWeather != null) {
+            List<String> retval = new ArrayList<>(this.forecastWeather.size());
+            StringBuilder sb;
+            for (Weather w : this.forecastWeather) {
+                sb = new StringBuilder();
+                if (w.getIntensity() != null) {
+                    sb.append(w.getIntensity().getCode());
+                }
+                if (w.isInVicinity()) {
+                    sb.append("VI");
+                }
+                sb.append(w.getKind().getCode());
+                retval.add(sb.toString());
+            }
+            return retval;
+        }
+        return null;
+    }
+
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecast#getCloud()
-     */
+         * @see fi.fmi.avi.data.TrendForecast#getCloud()
+         */
     @Override
     public CloudForecast getCloud() {
         return cloud;
@@ -120,7 +133,8 @@ public class TrendForecastImpl implements TrendForecast {
      */
     
     @Override
-    public void setTimeGroups(final List<String> timeGroups) {
+    @JsonDeserialize(as = TrendTimeGroupsImpl.class)
+    public void setTimeGroups(final TrendTimeGroups timeGroups) {
         this.timeGroups = timeGroups;
     }
     
@@ -171,7 +185,7 @@ public class TrendForecastImpl implements TrendForecast {
      * @see fi.fmi.avi.data.TrendForecast#setForecastWeather(java.util.List)
      */
     @Override
-    public void setForecastWeather(final List<String> forecastWeather) {
+    public void setForecastWeather(final List<Weather> forecastWeather) {
         this.forecastWeather = forecastWeather;
     }
 
