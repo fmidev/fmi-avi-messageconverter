@@ -1,10 +1,13 @@
 package fi.fmi.avi.data.taf.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import fi.fmi.avi.data.taf.TAFChangeForecast;
 
 /**
  * Created by rinne on 30/01/15.
  */
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeForecast {
 
     private TAFChangeIndicator changeIndicator;

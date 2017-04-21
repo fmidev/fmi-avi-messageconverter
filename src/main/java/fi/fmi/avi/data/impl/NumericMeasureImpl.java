@@ -1,8 +1,10 @@
 package fi.fmi.avi.data.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import fi.fmi.avi.data.NumericMeasure;
 
-
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class NumericMeasureImpl implements NumericMeasure {
 
     private Double value;

@@ -1,24 +1,27 @@
 package fi.fmi.avi.data.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import fi.fmi.avi.data.AviationCodeListUser.WeatherCodeIntensity;
 import fi.fmi.avi.data.AviationCodeListUser.WeatherCodeKind;
 import fi.fmi.avi.data.Weather;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class WeatherImpl implements Weather {
 
 	private WeatherCodeKind kind;
 	private WeatherCodeIntensity intensity;
 	private boolean inVicinity;
-	
-	public WeatherImpl() {	
+
+	public WeatherImpl() {
 	}
-	
+
 	public WeatherImpl(final Weather weather) {
 		this.kind = weather.getKind();
 		this.intensity = weather.getIntensity();
 		this.inVicinity = weather.isInVicinity();
 	}
-	
+
 	@Override
 	public WeatherCodeKind getKind() {
 		return this.kind;
@@ -26,7 +29,7 @@ public class WeatherImpl implements Weather {
 
 	@Override
 	public WeatherCodeIntensity getIntensity() {
-		return this.intensity; 
+		return this.intensity;
 	}
 
 	@Override

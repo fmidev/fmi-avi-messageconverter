@@ -1,5 +1,6 @@
 package fi.fmi.avi.data.taf.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
@@ -9,6 +10,7 @@ import fi.fmi.avi.data.taf.TAFAirTemperatureForecast;
 /**
  * Created by rinne on 30/01/15.
  */
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast {
 
     private NumericMeasure maxTemperature;

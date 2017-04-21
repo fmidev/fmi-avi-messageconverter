@@ -3,7 +3,7 @@ package fi.fmi.avi.data.metar.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.fmi.avi.data.metar.WindShear;
 
@@ -13,6 +13,7 @@ import fi.fmi.avi.data.metar.WindShear;
  * 
  */
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class WindShearImpl implements WindShear {
 
     private boolean allRunways;

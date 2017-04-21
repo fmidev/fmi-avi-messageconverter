@@ -3,6 +3,7 @@ package fi.fmi.avi.data.metar.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.CloudLayer;
@@ -16,7 +17,7 @@ import fi.fmi.avi.data.metar.ObservedClouds;
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  * 
  */
-
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ObservedCloudsImpl implements ObservedClouds {
 
     private boolean amountAndHeightUnobservableByAutoSystem;

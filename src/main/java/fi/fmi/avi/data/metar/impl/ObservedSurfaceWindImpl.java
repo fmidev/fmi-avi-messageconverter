@@ -1,6 +1,6 @@
 package fi.fmi.avi.data.metar.impl;
 
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
@@ -12,7 +12,7 @@ import fi.fmi.avi.data.metar.ObservedSurfaceWind;
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  * 
  */
-
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ObservedSurfaceWindImpl implements ObservedSurfaceWind {
 
     private boolean variableDirection;

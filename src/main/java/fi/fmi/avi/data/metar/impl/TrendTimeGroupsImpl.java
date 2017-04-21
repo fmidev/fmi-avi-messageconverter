@@ -1,7 +1,10 @@
 package fi.fmi.avi.data.metar.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import fi.fmi.avi.data.metar.TrendTimeGroups;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TrendTimeGroupsImpl implements TrendTimeGroups {
     private int startHour = -1;
     private int startMinute = -1;

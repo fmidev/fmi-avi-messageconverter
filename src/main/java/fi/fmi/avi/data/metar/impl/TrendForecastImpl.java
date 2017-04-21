@@ -3,6 +3,7 @@ package fi.fmi.avi.data.metar.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.CloudForecast;
@@ -17,7 +18,7 @@ import fi.fmi.avi.data.metar.TrendTimeGroups;
 /**
  * 
  */
-
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TrendForecastImpl implements TrendForecast {
 
     private TrendTimeGroups timeGroups;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.Weather;
@@ -21,6 +21,7 @@ import fi.fmi.avi.data.metar.SeaState;
 import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.WindShear;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class MetarImpl implements Metar {
 
     private boolean automatedStation;

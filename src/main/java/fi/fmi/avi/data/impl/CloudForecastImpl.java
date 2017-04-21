@@ -3,6 +3,7 @@ package fi.fmi.avi.data.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.CloudForecast;
@@ -12,7 +13,7 @@ import fi.fmi.avi.data.NumericMeasure;
 /**
  *
  */
-
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class CloudForecastImpl implements CloudForecast {
 
     private NumericMeasure verticalVisibility; // only if no layers
