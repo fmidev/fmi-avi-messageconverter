@@ -4,7 +4,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
 
 public interface AviMessageParser {
 
-    <T extends AviationWeatherMessage> T parseMessage(LexemeSequence lexed, Class<T> type) throws ParsingException;
+    <T extends AviationWeatherMessage> ParsingResult<T> parseMessage(LexemeSequence lexed, Class<T> type);
 
-    <T extends AviationWeatherMessage> T parseMessage(LexemeSequence lexed, Class<T> type, ParsingHints hints) throws ParsingException;
+    <T extends AviationWeatherMessage> ParsingResult<T> parseMessage(LexemeSequence lexed, Class<T> type, ParsingHints hints);
 }
