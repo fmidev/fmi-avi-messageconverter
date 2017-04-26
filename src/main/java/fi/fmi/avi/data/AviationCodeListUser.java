@@ -67,38 +67,11 @@ public interface AviationCodeListUser {
 
     }
 
-    public enum MissingReason {
-        NOT_MISSING(-1), INAPPLICABLE(0), MISSING(1), UNKNOWN(2), WITHHELD(3);
-
-        public static MissingReason fromInt(final int code) {
-            switch (code) {
-                case -1: return NOT_MISSING;
-                case 0: return INAPPLICABLE;
-                case 1: return MISSING;
-                case 2: return UNKNOWN;
-                case 3: return WITHHELD;
-                default: throw new IllegalArgumentException("No value for code " + code);
-            }
-        }
-
-        private int code;
-
-        MissingReason(final int code) {
-            this.code = code;
-        }
-
-        public int getCode() {
-            return this.code;
-        }
-
-    }
-
     public enum RelationalOperator {
-        NOT_GIVEN(-1), ABOVE(0), BELOW(1);
+        ABOVE(0), BELOW(1);
 
         public static RelationalOperator fromInt(final int code) {
             switch (code) {
-                case -1: return NOT_GIVEN;
                 case 0: return ABOVE;
                 case 1: return BELOW;
                 default: throw new IllegalArgumentException("No value for code " + code);
@@ -118,11 +91,10 @@ public interface AviationCodeListUser {
     }
 
     public enum VisualRangeTendency {
-        NOT_GIVEN(-1), UPWARD(0), NO_CHANGE(1), DOWNWARD(2);
+        UPWARD(0), NO_CHANGE(1), DOWNWARD(2);
 
         public static VisualRangeTendency fromInt(final int code) {
             switch(code) {
-                case -1: return NOT_GIVEN;
                 case 0: return UPWARD;
                 case 1: return NO_CHANGE;
                 case 2: return DOWNWARD;
@@ -173,11 +145,10 @@ public interface AviationCodeListUser {
     }
 
     public enum CloudType {
-        NOT_GIVEN(-1), CB(9), TCU(32);
+        CB(9), TCU(32);
 
         public static CloudType fromInt(final int code) {
            switch(code) {
-               case -1: return NOT_GIVEN;
                case 9: return CB;
                case 32: return TCU;
                default: throw new IllegalArgumentException("No value for code " + code);
@@ -228,14 +199,13 @@ public interface AviationCodeListUser {
     }
 
     public enum RunwayDeposit {
-        NOT_AVAILABLE(-1), CLEAR_AND_DRY(0), DAMP(1), WET_WITH_WATER_PATCHES(2), RIME_AND_FROST_COVERED(3), // (depth normally less than 1mm)
+        CLEAR_AND_DRY(0), DAMP(1), WET_WITH_WATER_PATCHES(2), RIME_AND_FROST_COVERED(3), // (depth normally less than 1mm)
         DRY_SNOW(4), WET_SNOW(5), SLUSH(6), ICE(7), COMPACT_OR_ROLLED_SNOW(8), FROZEN_RUTS_OR_RIDGES(9),
         MISSING_OR_NOT_REPORTED(15);
 
 
         public static RunwayDeposit fromInt(final int code) {
            switch (code) {
-               case -1: return NOT_AVAILABLE;
                case 0: return CLEAR_AND_DRY;
                case 1: return DAMP;
                case 2: return WET_WITH_WATER_PATCHES;
@@ -263,13 +233,12 @@ public interface AviationCodeListUser {
     }
 
     public enum RunwayContamination {
-        NOT_AVAILABLE(-1), PCT_COVERED_LESS_THAN_10(1), PCT_COVERED_11_25(2), PCT_COVERED_26_50(5),
+        PCT_COVERED_LESS_THAN_10(1), PCT_COVERED_11_25(2), PCT_COVERED_26_50(5),
         PCT_COVERED_51_100(9), MISSING_OR_NOT_REPORTED(15);
 
 
         public static RunwayContamination fromInt(final int code) {
           switch (code) {
-              case -1: return NOT_AVAILABLE;
               case 1: return PCT_COVERED_LESS_THAN_10;
               case 2: return PCT_COVERED_11_25;
               case 5:
