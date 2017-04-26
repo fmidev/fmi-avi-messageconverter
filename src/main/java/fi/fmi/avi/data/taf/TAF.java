@@ -26,15 +26,7 @@ public interface TAF extends AviationWeatherMessage, AviationCodeListUser {
 
     List<TAFChangeForecast> getChangeForecasts();
 
-    String getPreviousReportAerodromeDesignator();
-
-    int getPreviousReportValidityStartDayOfMonth();
-
-    int getPreviousReportValidityStartHour();
-
-    int getPreviousReportValidityEndDayOfMonth();
-
-    int getPreviousReportValidityEndHour();
+    TAF getReferredReport();
 
     void setStatus(TAFStatus status);
 
@@ -52,15 +44,7 @@ public interface TAF extends AviationWeatherMessage, AviationCodeListUser {
 
     void setChangeForecasts(List<TAFChangeForecast> changeForecasts);
 
-    void setPreviousReportAerodromeDesignator(String aerodromeDesignator);
-
-    void setPreviousReportValidityStartDayOfMonth(int dayOfMonth);
-
-    void setPreviousReportValidityStartHour(int hour);
-
-    void setPreviousReportValidityEndDayOfMonth(int dayOfMonth);
-
-    void setPreviousReportValidityEndHour(int hour);
+    void setReferredReport(TAF referredReport);
 
 
 }

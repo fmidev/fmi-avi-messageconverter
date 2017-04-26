@@ -47,8 +47,6 @@ public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
 
     List<TrendForecast> getTrends();
 
-    List<String> getRemarks();
-
 
     void setAutomatedStation(boolean automatedStation);
 
@@ -84,6 +82,5 @@ public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
 
     void setTrends(List<TrendForecast> trends);
 
-    void setRemarks(List<String> remarks);
 
 }

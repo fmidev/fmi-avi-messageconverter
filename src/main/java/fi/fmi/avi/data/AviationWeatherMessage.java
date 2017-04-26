@@ -1,5 +1,7 @@
 package fi.fmi.avi.data;
 
+import java.util.List;
+
 public interface AviationWeatherMessage {
 
     int getIssueDayOfMonth();
@@ -10,6 +12,8 @@ public interface AviationWeatherMessage {
 
     String getIssueTimeZone();
 
+    List<String> getRemarks();
+
     void setIssueDayOfMonth(final int day);
 
     void setIssueHour(final int hour);
@@ -17,4 +21,8 @@ public interface AviationWeatherMessage {
     void setIssueMinute(final int minute);
 
     void setIssueTimeZone(String timeZone);
+
+    void setRemarks(List<String> remarks);
+
+
 }

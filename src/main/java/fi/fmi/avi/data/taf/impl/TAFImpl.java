@@ -28,11 +28,8 @@ public class TAFImpl implements TAF {
     private int validityEndHour = -1;
     private TAFBaseForecast baseForecast;
     private List<TAFChangeForecast> changeForecasts;
-    private String previousReportAerodromeDesignator;
-    private int previousReportValidityStartDayOfMonth = -1;
-    private int previousReportValidityStartHour = -1;
-    private int previousReportValidityEndDayOfMonth = -1;
-    private int previousReportValidityEndHour = -1;
+    private TAF referredReport;
+    private List<String> remarks;
 
     public TAFImpl() {
     }
@@ -53,11 +50,9 @@ public class TAFImpl implements TAF {
         for (TAFChangeForecast fct : input.getChangeForecasts()) {
             this.changeForecasts.add(new TAFChangeForecastImpl(fct));
         }
-        this.previousReportAerodromeDesignator = input.getPreviousReportAerodromeDesignator();
-        this.previousReportValidityStartDayOfMonth = input.getPreviousReportValidityStartDayOfMonth();
-        this.previousReportValidityStartHour = input.getPreviousReportValidityStartHour();
-        this.previousReportValidityEndDayOfMonth = input.getPreviousReportValidityEndDayOfMonth();
-        this.previousReportValidityEndHour = input.getPreviousReportValidityEndHour();
+        this.referredReport = input.getReferredReport();
+        this.remarks = new ArrayList<>();
+        this.remarks.addAll(input.getRemarks());
     }
 
     @Override
@@ -183,52 +178,24 @@ public class TAFImpl implements TAF {
     }
 
     @Override
-    public String getPreviousReportAerodromeDesignator() {
-        return previousReportAerodromeDesignator;
+    public TAF getReferredReport() {
+        return this.referredReport;
     }
 
     @Override
-    public void setPreviousReportAerodromeDesignator(final String previousReportAerodromeDesignator) {
-        this.previousReportAerodromeDesignator = previousReportAerodromeDesignator;
+    @JsonDeserialize(as = TAFImpl.class)
+    public void setReferredReport(final TAF referredReport) {
+        this.referredReport = referredReport;
     }
 
     @Override
-    public int getPreviousReportValidityStartDayOfMonth() {
-        return previousReportValidityStartDayOfMonth;
+    public List<String> getRemarks() {
+        return this.remarks;
     }
 
     @Override
-    public void setPreviousReportValidityStartDayOfMonth(final int previousReportValidityStartDayOfMonth) {
-        this.previousReportValidityStartDayOfMonth = previousReportValidityStartDayOfMonth;
+    public void setRemarks(final List<String> remarks) {
+        this.remarks = remarks;
     }
 
-    @Override
-    public int getPreviousReportValidityStartHour() {
-        return previousReportValidityStartHour;
-    }
-
-    @Override
-    public void setPreviousReportValidityStartHour(final int previousReportValidityStartHour) {
-        this.previousReportValidityStartHour = previousReportValidityStartHour;
-    }
-
-    @Override
-    public int getPreviousReportValidityEndDayOfMonth() {
-        return previousReportValidityEndDayOfMonth;
-    }
-
-    @Override
-    public void setPreviousReportValidityEndDayOfMonth(final int previousReportValidityEndDayOfMonth) {
-        this.previousReportValidityEndDayOfMonth = previousReportValidityEndDayOfMonth;
-    }
-
-    @Override
-    public int getPreviousReportValidityEndHour() {
-        return previousReportValidityEndHour;
-    }
-
-    @Override
-    public void setPreviousReportValidityEndHour(final int previousReportValidityEndHour) {
-        this.previousReportValidityEndHour = previousReportValidityEndHour;
-    }
 }
