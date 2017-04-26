@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.Weather;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
+import fi.fmi.avi.data.impl.WeatherCodeProcessor;
 import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.metar.HorizontalVisibility;
 import fi.fmi.avi.data.metar.Metar;
@@ -22,7 +23,7 @@ import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.WindShear;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class MetarImpl implements Metar {
+public class MetarImpl extends WeatherCodeProcessor implements Metar {
 
     private boolean automatedStation;
     private MetarStatus status;
@@ -325,23 +326,7 @@ public class MetarImpl implements Metar {
     @Override
     @JsonIgnore
     public List<String> getPresentWeatherCodes() {
-    	if (this.presentWeather != null) {
-    		List<String> retval = new ArrayList<>(this.presentWeather.size());
-    		StringBuilder sb;
-    		for (Weather w:this.presentWeather) {
-    			sb = new StringBuilder();
-    			if (w.getIntensity() != null) {
-    				sb.append(w.getIntensity().getCode());
-    			}
-    			if (w.isInVicinity()) {
-    				sb.append("VI");
-    			}
-    			sb.append(w.getKind().getCode());
-    			retval.add(sb.toString());
-    		}
-    		return retval;
-    	}
-        return null;
+        return getAsWeatherCodes(this.presentWeather);
     }
 
     /* (non-Javadoc)
@@ -380,24 +365,7 @@ public class MetarImpl implements Metar {
     @Override
     @JsonIgnore
     public List<String> getRecentWeatherCodes() {
-    	if (this.recentWeather != null) {
-    		List<String> retval = new ArrayList<>(this.recentWeather.size());
-    		StringBuilder sb;
-    		for (Weather w:this.recentWeather) {
-    			sb = new StringBuilder();
-    			sb.append("RE");
-    			if (w.getIntensity() != null) {
-    				sb.append(w.getIntensity().getCode());
-    			}
-    			if (w.isInVicinity()) {
-    				sb.append("VI");
-    			}
-    			sb.append(w.getKind().getCode());
-    			retval.add(sb.toString());
-    		}
-    		return retval;
-    	}
-        return null;
+        return getAsWeatherCodes(this.recentWeather, "RE");
     }
 
     /* (non-Javadoc)

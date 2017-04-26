@@ -11,6 +11,7 @@ import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.Weather;
 import fi.fmi.avi.data.impl.CloudForecastImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
+import fi.fmi.avi.data.impl.WeatherCodeProcessor;
 import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.TrendForecastSurfaceWind;
 import fi.fmi.avi.data.metar.TrendTimeGroups;
@@ -19,7 +20,7 @@ import fi.fmi.avi.data.metar.TrendTimeGroups;
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TrendForecastImpl implements TrendForecast {
+public class TrendForecastImpl extends WeatherCodeProcessor implements TrendForecast {
 
     private TrendTimeGroups timeGroups;
     private boolean ceilingAndVisibilityOk;
@@ -102,23 +103,7 @@ public class TrendForecastImpl implements TrendForecast {
 
     @Override
     public List<String> getForecastWeatherCodes() {
-        if (this.forecastWeather != null) {
-            List<String> retval = new ArrayList<>(this.forecastWeather.size());
-            StringBuilder sb;
-            for (Weather w : this.forecastWeather) {
-                sb = new StringBuilder();
-                if (w.getIntensity() != null) {
-                    sb.append(w.getIntensity().getCode());
-                }
-                if (w.isInVicinity()) {
-                    sb.append("VI");
-                }
-                sb.append(w.getKind().getCode());
-                retval.add(sb.toString());
-            }
-            return retval;
-        }
-        return null;
+        return getAsWeatherCodes(this.forecastWeather);
     }
 
     /* (non-Javadoc)

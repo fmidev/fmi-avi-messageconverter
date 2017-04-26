@@ -8,8 +8,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.Weather;
 import fi.fmi.avi.data.impl.CloudForecastImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
+import fi.fmi.avi.data.impl.WeatherCodeProcessor;
+import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.taf.TAFForecast;
 import fi.fmi.avi.data.taf.TAFSurfaceWind;
 
@@ -17,13 +20,13 @@ import fi.fmi.avi.data.taf.TAFSurfaceWind;
  * Created by rinne on 30/01/15.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class TAFForecastImpl implements TAFForecast {
+public abstract class TAFForecastImpl extends WeatherCodeProcessor implements TAFForecast {
 
     private boolean ceilingAndVisibilityOk;
     private NumericMeasure prevailingVisibility;
     private RelationalOperator prevailingVisibilityOperator;
     private TAFSurfaceWind surfaceWind;
-    private List<String> forecastWeather;
+    private List<Weather> forecastWeather;
     private CloudForecast cloud;
 
 
@@ -35,7 +38,7 @@ public abstract class TAFForecastImpl implements TAFForecast {
         this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
         this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
         this.surfaceWind = new TAFSurfaceWindImpl(input.getSurfaceWind());
-        this.forecastWeather = new ArrayList<String>(input.getForecastWeather());
+        this.forecastWeather = new ArrayList<>(input.getForecastWeather());
         this.cloud = new CloudForecastImpl(input.getCloud());
     }
 
@@ -82,12 +85,17 @@ public abstract class TAFForecastImpl implements TAFForecast {
     }
 
     @Override
-    public List<String> getForecastWeather() {
+    public List<Weather> getForecastWeather() {
         return forecastWeather;
     }
 
+    public List<String> getForecastWeatherCodes() {
+        return getAsWeatherCodes(this.forecastWeather);
+    }
+
     @Override
-    public void setForecastWeather(final List<String> forecastWeather) {
+    @JsonDeserialize(contentAs = WeatherImpl.class)
+    public void setForecastWeather(final List<Weather> forecastWeather) {
         this.forecastWeather = forecastWeather;
     }
 

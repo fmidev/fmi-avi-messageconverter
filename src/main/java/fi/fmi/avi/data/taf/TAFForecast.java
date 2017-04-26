@@ -5,6 +5,7 @@ import java.util.List;
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.Weather;
 
 /**
  * Created by rinne on 30/01/15.
@@ -19,7 +20,9 @@ public interface TAFForecast extends AviationCodeListUser {
 
     TAFSurfaceWind getSurfaceWind();
 
-    List<String> getForecastWeather();
+    List<Weather> getForecastWeather();
+
+    List<String> getForecastWeatherCodes();
 
     CloudForecast getCloud();
 
@@ -32,7 +35,7 @@ public interface TAFForecast extends AviationCodeListUser {
 
     void setSurfaceWind(TAFSurfaceWind surfaceWind);
 
-    void setForecastWeather(List<String> forecastWeather);
+    void setForecastWeather(List<Weather> forecastWeather);
 
     void setCloud(CloudForecast cloud);
 }
