@@ -5,7 +5,6 @@ import java.util.List;
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.CloudLayer;
 import fi.fmi.avi.data.NumericMeasure;
-import fi.fmi.avi.data.AviationCodeListUser.MissingReason;
 
 public interface ObservedClouds extends AviationCodeListUser {
 
