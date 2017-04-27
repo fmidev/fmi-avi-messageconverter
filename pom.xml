@@ -13,14 +13,14 @@
   <groupId>fi.fmi.avi</groupId>
   <artifactId>fmi-avi-messageparser-api</artifactId>
   <name>fmi-avi-messageparser-api</name>
-  <version>1.5.1-SNAPSHOT</version>
+  <version>1.5.1</version>
   <packaging>jar</packaging>
 
   <scm>
     <connection>${scm-url}</connection>
     <developerConnection>${scm-url}</developerConnection>
     <url>${scm-web-url}</url>
-    <tag>HEAD</tag>
+    <tag>fmi-avi-messageparser-api-1.5.1</tag>
   </scm>
 
   <dependencies>
