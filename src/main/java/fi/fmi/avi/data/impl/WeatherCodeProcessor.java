@@ -10,28 +10,16 @@ import fi.fmi.avi.data.Weather;
  */
 public abstract class WeatherCodeProcessor {
 
-    protected static List<String> getAsWeatherCodes(List<Weather> weatherList) {
+    protected List<String> getAsWeatherCodes(List<Weather> weatherList) {
         return getAsWeatherCodes(weatherList, null);
     }
 
-    protected static List<String> getAsWeatherCodes(List<Weather> weatherList, String prefix) {
+    protected List<String> getAsWeatherCodes(List<Weather> weatherList, String prefix) {
         List<String> retval = null;
         if (weatherList != null) {
             retval = new ArrayList<>(weatherList.size());
-            StringBuilder sb;
             for (Weather w : weatherList) {
-                sb = new StringBuilder();
-                if (prefix != null) {
-                    sb.append(prefix);
-                }
-                if (w.getIntensity() != null) {
-                    sb.append(w.getIntensity().getCode());
-                }
-                if (w.isInVicinity()) {
-                    sb.append("VI");
-                }
-                sb.append(w.getKind().getCode());
-                retval.add(sb.toString());
+                retval.add(w.getCode());
             }
         }
         return retval;
