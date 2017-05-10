@@ -10,9 +10,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
  */
 public interface ParsingResult<T extends AviationWeatherMessage> {
 
-    enum ParsingStatus {SUCCESS, WITH_ERRORS, FAIL}
-
-    ;
+    enum ParsingStatus {SUCCESS, WITH_ERRORS, FAIL};
 
     ParsingStatus getStatus();
 
