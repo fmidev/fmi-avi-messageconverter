@@ -17,6 +17,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_MESSAGE_TYPE;
     public static final Key KEY_REFERENCE_DATA;
     public static final Key KEY_PARSING_MODE;
+    public static final Key KEY_VALIDTIME_FORMAT;
 
     public static final Object VALUE_MESSAGE_TYPE_METAR = "METAR";
     public static final Object VALUE_MESSAGE_TYPE_TAF = "TAF";
@@ -30,6 +31,9 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS = "ALLOW_SYNTAX_ERRORS";
     public static final Object VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS = "ALLOW_LOGICAL_ERRORS";
     public static final Object VALUE_PARSING_MODE_ALLOW_ANY_ERRORS = "ALLOW_ANY_ERRORS";
+    
+    public static final Object VALUE_VALIDTIME_FORMAT_PREFER_LONG = "PREFER_LONG";
+    public static final Object VALUE_VALIDTIME_FORMAT_PREFER_SHORT = "PREFER_SHORT";
     
     public static final ParsingHints METAR;
     public static final ParsingHints TAF;
@@ -45,6 +49,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
                 VALUE_MESSAGE_TYPE_SIGMET, VALUE_MESSAGE_TYPE_AIRMET, VALUE_MESSAGE_TYPE_ARS);
         KEY_REFERENCE_DATA = new KeyImpl(2, "Java object providing extra information for parsing / serializing");
         KEY_PARSING_MODE = new KeyImpl(3, "Parsing mode hint", VALUE_PARSING_MODE_STRICT, VALUE_PARSING_MODE_ALLOW_MISSING, VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS, VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
+        KEY_VALIDTIME_FORMAT = new KeyImpl(4, "Valid time format preference", VALUE_VALIDTIME_FORMAT_PREFER_SHORT, VALUE_VALIDTIME_FORMAT_PREFER_LONG);
         
         METAR = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
         TAF = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
