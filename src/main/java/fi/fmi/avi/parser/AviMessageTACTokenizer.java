@@ -7,7 +7,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
  */
 public interface AviMessageTACTokenizer {
 
-    LexemeSequence tokenizeMessage(AviationWeatherMessage msg);
+    LexemeSequence tokenizeMessage(AviationWeatherMessage msg) throws TokenizingException;
 
-    LexemeSequence tokenizeMessage(AviationWeatherMessage msg, ParsingHints hints);
+    LexemeSequence tokenizeMessage(AviationWeatherMessage msg, ParsingHints hints) throws TokenizingException;
 }
