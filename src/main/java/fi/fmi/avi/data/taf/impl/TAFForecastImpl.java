@@ -23,6 +23,8 @@ import fi.fmi.avi.data.taf.TAFSurfaceWind;
 public abstract class TAFForecastImpl extends WeatherCodeProcessor implements TAFForecast {
 
     private boolean ceilingAndVisibilityOk;
+    private boolean noSignificantWeather;
+    private boolean noSignificantCloud;
     private NumericMeasure prevailingVisibility;
     private RelationalOperator prevailingVisibilityOperator;
     private TAFSurfaceWind surfaceWind;
@@ -39,6 +41,8 @@ public abstract class TAFForecastImpl extends WeatherCodeProcessor implements TA
         this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
         this.surfaceWind = new TAFSurfaceWindImpl(input.getSurfaceWind());
         this.forecastWeather = new ArrayList<>(input.getForecastWeather());
+        this.noSignificantWeather = input.isNoSignificantWeather();
+        this.noSignificantCloud = input.isNoSignificantCloud();
         this.cloud = new CloudForecastImpl(input.getCloud());
     }
 
@@ -100,6 +104,16 @@ public abstract class TAFForecastImpl extends WeatherCodeProcessor implements TA
     }
 
     @Override
+    public boolean isNoSignificantWeather() {
+        return this.noSignificantWeather;
+    }
+
+    @Override
+    public void setNoSignificantWeather(boolean nsw) {
+        this.noSignificantWeather = nsw;
+    }
+
+    @Override
     public CloudForecast getCloud() {
         return cloud;
     }
@@ -108,5 +122,14 @@ public abstract class TAFForecastImpl extends WeatherCodeProcessor implements TA
     @JsonDeserialize(as = CloudForecastImpl.class)
     public void setCloud(final CloudForecast cloud) {
         this.cloud = cloud;
+    }
+
+    @Override
+    public boolean isNoSignificantCloud() {
+        return this.noSignificantCloud;
+    }
+
+    public void setNoSignificantCloud(boolean nsc) {
+        this.noSignificantCloud = nsc;
     }
 }

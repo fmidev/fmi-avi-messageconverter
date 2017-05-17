@@ -26,8 +26,12 @@ public interface TrendForecast extends AviationCodeListUser {
 
     List<String> getForecastWeatherCodes();
 
+    boolean isNoSignificantWeather();
 
     CloudForecast getCloud();
+
+    boolean isNoSignificantCloud();
+
 
     void setTimeGroups(TrendTimeGroups timeGroups);
 
@@ -43,6 +47,10 @@ public interface TrendForecast extends AviationCodeListUser {
 
     void setForecastWeather(List<Weather> forecastWeather);
 
+    void setNoSignificantWeather(boolean nsw);
+
     void setCloud(CloudForecast cloud);
+
+    void setNoSignificantCloud(boolean nsc);
 
 }

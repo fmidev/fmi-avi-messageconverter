@@ -22,9 +22,13 @@ public interface TAFForecast extends AviationCodeListUser {
 
     List<Weather> getForecastWeather();
 
+    boolean isNoSignificantWeather();
+
     List<String> getForecastWeatherCodes();
 
     CloudForecast getCloud();
+
+    boolean isNoSignificantCloud();
 
 
     void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
@@ -37,5 +41,9 @@ public interface TAFForecast extends AviationCodeListUser {
 
     void setForecastWeather(List<Weather> forecastWeather);
 
+    void setNoSignificantWeather(boolean nsw);
+
     void setCloud(CloudForecast cloud);
+
+    void setNoSignificantCloud(boolean nsc);
 }

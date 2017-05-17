@@ -24,6 +24,8 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
 
     private TrendTimeGroups timeGroups;
     private boolean ceilingAndVisibilityOk;
+    private boolean noSignificantWeather;
+    private boolean noSignificantCloud;
     private TrendForecastChangeIndicator changeIndicator;
     private NumericMeasure prevailingVisibility;
     private RelationalOperator prevailingVisibilityOperator;
@@ -42,6 +44,8 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
         this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
         this.surfaceWind = new TrendForecastSurfaceWindImpl(input.getSurfaceWind());
         this.forecastWeather = new ArrayList<>(input.getForecastWeather());
+        this.noSignificantWeather = input.isNoSignificantWeather();
+        this.noSignificantCloud = input.isNoSignificantCloud();
         this.cloud = new CloudForecastImpl(input.getCloud());
     }
 
@@ -106,6 +110,12 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
         return getAsWeatherCodes(this.forecastWeather);
     }
 
+    @Override
+    public boolean isNoSignificantWeather() {
+        return this.noSignificantWeather;
+    }
+
+
     /* (non-Javadoc)
          * @see fi.fmi.avi.data.TrendForecast#getCloud()
          */
@@ -117,6 +127,11 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecast#setTimeGroups(fi.fmi.avi.data.TrendForecastImpl.TimeGroups)
      */
+
+    @Override
+    public boolean isNoSignificantCloud() {
+        return this.noSignificantCloud;
+    }
     
     @Override
     @JsonDeserialize(as = TrendTimeGroupsImpl.class)
@@ -175,6 +190,11 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
         this.forecastWeather = forecastWeather;
     }
 
+    @Override
+    public void setNoSignificantWeather(boolean nsw) {
+        this.noSignificantWeather = nsw;
+    }
+
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecast#setCloud(fi.fmi.avi.data.CloudForecast)
      */
@@ -184,4 +204,7 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
         this.cloud = cloud;
     }
 
+    public void setNoSignificantCloud(boolean nsc) {
+        this.noSignificantCloud = nsc;
+    }
 }
