@@ -132,55 +132,210 @@ public interface Lexeme {
         RUNWAY
     }
 
+    /**
+     * Returns the identity of the Lexeme if the Lexeme has been identified.
+     * 
+     * @return Lexeme identity, or null if unrecognized.
+     */
     Identity getIdentity();
 
+    /**
+     * Returns the identity of the Lexeme if the Lexeme has been identified, and 
+     * the status is either {@link Status.OK} or {@link Status.WARNING}.
+     * 
+     * @return Lexeme identity, or null if status is {@link Status.UNRECOGNIZED or {@link Status.SYNTAX_ERROR}.
+     */
     Identity getIdentityIfAcceptable();
 
+    /**
+     * Returns the recognizing status of Lexeme.
+     * @return the status
+     */
     Status getStatus();
 
+    /**
+     * Returns the lexing-related message for this Lexeme, if provided by the {@link AviMessageLexer}. 
+     * This message is typically provided when warning or error status is set.
+     * 
+     * @return the lexing message
+     */
     String getLexerMessage();
 
+    /**
+     * The start index of the token used for creating this Lexeme in the original message input.
+     * This is only available if populated by the lexer.
+     * 
+     * @return index of the first character of the Lexeme token
+     */
     int getStartIndex();
 
+
+    /**
+     * The end index of the token used for creating this Lexeme in the original message input.
+     * This is only available if populated by the lexer.
+     * 
+     * @return index of the last character of the Lexeme token
+     */
     int getEndIndex();
 
+    /**
+     * Provides all additional information entries parsed from the original token by the 
+     * {@link AviMessageLexer}.
+     * 
+     * @see #getParsedValue(ParsedValueName, Class)
+     * @return map of entries
+     */
     Map<ParsedValueName, Object> getParsedValues();
 
-    <T> T getParsedValue(ParsedValueName name, Class<T> clz);
+    /**
+     * Returns a particular additional information entry parsed from the original token by the 
+     * {@link AviMessageLexer} as given type (if possible). 
+     * 
+     * The implementations must throw a 
+     * {@link ClassCastException} if the provided value exists, but cannot be returned as
+     * the type given by {@code clz}. The implementations must throw an 
+     * {@link IllegalArgumentException} if the requested entity is not allowed to be used
+     * with the {@link Identity} of this Lexeme.
+     * 
+     * @param name
+     * @param clz
+     * @return
+     */
+    <T> T getParsedValue(ParsedValueName name, Class<T> clz) throws ClassCastException, IllegalArgumentException ;
 
+    /**
+     * Returns this Lexeme as TAC encoded token.
+     * 
+     * @return the TAC token
+     */
     String getTACToken();
 
+    /**
+     * Returns the first Lexeme in the {@link LexemeSequence} containing this Lexeme.
+     * This link is provided mainly as navigation shortcut.
+     * 
+     * @return the first Lexeme of the sequence, if available
+     */
     Lexeme getFirst();
 
+    /**
+     * Returns the Lexeme immediately before this one in the {@link LexemeSequence} 
+     * containing this Lexeme. For the first Lexeme in sequence this must return 
+     * {@code null}.
+     * 
+     * @return the previous Lexeme of the sequence, if available
+     */
     Lexeme getPrevious();
 
+    /**
+     * Returns the Lexeme immediately after this one in the {@link LexemeSequence} 
+     * containing this Lexeme. For the last Lexeme in sequence this must return 
+     * {@code null}.
+     * 
+     * @return the next Lexeme of the sequence, if available
+     */
     Lexeme getNext();
 
+    /**
+     * For checking if the Lexeme knows the previous Lexeme in it's sequence.
+     * 
+     * @return the previous Lexeme
+     */
     boolean hasPrevious();
 
+    /**
+     * For checking if the Lexeme knows the next Lexeme in it's sequence.
+     * 
+     * @return the next Lexeme
+     */
     boolean hasNext();
 
+    /**
+     * A synthetic Lexeme has been created by the lexing process to fix some small syntax
+     * issues of the input message, such a missing start token. 
+     * 
+     * @return true of the Lexemehas been marked as synthetic
+     */
     boolean isSynthetic();
 
+    /**
+     * Identifies this Lexeme as {@code id} with {@link Status.OK} and no additional message.
+     * 
+     * @param id identity to assign
+     */
     void identify(final Identity id);
 
+    /**
+     * Identifies this Lexeme as {@code id} with {@code status} and no additional message.
+     * 
+     * @param id identity to assign
+     * @param status to set
+     */
     void identify(final Identity id, final Status status);
 
+    /**
+     * Identifies this Lexeme as {@code id} with {@code status} and {@code message}.
+     * 
+     * @param id identity to assign
+     * @param status to set
+     * @param note additional message, such as lexing warning note
+     */
     void identify(final Identity id, final Status status, final String note);
 
+    /**
+     * Return true when the Lexeme is not in {@link Status.UNRECOGNIZED}
+     * 
+     * @return true is recognized
+     */
     boolean isRecognized();
 
+    /**
+     * Sets the Lexeme reconizing status.
+     * 
+     * @param status to set
+     */
     void setStatus(final Status status);
 
+    /**
+     * Marks this Lexeme as synthetic.
+     * 
+     * @see #isSynthetic()
+     * @param synthetic
+     */
     void setSynthetic(final boolean synthetic);
 
-    void setParsedValue(ParsedValueName name, Object value);
+    /**
+     * Stores an additional information entity to used later in the parsing process.
+     * The main purpose is the simplify further parsing be storing the information
+     * bits parsed from the token to make lexing possible. This way this information 
+     * does not have to be parsed more than once.
+     * 
+     * One of the {@link #identify} methods must be called before this method to provide
+     * allowed {@code name} checking.
+     * 
+     * @param name
+     * @param value
+     * 
+     * @throws IllegalArgumentException if the {@code name} is not allowed to be used with the current Lexeme identity
+     * @throws IllegalStateException if the Lexeme has not yet been identified.
+     */
+    void setParsedValue(ParsedValueName name, Object value) throws IllegalArgumentException, IllegalStateException;
 
+    /**
+     * Sets a lexing note, such as an explanation for warning or error status.
+     *  
+     * @param msg message
+     */
     void setLexerMessage(final String msg);
 
-    void setTACToken(final String token);
-
-    //Visitor pattern
+    /**
+     * Provides access to a {@link LexemeVisitor} to refine this Lexeme.
+     * Typically used by the {@link AviMessageLexer} to try out different
+     * options for recognizing the Lexeme. 
+     * 
+     * @param visitor
+     * @param hints
+     */
     void accept(final LexemeVisitor visitor, final ParsingHints hints);
 
 }
