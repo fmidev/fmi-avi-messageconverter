@@ -12,6 +12,7 @@ import fi.fmi.avi.data.Weather;
 import fi.fmi.avi.data.impl.CloudForecastImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
 import fi.fmi.avi.data.impl.WeatherCodeProcessor;
+import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.TrendForecastSurfaceWind;
 import fi.fmi.avi.data.metar.TrendTimeGroups;
@@ -186,6 +187,7 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
      * @see fi.fmi.avi.data.TrendForecast#setForecastWeather(java.util.List)
      */
     @Override
+    @JsonDeserialize(contentAs = WeatherImpl.class)
     public void setForecastWeather(final List<Weather> forecastWeather) {
         this.forecastWeather = forecastWeather;
     }
