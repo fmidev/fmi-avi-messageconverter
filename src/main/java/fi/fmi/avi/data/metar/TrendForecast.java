@@ -32,6 +32,8 @@ public interface TrendForecast extends AviationCodeListUser {
 
     boolean isNoSignificantCloud();
 
+    ColorState getColorState();
+
 
     void setTimeGroups(TrendTimeGroups timeGroups);
 
@@ -52,5 +54,7 @@ public interface TrendForecast extends AviationCodeListUser {
     void setCloud(CloudForecast cloud);
 
     void setNoSignificantCloud(boolean nsc);
+
+    void setColorState(ColorState color);
 
 }

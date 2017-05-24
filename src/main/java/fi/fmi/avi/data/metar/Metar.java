@@ -47,6 +47,9 @@ public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
 
     List<TrendForecast> getTrends();
 
+    ColorState getColorState();
+
+
 
     void setAutomatedStation(boolean automatedStation);
 
@@ -81,6 +84,8 @@ public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
     void setRunwayStates(List<RunwayState> runwayStates);
 
     void setTrends(List<TrendForecast> trends);
+
+    void setColorState(ColorState color);
 
 
 }

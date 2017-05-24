@@ -47,6 +47,7 @@ public class MetarImpl extends WeatherCodeProcessor implements Metar {
     private List<RunwayState> runwayStates;
     private List<TrendForecast> trends;
     private List<String> remarks;
+    private ColorState colorState;
 
     public MetarImpl() {
     }
@@ -83,6 +84,7 @@ public class MetarImpl extends WeatherCodeProcessor implements Metar {
             this.trends.add(new TrendForecastImpl(trend));
         }
         this.remarks = input.getRemarks();
+        this.colorState = input.getColorState();
     }
 
     /* (non-Javadoc)
@@ -453,5 +455,15 @@ public class MetarImpl extends WeatherCodeProcessor implements Metar {
     @Override
     public void setRemarks(final List<String> remarks) {
         this.remarks = remarks;
+    }
+
+    @Override
+    public ColorState getColorState() {
+        return this.colorState;
+    }
+
+    @Override
+    public void setColorState(final ColorState colorState) {
+        this.colorState = colorState;
     }
 }

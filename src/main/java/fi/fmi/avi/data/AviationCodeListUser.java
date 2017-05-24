@@ -1,5 +1,7 @@
 package fi.fmi.avi.data;
 
+import static fi.fmi.avi.data.AviationCodeListUser.RelationalOperator.BELOW;
+
 public interface AviationCodeListUser {
 
     String CODELIST_AERODROME_PRESENT_OR_FORECAST_WEATHER = "http://codes.wmo.int/49-2/AerodromePresentOrForecastWeather";
@@ -338,6 +340,60 @@ public interface AviationCodeListUser {
 
         public int getCode() {
             return this.code;
+        }
+    }
+
+    public enum ColorState {
+        BLU(2500, 8000),
+        WHT(1500, 5000),
+        GRN(700, 3700),
+        YLO1(500, 2500),
+        YLO2(300, 1600),
+        AMB(200, 800),
+        RED(200, 800, BELOW),
+        BLACK(-1, -1, null, true),
+        BLACKBLU(2500, 8000, null, true),
+        BLACKWHT(1500, 5000, null, true),
+        BLACKGRN(700, 3700, null, true),
+        BLACKYLO1(500, 2500, null, true),
+        BLACKYLO2(300, 1600, null, true),
+        BLACKAMB(200, 800, null, true),
+        BLACKRED(200, 800, BELOW, true);
+
+        private double minCloudHeight;
+        private double minVisibility;
+        private boolean unusable;
+        private RelationalOperator operator;
+
+        ColorState(final double cloudHeight, final double visibility) {
+            this(cloudHeight, visibility, null, false);
+        }
+
+        ColorState(final double cloudHeight, final double visibility, final RelationalOperator operator) {
+            this(cloudHeight, visibility, operator, false);
+        }
+
+        ColorState(final double cloudHeight, final double visibility, final RelationalOperator operator, final boolean unusable) {
+            this.minCloudHeight = cloudHeight;
+            this.minVisibility = visibility;
+            this.operator = operator;
+            this.unusable = unusable;
+        }
+
+        public double getMinCloudHeight() {
+            return minCloudHeight;
+        }
+
+        public double getMinVisibility() {
+            return minVisibility;
+        }
+
+        public boolean isUnusable() {
+            return unusable;
+        }
+
+        public RelationalOperator getOperator() {
+            return operator;
         }
     }
 

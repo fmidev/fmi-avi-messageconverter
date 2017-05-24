@@ -33,6 +33,7 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
     private TrendForecastSurfaceWind surfaceWind;
     private List<Weather> forecastWeather;
     private CloudForecast cloud;
+    private ColorState colorState;
 
     public TrendForecastImpl() {
     }
@@ -48,6 +49,7 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
         this.noSignificantWeather = input.isNoSignificantWeather();
         this.noSignificantCloud = input.isNoSignificantCloud();
         this.cloud = new CloudForecastImpl(input.getCloud());
+        this.colorState = input.getColorState();
     }
 
     /* (non-Javadoc)
@@ -208,5 +210,15 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
 
     public void setNoSignificantCloud(boolean nsc) {
         this.noSignificantCloud = nsc;
+    }
+
+    @Override
+    public ColorState getColorState() {
+        return this.colorState;
+    }
+
+    @Override
+    public void setColorState(final ColorState colorState) {
+        this.colorState = colorState;
     }
 }
