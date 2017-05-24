@@ -13,7 +13,7 @@ import static fi.fmi.avi.parser.Lexeme.ParsedValueName.*;
  * 
  * In AviMessageParser library a TAC message is first parsed into 
  * {@link LexemeSequence} containing a list of identified 
- * (and possibly unidentified) {@Link Lexeme}s by 
+ * (and possibly unidentified) {@link Lexeme}s by
  * {@link AviMessageLexer}. This result is then typically fed into
  * {@link AviMessageParser} to construct a Java POJO for the entire 
  * message.
@@ -141,9 +141,9 @@ public interface Lexeme {
 
     /**
      * Returns the identity of the Lexeme if the Lexeme has been identified, and 
-     * the status is either {@link Status.OK} or {@link Status.WARNING}.
+     * the status is either {@link Status#OK} or {@link Status#WARNING}.
      * 
-     * @return Lexeme identity, or null if status is {@link Status.UNRECOGNIZED or {@link Status.SYNTAX_ERROR}.
+     * @return Lexeme identity, or null if status is {@link Status#UNRECOGNIZED} or {@link Status#SYNTAX_ERROR}.
      */
     Identity getIdentityIfAcceptable();
 
@@ -197,9 +197,10 @@ public interface Lexeme {
      * {@link IllegalArgumentException} if the requested entity is not allowed to be used
      * with the {@link Identity} of this Lexeme.
      * 
-     * @param name
-     * @param clz
-     * @return
+     * @param name name of the value
+     * @param clz class of the expected type
+     * @param <T> returned type
+     * @return a previously stores value or null if not value is available
      */
     <T> T getParsedValue(ParsedValueName name, Class<T> clz) throws ClassCastException, IllegalArgumentException ;
 
@@ -259,7 +260,7 @@ public interface Lexeme {
     boolean isSynthetic();
 
     /**
-     * Identifies this Lexeme as {@code id} with {@link Status.OK} and no additional message.
+     * Identifies this Lexeme as {@code id} with {@link Status#OK} and no additional message.
      * 
      * @param id identity to assign
      */
@@ -283,7 +284,7 @@ public interface Lexeme {
     void identify(final Identity id, final Status status, final String note);
 
     /**
-     * Return true when the Lexeme is not in {@link Status.UNRECOGNIZED}
+     * Return true when the Lexeme is not in {@link Status#UNRECOGNIZED}
      * 
      * @return true is recognized
      */
@@ -300,7 +301,7 @@ public interface Lexeme {
      * Marks this Lexeme as synthetic.
      * 
      * @see #isSynthetic()
-     * @param synthetic
+     * @param synthetic true to mark as synthetic
      */
     void setSynthetic(final boolean synthetic);
 
@@ -313,8 +314,8 @@ public interface Lexeme {
      * One of the {@link #identify} methods must be called before this method to provide
      * allowed {@code name} checking.
      * 
-     * @param name
-     * @param value
+     * @param name name of the stored value
+     * @param value value to store
      * 
      * @throws IllegalArgumentException if the {@code name} is not allowed to be used with the current Lexeme identity
      * @throws IllegalStateException if the Lexeme has not yet been identified.
@@ -333,8 +334,8 @@ public interface Lexeme {
      * Typically used by the {@link AviMessageLexer} to try out different
      * options for recognizing the Lexeme. 
      * 
-     * @param visitor
-     * @param hints
+     * @param visitor to visit this Lexeme
+     * @param hints hints to pass the lexing process
      */
     void accept(final LexemeVisitor visitor, final ParsingHints hints);
 
