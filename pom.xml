@@ -13,7 +13,7 @@
   <groupId>fi.fmi.avi</groupId>
   <artifactId>fmi-avi-messageparser-api</artifactId>
   <name>fmi-avi-messageparser-api</name>
-  <version>1.6.1-SNAPSHOT</version>
+  <version>1.5.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <scm>
