@@ -186,13 +186,13 @@ public class RunwayStateImpl implements RunwayState {
     }
     
     @Override
-    public void setDepthNotMeasurable(boolean notMeasurable) {
-    	this.depthNotMeasurable = notMeasurable;
+    public void setDepthNotMeasurable(final boolean notMeasurable) {
+        this.depthNotMeasurable = notMeasurable;
     }
 
     @Override
-    public void setRunwayNotOperational(boolean notOperational) {
-    	this.runwayNotOperational = notOperational;
+    public void setRunwayNotOperational(final boolean notOperational) {
+        this.runwayNotOperational = notOperational;
     }
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#setRunwayDirectionDesignator(java.lang.String)
@@ -228,8 +228,8 @@ public class RunwayStateImpl implements RunwayState {
     }
     
     @Override
-    public void setDepthOperator(RelationalOperator operator) {
-    	this.depthOperator = operator;
+    public void setDepthOperator(final RelationalOperator operator) {
+        this.depthOperator = operator;
     }
 
     /* (non-Javadoc)

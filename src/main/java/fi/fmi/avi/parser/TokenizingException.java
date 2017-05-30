@@ -2,18 +2,20 @@ package fi.fmi.avi.parser;
 
 public class TokenizingException extends Exception {
 
+	private static final long serialVersionUID = -8528248357845259224L;
+
 	public TokenizingException() {
 	}
 
-	public TokenizingException(String message) {
+	public TokenizingException(final String message) {
 		super(message);
 	}
 
-	public TokenizingException(Throwable cause) {
+	public TokenizingException(final Throwable cause) {
 		super(cause);
 	}
 
-	public TokenizingException(String message, Throwable cause) {
+	public TokenizingException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 

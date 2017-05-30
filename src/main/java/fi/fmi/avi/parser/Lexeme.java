@@ -1,10 +1,31 @@
 package fi.fmi.avi.parser;
 
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.COUNTRY;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.COVER;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.DAY1;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.DAY2;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.DIRECTION;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.HOUR1;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.HOUR2;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MAX_DIRECTION;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MAX_VALUE;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MEAN_VALUE;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MINUTE1;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MIN_DIRECTION;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MIN_VALUE;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.RELATIONAL_OPERATOR;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.RELATIONAL_OPERATOR2;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.RUNWAY;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.TENDENCY_OPERATOR;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.TYPE;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.UNIT;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.UNIT2;
+import static fi.fmi.avi.parser.Lexeme.ParsedValueName.VALUE;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.*;
 
 /**
  * Lexeme is a basic lexical unit of an aviation weather message. 
@@ -93,8 +114,8 @@ public interface Lexeme {
         REMARK(VALUE),
         COLOR_CODE(VALUE),
         END_TOKEN;
-        
-        private Set<ParsedValueName> possibleParameters = new HashSet<>();
+
+        private final Set<ParsedValueName> possibleParameters = new HashSet<>();
         
         Identity(final ParsedValueName...names) {
         	possibleParameters.addAll(Arrays.asList(names));
@@ -103,9 +124,9 @@ public interface Lexeme {
         public Set<ParsedValueName> getPossibleNames() {
         	return this.possibleParameters;
         }
-        
-        public boolean canStore(ParsedValueName name) {
-        	return this.possibleParameters.contains(name);
+
+        public boolean canStore(final ParsedValueName name) {
+            return this.possibleParameters.contains(name);
         }
         
     }

@@ -70,7 +70,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
     public abstract static class Key {
         private final int key;
 
-        protected Key(int privateKey) {
+        protected Key(final int privateKey) {
             this.key = privateKey;
         }
 
@@ -80,7 +80,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
             return System.identityHashCode(this);
         }
 
-        public final boolean equals(Object other) {
+        public final boolean equals(final Object other) {
             return this == other;
         }
 
@@ -93,16 +93,17 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
         final String description;
         final Object[] fixedOptions;
 
-        KeyImpl(int privateKey, String description, Object... option) {
+        KeyImpl(final int privateKey, final String description, final Object... option) {
             super(privateKey);
             this.description = description;
             this.fixedOptions = option;
         }
 
-        KeyImpl(int privateKey, String description) {
+        KeyImpl(final int privateKey, final String description) {
             this(privateKey, description, (Object[]) null);
         }
-        public boolean isCompatibleValue(Object value) {
+
+        public boolean isCompatibleValue(final Object value) {
             boolean retval = true;
             if (this.fixedOptions != null) {
                 retval = false;
@@ -126,13 +127,13 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
     public ParsingHints() {
     }
 
-    public ParsingHints(Map<Key, ?> init) {
+    public ParsingHints(final Map<Key, ?> init) {
         if (init != null) {
             putAll(init);
         }
     }
 
-    public ParsingHints(Key key, Object value) {
+    public ParsingHints(final Key key, final Object value) {
         put(key, value);
     }
 
@@ -168,8 +169,8 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
         return this.hintMap.get(key);
     }
 
-    public <T> T get(final Key key, Class<T> clz) {
-        Object o = this.hintMap.get(key);
+    public <T> T get(final Key key, final Class<T> clz) {
+        final Object o = this.hintMap.get(key);
         if (o != null) {
             if (clz.isAssignableFrom(o.getClass())) {
                 return (T) o;
@@ -210,9 +211,9 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
 
     @Override
     public void putAll(final Map<?, ?> m) {
-        Iterator<?> iterator = m.keySet().iterator();
+        final Iterator<?> iterator = m.keySet().iterator();
         while (iterator.hasNext()) {
-            Key key = (Key) iterator.next();
+            final Key key = (Key) iterator.next();
             if (!key.isCompatibleValue(m.get(key))) {
                 throw new IllegalArgumentException();
             }
@@ -241,7 +242,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         return this.hintMap.equals(o);
     }
 
@@ -252,10 +253,10 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
 
     public Object clone() {
         try {
-            ParsingHints copy = (ParsingHints) super.clone();
+            final ParsingHints copy = (ParsingHints) super.clone();
             copy.hintMap = new HashMap<Object, Object>(hintMap);
             return copy;
-        } catch (CloneNotSupportedException e) {
+        } catch (final CloneNotSupportedException e) {
             throw (Error) new InternalError().initCause(e);
         }
     }

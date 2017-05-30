@@ -195,7 +195,7 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
     }
 
     @Override
-    public void setNoSignificantWeather(boolean nsw) {
+    public void setNoSignificantWeather(final boolean nsw) {
         this.noSignificantWeather = nsw;
     }
 
@@ -208,7 +208,7 @@ public class TrendForecastImpl extends WeatherCodeProcessor implements TrendFore
         this.cloud = cloud;
     }
 
-    public void setNoSignificantCloud(boolean nsc) {
+    public void setNoSignificantCloud(final boolean nsc) {
         this.noSignificantCloud = nsc;
     }
 

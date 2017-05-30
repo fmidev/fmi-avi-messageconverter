@@ -109,7 +109,7 @@ public abstract class TAFForecastImpl extends WeatherCodeProcessor implements TA
     }
 
     @Override
-    public void setNoSignificantWeather(boolean nsw) {
+    public void setNoSignificantWeather(final boolean nsw) {
         this.noSignificantWeather = nsw;
     }
 
@@ -129,7 +129,7 @@ public abstract class TAFForecastImpl extends WeatherCodeProcessor implements TA
         return this.noSignificantCloud;
     }
 
-    public void setNoSignificantCloud(boolean nsc) {
+    public void setNoSignificantCloud(final boolean nsc) {
         this.noSignificantCloud = nsc;
     }
 }

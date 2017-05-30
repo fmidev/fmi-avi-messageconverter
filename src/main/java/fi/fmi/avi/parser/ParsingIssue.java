@@ -9,8 +9,8 @@ public class ParsingIssue {
         SYNTAX_ERROR, LOGICAL_ERROR, MISSING_DATA, OTHER
     }
 
-    private Type type;
-    private String message;
+    private final Type type;
+    private final String message;
 
     public ParsingIssue(final Type type, final String message) {
         this.type = type;

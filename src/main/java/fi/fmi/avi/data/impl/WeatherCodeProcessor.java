@@ -10,15 +10,15 @@ import fi.fmi.avi.data.Weather;
  */
 public abstract class WeatherCodeProcessor {
 
-    protected List<String> getAsWeatherCodes(List<Weather> weatherList) {
+    protected List<String> getAsWeatherCodes(final List<Weather> weatherList) {
         return getAsWeatherCodes(weatherList, null);
     }
 
-    protected List<String> getAsWeatherCodes(List<Weather> weatherList, String prefix) {
+    protected List<String> getAsWeatherCodes(final List<Weather> weatherList, final String prefix) {
         List<String> retval = null;
         if (weatherList != null) {
             retval = new ArrayList<>(weatherList.size());
-            for (Weather w : weatherList) {
+            for (final Weather w : weatherList) {
                 retval.add(w.getCode());
             }
         }
