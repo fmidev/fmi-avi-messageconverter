@@ -15,14 +15,6 @@ public interface LexemeSequence {
 
     List<Lexeme> getLexemes();
 
-    /*
-    Iterator<Lexeme> getLexemes();
-
-    Iterator<Lexeme> getRecognizedLexemes();
-
-    Iterator<Lexeme> getUnrecognizedLexemes();
-
-    int getTotalLexemeCount();
-    */
+    List<LexemeSequence> splitBy(Lexeme.Identity...ids);
 
 }
