@@ -1,9 +1,9 @@
 package fi.fmi.avi.parser;
 
-import java.util.Iterator;
+import java.util.List;
 
 /**
- * Created by rinne on 16/12/16.
+ *
  */
 public interface LexemeSequence {
 
@@ -13,6 +13,9 @@ public interface LexemeSequence {
 
     Lexeme getLastLexeme();
 
+    List<Lexeme> getLexemes();
+
+    /*
     Iterator<Lexeme> getLexemes();
 
     Iterator<Lexeme> getRecognizedLexemes();
@@ -20,5 +23,6 @@ public interface LexemeSequence {
     Iterator<Lexeme> getUnrecognizedLexemes();
 
     int getTotalLexemeCount();
+    */
 
 }
