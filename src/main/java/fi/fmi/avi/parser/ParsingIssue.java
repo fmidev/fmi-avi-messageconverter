@@ -1,7 +1,12 @@
 package fi.fmi.avi.parser;
 
 /**
- * Created by rinne on 20/12/16.
+ * A parsing issue to be reported within the {@link ParsingResult}.
+ *
+ * This way of error/warning reporting is preferred over "fail-fast" parsing
+ * exceptions to enable returning partially populated message POJOs from the
+ * {@link AviMessageParser#parseMessage(LexemeSequence, Class)}.
+ *
  */
 public class ParsingIssue {
 

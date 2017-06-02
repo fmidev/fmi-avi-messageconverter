@@ -352,9 +352,15 @@ public interface Lexeme {
 
     /**
      * Provides access to a {@link LexemeVisitor} to refine this Lexeme.
-     * Typically used by the {@link AviMessageLexer} to try out different
-     * options for recognizing the Lexeme. 
-     * 
+     * Typically called by a {@link LexemeVisitor} to try to recognize
+     * the Lexeme.
+     *
+     * For hierarchical Lexemes, the implementation is responsible for
+     * delegating the {@link #accept(LexemeVisitor, ParsingHints)} to the child
+     * nodes.
+     *
+     * @see LexemeVisitor#visit(Lexeme, ParsingHints)
+     *
      * @param visitor to visit this Lexeme
      * @param hints hints to pass the lexing process
      */
