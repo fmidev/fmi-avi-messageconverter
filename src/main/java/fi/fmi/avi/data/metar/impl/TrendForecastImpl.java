@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.Weather;
+import fi.fmi.avi.data.impl.AviationWeatherMessageImpl;
 import fi.fmi.avi.data.impl.CloudForecastImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.WeatherCodeProcessor;
 import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.TrendForecastSurfaceWind;
@@ -21,7 +21,7 @@ import fi.fmi.avi.data.metar.TrendTimeGroups;
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TrendForecastImpl extends WeatherCodeProcessor implements TrendForecast {
+public class TrendForecastImpl extends AviationWeatherMessageImpl implements TrendForecast {
 
     private TrendTimeGroups timeGroups;
     private boolean ceilingAndVisibilityOk;

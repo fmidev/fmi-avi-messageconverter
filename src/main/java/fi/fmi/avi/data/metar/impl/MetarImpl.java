@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.Weather;
+import fi.fmi.avi.data.impl.AviationWeatherMessageImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.WeatherCodeProcessor;
 import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.metar.HorizontalVisibility;
 import fi.fmi.avi.data.metar.Metar;
@@ -23,14 +23,10 @@ import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.WindShear;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class MetarImpl extends WeatherCodeProcessor implements Metar {
+public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
 
     private boolean automatedStation;
     private MetarStatus status;
-    private int dayOfMonth = -1;
-    private int hour = -1;
-    private int minute = -1;
-    private String timeZone;
     private String aerodromeDesignator;
     private boolean ceilingAndVisibilityOk;
     private NumericMeasure airTemperature;
@@ -46,19 +42,15 @@ public class MetarImpl extends WeatherCodeProcessor implements Metar {
     private SeaState seaState;
     private List<RunwayState> runwayStates;
     private List<TrendForecast> trends;
-    private List<String> remarks;
     private ColorState colorState;
 
     public MetarImpl() {
     }
 
     public MetarImpl(final Metar input) {
+        super(input);
         this.automatedStation = input.isAutomatedStation();
         this.status = input.getStatus();
-        this.dayOfMonth = input.getIssueDayOfMonth();
-        this.hour = input.getIssueHour();
-        this.minute = input.getIssueMinute();
-        this.timeZone = input.getIssueTimeZone();
         this.aerodromeDesignator = input.getAerodromeDesignator();
         this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
         this.airTemperature = new NumericMeasureImpl(input.getAirTemperature());
@@ -83,7 +75,6 @@ public class MetarImpl extends WeatherCodeProcessor implements Metar {
         for (TrendForecast trend : input.getTrends()) {
             this.trends.add(new TrendForecastImpl(trend));
         }
-        this.remarks = input.getRemarks();
         this.colorState = input.getColorState();
     }
 
@@ -119,69 +110,6 @@ public class MetarImpl extends WeatherCodeProcessor implements Metar {
         this.status = status;
     }
 
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getIssueDayOfMonth()
-     */
-    @Override
-    public int getIssueDayOfMonth() {
-        return dayOfMonth;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setIssueDayOfMonth(int)
-     */
-    @Override
-    public void setIssueDayOfMonth(final int dayOfMonth) {
-        this.dayOfMonth = dayOfMonth;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getIssueHour()
-     */
-    @Override
-    public int getIssueHour() {
-        return hour;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setIssueHour(int)
-     */
-    @Override
-    public void setIssueHour(final int hour) {
-        this.hour = hour;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getIssueMinute()
-     */
-    @Override
-    public int getIssueMinute() {
-        return minute;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setIssueMinute(int)
-     */
-    @Override
-    public void setIssueMinute(final int minute) {
-        this.minute = minute;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getTimeZone()
-     */
-    @Override
-    public String getIssueTimeZone() {
-        return timeZone;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setTimeZone(java.lang.String)
-     */
-    @Override
-    public void setIssueTimeZone(final String timeZone) {
-        this.timeZone = timeZone;
-    }
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.Metar#getAerodromeDesignator()
@@ -447,15 +375,6 @@ public class MetarImpl extends WeatherCodeProcessor implements Metar {
         this.trends = trends;
     }
 
-    @Override
-    public List<String> getRemarks() {
-        return this.remarks;
-    }
-
-    @Override
-    public void setRemarks(final List<String> remarks) {
-        this.remarks = remarks;
-    }
 
     @Override
     public ColorState getColorState() {

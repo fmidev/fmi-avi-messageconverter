@@ -38,4 +38,5 @@ public class TAFBaseForecastImpl extends TAFForecastImpl implements TAFBaseForec
     public void setTemperatures(final List<TAFAirTemperatureForecast> temperatures) {
         this.temperatures = temperatures;
     }
+
 }

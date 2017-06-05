@@ -2,6 +2,9 @@ package fi.fmi.avi.data;
 
 import static fi.fmi.avi.data.AviationCodeListUser.RelationalOperator.BELOW;
 
+/**
+ * A convenience interface containing references to shared codelists and enums.
+ */
 public interface AviationCodeListUser {
 
     String CODELIST_AERODROME_PRESENT_OR_FORECAST_WEATHER = "http://codes.wmo.int/49-2/AerodromePresentOrForecastWeather";
@@ -150,11 +153,11 @@ public interface AviationCodeListUser {
         CB(9), TCU(32);
 
         public static CloudType fromInt(final int code) {
-           switch(code) {
-               case 9: return CB;
-               case 32: return TCU;
-               default: throw new IllegalArgumentException("No value for code " + code);
-           }
+            switch(code) {
+                case 9: return CB;
+                case 32: return TCU;
+                default: throw new IllegalArgumentException("No value for code " + code);
+            }
         }
 
         private final int code;
@@ -172,21 +175,21 @@ public interface AviationCodeListUser {
         CALM_GLASSY(0), CALM_RIPPLED(1), SMOOTH_WAVELETS(2), SLIGHT(3), MODERATE(4),
         ROUGH(5), VERY_ROUGH(6), HIGH(7), VERY_HIGH(8), PHENOMENAL(9), MISSING_VALUE(15);
 
-               public static SeaSurfaceState fromInt(final int code) {
-           switch(code) {
-               case 0: return CALM_GLASSY;
-               case 1: return CALM_RIPPLED;
-               case 2: return SMOOTH_WAVELETS;
-               case 3: return SLIGHT;
-               case 4: return MODERATE;
-               case 5: return ROUGH;
-               case 6: return VERY_ROUGH;
-               case 7: return HIGH;
-               case 8: return VERY_HIGH;
-               case 9: return PHENOMENAL;
-               case 15: return MISSING_VALUE;
-               default: throw new IllegalArgumentException("No value for code " + code);
-           }
+        public static SeaSurfaceState fromInt(final int code) {
+            switch(code) {
+                case 0: return CALM_GLASSY;
+                case 1: return CALM_RIPPLED;
+                case 2: return SMOOTH_WAVELETS;
+                case 3: return SLIGHT;
+                case 4: return MODERATE;
+                case 5: return ROUGH;
+                case 6: return VERY_ROUGH;
+                case 7: return HIGH;
+                case 8: return VERY_HIGH;
+                case 9: return PHENOMENAL;
+                case 15: return MISSING_VALUE;
+                default: throw new IllegalArgumentException("No value for code " + code);
+            }
         }
 
         private final int code;
@@ -202,25 +205,23 @@ public interface AviationCodeListUser {
 
     enum RunwayDeposit {
         CLEAR_AND_DRY(0), DAMP(1), WET_WITH_WATER_PATCHES(2), RIME_AND_FROST_COVERED(3), // (depth normally less than 1mm)
-        DRY_SNOW(4), WET_SNOW(5), SLUSH(6), ICE(7), COMPACT_OR_ROLLED_SNOW(8), FROZEN_RUTS_OR_RIDGES(9),
-        MISSING_OR_NOT_REPORTED(15);
-
+        DRY_SNOW(4), WET_SNOW(5), SLUSH(6), ICE(7), COMPACT_OR_ROLLED_SNOW(8), FROZEN_RUTS_OR_RIDGES(9), MISSING_OR_NOT_REPORTED(15);
 
         public static RunwayDeposit fromInt(final int code) {
-           switch (code) {
-               case 0: return CLEAR_AND_DRY;
-               case 1: return DAMP;
-               case 2: return WET_WITH_WATER_PATCHES;
-               case 3: return RIME_AND_FROST_COVERED;
-               case 4: return DRY_SNOW;
-               case 5: return WET_SNOW;
-               case 6: return SLUSH;
-               case 7: return ICE;
-               case 8: return COMPACT_OR_ROLLED_SNOW;
-               case 9: return FROZEN_RUTS_OR_RIDGES;
-               case 15: return MISSING_OR_NOT_REPORTED;
-               default: throw new IllegalArgumentException("No value for code " + code);
-           }
+            switch (code) {
+                case 0: return CLEAR_AND_DRY;
+                case 1: return DAMP;
+                case 2: return WET_WITH_WATER_PATCHES;
+                case 3: return RIME_AND_FROST_COVERED;
+                case 4: return DRY_SNOW;
+                case 5: return WET_SNOW;
+                case 6: return SLUSH;
+                case 7: return ICE;
+                case 8: return COMPACT_OR_ROLLED_SNOW;
+                case 9: return FROZEN_RUTS_OR_RIDGES;
+                case 15: return MISSING_OR_NOT_REPORTED;
+                default: throw new IllegalArgumentException("No value for code " + code);
+            }
         }
 
         private final int code;
@@ -235,20 +236,18 @@ public interface AviationCodeListUser {
     }
 
     enum RunwayContamination {
-        PCT_COVERED_LESS_THAN_10(1), PCT_COVERED_11_25(2), PCT_COVERED_26_50(5),
-        PCT_COVERED_51_100(9), MISSING_OR_NOT_REPORTED(15);
-
+        PCT_COVERED_LESS_THAN_10(1), PCT_COVERED_11_25(2), PCT_COVERED_26_50(5), PCT_COVERED_51_100(9), MISSING_OR_NOT_REPORTED(15);
 
         public static RunwayContamination fromInt(final int code) {
-          switch (code) {
-              case 1: return PCT_COVERED_LESS_THAN_10;
-              case 2: return PCT_COVERED_11_25;
-              case 5:
-                  return PCT_COVERED_26_50;
-              case 9: return PCT_COVERED_51_100;
-              case 15: return MISSING_OR_NOT_REPORTED;
-              default: throw new IllegalArgumentException("No value for code " + code);
-          }
+            switch (code) {
+                case 1: return PCT_COVERED_LESS_THAN_10;
+                case 2: return PCT_COVERED_11_25;
+                case 5:
+                    return PCT_COVERED_26_50;
+                case 9: return PCT_COVERED_51_100;
+                case 15: return MISSING_OR_NOT_REPORTED;
+                default: throw new IllegalArgumentException("No value for code " + code);
+            }
         }
 
         private final int code;
@@ -268,23 +267,23 @@ public interface AviationCodeListUser {
         private final int code;
 
         public static BreakingAction fromInt(final int code) {
-    		switch(code) {
-    		case 91: return POOR;
-    		case 92: return MEDIUM_POOR;
-    		case 93: return BreakingAction.MEDIUM;
-    		case 94: return MEDIUM_GOOD;
-    		case 95: return GOOD;
-    		default: return null;
-    		}
-    	}
-    	
-    	BreakingAction(final int code) {
-    		this.code = code;
-    	}
-    	
-    	public int getCode() {
-    		return this.code;
-    	}
+            switch(code) {
+                case 91: return POOR;
+                case 92: return MEDIUM_POOR;
+                case 93: return BreakingAction.MEDIUM;
+                case 94: return MEDIUM_GOOD;
+                case 95: return GOOD;
+                default: return null;
+            }
+        }
+
+        BreakingAction(final int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return this.code;
+        }
     }
 
     enum TrendForecastChangeIndicator {

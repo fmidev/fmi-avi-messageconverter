@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.data.impl.AviationWeatherMessageImpl;
 import fi.fmi.avi.data.taf.TAF;
 import fi.fmi.avi.data.taf.TAFBaseForecast;
 import fi.fmi.avi.data.taf.TAFChangeForecast;
@@ -14,13 +15,9 @@ import fi.fmi.avi.data.taf.TAFChangeForecast;
  * Created by rinne on 30/01/15.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TAFImpl implements TAF {
+public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
 
     private TAFStatus status;
-    private int issueDayOfMonth = -1;
-    private int issueHour = -1;
-    private int issueMinute = -1;
-    private String timeZone;
     private String aerodromeDesignator;
     private int validityStartDayOfMonth = -1;
     private int validityStartHour = -1;
@@ -35,11 +32,8 @@ public class TAFImpl implements TAF {
     }
 
     public TAFImpl(final TAF input) {
+        super(input);
         this.status = input.getStatus();
-        this.issueDayOfMonth = input.getIssueDayOfMonth();
-        this.issueHour = input.getIssueHour();
-        this.issueMinute = input.getIssueMinute();
-        this.timeZone = input.getIssueTimeZone();
         this.aerodromeDesignator = input.getAerodromeDesignator();
         this.validityStartDayOfMonth = input.getValidityStartDayOfMonth();
         this.validityStartHour = input.getValidityStartHour();
@@ -63,46 +57,6 @@ public class TAFImpl implements TAF {
     @Override
     public void setStatus(final TAFStatus status) {
         this.status = status;
-    }
-
-    @Override
-    public int getIssueDayOfMonth() {
-        return issueDayOfMonth;
-    }
-
-    @Override
-    public void setIssueDayOfMonth(final int issueDayOfMonth) {
-        this.issueDayOfMonth = issueDayOfMonth;
-    }
-
-    @Override
-    public int getIssueHour() {
-        return issueHour;
-    }
-
-    @Override
-    public void setIssueHour(final int issueHour) {
-        this.issueHour = issueHour;
-    }
-
-    @Override
-    public int getIssueMinute() {
-        return issueMinute;
-    }
-
-    @Override
-    public void setIssueMinute(final int issueMinute) {
-        this.issueMinute = issueMinute;
-    }
-
-    @Override
-    public String getIssueTimeZone() {
-        return timeZone;
-    }
-
-    @Override
-    public void setIssueTimeZone(final String timeZone) {
-        this.timeZone = timeZone;
     }
 
     @Override
@@ -188,14 +142,5 @@ public class TAFImpl implements TAF {
         this.referredReport = referredReport;
     }
 
-    @Override
-    public List<String> getRemarks() {
-        return this.remarks;
-    }
-
-    @Override
-    public void setRemarks(final List<String> remarks) {
-        this.remarks = remarks;
-    }
 
 }

@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.Weather;
+import fi.fmi.avi.data.impl.AviationWeatherMessageImpl;
 import fi.fmi.avi.data.impl.CloudForecastImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
-import fi.fmi.avi.data.impl.WeatherCodeProcessor;
 import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.taf.TAFForecast;
 import fi.fmi.avi.data.taf.TAFSurfaceWind;
@@ -20,7 +20,7 @@ import fi.fmi.avi.data.taf.TAFSurfaceWind;
  * Created by rinne on 30/01/15.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class TAFForecastImpl extends WeatherCodeProcessor implements TAFForecast {
+public abstract class TAFForecastImpl extends AviationWeatherMessageImpl implements TAFForecast {
 
     private boolean ceilingAndVisibilityOk;
     private boolean noSignificantWeather;
