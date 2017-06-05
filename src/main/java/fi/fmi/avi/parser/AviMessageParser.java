@@ -3,11 +3,12 @@ package fi.fmi.avi.parser;
 import fi.fmi.avi.data.AviationWeatherMessage;
 
 /**
- * AviMessageParser parses a {@link LexemeSequence} into a Java POJO representing the aviation weather message
- * of the requested type. Methods of this class are typically used together with {@link AviMessageLexer} to parse
- * TAC encoded aviation weather messages:
+ * AviMessageParser parses a TAC encoded message into a Java POJO representing the aviation weather message
+ * of the requested type.
+ *
+ * Example:
  * <pre>
- *  ParsingResult<TAF> result = parser.parseMessage(lexer.lexMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015="));
+ *  ParsingResult<TAF> result = parser.parseMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=");
  *  if (ParsingResult.ParsingStatus.SUCCESS = result.getStatus()) {
  *      TAF pojo = result.getParsedMessage();
  *  }
@@ -16,13 +17,41 @@ import fi.fmi.avi.data.AviationWeatherMessage;
 public interface AviMessageParser {
 
     /**
+     * Parses the given message into a Java POJO of the type <code>type</code>.
      *
-     * @param lexed
-     * @param type
-     * @param <T>
-     * @return
+     * The returned {@link ParsingResult} includes the status, the parsed POJO and the possible
+     * {@link ParsingIssue}s.
+     *
+     * @see ParsingResult
+     * @param input the input message
+     * @param inputClz class of the input message
+     * @param outputClz class of the POJO to return
+     * @param <T> the type of the POJO to return
+     * @return the result of the parsing
      */
-    <T extends AviationWeatherMessage> ParsingResult<T> parseMessage(LexemeSequence lexed, Class<T> type);
+    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, Class<S> inputClz, Class<T> outputClz);
 
-    <T extends AviationWeatherMessage> ParsingResult<T> parseMessage(LexemeSequence lexed, Class<T> type, ParsingHints hints);
+    /**
+     * Parses the given message into a Java POJO of the type <code>type</code> using
+     * the provided parsing hints.
+     *
+     * The returned {@link ParsingResult} includes the status, the parsed POJO and the possible
+     * {@link ParsingIssue}s.
+     *
+     * @param input
+     *         the input message
+     * @param inputClz
+     *         class of the input message
+     * @param outputClz
+     *         class of the POJO to return
+     * @param hints
+     *         the parsing hints to guide the parsing implementation
+     * @param <T>
+     *         the type of the POJO to return
+     *
+     * @return the result of the parsing
+     *
+     * @see ParsingResult
+     */
+    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, Class<S> inputClz, Class<T> outputClz, ParsingHints hints);
 }
