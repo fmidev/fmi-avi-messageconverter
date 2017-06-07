@@ -8,7 +8,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
  *
  * Example:
  * <pre>
- *  ParsingResult<TAF> result = parser.parseMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=");
+ *  ParsingResult<TAF> result = parser.parseMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=",ParserSpecification.TAC_TO_TAF);
  *  if (ParsingResult.ParsingStatus.SUCCESS = result.getStatus()) {
  *      TAF pojo = result.getParsedMessage();
  *  }
@@ -23,13 +23,13 @@ public interface AviMessageParser {
      * {@link ParsingIssue}s.
      *
      * @see ParsingResult
-     * @param input the input message
-     * @param inputClz class of the input message
-     * @param outputClz class of the POJO to return
+     * @param spec {@link ParserSpecification} to use
+     * @param <S> the type of the input message
      * @param <T> the type of the POJO to return
      * @return the result of the parsing
+     * 
      */
-    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, Class<S> inputClz, Class<T> outputClz);
+    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, ParserSpecification<S, T> spec);
 
     /**
      * Parses the given message into a Java POJO of the type <code>type</code> using
@@ -38,20 +38,13 @@ public interface AviMessageParser {
      * The returned {@link ParsingResult} includes the status, the parsed POJO and the possible
      * {@link ParsingIssue}s.
      *
-     * @param input
-     *         the input message
-     * @param inputClz
-     *         class of the input message
-     * @param outputClz
-     *         class of the POJO to return
-     * @param hints
-     *         the parsing hints to guide the parsing implementation
-     * @param <T>
-     *         the type of the POJO to return
+     * @param input the input message
+     * @param spec {@link ParserSpecification} to use
+     * @param <S> the type of the input message
+     * @param <T> the type of the POJO to return
+     * @param hints the parsing hints to guide the parsing implementation
      *
      * @return the result of the parsing
-     *
-     * @see ParsingResult
      */
-    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, Class<S> inputClz, Class<T> outputClz, ParsingHints hints);
+    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, ParserSpecification<S, T> spec, ParsingHints hints);
 }
