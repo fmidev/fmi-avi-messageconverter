@@ -22,7 +22,7 @@ import java.util.Set;
  * to the request.
  *
  * The keys used to control the hints are all special values that
- * subclass the associated {@link ParsingHints.Key} class.
+ * subclass the associated {@link ConversionHints.Key} class.
  *
  * Many common hints are expressed below as static constants in this
  * class, but the list is not meant to be exhaustive.
@@ -33,7 +33,7 @@ import java.util.Set;
  *
  * @author Ilkka Rinne / Spatineo 2017
  */
-public class ParsingHints implements Map<Object, Object>, Cloneable {
+public class ConversionHints implements Map<Object, Object>, Cloneable {
 
     /**
      * Key for explicitly specifying the Aviation weather message type.
@@ -132,39 +132,39 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_TIMEZONE_ID_POLICY_LOOSE = "LOOSE";
 
     /**
-     * A convenience ParsingHints including only the {@link ParsingHints#KEY_MESSAGE_TYPE} with value {@link ParsingHints#VALUE_MESSAGE_TYPE_METAR}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
      */
-    public static final ParsingHints METAR;
+    public static final ConversionHints METAR;
 
     /**
-     * A convenience ParsingHints including only the {@link ParsingHints#KEY_MESSAGE_TYPE} with value {@link ParsingHints#VALUE_MESSAGE_TYPE_TAF}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_TAF}
      */
-    public static final ParsingHints TAF;
+    public static final ConversionHints TAF;
 
     /**
-     * A convenience ParsingHints including only the {@link ParsingHints#KEY_MESSAGE_TYPE} with value {@link ParsingHints#VALUE_MESSAGE_TYPE_SPECI}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_SPECI}
      */
-    public static final ParsingHints SPECI;
+    public static final ConversionHints SPECI;
 
     /**
-     * A convenience ParsingHints including only the {@link ParsingHints#KEY_MESSAGE_TYPE} with value {@link ParsingHints#VALUE_MESSAGE_TYPE_SIGMET}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_SIGMET}
      */
-    public static final ParsingHints SIGMET;
+    public static final ConversionHints SIGMET;
 
     /**
-     * A convenience ParsingHints including only the {@link ParsingHints#KEY_MESSAGE_TYPE} with value {@link ParsingHints#VALUE_MESSAGE_TYPE_ARS}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_ARS}
      */
-    public static final ParsingHints ARS;
+    public static final ConversionHints ARS;
 
     /**
-     * A convenience parsingHints including only the {@link ParsingHints#KEY_PARSING_MODE} with value {@link ParsingHints#VALUE_PARSING_MODE_STRICT}
+     * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value {@link ConversionHints#VALUE_PARSING_MODE_STRICT}
      */
-    public static final ParsingHints STRICT_PARSING;
+    public static final ConversionHints STRICT_PARSING;
 
     /**
-     * A convenience parsingHints including only the {@link ParsingHints#KEY_PARSING_MODE} with value {@link ParsingHints#VALUE_PARSING_MODE_ALLOW_ANY_ERRORS}
+     * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value {@link ConversionHints#VALUE_PARSING_MODE_ALLOW_ANY_ERRORS}
      */
-    public static final ParsingHints ALLOW_ERRORS;
+    public static final ConversionHints ALLOW_ERRORS;
 
     static {
         KEY_MESSAGE_TYPE = new KeyImpl(1, "Aviation message type hint", VALUE_MESSAGE_TYPE_METAR, VALUE_MESSAGE_TYPE_SPECI, VALUE_MESSAGE_TYPE_TAF,
@@ -174,18 +174,18 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
         KEY_TIMEZONE_ID_POLICY = new KeyImpl(5, "Controls whether the UTZ indicator 'Z' is required/created when not strictly mandated",
                 VALUE_TIMEZONE_ID_POLICY_LOOSE, VALUE_TIMEZONE_ID_POLICY_STRICT);
 
-        METAR = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
-        TAF = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
-        SPECI = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SPECI);
-        SIGMET = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SIGMET);
-        ARS = new ParsingHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_ARS);
-        
-        STRICT_PARSING = new ParsingHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
-        ALLOW_ERRORS = new ParsingHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
+        METAR = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
+        TAF = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
+        SPECI = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SPECI);
+        SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SIGMET);
+        ARS = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_ARS);
+
+        STRICT_PARSING = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
+        ALLOW_ERRORS = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
     }
 
     /**
-     * Key for a specific hint. The {@link ParsingHints#put} methods only accept key-value pairs
+     * Key for a specific hint. The {@link ConversionHints#put} methods only accept key-value pairs
      * where the {@link #isCompatibleValue(Object)} returns true for the given value.
      */
     public abstract static class Key {
@@ -264,7 +264,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
     /**
      * The default constructor, creates an empty ParsingHints.
      */
-    public ParsingHints() {
+    public ConversionHints() {
     }
 
     /**
@@ -272,7 +272,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
      *
      * @param init the map of key-values
      */
-    public ParsingHints(final Map<Key, ?> init) {
+    public ConversionHints(final Map<Key, ?> init) {
         if (init != null) {
             putAll(init);
         }
@@ -283,7 +283,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
      * @param key
      * @param value
      */
-    public ParsingHints(final Key key, final Object value) {
+    public ConversionHints(final Key key, final Object value) {
         put(key, value);
     }
 
@@ -405,7 +405,7 @@ public class ParsingHints implements Map<Object, Object>, Cloneable {
 
     public Object clone() {
         try {
-            final ParsingHints copy = (ParsingHints) super.clone();
+            final ConversionHints copy = (ConversionHints) super.clone();
             copy.hintMap = new HashMap<Object, Object>(hintMap);
             return copy;
         } catch (final CloneNotSupportedException e) {

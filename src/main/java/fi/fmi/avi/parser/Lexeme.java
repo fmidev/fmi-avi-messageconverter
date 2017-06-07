@@ -356,14 +356,14 @@ public interface Lexeme {
      * the Lexeme.
      *
      * For hierarchical Lexemes, the implementation is responsible for
-     * delegating the {@link #accept(LexemeVisitor, ParsingHints)} to the child
+     * delegating the {@link #accept(LexemeVisitor, ConversionHints)} to the child
      * nodes.
      *
-     * @see LexemeVisitor#visit(Lexeme, ParsingHints)
+     * @see LexemeVisitor#visit(Lexeme, ConversionHints)
      *
      * @param visitor to visit this Lexeme
      * @param hints hints to pass the lexing process
      */
-    void accept(final LexemeVisitor visitor, final ParsingHints hints);
+    void accept(final LexemeVisitor visitor, final ConversionHints hints);
 
 }

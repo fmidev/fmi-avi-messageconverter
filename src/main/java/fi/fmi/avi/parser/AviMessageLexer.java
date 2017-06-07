@@ -32,12 +32,12 @@ public interface AviMessageLexer {
      * Lexes the input String with the given parsing settings.
      *
      * @see LexemeSequence
-     * @see ParsingHints
+     * @see ConversionHints
      *
      * @param input the TAC encoded message
      * @param hints parsing hints to be passed to the lexer implementation
      * @return sequence of recognized or unrecognized {@link Lexeme}s
      */
-    LexemeSequence lexMessage(final String input, ParsingHints hints);
+    LexemeSequence lexMessage(final String input, ConversionHints hints);
 
 }

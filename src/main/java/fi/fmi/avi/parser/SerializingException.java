@@ -4,14 +4,14 @@ package fi.fmi.avi.parser;
  * Exception created during the TAC tokenizing, that is serialization
  * from POJO into text based TAC encoding process.
  */
-public class TokenizingException extends Exception {
+public class SerializingException extends Exception {
 
 	private static final long serialVersionUID = -8528248357845259224L;
 
 	/**
 	 * The default constructor with empty message and cause.
 	 */
-	public TokenizingException() {
+	public SerializingException() {
 	}
 
 	/**
@@ -19,7 +19,7 @@ public class TokenizingException extends Exception {
 	 *
 	 * @param message the message
 	 */
-	public TokenizingException(final String message) {
+	public SerializingException(final String message) {
 		super(message);
 	}
 
@@ -28,7 +28,7 @@ public class TokenizingException extends Exception {
 	 *
 	 * @param cause reason behind the scenes
 	 */
-	public TokenizingException(final Throwable cause) {
+	public SerializingException(final Throwable cause) {
 		super(cause);
 	}
 
@@ -38,7 +38,7 @@ public class TokenizingException extends Exception {
 	 * @param message the message
 	 * @param cause the reason behind the scenes
 	 */
-	public TokenizingException(final String message, final Throwable cause) {
+	public SerializingException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 

@@ -10,7 +10,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
  * or {@link AviMessageTACTokenizer#tokenizeMessage(AviationWeatherMessage)}.
  *
  * To create a new instance from a String,
- * use {@link LexingFactory#createLexemeSequence(String, ParsingHints)}
+ * use {@link LexingFactory#createLexemeSequence(String, ConversionHints)}
  * or build a sequence dynamically using {@link LexemeSequenceBuilder}
  * available from {@link LexingFactory#createLexemeSequenceBuilder()}.
  *

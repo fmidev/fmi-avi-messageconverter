@@ -17,9 +17,9 @@ package fi.fmi.avi.parser;
  * content to be used later.
  *
  * The other complementary part the Visitor implementation is the
- * {@link Lexeme#accept(LexemeVisitor, ParsingHints)},
+ * {@link Lexeme#accept(LexemeVisitor, ConversionHints)},
  * which the {@link LexemeVisitor} implementations call as part of the
- * {@link #visit(Lexeme, ParsingHints)} method code:
+ * {@link #visit(Lexeme, ConversionHints)} method code:
  *
  * <pre>
  *   public void visit(final Lexeme token, final ParsingHints hints) {
@@ -34,7 +34,7 @@ package fi.fmi.avi.parser;
  *   }
  * </pre>
  *
- * @see Lexeme#accept(LexemeVisitor, ParsingHints)
+ * @see Lexeme#accept(LexemeVisitor, ConversionHints)
  *
  * @author Ilkka Rinne / Spatineo 2017
  *
@@ -46,5 +46,5 @@ public interface LexemeVisitor {
      * @param token
      * @param hints
      */
-    void visit(Lexeme token, ParsingHints hints);
+    void visit(Lexeme token, ConversionHints hints);
 }

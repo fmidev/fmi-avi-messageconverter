@@ -23,13 +23,13 @@ public interface AviMessageParser {
      * {@link ParsingIssue}s.
      *
      * @see ParsingResult
-     * @param spec {@link ParserSpecification} to use
+     * @param spec {@link ConversionSpecification} to use
      * @param <S> the type of the input message
      * @param <T> the type of the POJO to return
      * @return the result of the parsing
      * 
      */
-    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, ParserSpecification<S, T> spec);
+    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, ConversionSpecification<S, T> spec);
 
     /**
      * Parses the given message into a Java POJO of the type <code>type</code> using
@@ -39,12 +39,12 @@ public interface AviMessageParser {
      * {@link ParsingIssue}s.
      *
      * @param input the input message
-     * @param spec {@link ParserSpecification} to use
+     * @param spec {@link ConversionSpecification} to use
      * @param <S> the type of the input message
      * @param <T> the type of the POJO to return
      * @param hints the parsing hints to guide the parsing implementation
      *
      * @return the result of the parsing
      */
-    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, ParserSpecification<S, T> spec, ParsingHints hints);
+    <S, T extends AviationWeatherMessage> ParsingResult<T> parseMessage(S input, ConversionSpecification<S, T> spec, ConversionHints hints);
 }

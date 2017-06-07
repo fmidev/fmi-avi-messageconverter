@@ -1,24 +1,25 @@
 package fi.fmi.avi.parser;
 
-import fi.fmi.avi.data.AviationWeatherMessage;
 import fi.fmi.avi.data.metar.Metar;
 import fi.fmi.avi.data.taf.TAF;
 
-public class ParserSpecification<S, T extends AviationWeatherMessage> {
-	public static final ParserSpecification<String, Metar> TAC_TO_METAR = new ParserSpecification<>(String.class,  Metar.class);
-	public static final ParserSpecification<String, TAF> TAC_TO_TAF = new ParserSpecification<>(String.class, TAF.class);
+public class ConversionSpecification<S, T> {
+	public static final ConversionSpecification<String, Metar> TAC_TO_METAR = new ConversionSpecification<>(String.class, Metar.class);
+	public static final ConversionSpecification<Metar, String> METAR_TO_TAC = new ConversionSpecification<>(Metar.class, String.class);
 
+	public static final ConversionSpecification<String, TAF> TAC_TO_TAF = new ConversionSpecification<>(String.class, TAF.class);
+	public static final ConversionSpecification<TAF, String> TAF_TO_TAC = new ConversionSpecification<>(TAF.class, String.class);
 
 	private Class<S> inputClass;
     private Class<T> outputClass;
     private Object specifier;
 
-    public ParserSpecification(final Class<S> input, final Class<T> output){
-    	this(input, output, null);
+	public ConversionSpecification(final Class<S> input, final Class<T> output) {
+		this(input, output, null);
     }
-    
-    public ParserSpecification(final Class<S> input, final Class<T> output, final Object specifier) {
-        this.inputClass = input;
+
+	public ConversionSpecification(final Class<S> input, final Class<T> output, final Object specifier) {
+		this.inputClass = input;
         this.outputClass = output;
         this.specifier = specifier;
     }
@@ -51,7 +52,7 @@ public class ParserSpecification<S, T extends AviationWeatherMessage> {
    			return false;
    		if (getClass() != obj.getClass())
    			return false;
-   		ParserSpecification other = (ParserSpecification) obj;
+		ConversionSpecification other = (ConversionSpecification) obj;
    		if (inputClass == null) {
    			if (other.inputClass != null)
    				return false;

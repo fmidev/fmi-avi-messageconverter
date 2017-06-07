@@ -24,7 +24,7 @@ public interface LexingFactory {
      * @param hints guiding instructions for the implementation
      * @return a "raw", unprocessed Lexeme sequence
      */
-    LexemeSequence createLexemeSequence(final String input, final ParsingHints hints);
+    LexemeSequence createLexemeSequence(final String input, final ConversionHints hints);
 
     /**
      * Creates a new {@link LexemeSequenceBuilder} for constructing a new {@link LexemeSequence}
