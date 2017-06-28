@@ -52,7 +52,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     /* (non-Javadoc)
-    * @see fi.fmi.avi.data.Metar#getIssueDayOfMonth()
+    * @see fi.fmi.avi.data.METAR#getIssueDayOfMonth()
     */
     @Override
     public int getIssueDayOfMonth() {
@@ -60,7 +60,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setIssueDayOfMonth(int)
+     * @see fi.fmi.avi.data.METAR#setIssueDayOfMonth(int)
      */
     @Override
     public void setIssueDayOfMonth(final int dayOfMonth) {
@@ -68,7 +68,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getIssueHour()
+     * @see fi.fmi.avi.data.METAR#getIssueHour()
      */
     @Override
     public int getIssueHour() {
@@ -76,7 +76,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setIssueHour(int)
+     * @see fi.fmi.avi.data.METAR#setIssueHour(int)
      */
     @Override
     public void setIssueHour(final int hour) {
@@ -84,7 +84,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getIssueMinute()
+     * @see fi.fmi.avi.data.METAR#getIssueMinute()
      */
     @Override
     public int getIssueMinute() {
@@ -92,7 +92,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setIssueMinute(int)
+     * @see fi.fmi.avi.data.METAR#setIssueMinute(int)
      */
     @Override
     public void setIssueMinute(final int minute) {
@@ -100,7 +100,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getTimeZone()
+     * @see fi.fmi.avi.data.METAR#getTimeZone()
      */
     @Override
     public String getIssueTimeZone() {
@@ -113,7 +113,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setTimeZone(java.lang.String)
+     * @see fi.fmi.avi.data.METAR#setTimeZone(java.lang.String)
      */
     @Override
     public void setIssueTimeZone(final String timeZone) {

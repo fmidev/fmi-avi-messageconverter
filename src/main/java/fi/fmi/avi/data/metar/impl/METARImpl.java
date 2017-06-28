@@ -13,7 +13,7 @@ import fi.fmi.avi.data.impl.AviationWeatherMessageImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
 import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.metar.HorizontalVisibility;
-import fi.fmi.avi.data.metar.Metar;
+import fi.fmi.avi.data.metar.METAR;
 import fi.fmi.avi.data.metar.ObservedClouds;
 import fi.fmi.avi.data.metar.ObservedSurfaceWind;
 import fi.fmi.avi.data.metar.RunwayState;
@@ -23,7 +23,7 @@ import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.WindShear;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
+public class METARImpl extends AviationWeatherMessageImpl implements METAR {
 
     private boolean automatedStation;
     private MetarStatus status;
@@ -37,6 +37,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     private List<RunwayVisualRange> runwayVisualRanges;
     private List<Weather> presentWeather;
     private ObservedClouds clouds;
+    private boolean noSignificantCloud;
     private List<Weather> recentWeather;
     private WindShear windShear;
     private SeaState seaState;
@@ -44,10 +45,10 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     private List<TrendForecast> trends;
     private ColorState colorState;
 
-    public MetarImpl() {
+    public METARImpl() {
     }
 
-    public MetarImpl(final Metar input) {
+    public METARImpl(final METAR input) {
         super(input);
         this.automatedStation = input.isAutomatedStation();
         this.status = input.getStatus();
@@ -79,7 +80,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#isAutomatedStation()
+     * @see fi.fmi.avi.data.METAR#isAutomatedStation()
      */
     @Override
     public boolean isAutomatedStation() {
@@ -87,7 +88,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setAutomatedStation(boolean)
+     * @see fi.fmi.avi.data.METAR#setAutomatedStation(boolean)
      */
     @Override
     public void setAutomatedStation(final boolean automatedStation) {
@@ -95,7 +96,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getStatus()
+     * @see fi.fmi.avi.data.METAR#getStatus()
      */
     @Override
     public MetarStatus getStatus() {
@@ -103,7 +104,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setStatus(fi.fmi.avi.data.AviationCodeListUser.MetarStatus)
+     * @see fi.fmi.avi.data.METAR#setStatus(fi.fmi.avi.data.AviationCodeListUser.MetarStatus)
      */
     @Override
     public void setStatus(final MetarStatus status) {
@@ -112,7 +113,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
 
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getAerodromeDesignator()
+     * @see fi.fmi.avi.data.METAR#getAerodromeDesignator()
      */
     @Override
     public String getAerodromeDesignator() {
@@ -120,7 +121,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setAerodromeDesignator(java.lang.String)
+     * @see fi.fmi.avi.data.METAR#setAerodromeDesignator(java.lang.String)
      */
     @Override
     public void setAerodromeDesignator(final String aerodromeDesignator) {
@@ -128,7 +129,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#isCeilingAndVisibilityOk()
+     * @see fi.fmi.avi.data.METAR#isCeilingAndVisibilityOk()
      */
     @Override
     public boolean isCeilingAndVisibilityOk() {
@@ -136,7 +137,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setCeilingAndVisibilityOk(boolean)
+     * @see fi.fmi.avi.data.METAR#setCeilingAndVisibilityOk(boolean)
      */
     @Override
     public void setCeilingAndVisibilityOk(final boolean ceilingAndVisibilityOk) {
@@ -144,7 +145,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getAirTemperature()
+     * @see fi.fmi.avi.data.METAR#getAirTemperature()
      */
     @Override
     public NumericMeasure getAirTemperature() {
@@ -152,7 +153,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setAirTemperature(fi.fmi.avi.data.NumericMeasureImpl)
+     * @see fi.fmi.avi.data.METAR#setAirTemperature(fi.fmi.avi.data.NumericMeasureImpl)
      */
     @Override
     @JsonDeserialize(as = NumericMeasureImpl.class)
@@ -161,7 +162,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getDewpointTemperature()
+     * @see fi.fmi.avi.data.METAR#getDewpointTemperature()
      */
     @Override
     public NumericMeasure getDewpointTemperature() {
@@ -169,7 +170,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setDewpointTemperature(fi.fmi.avi.data.NumericMeasureImpl)
+     * @see fi.fmi.avi.data.METAR#setDewpointTemperature(fi.fmi.avi.data.NumericMeasureImpl)
      */
     @Override
     @JsonDeserialize(as = NumericMeasureImpl.class)
@@ -178,7 +179,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getAltimeterSettingQNH()
+     * @see fi.fmi.avi.data.METAR#getAltimeterSettingQNH()
      */
     @Override
     public NumericMeasure getAltimeterSettingQNH() {
@@ -186,7 +187,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setAltimeterSettingQNH(fi.fmi.avi.data.NumericMeasureImpl)
+     * @see fi.fmi.avi.data.METAR#setAltimeterSettingQNH(fi.fmi.avi.data.NumericMeasureImpl)
      */
     @Override
     @JsonDeserialize(as = NumericMeasureImpl.class)
@@ -195,7 +196,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getSurfaceWind()
+     * @see fi.fmi.avi.data.METAR#getSurfaceWind()
      */
     @Override
     public ObservedSurfaceWind getSurfaceWind() {
@@ -203,7 +204,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setSurfaceWind(fi.fmi.avi.data.ObservedSurfaceWindImpl)
+     * @see fi.fmi.avi.data.METAR#setSurfaceWind(fi.fmi.avi.data.ObservedSurfaceWindImpl)
      */
     @Override
     @JsonDeserialize(as = ObservedSurfaceWindImpl.class)
@@ -212,7 +213,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getVisibility()
+     * @see fi.fmi.avi.data.METAR#getVisibility()
      */
     @Override
     public HorizontalVisibility getVisibility() {
@@ -220,7 +221,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setVisibility(fi.fmi.avi.data.HorizontalVisibilityImpl)
+     * @see fi.fmi.avi.data.METAR#setVisibility(fi.fmi.avi.data.HorizontalVisibilityImpl)
      */
     @Override
     @JsonDeserialize(as = HorizontalVisibilityImpl.class)
@@ -229,7 +230,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getRunwayVisualRanges()
+     * @see fi.fmi.avi.data.METAR#getRunwayVisualRanges()
      */
     @Override
     public List<RunwayVisualRange> getRunwayVisualRanges() {
@@ -237,7 +238,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setRunwayVisualRanges(java.util.List)
+     * @see fi.fmi.avi.data.METAR#setRunwayVisualRanges(java.util.List)
      */
     @Override
     @JsonDeserialize(contentAs = RunwayVisualRangeImpl.class)
@@ -251,7 +252,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
     
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getPresentWeatherCodes()
+     * @see fi.fmi.avi.data.METAR#getPresentWeatherCodes()
      */
     @Override
     @JsonIgnore
@@ -260,7 +261,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setPresentWeatherCodes(java.util.List)
+     * @see fi.fmi.avi.data.METAR#setPresentWeatherCodes(java.util.List)
      */
     @Override
     @JsonDeserialize(contentAs = WeatherImpl.class)
@@ -269,20 +270,30 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getClouds()
+     * @see fi.fmi.avi.data.METAR#getClouds()
      */
     @Override
     public ObservedClouds getClouds() {
         return clouds;
     }
 
+    @Override
+    public boolean isNoSignificantCloud() {
+        return this.noSignificantCloud;
+    }
+
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setClouds(fi.fmi.avi.data.ObservedCloudsImpl)
-     */
+         * @see fi.fmi.avi.data.METAR#setClouds(fi.fmi.avi.data.ObservedCloudsImpl)
+         */
     @Override
     @JsonDeserialize(as = ObservedCloudsImpl.class)
     public void setClouds(final ObservedClouds clouds) {
         this.clouds = clouds;
+    }
+
+    @Override
+    public void setNoSignificantCloud(final boolean noSignificantCloud) {
+        this.noSignificantCloud = noSignificantCloud;
     }
 
     public List<Weather> getRecentWeather() {
@@ -290,7 +301,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
     
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getRecentWeatherCodes()
+     * @see fi.fmi.avi.data.METAR#getRecentWeatherCodes()
      */
     @Override
     @JsonIgnore
@@ -299,7 +310,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setRecentWeatherCodes(java.util.List)
+     * @see fi.fmi.avi.data.METAR#setRecentWeatherCodes(java.util.List)
      */
     @Override
     @JsonDeserialize(contentAs = WeatherImpl.class)
@@ -308,7 +319,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getWindShear()
+     * @see fi.fmi.avi.data.METAR#getWindShear()
      */
     @Override
     public WindShear getWindShear() {
@@ -316,7 +327,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setWindShear(fi.fmi.avi.data.WindShearImpl)
+     * @see fi.fmi.avi.data.METAR#setWindShear(fi.fmi.avi.data.WindShearImpl)
      */
     @Override
     @JsonDeserialize(as = WindShearImpl.class)
@@ -325,7 +336,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getSeaState()
+     * @see fi.fmi.avi.data.METAR#getSeaState()
      */
     @Override
     public SeaState getSeaState() {
@@ -333,7 +344,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setSeaState(fi.fmi.avi.data.SeaStateImpl)
+     * @see fi.fmi.avi.data.METAR#setSeaState(fi.fmi.avi.data.SeaStateImpl)
      */
     @Override
     @JsonDeserialize(as = SeaStateImpl.class)
@@ -342,7 +353,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getRunwayStates()
+     * @see fi.fmi.avi.data.METAR#getRunwayStates()
      */
     @Override
     public List<RunwayState> getRunwayStates() {
@@ -350,7 +361,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setRunwayStates(java.util.List)
+     * @see fi.fmi.avi.data.METAR#setRunwayStates(java.util.List)
      */
     @Override
     @JsonDeserialize(contentAs = RunwayStateImpl.class)
@@ -359,7 +370,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#getTrends()
+     * @see fi.fmi.avi.data.METAR#getTrends()
      */
     @Override
     public List<TrendForecast> getTrends() {
@@ -367,7 +378,7 @@ public class MetarImpl extends AviationWeatherMessageImpl implements Metar {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.Metar#setTrends(java.util.List)
+     * @see fi.fmi.avi.data.METAR#setTrends(java.util.List)
      */
     @Override
     @JsonDeserialize(contentAs = TrendForecastImpl.class)

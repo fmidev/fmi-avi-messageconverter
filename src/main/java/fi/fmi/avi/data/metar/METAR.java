@@ -7,7 +7,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.Weather;
 
-public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
+public interface METAR extends AviationWeatherMessage, AviationCodeListUser {
 
     boolean isAutomatedStation();
 
@@ -32,6 +32,8 @@ public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
     List<Weather> getPresentWeather();
 
     List<String> getPresentWeatherCodes();
+
+    boolean isNoSignificantCloud();
     
     ObservedClouds getClouds();
 
@@ -74,6 +76,8 @@ public interface Metar extends AviationWeatherMessage, AviationCodeListUser {
     void setPresentWeather(List<Weather> presentWeather);
 
     void setClouds(ObservedClouds clouds);
+
+    void setNoSignificantCloud(boolean nsc);
 
     void setRecentWeather(List<Weather> recentWeather);
 
