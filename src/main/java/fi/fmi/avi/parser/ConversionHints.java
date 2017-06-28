@@ -130,6 +130,16 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
      * Silently ignore the missing timezone ID or leave it out when allowed, but not required by the specification.
      */
     public static final Object VALUE_TIMEZONE_ID_POLICY_LOOSE = "LOOSE";
+    
+    /**
+     * Serialization policy
+     */
+    public static final Key KEY_SERIALIZATION_POLICY;
+    
+    /**
+     * Create 16th edition annex III (July 2007)
+     */
+    public static final Object VALUE_SERIALIZATION_POLICY_ANNEX3_16TH = "ANNEX3_16TH";
 
     /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
@@ -174,6 +184,9 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         KEY_TIMEZONE_ID_POLICY = new KeyImpl(5, "Controls whether the UTZ indicator 'Z' is required/created when not strictly mandated",
                 VALUE_TIMEZONE_ID_POLICY_LOOSE, VALUE_TIMEZONE_ID_POLICY_STRICT);
 
+        KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags",
+        		VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
+        
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
         SPECI = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SPECI);
