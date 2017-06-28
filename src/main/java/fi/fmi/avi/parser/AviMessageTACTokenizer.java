@@ -25,6 +25,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
  *
  * </pre>
  *
+ * @author Ilkka Rinne / Spatineo Oy 2017
  */
 public interface AviMessageTACTokenizer {
 

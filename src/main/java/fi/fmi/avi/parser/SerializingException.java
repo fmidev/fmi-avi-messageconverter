@@ -1,8 +1,9 @@
 package fi.fmi.avi.parser;
 
 /**
- * Exception created during the TAC tokenizing, that is serialization
- * from POJO into text based TAC encoding process.
+ * Exception created during the message serialization.
+ *
+ * @author Ilkka Rinne / Spatineo Oy 2017
  */
 public class SerializingException extends Exception {
 

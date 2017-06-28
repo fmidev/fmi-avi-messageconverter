@@ -6,7 +6,7 @@ import java.util.List;
 import fi.fmi.avi.data.AviationWeatherMessage;
 
 /**
- * Container for parsing result returned by {@link AviMessageParser#parseMessage(LexemeSequence, Class)}.
+ * Container for parsing result returned by {@link AviMessageParser#parseMessage(Object, ConversionSpecification)}.
  *
  * @param <T> the type of the parsed message.
  *

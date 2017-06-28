@@ -3,16 +3,18 @@ package fi.fmi.avi.parser;
 import fi.fmi.avi.data.AviationWeatherMessage;
 
 /**
- * AviMessageParser parses a TAC encoded message into a Java POJO representing the aviation weather message
+ * AviMessageParser parses a message into a Java POJO representing the aviation weather message
  * of the requested type.
  *
  * Example:
  * <pre>
- *  ParsingResult<TAF> result = parser.parseMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=",ParserSpecification.TAC_TO_TAF);
+ *  ParsingResult<TAF> result = parser.parseMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=",ParserSpecification.TAC_TO_TAF_POJO);
  *  if (ParsingResult.ParsingStatus.SUCCESS = result.getStatus()) {
  *      TAF pojo = result.getParsedMessage();
  *  }
  * </pre>
+ *
+ *  @author Ilkka Rinne / Spatineo Oy 2017
  */
 public interface AviMessageParser {
 

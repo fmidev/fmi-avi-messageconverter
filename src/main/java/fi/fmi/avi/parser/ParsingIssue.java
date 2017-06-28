@@ -5,7 +5,7 @@ package fi.fmi.avi.parser;
  *
  * This way of error/warning reporting is preferred over "fail-fast" parsing
  * exceptions to enable returning partially populated message POJOs from the
- * {@link AviMessageParser#parseMessage(LexemeSequence, Class)}.
+ * {@link AviMessageParser#parseMessage(Object, ConversionSpecification)}.
  *
  * @author Ilkka Rinne / Spatineo 2017
  */

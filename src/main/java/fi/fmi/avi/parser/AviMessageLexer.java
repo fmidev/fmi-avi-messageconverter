@@ -12,6 +12,7 @@ package fi.fmi.avi.parser;
  * of the TAC message parsing before creating the actual Java POJO, and basic
  * input validation for TAC messages.
  *
+ * @author Ilkka Rinne / Spatineo Oy 2017
  */
 public interface AviMessageLexer {
 
