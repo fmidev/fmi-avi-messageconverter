@@ -14,7 +14,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
  *     ...
  *
  *     String original = "TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=";
- *     ParsingResult<TAF> result = parser.parseMessage(lexer.lexMessage(original));
+ *     ParsingResult&lt;TAF&gt; result = parser.parseMessage(lexer.lexMessage(original));
  *      if (ParsingResult.ParsingStatus.SUCCESS = result.getStatus()) {
  *          TAF pojo = result.getParsedMessage();
  *          LexemeSequence seq = tokenizer.tokenizeMessage(pojo);

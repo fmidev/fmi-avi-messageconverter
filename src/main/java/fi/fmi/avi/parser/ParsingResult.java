@@ -32,7 +32,7 @@ public interface ParsingResult<T extends AviationWeatherMessage> {
      * to make sure there were no problems:
      *
      * <pre>
-     *     ParsingResult<TAF> result = parser.parseMessage(tacEncoded, TAF.class);
+     *     ParsingResult&lt;TAF&gt; result = parser.parseMessage(tacEncoded, TAF.class);
      *     if (ParsingResult.ParsingStatus.SUCCESS == result.getStatus()) {
      *         //OK to continue
      *         TAF pojo = result.getParsedMessage();

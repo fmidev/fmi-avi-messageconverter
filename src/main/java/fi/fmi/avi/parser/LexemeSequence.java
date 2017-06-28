@@ -48,8 +48,8 @@ public interface LexemeSequence {
      * Note that Java 8 users may filter the returned list conveniently using
      * the Stream API:
      * <pre>
-     *     List<Lexeme> recognizedLexemes = lexed.getLexemes().stream()
-     *       .filter((lexeme) -> Lexeme.Status.UNRECOGNIZED != lexeme.getStatus())
+     *     List&lt;Lexeme&gt; recognizedLexemes = lexed.getLexemes().stream()
+     *       .filter((lexeme) -&gt; Lexeme.Status.UNRECOGNIZED != lexeme.getStatus())
      *       .collect(Collectors.toList());
      * </pre>
      *
@@ -68,8 +68,8 @@ public interface LexemeSequence {
      * If not matches are found, the original {@link LexemeSequence} is returned as the
      * only list item.
      *
-     * @param ids
-     * @return
+     * @param ids the IDs if the tokens to use for splitting
+     * @return the list of split-up sequences
      */
     List<LexemeSequence> splitBy(Lexeme.Identity...ids);
 

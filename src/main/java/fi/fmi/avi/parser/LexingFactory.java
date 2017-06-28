@@ -60,9 +60,9 @@ public interface LexingFactory {
      * {@link Lexeme#getTACToken()} with {@link Lexeme#getIdentity()} <code>identity</code>
      * and {@link Lexeme#getStatus()} <code>status</code>.
      *
-     * @param token
-     * @param identity
-     * @param status
+     * @param token the TAC token
+     * @param identity the forced identity
+     * @param status the forced status
      * @return a recognized Lexeme with the given status
      */
     Lexeme createLexeme(final String token, final Lexeme.Identity identity, final Lexeme.Status status);

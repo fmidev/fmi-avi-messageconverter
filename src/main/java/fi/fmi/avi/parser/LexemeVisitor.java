@@ -23,7 +23,7 @@ package fi.fmi.avi.parser;
  *
  * <pre>
  *   public void visit(final Lexeme token, final ParsingHints hints) {
- *     if (!token.isRecognized() && visitors != null) {
+ *     if (!token.isRecognized() &amp;&amp; visitors != null) {
  *       for (LexemeVisitor v : visitors) {
  *         token.accept(v, hints);
  *         if (token.isRecognized()) {
@@ -42,9 +42,10 @@ package fi.fmi.avi.parser;
 public interface LexemeVisitor {
 
     /**
+     * Defines a way to visit a {@link Lexeme}.
      *
-     * @param token
-     * @param hints
+     * @param token to visit
+     * @param hints hints to be passed to the visitor fro guiding the possible modifications
      */
     void visit(Lexeme token, ConversionHints hints);
 }

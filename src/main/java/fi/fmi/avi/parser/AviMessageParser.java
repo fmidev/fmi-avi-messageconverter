@@ -8,7 +8,7 @@ import fi.fmi.avi.data.AviationWeatherMessage;
  *
  * Example:
  * <pre>
- *  ParsingResult<TAF> result = parser.parseMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=",ParserSpecification.TAC_TO_TAF_POJO);
+ *  ParsingResult&lt;TAF&gt; result = parser.parseMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=",ParserSpecification.TAC_TO_TAF_POJO);
  *  if (ParsingResult.ParsingStatus.SUCCESS = result.getStatus()) {
  *      TAF pojo = result.getParsedMessage();
  *  }
@@ -25,6 +25,8 @@ public interface AviMessageParser {
      * {@link ParsingIssue}s.
      *
      * @see ParsingResult
+     *
+     * @param input the input message
      * @param spec {@link ConversionSpecification} to use
      * @param <S> the type of the input message
      * @param <T> the type of the POJO to return

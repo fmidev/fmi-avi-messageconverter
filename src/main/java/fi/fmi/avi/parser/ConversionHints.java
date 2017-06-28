@@ -220,7 +220,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
          * Overridden to force using {@link System#identityHashCode(Object)} for all
          * Key implementations.
          *
-         * @return
+         * @return the hashcode
          */
         public final int hashCode() {
             return System.identityHashCode(this);
@@ -293,8 +293,8 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
     /**
      * Creates a ParsingHints with only a single key-value pair.
-     * @param key
-     * @param value
+     * @param key the key
+     * @param value the value for the key
      */
     public ConversionHints(final Key key, final Object value) {
         put(key, value);
