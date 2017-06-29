@@ -1,4 +1,4 @@
-package fi.fmi.avi.parser;
+package fi.fmi.avi.converter;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -7,9 +7,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
  *
- * ParsingHints provides lexing, parsing and serializing related
+ * ConversionHints provides lexing, parsing and serializing related
  * implementation hints for aviation weather message processing operations.
  *
  * Note that since these keys and values are <i>hints</i>, there is

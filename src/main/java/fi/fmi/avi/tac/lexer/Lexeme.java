@@ -1,42 +1,45 @@
-package fi.fmi.avi.parser;
+package fi.fmi.avi.tac.lexer;
 
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.COUNTRY;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.COVER;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.DAY1;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.DAY2;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.DIRECTION;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.HOUR1;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.HOUR2;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MAX_DIRECTION;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MAX_VALUE;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MEAN_VALUE;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MINUTE1;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MIN_DIRECTION;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.MIN_VALUE;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.RELATIONAL_OPERATOR;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.RELATIONAL_OPERATOR2;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.RUNWAY;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.TENDENCY_OPERATOR;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.TYPE;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.UNIT;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.UNIT2;
-import static fi.fmi.avi.parser.Lexeme.ParsedValueName.VALUE;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.COUNTRY;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.COVER;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.DAY1;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.DAY2;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.DIRECTION;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.HOUR1;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.HOUR2;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.MAX_DIRECTION;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.MAX_VALUE;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.MEAN_VALUE;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.MINUTE1;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.MIN_DIRECTION;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.MIN_VALUE;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.RELATIONAL_OPERATOR;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.RELATIONAL_OPERATOR2;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.RUNWAY;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.TENDENCY_OPERATOR;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.TYPE;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.UNIT;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.UNIT2;
+import static fi.fmi.avi.tac.lexer.Lexeme.ParsedValueName.VALUE;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import fi.fmi.avi.converter.AviMessageConverter;
+import fi.fmi.avi.converter.ConversionHints;
+
 /**
  * Lexeme is a basic lexical unit of an aviation weather message. 
  * A Lexeme is an abstraction of a single semantic character string 
  * token of a message encoded using Traditional Alphanumeric Codes (TAC).
  * 
- * In AviMessageParser library a TAC message is first parsed into 
+ * In AviMessageConverter library a TAC message is first parsed into 
  * {@link LexemeSequence} containing a list of identified 
  * (and possibly unidentified) {@link Lexeme}s by
  * {@link AviMessageLexer}. This result is then typically fed into
- * {@link AviMessageParser} to construct a Java POJO for the entire 
+ * {@link AviMessageConverter} to construct a Java POJO for the entire 
  * message.
  * 
  * In addition to the identification of the token, a Lexeme may contain
@@ -53,7 +56,7 @@ import java.util.Set;
  * identifying a Lexeme, {@link AviMessageLexer} may store
  * values extracted from the parsed string token into the Lexeme
  * by using the {@link #setParsedValue(ParsedValueName, Object)} method.
- * These values may be queried by the {@link AviMessageParser} for 
+ * These values may be queried by the {@link AviMessageConverter} for 
  * constructing the {@link fi.fmi.avi.data.AviationWeatherMessage} POJOs.
  * 
  * {@link LexemeSequence} may also be directly used for providing validating 

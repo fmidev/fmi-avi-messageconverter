@@ -1,4 +1,4 @@
-package fi.fmi.avi.parser;
+package fi.fmi.avi.tac.lexer;
 
 /**
  * Exception created during the message serialization.

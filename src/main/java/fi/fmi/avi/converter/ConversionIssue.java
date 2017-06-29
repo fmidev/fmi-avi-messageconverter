@@ -1,15 +1,15 @@
-package fi.fmi.avi.parser;
+package fi.fmi.avi.converter;
 
 /**
- * A parsing issue to be reported within the {@link ParsingResult}.
+ * A parsing issue to be reported within the {@link ConversionResult}.
  *
  * This way of error/warning reporting is preferred over "fail-fast" parsing
  * exceptions to enable returning partially populated message POJOs from the
- * {@link AviMessageParser#parseMessage(Object, ConversionSpecification)}.
+ * {@link AviMessageConverter#convertMessage(Object, ConversionSpecification)}.
  *
  * @author Ilkka Rinne / Spatineo 2017
  */
-public class ParsingIssue {
+public class ConversionIssue {
 
     /**
      * Issue type
@@ -29,7 +29,7 @@ public class ParsingIssue {
      * @param message
      *         message to report
      */
-    public ParsingIssue(final Type type, final String message) {
+    public ConversionIssue(final Type type, final String message) {
         this.type = type;
         this.message = message;
     }

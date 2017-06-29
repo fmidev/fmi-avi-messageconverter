@@ -1,4 +1,4 @@
-package fi.fmi.avi.parser;
+package fi.fmi.avi.converter;
 
 import fi.fmi.avi.data.metar.METAR;
 import fi.fmi.avi.data.taf.TAF;

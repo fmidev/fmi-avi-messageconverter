@@ -1,4 +1,6 @@
-package fi.fmi.avi.parser;
+package fi.fmi.avi.tac.lexer;
+
+import fi.fmi.avi.converter.ConversionHints;
 
 /**
  *

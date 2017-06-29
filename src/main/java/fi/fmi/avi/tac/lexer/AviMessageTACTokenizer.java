@@ -1,30 +1,12 @@
-package fi.fmi.avi.parser;
+package fi.fmi.avi.tac.lexer;
 
+import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.data.AviationWeatherMessage;
 
 /**
  * AviMessageTACTokenizer creates a {@link LexemeSequence} of TAC encoded tokens from the
- * given aviation weather message POJO. This is typically used for serializing the POJO
- * into a TAC encoded String:
- *
- * <pre>
- *     AviMessageParser parser;
- *     AviMessageLexer lexer;
- *     AviMessageTACTokenizer tokenizer;
- *     ...
- *
- *     String original = "TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=";
- *     ParsingResult&lt;TAF&gt; result = parser.parseMessage(lexer.lexMessage(original));
- *      if (ParsingResult.ParsingStatus.SUCCESS = result.getStatus()) {
- *          TAF pojo = result.getParsedMessage();
- *          LexemeSequence seq = tokenizer.tokenizeMessage(pojo);
- *          if (original.equals(seq.getTAC()) {
- *              //loopback succeeded
- *          }
- *      }
- *
- * </pre>
- *
+ * given aviation weather message POJO.
+ * 
  * @author Ilkka Rinne / Spatineo Oy 2017
  */
 public interface AviMessageTACTokenizer {
