@@ -1,10 +1,10 @@
 package fi.fmi.avi.converter;
 
 /**
- * A parsing issue to be reported within the {@link ConversionResult}.
+ * An issue to be reported within the {@link ConversionResult}.
  *
- * This way of error/warning reporting is preferred over "fail-fast" parsing
- * exceptions to enable returning partially populated message POJOs from the
+ * This way of error/warning reporting is preferred over "fail-fast" conversions
+ * exceptions to enable returning partially populated message objects from the
  * {@link AviMessageConverter#convertMessage(Object, ConversionSpecification)}.
  *
  * @author Ilkka Rinne / Spatineo 2017

@@ -4,12 +4,13 @@ import java.util.Set;
 
 /**
  * AviMessageConverter converts an aviation weather message from one type to another.
+ * Not that not all conversions are lossles.
  *
  * Example:
  * <pre>
  *  ConversionResult&lt;TAF&gt; result = converter.convertMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=",ConversionSpecification.TAC_TO_TAF_POJO);
  *  if (ConversionResult.Status.SUCCESS = result.getStatus()) {
- *      TAF pojo = result.getParsedMessage();
+ *      TAF pojo = result.getConvertedMessage();
  *  }
  * </pre>
  *
@@ -18,9 +19,9 @@ import java.util.Set;
 public interface AviMessageConverter {
 
     /**
-     * Parses the given message into a Java POJO of the type <code>type</code>.
+     * Converts the given message according to the <code>spec</code>.
      *
-     * The returned {@link ConversionResult} includes the status, the parsed POJO and the possible
+     * The returned {@link ConversionResult} includes the status, the converted message and the possible
      * {@link ConversionIssue}s.
      *
      * @see ConversionResult
@@ -28,23 +29,24 @@ public interface AviMessageConverter {
      * @param input the input message
      * @param spec {@link ConversionSpecification} to use
      * @param <S> the type of the input message
-     * @param <T> the type of the POJO to return
+     * @param <T> the type of the output message
+     * 
      * @return the result of the conversion
      * 
      */
     <S, T> ConversionResult<T> convertMessage(S input, ConversionSpecification<S, T> spec);
 
     /**
-     * Parses the given message into a Java POJO of the type <code>type</code> using
-     * the provided parsing hints.
+     * Converts the given message according to the <code>spec</code> using
+     * the provided conversion hints.
      *
-     * The returned {@link ConversionResult} includes the status, the parsed POJO and the possible
+     * The returned {@link ConversionResult} includes the status, the converted message and the possible
      * {@link ConversionIssue}s.
      *
      * @param input the input message
      * @param spec {@link ConversionSpecification} to use
      * @param <S> the type of the input message
-     * @param <T> the type of the POJO to return
+     * @param <T> the type of the output message
      * @param hints to guide the conversion process
      *
      * @return the result of the conversion
@@ -52,8 +54,10 @@ public interface AviMessageConverter {
     <S, T> ConversionResult<T> convertMessage(S input, ConversionSpecification<S, T> spec, ConversionHints hints);
     
     /**
+     * Returns all the {@link ConversionSpecification}s supported by this 
+     * AviMessageConverter implementation.
      * 
-     * @return
+     * @return set of supported specifications
      */
     Set<ConversionSpecification<?,?>> getSupportedSpecifications();
 }
