@@ -2,17 +2,15 @@ package fi.fmi.avi.data.taf;
 
 import java.util.List;
 
+import fi.fmi.avi.data.AerodromeWeatherMessage;
 import fi.fmi.avi.data.AviationCodeListUser;
-import fi.fmi.avi.data.AviationWeatherMessage;
 
 /**
  * Created by rinne on 30/01/15.
  */
-public interface TAF extends AviationWeatherMessage, AviationCodeListUser {
+public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     TAFStatus getStatus();
-
-    String getAerodromeDesignator();
 
     int getValidityStartDayOfMonth();
 
@@ -29,8 +27,6 @@ public interface TAF extends AviationWeatherMessage, AviationCodeListUser {
     TAF getReferredReport();
 
     void setStatus(TAFStatus status);
-
-    void setAerodromeDesignator(String aerodromeDesignator);
 
     void setValidityStartDayOfMonth(int dayOfMonth);
 

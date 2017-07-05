@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.RunwayDirection;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
 import fi.fmi.avi.data.metar.RunwayState;
 
@@ -22,7 +23,7 @@ public class RunwayStateImpl implements RunwayState {
     private boolean repetition;
     private boolean depthNotMeasurable;
     private boolean runwayNotOperational;
-    private String runwayDirectionDesignator;
+    private RunwayDirection runwayDirection;
     private RunwayDeposit deposit;
     private RunwayContamination contamination;
     private NumericMeasure depthOfDeposit;
@@ -39,7 +40,7 @@ public class RunwayStateImpl implements RunwayState {
         this.estimatedSurfaceFrictionUnreliable = input.isEstimatedSurfaceFrictionUnreliable();
         this.snowClosure = input.isSnowClosure();
         this.repetition = input.isRepetition();
-        this.runwayDirectionDesignator = input.getRunwayDirectionDesignator();
+        this.runwayDirection = input.getRunwayDirection();
         this.deposit = input.getDeposit();
         this.contamination = input.getContamination();
         this.depthOfDeposit = new NumericMeasureImpl(input.getDepthOfDeposit());
@@ -97,11 +98,11 @@ public class RunwayStateImpl implements RunwayState {
     
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#getRunwayDirectionDesignator()
+     * @see fi.fmi.avi.data.RunwayState#getRunwayDirection()
      */
     @Override
-    public String getRunwayDirectionDesignator() {
-        return runwayDirectionDesignator;
+    public RunwayDirection getRunwayDirection() {
+        return runwayDirection;
     }
 
     /* (non-Javadoc)
@@ -198,8 +199,8 @@ public class RunwayStateImpl implements RunwayState {
      * @see fi.fmi.avi.data.RunwayState#setRunwayDirectionDesignator(java.lang.String)
      */
     @Override
-    public void setRunwayDirectionDesignator(final String runwayDirectionDesignator) {
-        this.runwayDirectionDesignator = runwayDirectionDesignator;
+    public void setRunwayDirection(final RunwayDirection runwayDirection) {
+        this.runwayDirection = runwayDirection;
     }
 
     /* (non-Javadoc)

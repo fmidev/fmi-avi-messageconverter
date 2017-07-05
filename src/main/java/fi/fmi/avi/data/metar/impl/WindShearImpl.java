@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import fi.fmi.avi.data.RunwayDirection;
 import fi.fmi.avi.data.metar.WindShear;
 
 /**
@@ -17,14 +18,14 @@ import fi.fmi.avi.data.metar.WindShear;
 public class WindShearImpl implements WindShear {
 
     private boolean allRunways;
-    private List<String> runwayDirectionDesignators;
+    private List<RunwayDirection> runwayDirections;
 
     public WindShearImpl() {
     }
 
     public WindShearImpl(final WindShear input) {
         this.allRunways = input.isAllRunways();
-        this.runwayDirectionDesignators = new ArrayList<String>(input.getRunwayDirectionDesignators());
+        this.runwayDirections = new ArrayList<RunwayDirection>(input.getRunwayDirections());
     }
 
     /* (non-Javadoc)
@@ -36,11 +37,11 @@ public class WindShearImpl implements WindShear {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.WindShear#getRunwayDirectionDesignators()
+     * @see fi.fmi.avi.data.WindShear#getRunwayDirections()
      */
     @Override
-    public List<String> getRunwayDirectionDesignators() {
-        return runwayDirectionDesignators;
+    public List<RunwayDirection> getRunwayDirections() {
+        return runwayDirections;
     }
 
     /* (non-Javadoc)
@@ -52,11 +53,11 @@ public class WindShearImpl implements WindShear {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.WindShear#setRunwayDirectionDesignators(java.util.List)
+     * @see fi.fmi.avi.data.WindShear#setRunwayDirections(java.util.List)
      */
     @Override
-    public void setRunwayDirectionDesignators(final List<String> runwayDirectionDesignators) {
-        this.runwayDirectionDesignators = runwayDirectionDesignators;
+    public void setRunwayDirections(final List<RunwayDirection> runwayDirections) {
+        this.runwayDirections = runwayDirections;
     }
 
 }

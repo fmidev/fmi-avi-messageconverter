@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.data.Aerodrome;
 import fi.fmi.avi.data.impl.AviationWeatherMessageImpl;
 import fi.fmi.avi.data.taf.TAF;
 import fi.fmi.avi.data.taf.TAFBaseForecast;
@@ -18,7 +19,7 @@ import fi.fmi.avi.data.taf.TAFChangeForecast;
 public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
 
     private TAFStatus status;
-    private String aerodromeDesignator;
+    private Aerodrome aerodrome;
     private int validityStartDayOfMonth = -1;
     private int validityStartHour = -1;
     private int validityEndDayOfMonth = -1;
@@ -34,7 +35,7 @@ public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
     public TAFImpl(final TAF input) {
         super(input);
         this.status = input.getStatus();
-        this.aerodromeDesignator = input.getAerodromeDesignator();
+        this.aerodrome = input.getAerodrome();
         this.validityStartDayOfMonth = input.getValidityStartDayOfMonth();
         this.validityStartHour = input.getValidityStartHour();
         this.validityEndDayOfMonth = input.getValidityEndDayOfMonth();
@@ -60,13 +61,13 @@ public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
     }
 
     @Override
-    public String getAerodromeDesignator() {
-        return aerodromeDesignator;
+    public Aerodrome getAerodrome() {
+        return aerodrome;
     }
 
     @Override
-    public void setAerodromeDesignator(final String aerodromeDesignator) {
-        this.aerodromeDesignator = aerodromeDesignator;
+    public void setAerodrome(final Aerodrome aerodrome) {
+        this.aerodrome = aerodrome;
     }
 
     @Override
@@ -141,6 +142,17 @@ public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
     public void setReferredReport(final TAF referredReport) {
         this.referredReport = referredReport;
     }
+
+	@Override
+	public boolean isAerodromeInfoResolved() {
+		return this.aerodrome != null && this.aerodrome.isResolved();
+	}
+
+	@Override
+	public void amendAerodromeInfo(Aerodrome fullInfo) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

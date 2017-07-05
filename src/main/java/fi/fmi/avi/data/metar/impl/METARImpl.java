@@ -1,15 +1,20 @@
 package fi.fmi.avi.data.metar.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.data.Aerodrome;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.RunwayDirection;
+import fi.fmi.avi.data.RunwaySpecificWeatherMessage;
 import fi.fmi.avi.data.Weather;
-import fi.fmi.avi.data.impl.AviationWeatherMessageImpl;
+import fi.fmi.avi.data.impl.AerodromeWeatherMessageImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
 import fi.fmi.avi.data.impl.WeatherImpl;
 import fi.fmi.avi.data.metar.HorizontalVisibility;
@@ -23,11 +28,10 @@ import fi.fmi.avi.data.metar.TrendForecast;
 import fi.fmi.avi.data.metar.WindShear;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class METARImpl extends AviationWeatherMessageImpl implements METAR {
+public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 
     private boolean automatedStation;
     private MetarStatus status;
-    private String aerodromeDesignator;
     private boolean ceilingAndVisibilityOk;
     private NumericMeasure airTemperature;
     private NumericMeasure dewpointTemperature;
@@ -52,7 +56,6 @@ public class METARImpl extends AviationWeatherMessageImpl implements METAR {
         super(input);
         this.automatedStation = input.isAutomatedStation();
         this.status = input.getStatus();
-        this.aerodromeDesignator = input.getAerodromeDesignator();
         this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
         this.airTemperature = new NumericMeasureImpl(input.getAirTemperature());
         this.dewpointTemperature = new NumericMeasureImpl(input.getDewpointTemperature());
@@ -109,23 +112,6 @@ public class METARImpl extends AviationWeatherMessageImpl implements METAR {
     @Override
     public void setStatus(final MetarStatus status) {
         this.status = status;
-    }
-
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#getAerodromeDesignator()
-     */
-    @Override
-    public String getAerodromeDesignator() {
-        return aerodromeDesignator;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#setAerodromeDesignator(java.lang.String)
-     */
-    @Override
-    public void setAerodromeDesignator(final String aerodromeDesignator) {
-        this.aerodromeDesignator = aerodromeDesignator;
     }
 
     /* (non-Javadoc)
@@ -396,4 +382,87 @@ public class METARImpl extends AviationWeatherMessageImpl implements METAR {
     public void setColorState(final ColorState colorState) {
         this.colorState = colorState;
     }
+
+	@Override
+	public Set<String> getUnresolvedRunwayDirectionDesignators() {
+		Set<String> retval = new HashSet<>();
+		if (this.runwayStates != null) {
+			for (RunwayState rws:this.runwayStates) {
+				if (rws.getRunwayDirection() != null && !rws.getRunwayDirection().isResolved()) {
+					retval.add(rws.getRunwayDirection().getDesignator());
+				}
+			}
+		}
+		if (this.runwayVisualRanges != null) {
+			for (RunwayVisualRange rvr:this.runwayVisualRanges) {
+				if (rvr.getRunwayDirection() != null && !rvr.getRunwayDirection().isResolved()) {
+					retval.add(rvr.getRunwayDirection().getDesignator());
+				}
+			}
+		}
+		if (this.windShear != null) {
+			for (RunwayDirection rwd:this.windShear.getRunwayDirections()) {
+				if (!rwd.isResolved()){
+					retval.add(rwd.getDesignator());
+				}
+			}
+		}
+		return retval;
+	}
+
+	@Override
+	public void amendRunwayDirectionInfo(RunwayDirection fullInfo) {
+		if (this.getAerodrome() == null) {
+			throw new IllegalStateException("Set target aerodrome before amending runway direction info");
+		}
+		if (fullInfo.getAssociatedAirportHeliport() != null && this.getAerodrome().getDesignator().equals(fullInfo.getAssociatedAirportHeliport().getDesignator())) {
+			if (this.runwayStates != null) {
+				for (RunwayState rws:this.runwayStates) {
+					if (rws.getRunwayDirection() != null && !rws.getRunwayDirection().getDesignator().equals(fullInfo.getDesignator())) {
+						rws.setRunwayDirection(fullInfo);
+					}
+				}
+			}
+			if (this.runwayVisualRanges != null) {
+				for (RunwayVisualRange rvr:this.runwayVisualRanges) {
+					if (rvr.getRunwayDirection() != null && !rvr.getRunwayDirection().getDesignator().equals(fullInfo.getDesignator())) {
+						rvr.setRunwayDirection(fullInfo);
+					}
+				}
+			}
+			if (this.windShear != null) {
+				List<RunwayDirection> amendedList = new ArrayList<>();
+				for (RunwayDirection rwd:this.windShear.getRunwayDirections()) {
+					if (rwd.getDesignator().equals(fullInfo.getDesignator())){
+						amendedList.add(fullInfo);
+					} else {
+						amendedList.add(rwd);
+					}
+				}
+				this.windShear.setRunwayDirections(amendedList);
+			}
+		}
+	}
+	
+	protected void syncAerodromeInfo(final Aerodrome fullInfo) {
+		if (this.runwayStates != null) {
+			for (RunwayState rws:this.runwayStates) {
+				if (rws.getRunwayDirection() != null) {
+					rws.getRunwayDirection().setAssociatedAirportHeliport(fullInfo);
+				}
+			}
+		}
+		if (this.runwayVisualRanges != null) {
+			for (RunwayVisualRange rvr:this.runwayVisualRanges) {
+				if (rvr.getRunwayDirection() != null) {
+					rvr.getRunwayDirection().setAssociatedAirportHeliport(fullInfo);
+				}
+			}
+		}
+		if (this.windShear != null) {
+			for (RunwayDirection rwd:this.windShear.getRunwayDirections()) {
+				rwd.setAssociatedAirportHeliport(fullInfo);
+			}
+		}
+	}
 }

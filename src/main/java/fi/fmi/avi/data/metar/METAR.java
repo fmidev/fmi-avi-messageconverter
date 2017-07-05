@@ -3,17 +3,15 @@ package fi.fmi.avi.data.metar;
 import java.util.List;
 
 import fi.fmi.avi.data.AviationCodeListUser;
-import fi.fmi.avi.data.AviationWeatherMessage;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.RunwaySpecificWeatherMessage;
 import fi.fmi.avi.data.Weather;
 
-public interface METAR extends AviationWeatherMessage, AviationCodeListUser {
+public interface METAR extends RunwaySpecificWeatherMessage, AviationCodeListUser {
 
     boolean isAutomatedStation();
 
     MetarStatus getStatus();
-
-    String getAerodromeDesignator();
 
     boolean isCeilingAndVisibilityOk();
 
@@ -56,8 +54,6 @@ public interface METAR extends AviationWeatherMessage, AviationCodeListUser {
     void setAutomatedStation(boolean automatedStation);
 
     void setStatus(MetarStatus status);
-
-    void setAerodromeDesignator(String aerodromeDesignator);
 
     void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
 

@@ -4,7 +4,7 @@ import java.util.Set;
 
 /**
  * AviMessageConverter converts an aviation weather message from one type to another.
- * Not that not all conversions are lossles.
+ * Not that not all conversions are lossless.
  *
  * Example:
  * <pre>
@@ -53,6 +53,14 @@ public interface AviMessageConverter {
      */
     <S, T> ConversionResult<T> convertMessage(S input, ConversionSpecification<S, T> spec, ConversionHints hints);
     
+    /**
+     * 
+     * @param spec
+     * @param converter
+     */
+    public <S, T> void setMessageSpecificConverter(ConversionSpecification<S, T> spec, AviMessageSpecificConverter<S, T> converter);
+    	
+ 
     /**
      * Returns all the {@link ConversionSpecification}s supported by this 
      * AviMessageConverter implementation.

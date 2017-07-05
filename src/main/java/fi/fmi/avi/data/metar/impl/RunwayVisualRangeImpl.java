@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.RunwayDirection;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
 import fi.fmi.avi.data.metar.RunwayVisualRange;
 
@@ -15,7 +16,7 @@ import fi.fmi.avi.data.metar.RunwayVisualRange;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RunwayVisualRangeImpl implements RunwayVisualRange {
 
-    private String runwayDirectionDesignator;
+    private RunwayDirection runwayDirection;
     private NumericMeasure meanRVR;
     private NumericMeasure varyingMinRVR;
     private NumericMeasure varyingMaxRVR;
@@ -28,7 +29,7 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     }
 
     public RunwayVisualRangeImpl(final RunwayVisualRange input) {
-        this.runwayDirectionDesignator = input.getRunwayDirectionDesignator();
+        this.runwayDirection = input.getRunwayDirection();
         this.meanRVR = new NumericMeasureImpl(input.getMeanRVR());
         this.meanRVROperator = input.getMeanRVROperator();
         this.minRVROperator = input.getVaryingRVRMinimumOperator();
@@ -37,11 +38,11 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayVisualRange#getRunwayDirectionDesignator()
+     * @see fi.fmi.avi.data.RunwayVisualRange#getRunwayDirection()
      */
     @Override
-    public String getRunwayDirectionDesignator() {
-        return runwayDirectionDesignator;
+    public RunwayDirection getRunwayDirection() {
+        return runwayDirection;
     }
 
     /* (non-Javadoc)
@@ -89,11 +90,11 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayVisualRange#setRunwayDirectionDesignator(java.lang.String)
+     * @see fi.fmi.avi.data.RunwayVisualRange#setRunwayDirection()
      */
     @Override
-    public void setRunwayDirectionDesignator(final String runwayDirectionDesignator) {
-        this.runwayDirectionDesignator = runwayDirectionDesignator;
+    public void setRunwayDirection(final RunwayDirection runwayDirection) {
+        this.runwayDirection = runwayDirection;
     }
 
     /* (non-Javadoc)

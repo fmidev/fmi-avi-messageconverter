@@ -2,6 +2,7 @@ package fi.fmi.avi.data.metar;
 
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.RunwayDirection;
 
 public interface RunwayState extends AviationCodeListUser {
 
@@ -19,7 +20,7 @@ public interface RunwayState extends AviationCodeListUser {
     
     boolean isRunwayNotOperational();
 
-    String getRunwayDirectionDesignator();
+    RunwayDirection getRunwayDirection();
 
     RunwayDeposit getDeposit();
 
@@ -48,7 +49,7 @@ public interface RunwayState extends AviationCodeListUser {
     
     void setRunwayNotOperational(boolean notOperational);
 
-    void setRunwayDirectionDesignator(String runwayDirectionDesignator);
+    void setRunwayDirection(RunwayDirection runwayDirection);
 
     void setDeposit(RunwayDeposit deposit);
 

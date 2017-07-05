@@ -2,10 +2,11 @@ package fi.fmi.avi.data.metar;
 
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.RunwayDirection;
 
 public interface RunwayVisualRange extends AviationCodeListUser {
 
-    String getRunwayDirectionDesignator();
+    RunwayDirection getRunwayDirection();
 
     NumericMeasure getMeanRVR();
 
@@ -22,7 +23,7 @@ public interface RunwayVisualRange extends AviationCodeListUser {
     VisualRangeTendency getPastTendency();
 
 
-    void setRunwayDirectionDesignator(String runwayDirectionDesignator);
+    void setRunwayDirection(RunwayDirection runwayDirection);
 
     void setMeanRVR(NumericMeasure meanRVR);
 
