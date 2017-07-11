@@ -1,5 +1,6 @@
 package fi.fmi.avi.data.taf.impl;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,5 +39,28 @@ public class TAFBaseForecastImpl extends TAFForecastImpl implements TAFBaseForec
     public void setTemperatures(final List<TAFAirTemperatureForecast> temperatures) {
         this.temperatures = temperatures;
     }
+
+	@Override
+	public void amendTimeReferences(ZonedDateTime referenceTime) {
+		if (this.temperatures != null) {
+			for (TAFAirTemperatureForecast fct:this.temperatures) {
+				if (!fct.areTimeReferencesResolved()) {
+					fct.amendTimeReferences(referenceTime);
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean areTimeReferencesResolved() {
+		if (this.temperatures != null) {
+			for (TAFAirTemperatureForecast fct:this.temperatures) {
+				if (!fct.areTimeReferencesResolved()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 }

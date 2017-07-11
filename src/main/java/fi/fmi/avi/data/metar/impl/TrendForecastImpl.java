@@ -1,5 +1,6 @@
 package fi.fmi.avi.data.metar.impl;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import fi.fmi.avi.data.metar.TrendTimeGroups;
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TrendForecastImpl extends AviationWeatherMessageImpl implements TrendForecast {
+public class TrendForecastImpl implements TrendForecast {
 
     private TrendTimeGroups timeGroups;
     private boolean ceilingAndVisibilityOk;
@@ -110,7 +111,7 @@ public class TrendForecastImpl extends AviationWeatherMessageImpl implements Tre
 
     @Override
     public List<String> getForecastWeatherCodes() {
-        return getAsWeatherCodes(this.forecastWeather);
+        return AviationWeatherMessageImpl.getAsWeatherCodes(this.forecastWeather);
     }
 
     @Override
@@ -221,4 +222,20 @@ public class TrendForecastImpl extends AviationWeatherMessageImpl implements Tre
     public void setColorState(final ColorState colorState) {
         this.colorState = colorState;
     }
+
+	@Override
+	public void amendTimeReferences(final ZonedDateTime issueTime) {
+		if (this.timeGroups != null) {
+			this.timeGroups.amendTimeReferences(issueTime);
+		}
+	}
+
+	@Override
+	public boolean areTimeReferencesResolved() {
+		if (this.timeGroups != null) {
+			return this.timeGroups.areTimeReferencesResolved();
+		} else {
+			return false;
+		}
+	}
 }

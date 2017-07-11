@@ -1,5 +1,7 @@
 package fi.fmi.avi.data.taf;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import fi.fmi.avi.data.AerodromeWeatherMessage;
@@ -15,10 +17,18 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
     int getValidityStartDayOfMonth();
 
     int getValidityStartHour();
+    
+    String getPartialValidityStartTime();
+    
+    ZonedDateTime getValidityStartTime();
 
     int getValidityEndDayOfMonth();
 
     int getValidityEndHour();
+    
+    String getPartialValidityEndTime();
+    
+    ZonedDateTime getValidityEndTime();
 
     TAFBaseForecast getBaseForecast();
 
@@ -26,16 +36,25 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     TAF getReferredReport();
 
+
     void setStatus(TAFStatus status);
 
-    void setValidityStartDayOfMonth(int dayOfMonth);
+    void setPartialValidityStartTime(final String time);
+    
+    void setPartialValidityStartTime(final int day, final int hour);
+    
+    void setValidityStartTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone);
 
-    void setValidityStartHour(int hour);
+    void setValidityStartTime(final ZonedDateTime time);
+    
+    void setPartialValidityEndTime(final String time);
+    
+    void setPartialValidityEndTime(final int day, final int hour);
+    
+    void setValidityEndTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone);
 
-    void setValidityEndDayOfMonth(int dayOfMonth);
-
-    void setValidityEndHour(int hour);
-
+    void setValidityEndTime(final ZonedDateTime time);
+    
     void setBaseForecast(TAFBaseForecast baseForecast);
 
     void setChangeForecasts(List<TAFChangeForecast> changeForecasts);

@@ -1,14 +1,16 @@
 package fi.fmi.avi.data.metar;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.CloudForecast;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.TimeReferenceAmendable;
 import fi.fmi.avi.data.Weather;
 
 
-public interface TrendForecast extends AviationCodeListUser {
+public interface TrendForecast extends AviationCodeListUser, TimeReferenceAmendable {
 
     TrendTimeGroups getTimeGroups();
 
@@ -34,7 +36,7 @@ public interface TrendForecast extends AviationCodeListUser {
 
     ColorState getColorState();
 
-
+    
     void setTimeGroups(TrendTimeGroups timeGroups);
 
     void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);

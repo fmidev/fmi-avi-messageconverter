@@ -1,12 +1,16 @@
 package fi.fmi.avi.data.taf;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import fi.fmi.avi.data.AviationCodeListUser;
 import fi.fmi.avi.data.NumericMeasure;
+import fi.fmi.avi.data.TimeReferenceAmendable;
 
 /**
  * Created by rinne on 30/01/15.
  */
-public interface TAFAirTemperatureForecast extends AviationCodeListUser {
+public interface TAFAirTemperatureForecast extends AviationCodeListUser, TimeReferenceAmendable {
 
     NumericMeasure getMaxTemperature();
 
@@ -14,23 +18,43 @@ public interface TAFAirTemperatureForecast extends AviationCodeListUser {
 
     int getMaxTemperatureHour();
 
+    String getPartialMaxTemperatureTime();
+    
+    ZonedDateTime getMaxTemperatureTime();
+    
     NumericMeasure getMinTemperature();
 
     int getMinTemperatureDayOfMonth();
 
     int getMinTemperatureHour();
+    
+    String getPartialMinTemperatureTime();
+    
+    ZonedDateTime getMinTemperatureTime();
 
-
-    void setMaxTemperature(NumericMeasure maxTemperature);
-
-    void setMaxTemperatureDayOfMonth(int maxTemperatureDayOfMonth);
-
-    void setMaxTemperatureHour(int maxTemperatureHour);
 
     void setMinTemperature(NumericMeasure maxTemperature);
+    
+    void setPartialMinTemperatureTime(final String time);
+    
+    void setPartialMinTemperatureTime(final int hour);
+    
+    void setPartialMinTemperatureTime(final int day, final int hour);
+    
+    void setMinTemperatureTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final ZoneId timeZone);
 
-    void setMinTemperatureDayOfMonth(int maxTemperatureDayOfMonth);
+    void setMinTemperatureTime(final ZonedDateTime time);
+    
+    void setMaxTemperature(NumericMeasure maxTemperature);
+    
+    void setPartialMaxTemperatureTime(final String time);
+    
+    void setPartialMaxTemperatureTime(final int hour);
+    
+    void setPartialMaxTemperatureTime(final int day, final int hour);
+    
+    void setMaxTemperatureTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final ZoneId timeZone);
 
-    void setMinTemperatureHour(int maxTemperatureHour);
+    void setMaxTemperatureTime(final ZonedDateTime time);
 
 }

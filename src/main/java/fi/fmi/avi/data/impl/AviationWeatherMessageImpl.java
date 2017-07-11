@@ -6,6 +6,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fi.fmi.avi.data.AviationWeatherMessage;
 import fi.fmi.avi.data.Weather;
@@ -15,11 +17,11 @@ import fi.fmi.avi.data.Weather;
  */
 public abstract class AviationWeatherMessageImpl implements AviationWeatherMessage {
 
-    protected static List<String> getAsWeatherCodes(final List<Weather> weatherList) {
+    public static List<String> getAsWeatherCodes(final List<Weather> weatherList) {
         return getAsWeatherCodes(weatherList, null);
     }
 
-    protected static List<String> getAsWeatherCodes(final List<Weather> weatherList, final String prefix) {
+    public static List<String> getAsWeatherCodes(final List<Weather> weatherList, final String prefix) {
         List<String> retval = null;
         if (weatherList != null) {
             retval = new ArrayList<>(weatherList.size());
@@ -33,91 +35,112 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
         }
         return retval;
     }
-
+    
+    private static final Pattern DAY_HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})([0-9]{2})([A-Z]*)");
+    
     private int issueDayOfMonth = -1;
     private int issueHour = -1;
     private int issueMinute = -1;
-    private String timeZone;
+    
+    private ZoneId timeZone;
+    private ZonedDateTime fullyResolvedIssueTime;
+    
     private List<String> remarks;
 
     public AviationWeatherMessageImpl() {
     }
 
     public AviationWeatherMessageImpl(AviationWeatherMessage input) {
-        this.issueDayOfMonth = input.getIssueDayOfMonth();
-        this.issueHour = input.getIssueHour();
-        this.issueMinute = input.getIssueMinute();
-        this.timeZone = input.getIssueTimeZone();
+    	if (input.getIssueTime() != null) {
+    		this.setIssueTime(input.getIssueTime());
+    	} else {
+    		this.fullyResolvedIssueTime = null;
+    		this.setPartialIssueTime(input.getPartialIssueTime());
+    	}
         this.remarks = input.getRemarks();
     }
-
-    /* (non-Javadoc)
-    * @see fi.fmi.avi.data.METAR#getIssueDayOfMonth()
-    */
+    
     @Override
-    public int getIssueDayOfMonth() {
-        return issueDayOfMonth;
+    public void setPartialIssueTime(final String time) {
+    	if (time == null) {
+    		this.issueDayOfMonth = -1;
+    		this.issueHour = -1;
+    		this.issueMinute = -1;
+    		this.timeZone = null;
+    	} else {
+	    	Matcher m = DAY_HOUR_MINUTE_PATTERN.matcher(time);
+	    	if (m.matches()) {
+	    		int day = Integer.parseInt(m.group(1));
+	    		int hour = Integer.parseInt(m.group(2));
+	    		int minute = Integer.parseInt(m.group(3));
+	    		if (timeOk(day, hour, minute)) {
+	    			this.issueDayOfMonth = day;
+	    			this.issueHour = hour;
+	    			this.issueMinute = minute;
+	    		} else {
+	    			throw new IllegalArgumentException("Invalid day, hour and/or minute values in '" + time + "'");
+	    		}
+	    		try {
+	    			this.timeZone = ZoneId.of(m.group(4));
+	    		} catch (DateTimeException dte) {
+	    			throw new IllegalArgumentException("Time zone id '" + m.group(4) + "' is unknown");
+	    		}
+	    	} else {
+	    		throw new IllegalArgumentException("Time '" + time + "' is not in format 'ddHHmmz'");
+	    	}
+    	}
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#setIssueDayOfMonth(int)
+     * @see fi.fmi.avi.data.METAR#setIssueTime()
      */
     @Override
-    public void setIssueDayOfMonth(final int dayOfMonth) {
-        this.issueDayOfMonth = dayOfMonth;
+    public void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute) {
+        this.setPartialIssueTime(dayOfMonth, hour, minute, ZoneId.of("UTC"));
     }
-
+    
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#getIssueHour()
+     * @see fi.fmi.avi.data.METAR#setIssueTime(int, int, int, String)
      */
     @Override
-    public int getIssueHour() {
-        return issueHour;
+    public void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute, final ZoneId timeZoneID) {
+    	if (timeOk(dayOfMonth, hour, minute)) {
+    		this.issueDayOfMonth = dayOfMonth;
+    		this.issueHour = hour;
+    		this.issueMinute = minute;
+    		this.timeZone = timeZoneID;
+            this.fullyResolvedIssueTime = null;
+    	} else {
+    		throw new IllegalArgumentException("Invalid day, hour and/or minute values");
+    	}
     }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#setIssueHour(int)
-     */
+    
     @Override
-    public void setIssueHour(final int hour) {
-        this.issueHour = hour;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#getIssueMinute()
-     */
+	public void setIssueTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZoneID) {
+		this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour, minute), timeZoneID));
+	}
+    
     @Override
-    public int getIssueMinute() {
-        return issueMinute;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#setIssueMinute(int)
-     */
-    @Override
-    public void setIssueMinute(final int minute) {
-        this.issueMinute = minute;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#getTimeZone()
-     */
-    @Override
-    public String getIssueTimeZone() {
-        return timeZone;
+    public void setIssueTime(final ZonedDateTime issueTime) {
+    	this.fullyResolvedIssueTime = issueTime;
+		this.issueDayOfMonth = this.fullyResolvedIssueTime.getDayOfMonth();
+		this.issueHour = this.fullyResolvedIssueTime.getHour();
+		this.issueMinute = this.fullyResolvedIssueTime.getMinute();
+		this.timeZone = issueTime.getZone();
     }
 
     @Override
-    public ZonedDateTime getIssueTimeIn(final int month, final int year) throws DateTimeException {
-        return ZonedDateTime.of(LocalDateTime.of(year, month, this.issueDayOfMonth, this.issueHour, this.issueMinute), ZoneId.of(this.timeZone));
+    public String getPartialIssueTime() {
+    	if (this.issueDayOfMonth > -1 && this.issueHour > -1 && this.issueMinute > -1 && this.timeZone != null) {
+			return String.format("%02d%02d%02d%s", this.issueDayOfMonth, this.issueHour, this.issueMinute, this.timeZone);
+		} else {
+			return null;
+		}
     }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#setTimeZone(java.lang.String)
-     */
+    
     @Override
-    public void setIssueTimeZone(final String timeZone) {
-        this.timeZone = timeZone;
+    public ZonedDateTime getIssueTime() {
+        return this.fullyResolvedIssueTime;
     }
 
     @Override
@@ -128,6 +151,35 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     @Override
     public void setRemarks(final List<String> remarks) {
         this.remarks = remarks;
+    }
+    
+    @Override
+    public void amendTimeReferences(final ZonedDateTime referenceTime) {
+    	try {
+    		this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, this.issueHour, this.issueMinute), this.timeZone));
+    	} catch (DateTimeException dte) {
+    		throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be amended with month '" + referenceTime.getMonth() + "'", dte);
+    	}
+    }
+    
+    @Override
+    public boolean areTimeReferencesResolved() {
+    	return this.fullyResolvedIssueTime != null;
+    }
+    
+    private boolean timeOk(final int day, final int hour, final int minute) {
+    	if (day > 31) {
+			return false;
+    	}
+		if (hour > 23) {
+			return false;
+		}
+		if (minute > 59) {
+			return false;
+		} else if (hour == 24 && minute != 0) {
+			return false;
+		}
+		return true;
     }
 
 }

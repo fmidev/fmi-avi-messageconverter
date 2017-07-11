@@ -1,27 +1,53 @@
 package fi.fmi.avi.data.metar;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
+import fi.fmi.avi.data.TimeReferenceAmendable;
+
 /**
  * Created by rinne on 20/04/17.
  */
-public interface TrendTimeGroups {
-    int getFromHour();
+public interface TrendTimeGroups extends TimeReferenceAmendable {
+    
+	String getPartialStartTime();
+	
+	int getStartHour();
+     
+	int getStartMinute();
 
-    int getFromMinute();
-
-    int getToHour();
-
-    int getToMinute();
-
+    ZonedDateTime getStartTime();
+    
+    String getPartialEndTime();
+    
+    int getEndHour();
+    
+    int getEndMinute();
+    
+    ZonedDateTime getEndTime();
+    
     boolean isSingleInstance();
 
-    void setFromHour(final int hour);
 
-    void setFromMinute(final int minute);
+    void setPartialStartTime(final String time);
+    
+    void setPartialStartTime(final int hour, final int minute);
+    
+    void setStartTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone);
 
-    void setToHour(final int hour);
+    void setStartTime(final ZonedDateTime time);
+    
+    void setPartialEndTime(final String time);
 
-    void setToMinute(final int minute);
+    void setPartialEndTime(final int hour, final int minute);
 
+    void setEndTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone);
+    
+    void setEndTime(final ZonedDateTime time);
+    
     void setSingleInstance(final boolean isInstance);
 
+    public boolean hasStartTime();
+	
+    public boolean hasEndTime();
 }

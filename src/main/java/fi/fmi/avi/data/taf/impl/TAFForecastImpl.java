@@ -20,8 +20,8 @@ import fi.fmi.avi.data.taf.TAFSurfaceWind;
  * Created by rinne on 30/01/15.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class TAFForecastImpl extends AviationWeatherMessageImpl implements TAFForecast {
-
+public abstract class TAFForecastImpl implements TAFForecast {
+	
     private boolean ceilingAndVisibilityOk;
     private boolean noSignificantWeather;
     private boolean noSignificantCloud;
@@ -30,7 +30,6 @@ public abstract class TAFForecastImpl extends AviationWeatherMessageImpl impleme
     private TAFSurfaceWind surfaceWind;
     private List<Weather> forecastWeather;
     private CloudForecast cloud;
-
 
     public TAFForecastImpl(){
     }
@@ -94,7 +93,7 @@ public abstract class TAFForecastImpl extends AviationWeatherMessageImpl impleme
     }
 
     public List<String> getForecastWeatherCodes() {
-        return getAsWeatherCodes(this.forecastWeather);
+        return AviationWeatherMessageImpl.getAsWeatherCodes(this.forecastWeather);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package fi.fmi.avi.data.metar.impl;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.data.Aerodrome;
 import fi.fmi.avi.data.NumericMeasure;
 import fi.fmi.avi.data.RunwayDirection;
-import fi.fmi.avi.data.RunwaySpecificWeatherMessage;
 import fi.fmi.avi.data.Weather;
 import fi.fmi.avi.data.impl.AerodromeWeatherMessageImpl;
 import fi.fmi.avi.data.impl.NumericMeasureImpl;
@@ -444,6 +444,33 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 		}
 	}
 	
+	@Override
+	public void amendTimeReferences(final ZonedDateTime referenceTime) {
+		super.amendTimeReferences(referenceTime);
+		if (this.trends != null) {
+			for (TrendForecast fct:this.trends) {
+				if (!fct.areTimeReferencesResolved()) {
+					fct.amendTimeReferences(this.getIssueTime());
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean areTimeReferencesResolved() {
+		boolean retval = super.areTimeReferencesResolved();
+		if (retval && this.trends != null) {
+			for (TrendForecast fct:this.trends) {
+				if (!fct.areTimeReferencesResolved()) {
+					retval = false;
+					break;
+				}
+			}
+		}
+		return retval;
+	}
+	
+	
 	protected void syncAerodromeInfo(final Aerodrome fullInfo) {
 		if (this.runwayStates != null) {
 			for (RunwayState rws:this.runwayStates) {
@@ -465,4 +492,8 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 			}
 		}
 	}
+
+	
+	
+	
 }

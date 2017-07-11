@@ -1,6 +1,6 @@
 package fi.fmi.avi.data;
 
-import java.time.DateTimeException;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -11,56 +11,30 @@ import java.util.List;
  * data, a fully resolved issue time can only be constructed by
  * providing this info externally using {@link #getIssueTimeIn(int, int)}.
  */
-public interface AviationWeatherMessage {
+public interface AviationWeatherMessage extends TimeReferenceAmendable {
 
     /**
-     * Returns the day-of-month of the message issue time.
+     * Returns the partial issue time (day of month, hour & minute) 
+     * of the message issue time in format ddHHmmz.
+     * This should always be available regardless of the message 
+     * source.
      *
-     * @return the day-of-month for the issue time
+     * @return the partial the issue time
      */
-    int getIssueDayOfMonth();
+	String getPartialIssueTime();
 
     /**
-     * Returns the hour-of-day of the message issue time.
-     *
-     * @return hour-of-day of the message issue time.
-     *
-     * @see #getIssueTimeIn(int, int)
+     * Returns the fully-resolved issue time of the message.
+     * This is only available if the complete issue time data
+     * has been provided (not all formats contain 
+     * day of month and year data).
+     * 
+     * @return the fully resolved issue time, or null if not available
+     * 
+     * @see {@link #areTimeReferencesResolved()}
+     * @see {@link #amendTimeReferences(int, int)}
      */
-    int getIssueHour();
-
-    /**
-     * Returns the minute-of-hour of the message issue time.
-     *
-     * @see #getIssueTimeIn(int, int)
-     * @return minute-of-hour of the message issue time.
-     */
-    int getIssueMinute();
-
-    /**
-     * Returns the time zone ID of the message issue time, 'Z' must be used by default.
-     *
-     * @see #getIssueTimeIn(int, int)
-     * @return time zone ID
-     */
-    String getIssueTimeZone();
-
-    /**
-     * Returns a fully resolved {@link ZonedDateTime} using the given <code>month</code>
-     * and <code>year</code> together with the issue time day-of-month, hour-of-day,
-     * minute-of-hour and timezone.
-     *
-     * @param month
-     *         month-of-year, 1-12
-     * @param year
-     *         the year
-     *
-     * @return the resolved date-time
-     *
-     * @throws DateTimeException
-     *         if the date-time cannot be created using the given values
-     */
-    ZonedDateTime getIssueTimeIn(int month, int year) throws DateTimeException;
+    ZonedDateTime getIssueTime();
 
     /**
      * Returns the remarks, if included in the message.
@@ -72,40 +46,67 @@ public interface AviationWeatherMessage {
     List<String> getRemarks();
 
     /**
-     * Sets the issue time day-of-month.
-     *
-     * @param day issue time day-of-month
+     * Sets the partial issue time as a formatted String. 
+     * To get a fully resolved issue time, 
+     * the missing month of year and year data needs to be 
+     * provided using {@link #amendTimeReferences}. 
+     * 
+     * @param time formatted as ddHHmmz (201004Z)
+     * 
+     * @see {@link #getIssueTime()}
+     * @see {@link #amendTimeReferences(int, int)}
+     * @see {@link #areTimeReferncesResolved()}
      */
-    void setIssueDayOfMonth(final int day);
-
+    void setPartialIssueTime(final String time);
+   
     /**
+     * Sets the partially resolved issue time in UTC. To get a fully resolved issue time, 
+     * the missing month-of-year and year data needs to be provided using 
+     * {@link #amendTimeReferences}. 
      *
-     * Sets the issue time hour-of-day.
-     *
+     * @param dayOfMonth issue time day-of-month
      * @param hour issue time hour-of-day
-     */
-    void setIssueHour(final int hour);
-
-    /**
-     * Sets the issue time minute-of-hour.
-     *
      * @param minute issue time minute-of-hour
+     * 
+     * @see {@link #getIssueTime()}
+     * @see {@link #amendTimeReferences(int, int)}
+     * @see {@link #areTimeReferncesResolved()}
      */
-    void setIssueMinute(final int minute);
+    void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute);
+    
+    /**
+     * 
+     * @param dayOfMonth
+     * @param hour
+     * @param minute
+     * @param timeZoneID
+     */
+    void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute, final ZoneId timeZoneID);
 
     /**
-     * Sets the issue time time zone ID.
-     * If not provided assumed to be 'Z'.
-     *
-     * @param timeZone the time zone ID
+     * 
+     * @param year
+     * @param monthOfYear
+     * @param dayOfMonth
+     * @param hour
+     * @param minute
+     * @param timeZoneID
      */
-    void setIssueTimeZone(String timeZone);
+    void setIssueTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZoneID);
 
+    /**
+     * 
+     * @param issueTime
+     */
+    void setIssueTime(final ZonedDateTime issueTime);
+    
+    
     /**
      * Sets the remarks as a List.
      *
      * @param remarks to set
      */
     void setRemarks(List<String> remarks);
+
 
 }
