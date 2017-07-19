@@ -1,0 +1,75 @@
+{
+  "status": "NORMAL",
+  "partialIssueTime": "061150Z",
+  "aerodrome": {
+    "designator": "EGXE"
+  },
+  "surfaceWind": {
+    "meanWindDirection": {
+      "value": 30.0,
+      "uom": "deg"
+    },
+    "meanWindSpeed": {
+      "value": 10.0,
+      "uom": "kt"
+    }
+  },
+  "visibility": {
+    "prevailingVisibilityOperator": "ABOVE",
+    "prevailingVisibility": {
+      "value": 10000.0,
+      "uom": "m"
+    }
+  },
+  "clouds": {
+    "layers": [
+      {
+        "amount": "FEW",
+        "base": {
+          "value": 2000.0,
+          "uom": "ft"
+        }
+      }
+    ]
+  },
+  "airTemperature": {
+    "value": 17.0,
+    "uom": "degC"
+  },
+  "dewpointTemperature": {
+    "value": 11.0,
+    "uom": "degC"
+  },
+  "altimeterSettingQNH": {
+    "value": 1014.0,
+    "uom": "hPa"
+  },
+  "colorState": "BLACKBLU",
+  "trends": [
+    {
+      "changeIndicator": "TEMPORARY_FLUCTUATIONS",
+      "prevailingVisibility": {
+        "value": 6000.0,
+        "uom": "m"
+      },
+      "forecastWeather": [
+        {
+          "code": "SHRA",
+          "description": "Showery precipitation of rain"
+        }
+      ],
+      "cloud": {
+        "layers": [
+          {
+            "amount": "SCT",
+            "base": {
+              "value": 2000.0,
+              "uom": "ft"
+            }
+          }
+        ]
+      },
+      "colorState": "BLACKWHT"
+    }
+  ]
+}

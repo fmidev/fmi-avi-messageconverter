@@ -1,0 +1,185 @@
+{
+  "status": "NORMAL",
+  "partialIssueTime": "051130Z",
+  "aerodrome": {
+     "designator": "KOKC"
+  },
+  "partialValidityTimePeriod": "051212",
+  
+  "baseForecast": {
+    "surfaceWind": {
+	  "meanWindDirection": {
+	    "value": 140.0,
+	    "uom": "deg"
+	  },
+	  "meanWindSpeed": {
+	    "value": 8.0,
+	    "uom": "kt"
+	  }
+	},
+	
+    "prevailingVisibility": {
+	  "value": 5.0,
+	  "uom": "sm"
+	},
+	"forecastWeather": [
+      {
+        "code": "BR",
+        "description": "Mist"
+      }
+    ],
+    "cloud": {
+      "layers": [
+        {
+          "amount": "BKN",
+          "base": {
+            "value": 3000.0,
+            "uom": "ft"
+          }
+        }
+      ]
+    }
+  },
+   "changeForecasts": [
+    {
+      "changeIndicator": "TEMPORARY_FLUCTUATIONS",
+      "partialValidityTimePeriod": "1316",
+      "prevailingVisibility": {
+        "value": 1.5,
+        "uom": "sm"
+      },
+      "forecastWeather": [
+        {
+          "code": "BR",
+          "description": "Mist"
+        }
+      ]
+    },
+    {
+      "changeIndicator": "FROM",
+      "partialValidityStartTime": "1600",
+      "surfaceWind": {
+        "meanWindDirection": {
+          "value": 160.0,
+          "uom": "deg"
+        },
+        "meanWindSpeed": {
+          "value": 10.0,
+          "uom": "kt"
+        }
+      },
+      
+      "prevailingVisibility": {
+        "value": 6.0,
+        "uom": "sm"
+      },
+      "prevailingVisibilityOperator": "ABOVE",
+      "cloud": {
+        "layers": [
+          {
+            "amount": "SKC"
+          }
+        ]
+      }
+    },
+    {
+      "changeIndicator": "BECOMING",
+      "partialValidityTimePeriod": "2224",
+      "surfaceWind": {
+        "meanWindDirection": {
+          "value": 200.0,
+          "uom": "deg"
+        },
+        "meanWindSpeed": {
+          "value": 13.0,
+          "uom": "kt"
+        },
+        "windGust": {
+          "value": 20.0,
+          "uom": "kt"
+        }
+      },
+      
+      "prevailingVisibility": {
+        "value": 4.0,
+        "uom": "sm"
+      },
+      "forecastWeather": [
+        {
+          "code": "SHRA",
+          "description": "Showery precipitation of rain"
+        }
+      ],
+    
+      "cloud": {
+        "layers": [
+          {
+            "amount": "OVC",
+            "base": {
+              "value": 2000.0,
+              "uom": "ft"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeIndicator": "PROBABILITY_40",
+      "partialValidityTimePeriod": "0006",
+      "prevailingVisibility": {
+        "value": 2.0,
+        "uom": "sm"
+      },
+      "forecastWeather": [
+        {
+          "code": "TSRA",
+          "description": "Thunderstorm with precipitation of rain"
+        }
+      ],
+      "cloud": {
+        "layers": [
+          {
+            "amount": "OVC",
+            "base": {
+              "value": 800.0,
+              "uom": "ft"
+            },
+            "cloudType": "CB"
+          }
+        ]
+      }
+    },
+    {
+      "changeIndicator": "BECOMING",
+      "partialValidityTimePeriod": "0608",
+      "surfaceWind": {
+        "meanWindDirection": {
+          "value": 210.0,
+          "uom": "deg"
+        },
+        "meanWindSpeed": {
+          "value": 15.0,
+          "uom": "kt"
+        }
+      },
+      
+      "prevailingVisibility": {
+        "value": 6.0,
+        "uom": "sm"
+      },
+      "prevailingVisibilityOperator": "ABOVE",
+      "noSignificantWeather": true,
+      "cloud": {
+        "layers": [
+          {
+            "amount": "SCT",
+            "base": {
+              "value": 4000.0,
+              "uom": "ft"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

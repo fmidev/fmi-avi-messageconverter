@@ -1,0 +1,51 @@
+{
+  "status": "NORMAL",
+  "partialIssueTime": "091050Z",
+  "aerodrome": {
+    "designator": "EFKK"
+  },
+  "automatedStation": true,
+  "surfaceWind": {
+    "meanWindDirection": {
+      "value": 10.0,
+      "uom": "deg"
+    },
+    "meanWindSpeed": {
+      "value": 9.0,
+      "uom": "kt"
+    },
+    "extremeClockwiseWindDirection": {
+      "value": 40.0,
+      "uom": "deg"
+    },
+    "extremeCounterClockwiseWindDirection": {
+      "value": 340.0,
+      "uom": "deg"
+    }
+  },
+  "visibility": {
+    "prevailingVisibility": {
+      "value": 10000.0,
+      "uom": "m"
+    },
+    "prevailingVisibilityOperator": "ABOVE"
+  },
+  "clouds": {
+    "layers": [
+      {
+        "amount": "FEW",
+        "base": {
+          "value": 1200.0,
+          "uom": "ft"
+        }
+      },
+      {
+        "amount": "BKN",
+        "base": {
+          "value": 4600.0,
+          "uom": "ft"
+        }
+      }
+    ]
+  }
+}

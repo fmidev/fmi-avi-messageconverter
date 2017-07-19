@@ -1,0 +1,75 @@
+{
+  "status": "NORMAL",
+  "partialIssueTime": "010550Z",
+  "aerodrome": {
+    "designator": "EFHK"
+  },
+  "surfaceWind": {
+    "meanWindDirection": {
+      "value": 210.0,
+      "uom": "deg"
+    },
+    "meanWindSpeed": {
+      "value": 18.0,
+      "uom": "kt"
+    }
+  },
+  "visibility": {
+    "prevailingVisibilityOperator": "ABOVE",
+    "prevailingVisibility": {
+      "value": 10000.0,
+      "uom": "m"
+    }
+  },
+  "presentWeather": [
+    {
+      "code": "-RA",
+      "description": "Light precipitation of rain"
+    }
+  ],
+  "clouds": {
+    "layers": [
+      {
+        "amount": "SCT",
+        "base": {
+          "value": 1300.0,
+          "uom": "ft"
+        }
+      },
+      {
+        "amount": "BKN",
+        "base": {
+          "value": 2500.0,
+          "uom": "ft"
+        }
+      }
+    ]
+  },
+  "airTemperature": {
+    "value": 3.0,
+    "uom": "degC"
+  },
+  "dewpointTemperature": {
+    "value": 0.0,
+    "uom": "degC"
+  },
+  "altimeterSettingQNH": {
+    "value": 988.0,
+    "uom": "hPa"
+  },
+  "trends": [
+    {
+      "changeIndicator": "TEMPORARY_FLUCTUATIONS",
+      "prevailingVisibility": {
+        "value": 4000.0,
+        "uom": "m"
+      },
+      "forecastWeather": [
+        {
+          "code": "RASN",
+          "description": "Precipitation of rain and snow"
+        }
+      ]
+    }
+  ]
+}

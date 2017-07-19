@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>fmi-avi-messageconverter</artifactId>
+    <groupId>fi.fmi.avi.converter</groupId>
+    <version>1.7.1-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>fmi-avi-messageconverter-tac</artifactId>
+  <version>1.7.1-SNAPSHOT</version>
+
+  <dependencies>
+    <dependency>
+      <groupId>fi.fmi.avi.converter</groupId>
+      <artifactId>fmi-avi-messageconverter-base</artifactId>
+      <version>1.7.1-SNAPSHOT</version>
+    </dependency>
+
+  </dependencies>
+
+
+</project>

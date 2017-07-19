@@ -1,0 +1,57 @@
+{
+  "status": "NORMAL",
+  "partialIssueTime": "201004Z",
+  "aerodrome": {
+    "designator": "KORD"
+  },
+  "automatedStation": false,
+  "surfaceWind": {
+    "meanWindDirection": {
+      "value": 50.0,
+      "uom": "deg"
+    },
+    "meanWindSpeed": {
+      "value": 8.0,
+      "uom": "kt"
+    }
+  },
+  "visibility": {
+    "prevailingVisibility": {
+      "value": 1.25,
+      "uom": "sm"
+    }
+  },
+  "presentWeather": [
+    {
+      "code": "-DZ",
+      "description": "Light precipitation of drizzle"
+    },
+    {
+      "code": "BR",
+      "description": "Mist"
+    }
+  ],
+  "clouds": {
+    "layers": [
+      {
+        "amount": "OVC",
+        "base": {
+          "value": 600.0,
+          "uom": "ft"
+        }
+      }
+    ]
+  },
+  "airTemperature": {
+    "value": 3.0,
+    "uom": "degC"
+  },
+  "dewpointTemperature": {
+    "value": 3.0,
+    "uom": "degC"
+  },
+  "altimeterSettingQNH": {
+    "value": 2964.0,
+    "uom": "in Hg"
+  }
+}

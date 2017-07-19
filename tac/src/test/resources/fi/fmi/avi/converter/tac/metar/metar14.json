@@ -1,0 +1,54 @@
+{
+  "status": "NORMAL",
+  "partialIssueTime": "181750Z",
+  "aerodrome": {
+    "designator": "EFOU"
+  },
+  "automatedStation": true,
+  "surfaceWind": {
+    "meanWindDirection": {
+      "value": 180.0,
+      "uom": "deg"
+    },
+    "meanWindSpeed": {
+      "value": 7.0,
+      "uom": "kt"
+    }
+  },
+  "visibility": {
+    "prevailingVisibility": {
+      "value": 10000.0,
+      "uom": "m"
+    },
+    "prevailingVisibilityOperator": "ABOVE"
+  },
+  "clouds": {
+    "layers": [
+      {
+        "amount": "OVC",
+        "base": {
+          "value": 1000.0,
+          "uom": "ft"
+        }
+      }
+    ]
+  },
+  "airTemperature": {
+    "value": 2.0,
+    "uom": "degC"
+  },
+  "dewpointTemperature": {
+    "value": 1.0,
+    "uom": "degC"
+  },
+  "altimeterSettingQNH": {
+    "value": 1015.0,
+    "uom": "hPa"
+  },
+  "runwayStates": [
+    {
+      "allRunways": true,
+      "snowClosure": true
+    }
+  ]
+}
