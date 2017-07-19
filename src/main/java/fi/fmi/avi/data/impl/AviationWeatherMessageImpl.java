@@ -4,10 +4,16 @@ import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.util.Converter;
 
 import fi.fmi.avi.data.AviationWeatherMessage;
 import fi.fmi.avi.data.Weather;
@@ -15,6 +21,7 @@ import fi.fmi.avi.data.Weather;
 /**
  * Created by rinne on 05/06/17.
  */
+
 public abstract class AviationWeatherMessageImpl implements AviationWeatherMessage {
 
     public static List<String> getAsWeatherCodes(final List<Weather> weatherList) {
@@ -36,7 +43,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
         return retval;
     }
     
-    private static final Pattern DAY_HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})([0-9]{2})([A-Z]*)");
+    private static final Pattern DAY_HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})([0-9]{2})([A-Z]+)");
     
     private int issueDayOfMonth = -1;
     private int issueHour = -1;
@@ -63,25 +70,16 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     @Override
     public void setPartialIssueTime(final String time) {
     	if (time == null) {
-    		this.issueDayOfMonth = -1;
-    		this.issueHour = -1;
-    		this.issueMinute = -1;
-    		this.timeZone = null;
+    		this.setPartialIssueTime(-1, -1, -1, null);
     	} else {
 	    	Matcher m = DAY_HOUR_MINUTE_PATTERN.matcher(time);
 	    	if (m.matches()) {
 	    		int day = Integer.parseInt(m.group(1));
 	    		int hour = Integer.parseInt(m.group(2));
 	    		int minute = Integer.parseInt(m.group(3));
-	    		if (timeOk(day, hour, minute)) {
-	    			this.issueDayOfMonth = day;
-	    			this.issueHour = hour;
-	    			this.issueMinute = minute;
-	    		} else {
-	    			throw new IllegalArgumentException("Invalid day, hour and/or minute values in '" + time + "'");
-	    		}
 	    		try {
-	    			this.timeZone = ZoneId.of(m.group(4));
+	    			ZoneId tz = ZoneId.of(m.group(4));
+	    			this.setPartialIssueTime(day,hour,minute, tz);
 	    		} catch (DateTimeException dte) {
 	    			throw new IllegalArgumentException("Time zone id '" + m.group(4) + "' is unknown");
 	    		}
@@ -96,7 +94,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
      */
     @Override
     public void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute) {
-        this.setPartialIssueTime(dayOfMonth, hour, minute, ZoneId.of("UTC"));
+        this.setPartialIssueTime(dayOfMonth, hour, minute, ZoneId.of("Z"));
     }
     
     /* (non-Javadoc)
@@ -109,7 +107,15 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     		this.issueHour = hour;
     		this.issueMinute = minute;
     		this.timeZone = timeZoneID;
-            this.fullyResolvedIssueTime = null;
+    		if (this.fullyResolvedIssueTime != null) {
+    			if (this.fullyResolvedIssueTime.getDayOfMonth() != dayOfMonth 
+    					|| this.fullyResolvedIssueTime.getHour() != hour 
+    					|| this.fullyResolvedIssueTime.getMinute() != minute 
+    					|| !this.fullyResolvedIssueTime.getZone().equals(timeZoneID)) {
+    				 this.fullyResolvedIssueTime = null;
+    			}
+    		}
+           
     	} else {
     		throw new IllegalArgumentException("Invalid day, hour and/or minute values");
     	}
@@ -128,6 +134,20 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
 		this.issueMinute = this.fullyResolvedIssueTime.getMinute();
 		this.timeZone = issueTime.getZone();
     }
+    
+    @JsonProperty("issueTime")
+    public String getIssueTimeISO() {
+    	if (this.fullyResolvedIssueTime != null) {
+    		return this.fullyResolvedIssueTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    	} else {
+    		return null;
+    	}
+    }
+    
+    @JsonProperty("issueTime")
+    public void setIssueTimeISO(final String time) {
+    	this.setIssueTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+    }
 
     @Override
     public String getPartialIssueTime() {
@@ -139,10 +159,11 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
     
     @Override
+    @JsonIgnore
     public ZonedDateTime getIssueTime() {
         return this.fullyResolvedIssueTime;
     }
-
+    
     @Override
     public List<String> getRemarks() {
         return this.remarks;
@@ -155,10 +176,16 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     
     @Override
     public void amendTimeReferences(final ZonedDateTime referenceTime) {
-    	try {
-    		this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, this.issueHour, this.issueMinute), this.timeZone));
-    	} catch (DateTimeException dte) {
-    		throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be amended with month '" + referenceTime.getMonth() + "'", dte);
+    	if (this.issueDayOfMonth > -1 && this.issueHour > -1 && this.issueMinute > -1 && this.timeZone != null) {
+	    	try {
+	    		if (this.issueHour == 24 && this.issueMinute == 0) {
+	    			this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, 0, 0), this.timeZone).plusDays(1));
+	    		} else {
+	    			this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, this.issueHour, this.issueMinute), this.timeZone));
+	    		}
+	    	} catch (DateTimeException dte) {
+	    		throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be amended with month '" + referenceTime.getMonth() + "'", dte);
+	    	}
     	}
     }
     
@@ -171,15 +198,15 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     	if (day > 31) {
 			return false;
     	}
-		if (hour > 23) {
-			return false;
-		}
-		if (minute > 59) {
+		if (hour > 24) {
 			return false;
 		} else if (hour == 24 && minute != 0) {
 			return false;
 		}
+		if (minute > 59) {
+			return false;
+		}
 		return true;
     }
-
+    
 }

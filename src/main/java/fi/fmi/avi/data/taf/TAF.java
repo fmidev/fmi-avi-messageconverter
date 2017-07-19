@@ -14,22 +14,23 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     TAFStatus getStatus();
 
+    String getPartialValidityTimePeriod();
+    
+    
     int getValidityStartDayOfMonth();
 
     int getValidityStartHour();
     
-    String getPartialValidityStartTime();
-    
     ZonedDateTime getValidityStartTime();
+    
 
     int getValidityEndDayOfMonth();
 
     int getValidityEndHour();
     
-    String getPartialValidityEndTime();
-    
     ZonedDateTime getValidityEndTime();
 
+    
     TAFBaseForecast getBaseForecast();
 
     List<TAFChangeForecast> getChangeForecasts();
@@ -39,21 +40,22 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     void setStatus(TAFStatus status);
 
-    void setPartialValidityStartTime(final String time);
     
-    void setPartialValidityStartTime(final int day, final int hour);
+    void setPartialValidityTimePeriod(String time);
     
-    void setValidityStartTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone);
+    void setPartialValidityTimePeriod(int day, int startHour, int endHour);
+    
+    void setPartialValidityTimePeriod(int startDay, int endDay, int startHour, int endHour);
+    
+    
+    void setValidityStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone);
 
-    void setValidityStartTime(final ZonedDateTime time);
+    void setValidityStartTime(ZonedDateTime time);
     
-    void setPartialValidityEndTime(final String time);
-    
-    void setPartialValidityEndTime(final int day, final int hour);
-    
-    void setValidityEndTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone);
+    void setValidityEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone);
 
-    void setValidityEndTime(final ZonedDateTime time);
+    void setValidityEndTime(ZonedDateTime time);
+    
     
     void setBaseForecast(TAFBaseForecast baseForecast);
 

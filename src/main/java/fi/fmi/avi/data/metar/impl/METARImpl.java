@@ -1,6 +1,7 @@
 package fi.fmi.avi.data.metar.impl;
 
 import java.time.ZonedDateTime;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 
 import fi.fmi.avi.data.Aerodrome;
 import fi.fmi.avi.data.NumericMeasure;
@@ -262,12 +264,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     public ObservedClouds getClouds() {
         return clouds;
     }
-
-    @Override
-    public boolean isNoSignificantCloud() {
-        return this.noSignificantCloud;
-    }
-
+    
     /* (non-Javadoc)
          * @see fi.fmi.avi.data.METAR#setClouds(fi.fmi.avi.data.ObservedCloudsImpl)
          */
@@ -275,11 +272,6 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     @JsonDeserialize(as = ObservedCloudsImpl.class)
     public void setClouds(final ObservedClouds clouds) {
         this.clouds = clouds;
-    }
-
-    @Override
-    public void setNoSignificantCloud(final boolean noSignificantCloud) {
-        this.noSignificantCloud = noSignificantCloud;
     }
 
     public List<Weather> getRecentWeather() {
@@ -384,6 +376,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     }
 
 	@Override
+	@JsonIgnore
 	public Set<String> getUnresolvedRunwayDirectionDesignators() {
 		Set<String> retval = new HashSet<>();
 		if (this.runwayStates != null) {
@@ -491,9 +484,6 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 				rwd.setAssociatedAirportHeliport(fullInfo);
 			}
 		}
-	}
-
-	
-	
+	}	
 	
 }

@@ -32,8 +32,6 @@ public interface TrendForecast extends AviationCodeListUser, TimeReferenceAmenda
 
     CloudForecast getCloud();
 
-    boolean isNoSignificantCloud();
-
     ColorState getColorState();
 
     
@@ -54,8 +52,6 @@ public interface TrendForecast extends AviationCodeListUser, TimeReferenceAmenda
     void setNoSignificantWeather(boolean nsw);
 
     void setCloud(CloudForecast cloud);
-
-    void setNoSignificantCloud(boolean nsc);
 
     void setColorState(ColorState color);
 

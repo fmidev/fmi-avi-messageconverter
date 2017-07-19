@@ -47,5 +47,4 @@ public abstract class AerodromeWeatherMessageImpl extends AviationWeatherMessage
 	
 	
 	protected abstract void syncAerodromeInfo(Aerodrome fullInfo);
-
 }

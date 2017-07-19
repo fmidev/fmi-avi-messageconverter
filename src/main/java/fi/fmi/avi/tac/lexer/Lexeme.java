@@ -100,7 +100,6 @@ public interface Lexeme {
         CLOUD(VALUE, COVER, TYPE, UNIT),
         FORECAST_CHANGE_INDICATOR(DAY1, HOUR1, MINUTE1, TYPE), 
         NO_SIGNIFICANT_WEATHER, 
-        NO_SIGNIFICANT_CLOUD, 
         CHANGE_FORECAST_TIME_GROUP(DAY1, DAY2, HOUR1, HOUR2),
         AUTOMATED,
         RUNWAY_VISUAL_RANGE(RUNWAY, MIN_VALUE, MAX_VALUE, RELATIONAL_OPERATOR, RELATIONAL_OPERATOR2, TENDENCY_OPERATOR, UNIT),
@@ -283,7 +282,20 @@ public interface Lexeme {
     boolean isSynthetic();
 
     /**
+     * The certainty of the lexeme recognition as {@link #getIdentity()}.
+     * if {@link #getStatus()} is {@link Status#UNRECOGNIZED}, value == 0.0.
+     * Otherwise the value is ]0.0, 1.0] based on the Lexer's reasoning.
+     * 
+     * Lexer implementations are allowed to override a previous Lexeme 
+     * recognition only if the value is < 1.0.
+     * 
+     * @return value between 0.0 and 1.0
+     */
+    double getIdentificationCertainty();
+    
+    /**
      * Identifies this Lexeme as {@code id} with {@link Status#OK} and no additional message.
+     * The certainty of recognition is 1.0 (100% certain).
      * 
      * @param id identity to assign
      */
@@ -291,6 +303,7 @@ public interface Lexeme {
 
     /**
      * Identifies this Lexeme as {@code id} with {@code status} and no additional message.
+     * The certainty of recognition is 1.0 (100% certain).
      * 
      * @param id identity to assign
      * @param status to set
@@ -299,6 +312,7 @@ public interface Lexeme {
 
     /**
      * Identifies this Lexeme as {@code id} with {@code status} and {@code message}.
+     * The certainty of recognition is 1.0 (100% certain).
      * 
      * @param id identity to assign
      * @param status to set
@@ -306,6 +320,33 @@ public interface Lexeme {
      */
     void identify(final Identity id, final Status status, final String note);
 
+    /**
+     * Identifies this Lexeme as {@code id} with {@link Status#OK} and no additional message.
+     * 
+     * @param id identity to assign
+     * @param certainty the level of confidence 0.0 - 1.0
+     */
+    void identify(final Identity id, double certainty);
+
+    /**
+     * Identifies this Lexeme as {@code id} with {@code status} and no additional message.
+     * 
+     * @param id identity to assign
+     * @param status to set
+     * @param certainty the level of confidence 0.0 - 1.0
+     */
+    void identify(final Identity id, final Status status, double certainty);
+
+    /**
+     * Identifies this Lexeme as {@code id} with {@code status} and {@code message}.
+     * 
+     * @param id identity to assign
+     * @param status to set
+     * @param note additional message, such as lexing warning note
+     * @param certainty the level of confidence 0.0 - 1.0
+     */
+    void identify(final Identity id, final Status status, final String note, double certainty);
+    
     /**
      * Return true when the Lexeme is not in {@link Status#UNRECOGNIZED}
      * 
@@ -352,6 +393,15 @@ public interface Lexeme {
      */
     void setLexerMessage(final String msg);
 
+    /**
+     * Sets the confidence of the Lexeme identification.
+     * 
+     * @param between 0.0 and 1.0
+     * 
+     * @see {@link #getIdentificationCertainty()}
+     */
+    void setIdentificationCertainty(double percentage);
+    
     /**
      * Provides access to a {@link LexemeVisitor} to refine this Lexeme.
      * Typically called by a {@link LexemeVisitor} to try to recognize

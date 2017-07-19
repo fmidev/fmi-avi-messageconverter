@@ -9,7 +9,7 @@ import java.util.List;
  *
  * Note that as TAC encoding does not contain the month and year
  * data, a fully resolved issue time can only be constructed by
- * providing this info externally using {@link #getIssueTimeIn(int, int)}.
+ * providing this info externally using {@link #amendTimeReferences(ZonedDateTime)}.
  */
 public interface AviationWeatherMessage extends TimeReferenceAmendable {
 

@@ -27,7 +27,6 @@ public class TrendForecastImpl implements TrendForecast {
     private TrendTimeGroups timeGroups;
     private boolean ceilingAndVisibilityOk;
     private boolean noSignificantWeather;
-    private boolean noSignificantCloud;
     private TrendForecastChangeIndicator changeIndicator;
     private NumericMeasure prevailingVisibility;
     private RelationalOperator prevailingVisibilityOperator;
@@ -48,7 +47,6 @@ public class TrendForecastImpl implements TrendForecast {
         this.surfaceWind = new TrendForecastSurfaceWindImpl(input.getSurfaceWind());
         this.forecastWeather = new ArrayList<>(input.getForecastWeather());
         this.noSignificantWeather = input.isNoSignificantWeather();
-        this.noSignificantCloud = input.isNoSignificantCloud();
         this.cloud = new CloudForecastImpl(input.getCloud());
         this.colorState = input.getColorState();
     }
@@ -133,11 +131,6 @@ public class TrendForecastImpl implements TrendForecast {
      */
 
     @Override
-    public boolean isNoSignificantCloud() {
-        return this.noSignificantCloud;
-    }
-    
-    @Override
     @JsonDeserialize(as = TrendTimeGroupsImpl.class)
     public void setTimeGroups(final TrendTimeGroups timeGroups) {
         this.timeGroups = timeGroups;
@@ -207,10 +200,6 @@ public class TrendForecastImpl implements TrendForecast {
     @JsonDeserialize(as = CloudForecastImpl.class)
     public void setCloud(final CloudForecast cloud) {
         this.cloud = cloud;
-    }
-
-    public void setNoSignificantCloud(final boolean nsc) {
-        this.noSignificantCloud = nsc;
     }
 
     @Override

@@ -3,28 +3,31 @@ package fi.fmi.avi.data.taf.impl;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.Aerodrome;
-import fi.fmi.avi.data.impl.AviationWeatherMessageImpl;
+import fi.fmi.avi.data.impl.AerodromeWeatherMessageImpl;
 import fi.fmi.avi.data.taf.TAF;
 import fi.fmi.avi.data.taf.TAFBaseForecast;
 import fi.fmi.avi.data.taf.TAFChangeForecast;
+
 
 /**
  * Created by rinne on 30/01/15.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
-
-	private static final Pattern VALIDITY_START_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})");
-    private static final Pattern VALIDITY_END_PATTERN = Pattern.compile("([0-9]{2})?([0-9]{2})");
+public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
+	
+    private static final Pattern VALIDITY_PERIOD_PATTERN = Pattern.compile("^(([0-9]{2})([0-9]{2})([0-9]{2}))|(([0-9]{2})([0-9]{2})/([0-9]{2})([0-9]{2}))$");
     
     private TAFStatus status;
     private Aerodrome aerodrome;
@@ -46,16 +49,13 @@ public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
         super(input);
         this.status = input.getStatus();
         this.aerodrome = input.getAerodrome();
-        if (input.getValidityStartTime() != null) {
+        if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
         	this.setValidityStartTime(input.getValidityStartTime());
-        } else {
-        	this.setPartialValidityStartTime(input.getPartialValidityStartTime());
-        }
-        if (input.getValidityEndTime() != null) {
         	this.setValidityEndTime(input.getValidityEndTime());
         } else {
-        	this.setPartialValidityEndTime(input.getPartialValidityEndTime());
+        	this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
         }
+        
         this.baseForecast = new TAFBaseForecastImpl(input.getBaseForecast());
         this.changeForecasts = new ArrayList<TAFChangeForecast>();
         for (TAFChangeForecast fct : input.getChangeForecasts()) {
@@ -87,21 +87,25 @@ public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
     }
 
     @Override
+    @JsonIgnore
     public int getValidityStartDayOfMonth() {
         return validityStartDayOfMonth;
     }
 
     @Override
+    @JsonIgnore
     public int getValidityStartHour() {
         return validityStartHour;
     }
 
     @Override
+    @JsonIgnore
     public int getValidityEndDayOfMonth() {
         return validityEndDayOfMonth;
     }
 
     @Override
+    @JsonIgnore
     public int getValidityEndHour() {
         return validityEndHour;
     }
@@ -139,47 +143,140 @@ public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
         this.referredReport = referredReport;
     }
 
-	@Override
-	public boolean isAerodromeInfoResolved() {
-		return this.aerodrome != null && this.aerodrome.isResolved();
-	}
-
-	@Override
-	public void amendAerodromeInfo(Aerodrome fullInfo) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getPartialValidityStartTime() {
-		if (this.validityStartHour > -1 && this.validityStartDayOfMonth> -1){
-			return String.format("%02d%02d", this.validityStartDayOfMonth, this.validityStartHour);
+    @Override
+    public String getPartialValidityTimePeriod() {
+    	if (this.validityStartDayOfMonth > -1 && this.validityStartHour > -1 && this.validityEndHour > -1) {
+    		StringBuilder sb = new StringBuilder();
+    		sb.append(String.format("%02d%02d", this.validityStartDayOfMonth, this.validityStartHour));
+    		if (this.validityEndDayOfMonth > -1) {
+    			sb.append('/');
+    			sb.append(String.format("%02d%02d", this.validityEndDayOfMonth, this.validityEndHour));
+    		} else {
+    			sb.append(String.format("%02d", this.validityEndHour));
+    		}
+    		return sb.toString();
     	} else {
     		return null;
     	}
+    }
+	
+	@Override
+	@JsonProperty("partialValidityTimePeriod")
+	public void setPartialValidityTimePeriod(String time) {
+		if (time == null) {
+			this.setPartialValidityTimePeriod(-1, -1, -1, -1);
+    	} else {
+    		Matcher m = VALIDITY_PERIOD_PATTERN.matcher(time);
+    		if (m.matches()) {
+	    		if (m.group(1) != null) {
+	                //old 24h TAF, just one day field
+	                int day = Integer.parseInt(m.group(2));
+	                int fromHour = Integer.parseInt(m.group(3));
+	                int toHour = Integer.parseInt(m.group(4));
+	                this.setPartialValidityTimePeriod(day, fromHour, toHour);
+	            } else {
+	                //30h TAF
+	                int fromDay = Integer.parseInt(m.group(6));
+	                int fromHour = Integer.parseInt(m.group(7));
+	                int toDay = Integer.parseInt(m.group(8));
+	                int toHour = Integer.parseInt(m.group(9));
+	                this.setPartialValidityTimePeriod(fromDay, toDay, fromHour, toHour);
+	            }
+    		} else {
+    			throw new IllegalArgumentException("Time period is not either 'ddHHHH' or 'ddHH/ddHH'");
+    		}
+    	}
+	}
+	
+	@Override
+	public void setPartialValidityTimePeriod(int day, int startHour, int endHour) {
+		this.setPartialValidityTimePeriod(day, -1, startHour, endHour);
 	}
 
 	@Override
+	public void setPartialValidityTimePeriod(int startDay, int endDay, int startHour, int endHour) {
+		if (timeOk(startDay, startHour) && timeOk(endDay, endHour)) {
+			this.validityStartDayOfMonth = startDay;
+			this.validityStartHour = startHour;
+			this.validityEndDayOfMonth = endDay;
+			this.validityEndHour = endHour;
+			if (this.validityStartTime != null) {
+				if ( (this.validityStartTime.getDayOfMonth() != startDay) || (this.validityStartTime.getHour() != startHour) ) {
+					this.validityStartTime = null;
+				}
+			}
+			if (this.validityEndTime != null) {
+				if ( (this.validityEndTime.getDayOfMonth() != endDay) || (this.validityEndTime.getHour() != endHour) ) {
+					this.validityEndTime = null;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void setValidityStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
+		this.setValidityStartTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour,  minute), timeZone));
+		
+	}
+	
+	@JsonProperty("validityStartTime")
+    public String getValidityStartTimeISO() {
+    	if (this.validityStartTime != null) {
+    		return this.validityStartTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    	} else {
+    		return null;
+    	}
+    }
+    
+	@Override
+	@JsonIgnore
 	public ZonedDateTime getValidityStartTime() {
 		return this.validityStartTime;
 	}
-
+	
+	@JsonProperty("validityStartTime")
+    public void setValidityStartTimeISO(final String time) {
+    	this.setValidityStartTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+    }
+	 
 	@Override
-	public String getPartialValidityEndTime() {
-		if (this.validityEndHour > -1){
-			if (this.validityEndDayOfMonth > -1) {
-				return String.format("%02d%02d", this.validityEndDayOfMonth, this.validityEndHour);
-			} else {
-				return String.format("%02d", this.validityStartHour);
-			}
-    	} else {
-    		return null;
-    	}
+	public void setValidityStartTime(ZonedDateTime time) {
+		this.validityStartTime = time;
+		this.validityStartDayOfMonth = time.getDayOfMonth();
+		this.validityStartHour = time.getHour();
 	}
 
 	@Override
+	public void setValidityEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
+		this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour,  minute), timeZone));
+		
+	}
+	
+	@JsonProperty("validityEndTime")
+    public String getValidityEndTimeISO() {
+    	if (this.validityEndTime != null) {
+    		return this.validityEndTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    	} else {
+    		return null;
+    	}
+    }
+	
+	@Override
+	@JsonIgnore
 	public ZonedDateTime getValidityEndTime() {
 		return this.validityEndTime;
+	}
+
+	@JsonProperty("validityEndTime")
+    public void setValidityEndTimeISO(final String time) {
+    	this.setValidityEndTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+    }
+	
+	@Override
+	public void setValidityEndTime(ZonedDateTime time) {
+		this.validityEndTime = time;
+		this.validityEndDayOfMonth = time.getDayOfMonth();
+		this.validityEndHour = time.getHour();
 	}
 
 	@Override
@@ -276,112 +373,20 @@ public class TAFImpl extends AviationWeatherMessageImpl implements TAF {
 		return true;
 	}
 	
-
-	@Override
-	public void setPartialValidityStartTime(String time) {
-		if (time == null) {
-    		this.validityStartDayOfMonth = -1;
-    		this.validityStartHour = -1;
-    		this.validityStartTime = null;
-    	} else {
-    		Matcher m = VALIDITY_START_PATTERN.matcher(time);
-    		if (m.matches()) {
-    			int day = Integer.parseInt(m.group(1));
-    			int hour = Integer.parseInt(m.group(2));
-    			if (timeOk(day, hour)) {
-    				this.validityStartDayOfMonth = day;
-    				this.validityStartHour = hour;
-    			} else {
-    				throw new IllegalArgumentException("Invalid day and/or hour values in '" + time + "'");
-    			}
-    			this.validityStartTime = null;
-    		} else {
-    			throw new IllegalArgumentException("Time '" + time + "' is not in format 'ddHH'");
-    		}
-    	}
-		
-	}
-
-	@Override
-	public void setPartialValidityStartTime(int day, int hour) {
-		if (timeOk(day, hour)) {
-			this.validityStartDayOfMonth = day;
-			this.validityStartHour = hour;
-			this.validityStartTime = null;
-		}
-	}
-
-	@Override
-	public void setValidityStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
-		this.setValidityStartTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour,  minute), timeZone));
-		
-	}
-
-	@Override
-	public void setValidityStartTime(ZonedDateTime time) {
-		this.validityStartTime = time;
-		this.validityStartDayOfMonth = time.getDayOfMonth();
-		this.validityStartHour = time.getHour();
-	}
-
-	@Override
-	public void setPartialValidityEndTime(String time) {
-		if (time == null) {
-    		this.validityEndDayOfMonth = -1;
-    		this.validityEndHour = -1;
-    		this.validityEndTime = null;
-    	} else {
-    		Matcher m = VALIDITY_END_PATTERN.matcher(time);
-    		if (m.matches()) {
-    			int day = -1;
-    			if (m.group(1) != null) {
-    				day = Integer.parseInt(m.group(1));
-    			}
-    			int hour = Integer.parseInt(m.group(2));
-    			if (timeOk(day, hour)) {
-    				this.validityEndDayOfMonth = day;
-    				this.validityEndHour = hour;
-    			} else {
-    				throw new IllegalArgumentException("Invalid day and/or hour values in '" + time + "'");
-    			}
-    			this.validityEndTime = null;
-    		} else {
-    			throw new IllegalArgumentException("Time '" + time + "' is not in format 'HH' or 'ddHH'");
-    		}
-    	}
-	}
-
-	@Override
-	public void setPartialValidityEndTime(int day, int hour) {
-		if (timeOk(day, hour)) {
-			this.validityEndDayOfMonth = day;
-			this.validityEndHour = hour;
-			this.validityEndTime = null;
-		}
-	}
-
-	@Override
-	public void setValidityEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
-		this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour,  minute), timeZone));
-		
-	}
-
-	@Override
-	public void setValidityEndTime(ZonedDateTime time) {
-		this.validityEndTime = time;
-		this.validityEndDayOfMonth = time.getDayOfMonth();
-		this.validityEndHour = time.getHour();
-	}
-	
-	 private boolean timeOk(final int day, final int hour) {
-    	if (day > 31) {
+	private boolean timeOk(final int day, final int hour) {
+		if (day > 31) {
 			return false;
-    	}
-		if (hour > 23) {
+		}
+		if (hour > 24) {
 			return false;
 		}
 		return true;
     }
 
+	@Override
+	protected void syncAerodromeInfo(Aerodrome fullInfo) {
+		//No need to disseminate Aerodrome info the properties for TAFImpl
+	}
 
+	
 }

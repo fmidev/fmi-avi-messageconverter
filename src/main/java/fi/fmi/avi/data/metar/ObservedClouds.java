@@ -9,6 +9,8 @@ import fi.fmi.avi.data.NumericMeasure;
 public interface ObservedClouds extends AviationCodeListUser {
 
     boolean isAmountAndHeightUnobservableByAutoSystem();
+    
+    boolean isNoSignificantCloud();
 
     NumericMeasure getVerticalVisibility();
 
@@ -16,6 +18,8 @@ public interface ObservedClouds extends AviationCodeListUser {
 
 
     void setAmountAndHeightUnobservableByAutoSystem(boolean amountAndHeightUnobservableByAutoSystem);
+    
+    void setNoSignificantCloud(boolean nsc);
 
     void setVerticalVisibility(NumericMeasure verticalVisibility);
 

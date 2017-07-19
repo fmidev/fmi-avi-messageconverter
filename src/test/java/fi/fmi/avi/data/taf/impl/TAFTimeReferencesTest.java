@@ -33,14 +33,11 @@ public class TAFTimeReferencesTest {
 		msg.setChangeForecasts(changeForecasts);
 		
 		msg.setPartialIssueTime("311200Z");
-		msg.setPartialValidityStartTime("3112");
-		msg.setPartialValidityEndTime("0106");
+		msg.setPartialValidityTimePeriod("3112/0106");
 		tempFct.setPartialMaxTemperatureTime("3118");
 		tempFct.setPartialMinTemperatureTime("0104");
-		changeFct1.setPartialValidityStartTime("3119");
-		changeFct1.setPartialValidityEndTime("24");
-		changeFct2.setPartialValidityStartTime("0100");
-		changeFct2.setPartialValidityEndTime("0106");
+		changeFct1.setPartialValidityTimePeriod("3119/3124");
+		changeFct2.setPartialValidityTimePeriod("0100/0106");
 		
 		assertNull(msg.getIssueTime());
 		assertNull(msg.getValidityStartTime());

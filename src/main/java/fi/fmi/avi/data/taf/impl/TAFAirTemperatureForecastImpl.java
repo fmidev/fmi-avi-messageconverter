@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.data.NumericMeasure;
@@ -179,6 +180,7 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 	}
 
 	@Override
+	@JsonProperty("partialMinTemperatureTime")
 	public void setPartialMinTemperatureTime(final String time) {
 		if (time == null) {
     		this.minTemperatureDayOfMonth = -1;
@@ -233,6 +235,7 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 	}
 
 	@Override
+	@JsonProperty("partialMaxTemperatureTime")
 	public void setPartialMaxTemperatureTime(final String time) {
 		if (time == null) {
     		this.maxTemperatureDayOfMonth = -1;

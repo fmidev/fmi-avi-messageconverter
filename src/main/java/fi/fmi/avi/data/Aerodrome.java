@@ -1,16 +1,20 @@
 package fi.fmi.avi.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Container for the metadata for a single aerodrome.
  */
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class Aerodrome {
-    private String designator;
-    private String name;
-    private String locationIndicatorICAO;
-    private String designatorIATA;
-    private Double fieldElevationValue;
-    private String fieldElevationUnit;
-    private GeoPosition referencePoint;
+    private String designator = null;
+    private String name = null;
+    private String locationIndicatorICAO = null;
+    private String designatorIATA = null;
+    private Double fieldElevationValue = null;
+    private String fieldElevationUnit = null;
+    private GeoPosition referencePoint = null;
 
     public Aerodrome() {
     }
@@ -66,7 +70,7 @@ public class Aerodrome {
     public void setReferencePoint(final GeoPosition point) {
         this.referencePoint = point;
     }
-    
+    @JsonIgnore
     public boolean isResolved() {
     	return this.designator != null && this.name != null && this.referencePoint != null && this.fieldElevationValue != null;
     }

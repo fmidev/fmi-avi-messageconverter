@@ -25,29 +25,21 @@ public class TrendForecastImplTest {
 		timeGroups.setPartialStartTime("1200");
 		assertTrue(timeGroups.hasStartTime());
 		assertEquals("1200",timeGroups.getPartialStartTime());
-		assertTrue(12 == timeGroups.getStartHour());
-		assertTrue(0 == timeGroups.getStartMinute());
 		assertNull(timeGroups.getStartTime());
 		
 		timeGroups.setPartialEndTime("1530");
 		assertTrue(timeGroups.hasEndTime());
 		assertEquals("1530",timeGroups.getPartialEndTime());
-		assertTrue(15 == timeGroups.getEndHour());
-		assertTrue(30 == timeGroups.getEndMinute());
 		assertNull(timeGroups.getEndTime());
 		
 		timeGroups.setPartialEndTime("2400");
 		assertTrue(timeGroups.hasEndTime());
 		assertEquals("2400",timeGroups.getPartialEndTime());
-		assertTrue(24 == timeGroups.getEndHour());
-		assertTrue(00 == timeGroups.getEndMinute());
 		assertNull(timeGroups.getEndTime());
 		
 		timeGroups.amendTimeReferences(ZonedDateTime.of(2017, 1, 31, 12, 0, 0, 0, ZoneId.of("Z")));
 		assertTrue(timeGroups.hasEndTime());
 		assertTrue(timeGroups.hasStartTime());
-		assertTrue(24 == timeGroups.getEndHour());
-		assertTrue(00 == timeGroups.getEndMinute());
 		assertEquals(ZonedDateTime.of(2017, 2, 1, 0, 0, 0, 0, ZoneId.of("Z")), timeGroups.getEndTime());
 		assertEquals(ZonedDateTime.of(2017, 1, 31, 12, 0, 0, 0, ZoneId.of("Z")), timeGroups.getStartTime());
 		

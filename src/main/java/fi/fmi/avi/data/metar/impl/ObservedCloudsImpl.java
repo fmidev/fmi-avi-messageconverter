@@ -21,6 +21,7 @@ import fi.fmi.avi.data.metar.ObservedClouds;
 public class ObservedCloudsImpl implements ObservedClouds {
 
     private boolean amountAndHeightUnobservableByAutoSystem;
+    private boolean isNoSignificantCloud;
     private NumericMeasure verticalVisibility;
     private List<CloudLayer> layers;
 
@@ -29,6 +30,7 @@ public class ObservedCloudsImpl implements ObservedClouds {
 
     public ObservedCloudsImpl(final ObservedClouds input) {
         this.amountAndHeightUnobservableByAutoSystem = input.isAmountAndHeightUnobservableByAutoSystem();
+        this.isNoSignificantCloud = input.isNoSignificantCloud();
         this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
         this.layers = new ArrayList<CloudLayer>();
         for (CloudLayer layer:input.getLayers()) {
@@ -85,4 +87,15 @@ public class ObservedCloudsImpl implements ObservedClouds {
     public void setLayers(final List<CloudLayer> layers) {
         this.layers = layers;
     }
+
+	@Override
+	public boolean isNoSignificantCloud() {
+		return this.isNoSignificantCloud;
+	}
+
+	@Override
+	public void setNoSignificantCloud(boolean nsc) {
+		this.isNoSignificantCloud = nsc;
+		
+	}
 }

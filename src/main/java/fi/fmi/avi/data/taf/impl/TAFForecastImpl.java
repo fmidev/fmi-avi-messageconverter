@@ -3,6 +3,7 @@ package fi.fmi.avi.data.taf.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -24,7 +25,6 @@ public abstract class TAFForecastImpl implements TAFForecast {
 	
     private boolean ceilingAndVisibilityOk;
     private boolean noSignificantWeather;
-    private boolean noSignificantCloud;
     private NumericMeasure prevailingVisibility;
     private RelationalOperator prevailingVisibilityOperator;
     private TAFSurfaceWind surfaceWind;
@@ -41,7 +41,6 @@ public abstract class TAFForecastImpl implements TAFForecast {
         this.surfaceWind = new TAFSurfaceWindImpl(input.getSurfaceWind());
         this.forecastWeather = new ArrayList<>(input.getForecastWeather());
         this.noSignificantWeather = input.isNoSignificantWeather();
-        this.noSignificantCloud = input.isNoSignificantCloud();
         this.cloud = new CloudForecastImpl(input.getCloud());
     }
 
@@ -92,6 +91,7 @@ public abstract class TAFForecastImpl implements TAFForecast {
         return forecastWeather;
     }
 
+    @JsonIgnore
     public List<String> getForecastWeatherCodes() {
         return AviationWeatherMessageImpl.getAsWeatherCodes(this.forecastWeather);
     }
@@ -123,12 +123,4 @@ public abstract class TAFForecastImpl implements TAFForecast {
         this.cloud = cloud;
     }
 
-    @Override
-    public boolean isNoSignificantCloud() {
-        return this.noSignificantCloud;
-    }
-
-    public void setNoSignificantCloud(final boolean nsc) {
-        this.noSignificantCloud = nsc;
-    }
 }

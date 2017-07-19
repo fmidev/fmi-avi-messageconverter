@@ -11,18 +11,10 @@ import fi.fmi.avi.data.TimeReferenceAmendable;
 public interface TrendTimeGroups extends TimeReferenceAmendable {
     
 	String getPartialStartTime();
-	
-	int getStartHour();
-     
-	int getStartMinute();
 
     ZonedDateTime getStartTime();
     
     String getPartialEndTime();
-    
-    int getEndHour();
-    
-    int getEndMinute();
     
     ZonedDateTime getEndTime();
     

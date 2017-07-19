@@ -3,17 +3,19 @@ package fi.fmi.avi.data.metar.impl;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.fmi.avi.data.metar.TrendTimeGroups;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TrendTimeGroupsImpl implements TrendTimeGroups {
-	private Pattern HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})?");
+	private static final Pattern HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})?");
 	
     private int startHour = -1;
     private int startMinute = -1;
@@ -50,18 +52,20 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
     	}
     }
     
-    public int getStartHour() {
-    	return this.startHour;
-    }
-    
-    public int getStartMinute() {
-    	return this.startMinute;
-    }
-    
     @Override
+	@JsonIgnore
 	public ZonedDateTime getStartTime() {
 		return this.from;
 	}
+    
+    @JsonProperty("startTime")
+    public String getStartTimeISO() {
+    	if (this.from != null) {
+    		return this.from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    	} else {
+    		return null;
+    	}
+    }
     
     public String getPartialEndTime() {
     	if (this.endHour > -1 && this.endMinute > -1){
@@ -70,19 +74,21 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
     		return null;
     	}
     }
-    
-    public int getEndHour() {
-    	return this.endHour;
-    }
-    
-    public int getEndMinute() {
-    	return this.endMinute;
-    }
-    
+   
     @Override
+	@JsonIgnore
 	public ZonedDateTime getEndTime() {
 		return this.to;
 	}
+    
+    @JsonProperty("endTime")
+    public String getEndTimeISO() {
+    	if (this.to != null) {
+    		return this.to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    	} else {
+    		return null;
+    	}
+    }
     
     @Override
     public boolean isSingleInstance() {
@@ -94,28 +100,28 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
 	public void amendTimeReferences(final ZonedDateTime issueTime) {
 		 if (issueTime != null) {
 			if (this.hasStartTime()) {
-				if (this.getStartHour() < issueTime.getHour()) {
+				if (this.startHour < issueTime.getHour()) {
 					//assume the next day from issue
 					ZonedDateTime oneDayAfterIssue = issueTime.plusDays(1);
 					this.setStartTime(
 							ZonedDateTime.of(
-									LocalDateTime.of(oneDayAfterIssue.getYear(), oneDayAfterIssue.getMonth(), oneDayAfterIssue.getDayOfMonth(), this.getStartHour(), this.getStartMinute()),
+									LocalDateTime.of(oneDayAfterIssue.getYear(), oneDayAfterIssue.getMonth(), oneDayAfterIssue.getDayOfMonth(), this.startHour, this.startMinute),
 									oneDayAfterIssue.getZone()));
 				} else {
 					//assume same day as issue
 					this.setStartTime(
 							ZonedDateTime.of(
-									LocalDateTime.of(issueTime.getYear(), issueTime.getMonth(), issueTime.getDayOfMonth(), this.getStartHour(), this.getStartMinute()),
+									LocalDateTime.of(issueTime.getYear(), issueTime.getMonth(), issueTime.getDayOfMonth(), this.startHour, this.startMinute),
 									issueTime.getZone()));
 				}
 				
 				if (this.hasEndTime()) {
 					//both start and end given, the end may be on the same day as start or on the next day:
-					if (this.getEndHour() < this.getStartHour()) {
+					if (this.endHour < this.startHour) {
 						//assume the next day from start
 						ZonedDateTime oneDayAfterStart = this.getStartTime().plusDays(1);
 						this.setEndTime(ZonedDateTime.of(
-								LocalDateTime.of(oneDayAfterStart.getYear(), oneDayAfterStart.getMonth(), oneDayAfterStart.getDayOfMonth(), this.getEndHour(), this.getEndMinute()),
+								LocalDateTime.of(oneDayAfterStart.getYear(), oneDayAfterStart.getMonth(), oneDayAfterStart.getDayOfMonth(), this.endHour, this.endMinute),
 								oneDayAfterStart.getZone()));
 					} else {
 						if (this.endHourIs24) {
@@ -129,7 +135,7 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
 							//assume same day as start
 							this.setEndTime(
 									ZonedDateTime.of(
-											LocalDateTime.of(from.getYear(), from.getMonth(), from.getDayOfMonth(), this.getEndHour(), this.getEndMinute()),
+											LocalDateTime.of(from.getYear(), from.getMonth(), from.getDayOfMonth(), this.endHour, this.endMinute),
 											from.getZone()));
 						}
 						
@@ -138,25 +144,25 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
 			} else {
 				//no start, just check "to" based on the issue time:
 				if (this.hasEndTime()) {
-					if (this.getEndHour() < issueTime.getHour()) {
+					if (this.endHour < issueTime.getHour()) {
 						//assume the next day from issue
 						ZonedDateTime oneDayAfterIssue = issueTime.plusDays(1);
 						this.setEndTime(
 								ZonedDateTime.of(
-										LocalDateTime.of(oneDayAfterIssue.getYear(), oneDayAfterIssue.getMonth(), oneDayAfterIssue.getDayOfMonth(), this.getEndHour(), this.getEndMinute()),
+										LocalDateTime.of(oneDayAfterIssue.getYear(), oneDayAfterIssue.getMonth(), oneDayAfterIssue.getDayOfMonth(), this.endHour, this.endMinute),
 										oneDayAfterIssue.getZone()));
 					} else {
 						if (this.endHourIs24) {
 							//this is actually the 00 of the next day
 							this.setEndTime(
 									ZonedDateTime.of(
-											LocalDateTime.of(issueTime.getYear(), issueTime.getMonth(), issueTime.getDayOfMonth(), this.getEndHour() - 1, 59),
-											issueTime.getZone()).plusMinutes(1));
+											LocalDateTime.of(issueTime.getYear(), issueTime.getMonth(), issueTime.getDayOfMonth(), 0, 0),
+											issueTime.getZone()).plusDays(1));
 						} else {
 							//assume same day as issue
 							this.setEndTime(
 									ZonedDateTime.of(
-											LocalDateTime.of(issueTime.getYear(), issueTime.getMonth(), issueTime.getDayOfMonth(), this.getEndHour(), this.getEndMinute()),
+											LocalDateTime.of(issueTime.getYear(), issueTime.getMonth(), issueTime.getDayOfMonth(), this.endHour, this.endMinute),
 											issueTime.getZone()));
 						}
 					}
@@ -215,7 +221,8 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
 	public void setStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
 		this.setStartTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour, minute), timeZone));
 	}
-
+    
+   
 	@Override
 	public void setStartTime(ZonedDateTime time) {
 		this.from = time;
@@ -223,6 +230,10 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
 		this.startMinute = this.from.getMinute();
 	}
 	
+	@JsonProperty("startTime")
+    public void setStartTimeISO(final String time) {
+    	this.setStartTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+    }
 	
 	public void setPartialEndTime(final String time) {
     	if (time == null) {
@@ -266,6 +277,11 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
 	public void setEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
 		this.setEndTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour, minute), timeZone));
 	}
+	
+	@JsonProperty("endTime")
+    public void setEndTimeISO(final String time) {
+    	this.setEndTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+    }
 	
 	@Override
 	public void setEndTime(ZonedDateTime time) {

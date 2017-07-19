@@ -1,8 +1,12 @@
 package fi.fmi.avi.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Container for a single runway direction within an aerodrome, as part of a runway.
  */
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RunwayDirection {
     private String designator;
     private Double trueBearing;
@@ -48,7 +52,7 @@ public class RunwayDirection {
         this.associatedAirportHeliport = airportHeliport;
     }
     
-    
+    @JsonIgnore
     public boolean isResolved() {
     	return this.designator != null && this.associatedAirportHeliport != null && this.associatedAirportHeliport.isResolved() && this.trueBearing != null && this.elevationTDZMeters != null;
     }

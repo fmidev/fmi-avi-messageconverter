@@ -30,8 +30,6 @@ public interface METAR extends RunwaySpecificWeatherMessage, AviationCodeListUse
     List<Weather> getPresentWeather();
 
     List<String> getPresentWeatherCodes();
-
-    boolean isNoSignificantCloud();
     
     ObservedClouds getClouds();
 
@@ -72,8 +70,6 @@ public interface METAR extends RunwaySpecificWeatherMessage, AviationCodeListUse
     void setPresentWeather(List<Weather> presentWeather);
 
     void setClouds(ObservedClouds clouds);
-
-    void setNoSignificantCloud(boolean nsc);
 
     void setRecentWeather(List<Weather> recentWeather);
 

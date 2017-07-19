@@ -28,8 +28,6 @@ public interface TAFForecast extends AviationCodeListUser {
 
     CloudForecast getCloud();
 
-    boolean isNoSignificantCloud();
-
 
     void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
 
@@ -44,6 +42,4 @@ public interface TAFForecast extends AviationCodeListUser {
     void setNoSignificantWeather(boolean nsw);
 
     void setCloud(CloudForecast cloud);
-
-    void setNoSignificantCloud(boolean nsc);
 }
