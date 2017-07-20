@@ -15,28 +15,6 @@ import fi.fmi.avi.model.taf.TAF;
  */
 public class ConversionSpecification<S, T> {
 
-    /**
-     * Pre-configured spec for ICAO Annex 3 TAC format to {@link METAR} POJO.
-     */
-    public static final ConversionSpecification<String, METAR> TAC_TO_METAR_POJO = new ConversionSpecification<>(String.class, METAR.class, "ICAO Annex 3 TAC",
-            null);
-
-    /**
-     * Pre-configured spec for {@link METAR} to ICAO Annex 3 TAC String.
-     */
-    public static final ConversionSpecification<METAR, String> METAR_POJO_TO_TAC = new ConversionSpecification<>(METAR.class, String.class, null,
-            "ICAO Annex 3 TAC");
-
-    /**
-     * Pre-configured spec for ICAO Annex 3 TAC format to {@link TAF} POJO.
-     */
-    public static final ConversionSpecification<String, TAF> TAC_TO_TAF_POJO = new ConversionSpecification<>(String.class, TAF.class, "ICAO Annex 3 TAC", null);
-
-    /**
-     * Pre-configured spec for {@link TAF} to ICAO Annex 3 TAC String.
-     */
-    public static final ConversionSpecification<TAF, String> TAF_POJO_TO_TAC = new ConversionSpecification<>(TAF.class, String.class, null, "ICAO Annex 3 TAC");
-
     private Class<S> inputClass;
     private Class<T> outputClass;
     private Object inputSpecifier;

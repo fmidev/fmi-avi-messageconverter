@@ -21,17 +21,33 @@ public class ConversionIssue {
     private final Type type;
     private final String message;
 
+
+
+    private final Throwable ex;
+
     /**
-     * Default constructor.
+     * Creates an issue with type and a message.
+     *
+     * @param type
+     * @param message
+     */
+    public ConversionIssue(final Type type, final String message) {
+       this(type, message, null);
+    }
+
+    /**
+     * Creates an issue with type, message and a cause.
      *
      * @param type
      *         issue kind
      * @param message
      *         message to report
+     * @param cause the reason for the issue
      */
-    public ConversionIssue(final Type type, final String message) {
+    public ConversionIssue(final Type type, final String message, final Throwable cause) {
         this.type = type;
         this.message = message;
+        this.ex = cause;
     }
 
     /**
@@ -51,6 +67,15 @@ public class ConversionIssue {
      */
     public String getMessage() {
         return this.message;
+    }
+
+    /**
+     * Possible root cause of the issue.
+     *
+     * @return the cause or null
+     */
+    public Throwable getCause() {
+        return ex;
     }
 
     /**

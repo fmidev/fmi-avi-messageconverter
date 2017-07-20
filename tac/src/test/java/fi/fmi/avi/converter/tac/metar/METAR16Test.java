@@ -11,6 +11,7 @@ import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity.ISSUE_TIME;
 import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity.METAR_START;
 import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity.SURFACE_WIND;
 
+import fi.fmi.avi.converter.tac.conf.TACConverter;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.metar.impl.METARImpl;
 import fi.fmi.avi.converter.ConversionSpecification;
@@ -21,7 +22,7 @@ public class METAR16Test extends AbstractAviMessageTest<String, METAR> {
 
 	@Override
 	public String getJsonFilename() {
-		return "fi/fmi/avi/converter/tac/metar/metar16.json";
+		return "metar/metar16.json";
 	}
 	
 	@Override
@@ -51,12 +52,12 @@ public class METAR16Test extends AbstractAviMessageTest<String, METAR> {
 
 	@Override
     public ConversionSpecification<String, METAR> getParsingSpecification() {
-        return ConversionSpecification.TAC_TO_METAR_POJO;
+        return TACConverter.TAC_TO_METAR_POJO;
     }
 	
 	@Override
     public ConversionSpecification<METAR, String> getSerializationSpecification() {
-        return ConversionSpecification.METAR_POJO_TO_TAC;
+        return TACConverter.METAR_POJO_TO_TAC;
     }
 
 	@Override

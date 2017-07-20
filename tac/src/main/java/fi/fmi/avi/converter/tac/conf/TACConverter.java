@@ -59,7 +59,29 @@ import fi.fmi.avi.converter.tac.lexer.impl.token.WindShear;
  * Created by rinne on 10/02/17.
  */
 @Configuration
-public class TACConverterConfig {
+public class TACConverter {
+    /**
+     * Pre-configured spec for ICAO Annex 3 TAC format to {@link METAR} POJO.
+     */
+    public static final ConversionSpecification<String, METAR> TAC_TO_METAR_POJO = new ConversionSpecification<>(String.class, METAR.class, "ICAO Annex 3 TAC",
+            null);
+
+    /**
+     * Pre-configured spec for {@link METAR} to ICAO Annex 3 TAC String.
+     */
+    public static final ConversionSpecification<METAR, String> METAR_POJO_TO_TAC = new ConversionSpecification<>(METAR.class, String.class, null,
+            "ICAO Annex 3 TAC");
+
+    /**
+     * Pre-configured spec for ICAO Annex 3 TAC format to {@link TAF} POJO.
+     */
+    public static final ConversionSpecification<String, TAF> TAC_TO_TAF_POJO = new ConversionSpecification<>(String.class, TAF.class, "ICAO Annex 3 TAC", null);
+
+    /**
+     * Pre-configured spec for {@link TAF} to ICAO Annex 3 TAC String.
+     */
+    public static final ConversionSpecification<TAF, String> TAF_POJO_TO_TAC = new ConversionSpecification<>(TAF.class, String.class, null, "ICAO Annex 3 TAC");
+
 
     @Bean
     public AviMessageLexer aviMessageLexer() {
@@ -73,10 +95,10 @@ public class TACConverterConfig {
     @Bean
     public AviMessageConverter aviMessageConverter() {
         AviMessageConverter p = new AviMessageConverter();
-        p.setMessageSpecificConverter(ConversionSpecification.TAC_TO_METAR_POJO, metarTACParser());
-        p.setMessageSpecificConverter(ConversionSpecification.TAC_TO_TAF_POJO, tafTACParser());
-        p.setMessageSpecificConverter(ConversionSpecification.METAR_POJO_TO_TAC, metarTACSerializer());
-        p.setMessageSpecificConverter(ConversionSpecification.TAF_POJO_TO_TAC, tafTACSerializer());
+        p.setMessageSpecificConverter(TAC_TO_METAR_POJO, metarTACParser());
+        p.setMessageSpecificConverter(TAC_TO_TAF_POJO, tafTACParser());
+        p.setMessageSpecificConverter(METAR_POJO_TO_TAC, metarTACSerializer());
+        p.setMessageSpecificConverter(TAF_POJO_TO_TAC, tafTACSerializer());
         return p;
     }
 

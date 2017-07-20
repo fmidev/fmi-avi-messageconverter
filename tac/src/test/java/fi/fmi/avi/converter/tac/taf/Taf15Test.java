@@ -13,6 +13,7 @@ import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity.TAF_START;
 import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity.VALID_TIME;
 import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity.WEATHER;
 
+import fi.fmi.avi.converter.tac.conf.TACConverter;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.impl.TAFImpl;
 import fi.fmi.avi.converter.ConversionSpecification;
@@ -23,7 +24,7 @@ public class Taf15Test extends AbstractAviMessageTest<String, TAF> {
 
 	@Override
 	public String getJsonFilename() {
-		return "fi/fmi/avi/converter/tac/taf/taf15.json";
+		return "taf/taf15.json";
 	}
 	
 	@Override
@@ -49,12 +50,12 @@ public class Taf15Test extends AbstractAviMessageTest<String, TAF> {
 
 	@Override
     public ConversionSpecification<String, TAF> getParsingSpecification() {
-        return ConversionSpecification.TAC_TO_TAF_POJO;
+        return TACConverter.TAC_TO_TAF_POJO;
     }
     
     @Override
     public ConversionSpecification<TAF, String> getSerializationSpecification() {
-        return ConversionSpecification.TAF_POJO_TO_TAC;
+        return TACConverter.TAF_POJO_TO_TAC;
     }
 
 

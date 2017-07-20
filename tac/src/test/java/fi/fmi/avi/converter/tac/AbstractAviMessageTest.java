@@ -34,7 +34,7 @@ import fi.fmi.avi.converter.ConversionIssue;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionSpecification;
-import fi.fmi.avi.converter.tac.conf.TACConverterConfig;
+import fi.fmi.avi.converter.tac.conf.TACConverter;
 import fi.fmi.avi.converter.tac.lexer.SerializingException;
 import fi.fmi.avi.converter.tac.lexer.AviMessageLexer;
 import fi.fmi.avi.converter.tac.lexer.AviMessageTACTokenizer;
@@ -44,7 +44,7 @@ import fi.fmi.avi.converter.tac.lexer.Lexeme.Identity;
 import fi.fmi.avi.model.AviationWeatherMessage;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TACConverterConfig.class, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = TACConverter.class, loader = AnnotationConfigContextLoader.class)
 public abstract class AbstractAviMessageTest<S, T> {
 
 	private static final double FLOAT_EQUIVALENCE_THRESHOLD = 0.0000000001d;
@@ -174,7 +174,7 @@ public abstract class AbstractAviMessageTest<S, T> {
 	protected AviationWeatherMessage readFromJSON(String fileName) throws IOException {
 		AviationWeatherMessage retval = null;
 		ObjectMapper om = new ObjectMapper();
-		InputStream is = AbstractAviMessageTest.class.getClassLoader().getResourceAsStream(fileName);
+		InputStream is = AbstractAviMessageTest.class.getResourceAsStream(fileName);
 		if (is != null) {
 			retval = om.readValue(is, getTokenizerImplmentationClass());
 		} else {

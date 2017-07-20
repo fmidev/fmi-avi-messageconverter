@@ -16,6 +16,7 @@ import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity.WEATHER;
 import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity.WIND_SHEAR;
 
 import fi.fmi.avi.converter.tac.AbstractAviMessageTest;
+import fi.fmi.avi.converter.tac.conf.TACConverter;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.metar.impl.METARImpl;
 import fi.fmi.avi.converter.ConversionHints;
@@ -26,7 +27,7 @@ public class METAR10Test extends AbstractAviMessageTest<String, METAR> {
 
 	@Override
 	public String getJsonFilename() {
-		return "fi/fmi/avi/converter/tac/metar/metar10.json";
+		return "metar/metar10.json";
 	}
 
     // Almost exactly the same as METAR 9 except WS RWY04R
@@ -58,12 +59,12 @@ public class METAR10Test extends AbstractAviMessageTest<String, METAR> {
 	
 	@Override
     public ConversionSpecification<String, METAR> getParsingSpecification() {
-        return ConversionSpecification.TAC_TO_METAR_POJO;
+        return TACConverter.TAC_TO_METAR_POJO;
     }
 	
 	@Override
     public ConversionSpecification<METAR, String> getSerializationSpecification() {
-        return ConversionSpecification.METAR_POJO_TO_TAC;
+        return TACConverter.METAR_POJO_TO_TAC;
     }
 
 	@Override
