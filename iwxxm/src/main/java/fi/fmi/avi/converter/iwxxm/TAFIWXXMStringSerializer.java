@@ -24,43 +24,40 @@ import icao.iwxxm21.TAFType;
 
 public class TAFIWXXMStringSerializer extends AbstractTAFIWXXMSerializer<String> {
 
-  public TAFIWXXMStringSerializer() {
-  }
-
-  @Override
-  protected String render(TAFType taf, ConversionHints hints) throws JAXBException {
-    return renderXMLString(taf, hints);
-  }
-  
-  private String renderXMLString(final TAFType tafElem, final ConversionHints hints) throws JAXBException {
-    Document result = renderXMLDocument(tafElem, hints);
-    String retval = null;
-    if (result != null) {
-      try {
-        StringWriter sw = new StringWriter();
-        Result output = new StreamResult(sw);
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        Transformer transformer = tFactory.newTransformer();
-        
-        //TODO: switch these on based on the ConversionHints:
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        
-        DOMSource dsource = new DOMSource(result);
-        transformer.transform(dsource, output);
-        retval = sw.toString();
-      } catch (TransformerConfigurationException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      } catch (TransformerException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+    public TAFIWXXMStringSerializer() {
     }
-    return retval;
-  }
 
+    @Override
+    protected String render(TAFType taf, ConversionHints hints) throws JAXBException {
+        return renderXMLString(taf, hints);
+    }
 
+    private String renderXMLString(final TAFType tafElem, final ConversionHints hints) throws JAXBException {
+        Document result = renderXMLDocument(tafElem, hints);
+        String retval = null;
+        if (result != null) {
+            try {
+                StringWriter sw = new StringWriter();
+                Result output = new StreamResult(sw);
+                TransformerFactory tFactory = TransformerFactory.newInstance();
+                Transformer transformer = tFactory.newTransformer();
 
+                //TODO: switch these on based on the ConversionHints:
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+                DOMSource dsource = new DOMSource(result);
+                transformer.transform(dsource, output);
+                retval = sw.toString();
+            } catch (TransformerConfigurationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (TransformerException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return retval;
+    }
 
 }

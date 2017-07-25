@@ -36,7 +36,7 @@ public class TAFIWXXMSerializerTest {
     private AviMessageConverter converter;
 
     @Test
-    public void testTemplate() throws Exception {
+    public void testStringSerialization() throws Exception {
         assertTrue(converter.isSpecificationSupported(IWXXMConverterConfig.TAF_POJO_TO_IWXXM21_STRING));
         TAF t = readFromJSON("taf12.json");
         Aerodrome airport = new Aerodrome();
@@ -57,9 +57,11 @@ public class TAFIWXXMSerializerTest {
         t.amendTimeReferences(issueTime);
 
         ConversionResult<String> result = converter.convertMessage(t, IWXXMConverterConfig.TAF_POJO_TO_IWXXM21_STRING);
-        System.out.println(result.getConversionIssues().toString());
+        //System.out.println(result.getConversionIssues().toString());
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
-        System.out.println(result.getConvertedMessage());
+
+        //TODO: XPAth query based content asserts
+        //System.out.println(result.getConvertedMessage());
     }
 
     protected TAF readFromJSON(String fileName) throws IOException {
