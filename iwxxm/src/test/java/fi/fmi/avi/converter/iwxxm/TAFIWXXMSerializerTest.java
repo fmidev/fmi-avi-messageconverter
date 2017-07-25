@@ -37,7 +37,7 @@ public class TAFIWXXMSerializerTest {
 
     @Test
     public void testTemplate() throws Exception {
-        assertTrue(converter.isSpecificationSupported(IWXXMConverterConfig.TAF_POJO_TO_IWXXM21));
+        assertTrue(converter.isSpecificationSupported(IWXXMConverterConfig.TAF_POJO_TO_IWXXM21_STRING));
         TAF t = readFromJSON("taf12.json");
         Aerodrome airport = new Aerodrome();
 
@@ -56,7 +56,7 @@ public class TAFIWXXMSerializerTest {
         ZonedDateTime issueTime = ZonedDateTime.of(2017,7,29,21,0,0,0, ZoneId.of("Z"));
         t.amendTimeReferences(issueTime);
 
-        ConversionResult<String> result = converter.convertMessage(t, IWXXMConverterConfig.TAF_POJO_TO_IWXXM21);
+        ConversionResult<String> result = converter.convertMessage(t, IWXXMConverterConfig.TAF_POJO_TO_IWXXM21_STRING);
         System.out.println(result.getConversionIssues().toString());
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         System.out.println(result.getConvertedMessage());

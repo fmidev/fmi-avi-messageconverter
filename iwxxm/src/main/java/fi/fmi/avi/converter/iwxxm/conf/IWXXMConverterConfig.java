@@ -4,13 +4,15 @@ import javax.xml.bind.JAXBException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionSpecification;
 import fi.fmi.avi.converter.iwxxm.IWXXMSerializer;
-import fi.fmi.avi.converter.iwxxm.TAFIWXXMSerializer;
-
+import fi.fmi.avi.converter.iwxxm.TAFIWXXMDOMSerializer;
+import fi.fmi.avi.converter.iwxxm.TAFIWXXMStringSerializer;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.taf.TAF;
 
@@ -40,21 +42,34 @@ public class IWXXMConverterConfig {
     /**
      * Pre-configured spec for {@link TAF} to IWXXM 2.1 XML format TAF document String.
      */
-    public static final ConversionSpecification<TAF, String> TAF_POJO_TO_IWXXM21 = new ConversionSpecification<>(TAF.class, String.class,
+    public static final ConversionSpecification<TAF, String> TAF_POJO_TO_IWXXM21_STRING = new ConversionSpecification<>(TAF.class, String.class,
+            null, "TAF, XML/IWXXM 2.1");
+
+    
+    /**
+     * Pre-configured spec for {@link TAF} to IWXXM 2.1 XML format TAF document DOM Node.
+     */
+    public static final ConversionSpecification<TAF, Document> TAF_POJO_TO_IWXXM21_DOM = new ConversionSpecification<>(TAF.class, Document.class,
             null, "TAF, XML/IWXXM 2.1");
 
 
     @Bean
     public AviMessageConverter aviMessageConverter() throws JAXBException {
         AviMessageConverter p = new AviMessageConverter();
-        p.setMessageSpecificConverter(TAF_POJO_TO_IWXXM21,iwxxm21TAFSerializer());
+        p.setMessageSpecificConverter(TAF_POJO_TO_IWXXM21_DOM,iwxxm21TAFDOMSerializer());
+        p.setMessageSpecificConverter(TAF_POJO_TO_IWXXM21_STRING,iwxxm21TAFStringSerializer());
         return p;
     }
 
-    AviMessageSpecificConverter<TAF, String> iwxxm21TAFSerializer() throws JAXBException {
-        IWXXMSerializer<TAF> retval = new TAFIWXXMSerializer();
+    AviMessageSpecificConverter<TAF, Document> iwxxm21TAFDOMSerializer() throws JAXBException {
+        IWXXMSerializer<TAF, Document> retval = new TAFIWXXMDOMSerializer();
         return retval;
     }
+    
+    AviMessageSpecificConverter<TAF, String> iwxxm21TAFStringSerializer() throws JAXBException {
+      IWXXMSerializer<TAF, String> retval = new TAFIWXXMStringSerializer();
+      return retval;
+  }
 
 
     

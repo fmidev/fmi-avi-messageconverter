@@ -1,6 +1,5 @@
 package fi.fmi.avi.converter.iwxxm;
 
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -18,23 +17,55 @@ import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import net.bytebuddy.implementation.bytecode.StackSize;
-import net.opengis.gml32.AbstractGeometryType;
+import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
+
+import aero.aixm511.AirportHeliportType;
+import fi.fmi.avi.converter.ConversionHints;
+import fi.fmi.avi.converter.ConversionIssue;
+import fi.fmi.avi.converter.ConversionResult;
+import fi.fmi.avi.converter.ConversionIssue.Type;
+import fi.fmi.avi.converter.ConversionResult.Status;
+import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.CloudForecast;
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.Weather;
+import fi.fmi.avi.model.AviationCodeListUser.TAFStatus;
+import fi.fmi.avi.model.taf.TAF;
+import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
+import fi.fmi.avi.model.taf.TAFBaseForecast;
+import fi.fmi.avi.model.taf.TAFChangeForecast;
+import fi.fmi.avi.model.taf.TAFForecast;
+import fi.fmi.avi.model.taf.TAFSurfaceWind;
+import icao.iwxxm21.AerodromeAirTemperatureForecastPropertyType;
+import icao.iwxxm21.AerodromeAirTemperatureForecastType;
+import icao.iwxxm21.AerodromeCloudForecastPropertyType;
+import icao.iwxxm21.AerodromeCloudForecastType;
+import icao.iwxxm21.AerodromeForecastChangeIndicatorType;
+import icao.iwxxm21.AerodromeForecastWeatherType;
+import icao.iwxxm21.AerodromeSurfaceWindForecastPropertyType;
+import icao.iwxxm21.AerodromeSurfaceWindForecastType;
+import icao.iwxxm21.AirportHeliportPropertyType;
+import icao.iwxxm21.MeteorologicalAerodromeForecastRecordPropertyType;
+import icao.iwxxm21.MeteorologicalAerodromeForecastRecordType;
+import icao.iwxxm21.PermissibleUsageType;
+import icao.iwxxm21.RelationalOperatorType;
+import icao.iwxxm21.TAFReportStatusType;
+import icao.iwxxm21.TAFType;
 import net.opengis.gml32.AbstractTimeObjectType;
 import net.opengis.gml32.AngleType;
 import net.opengis.gml32.FeaturePropertyType;
@@ -51,69 +82,22 @@ import net.opengis.om20.OMObservationPropertyType;
 import net.opengis.om20.OMObservationType;
 import net.opengis.om20.OMProcessPropertyType;
 import net.opengis.om20.TimeObjectPropertyType;
-
-/* 
- * Ugly, but the seemingly the recommended way to pre-define namespace prefixes,
- * see http://docs.oracle.com/cd/E17802_01/webservices/webservices/docs/1.5/jaxb/vendorProperties.html 
- */
-import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
-
-import aero.aixm511.AirportHeliportType;
-import fi.fmi.avi.converter.ConversionHints;
-import fi.fmi.avi.converter.ConversionIssue;
-import fi.fmi.avi.converter.ConversionIssue.Type;
-
-import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.converter.ConversionResult.Status;
-import fi.fmi.avi.model.Aerodrome;
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.AviationCodeListUser.TAFStatus;
-import fi.fmi.avi.model.CloudForecast;
-import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.Weather;
-import fi.fmi.avi.model.taf.TAF;
-import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
-import fi.fmi.avi.model.taf.TAFBaseForecast;
-import fi.fmi.avi.model.taf.TAFChangeForecast;
-import fi.fmi.avi.model.taf.TAFForecast;
-import fi.fmi.avi.model.taf.TAFSurfaceWind;
-import icao.iwxxm21.AerodromeAirTemperatureForecastPropertyType;
-import icao.iwxxm21.AerodromeAirTemperatureForecastType;
-import icao.iwxxm21.AerodromeCloudForecastPropertyType;
-import icao.iwxxm21.AerodromeCloudForecastType;
-import icao.iwxxm21.AerodromeForecastChangeIndicatorType;
-import icao.iwxxm21.AerodromeForecastWeatherType;
-import icao.iwxxm21.AerodromeSurfaceWindForecastPropertyType;
-import icao.iwxxm21.AerodromeSurfaceWindForecastType;
-import icao.iwxxm21.AirportHeliportPropertyType;
-import icao.iwxxm21.LengthWithNilReasonType;
-import icao.iwxxm21.MeteorologicalAerodromeForecastRecordPropertyType;
-import icao.iwxxm21.MeteorologicalAerodromeForecastRecordType;
-import icao.iwxxm21.PermissibleUsageType;
-import icao.iwxxm21.RelationalOperatorType;
-import icao.iwxxm21.TAFReportStatusType;
-import icao.iwxxm21.TAFType;
 import wmo.metce2013.ProcessType;
 
-/**
- * Created by rinne on 19/07/17.
- */
-public class TAFIWXXMSerializer extends AerodromeMessageIWXXMSerializer implements IWXXMSerializer<TAF> {
+public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXXMSerializer implements IWXXMSerializer<TAF, T> {
   public static final int MAX_FCT_WEATHER_CODES = 3;
   public static final int MAX_FCT_TEMPERATURES = 2;
   public static final int MAX_CHANGE_FORECASTS = 7;
-private static final int AbstractTimeObjectType = 0;
-
-
-  public TAFIWXXMSerializer() {
-  }
-
+  
+  
+  protected abstract T render(final TAFType taf, final ConversionHints hints) throws JAXBException;
+  
   @Override
-  public ConversionResult<String> convertMessage(final TAF input, final ConversionHints hints) {
-    ConversionResult<String> retval = new ConversionResult<>();
+  public ConversionResult<T> convertMessage(TAF input, ConversionHints hints) {
+    ConversionResult<T> result = new ConversionResult<T>();
     if (!input.isAerodromeInfoResolved() || !input.areTimeReferencesResolved()) {
-      retval.addIssue(new ConversionIssue(ConversionIssue.Type.MISSING_DATA, "Aerodrome info and time references must be resolved before converting " + "to IWXXM"));
-      return retval;
+      result.addIssue(new ConversionIssue(ConversionIssue.Type.MISSING_DATA, "Aerodrome info and time references must be resolved before converting " + "to IWXXM"));
+      return result;
     }
     TAFType taf = create(TAFType.class);
     taf.setId("taf-" + UUID.randomUUID().toString());
@@ -154,40 +138,40 @@ private static final int AbstractTimeObjectType = 0;
         prop.setTimePeriod(tp);
 
       }));
-      this.updateChangeForecast(input, taf, issueTimeId, validTimeId, foiId, processId, retval);
+      this.updateChangeForecast(input, taf, issueTimeId, validTimeId, foiId, processId, result);
     }
-    this.updateBaseForecast(input, taf, issueTimeId, validTimeId, foiId, processId, aerodromeId, retval);
+    this.updateBaseForecast(input, taf, issueTimeId, validTimeId, foiId, processId, aerodromeId, result);
 
     if (AviationCodeListUser.TAFStatus.CORRECTION == status || AviationCodeListUser.TAFStatus.CANCELLATION == status
         || AviationCodeListUser.TAFStatus.AMENDMENT == status) {
-      this.updatePreviousReportReferences(input, taf, aerodromeId, retval);
+      this.updatePreviousReportReferences(input, taf, aerodromeId, result);
     } else {
       //TAF: previousReportValidPeriod must be null unless this cancels, corrects or amends a previous report
       if (input.getReferredReport() != null) {
-        retval.addIssue(new ConversionIssue(ConversionIssue.Type.LOGICAL_ERROR,
+        result.addIssue(new ConversionIssue(ConversionIssue.Type.LOGICAL_ERROR,
             "TAF contains reference to the previous report even if its type is "
                 + "not amendment, cancellation or correction"));
       }
     }
     try {
-      retval.setStatus(Status.SUCCESS);
-      this.updateMessageMetadata(retval, taf);
-      retval.setConvertedMessage(this.renderXMLString(taf, hints));
+      result.setStatus(Status.SUCCESS);
+      this.updateMessageMetadata(result, taf);
+      result.setConvertedMessage(this.render(taf, hints));
     } catch (JAXBException e) {
-      retval.setStatus(Status.FAIL);
-      retval.addIssue(new ConversionIssue(ConversionIssue.Type.OTHER, "Unable to render IWXXM message to String", e));
+      result.setStatus(Status.FAIL);
+      result.addIssue(new ConversionIssue(ConversionIssue.Type.OTHER, "Unable to render IWXXM message to String", e));
     }
-    return retval;
+    return result;
   }
-
-  private void updateBaseForecast(final TAF source,
+  
+  protected void updateBaseForecast(final TAF source,
       final TAFType target,
       final String issueTimeId,
       final String validTimeId,
       final String foiId,
       final String processId,
       final String aerodromeId,
-      final ConversionResult<String> result) {
+      final ConversionResult<?> result) {
 
     TAFForecast baseForecastInput = source.getBaseForecast();
     if (baseForecastInput != null) {
@@ -252,13 +236,13 @@ private static final int AbstractTimeObjectType = 0;
   }
 
   @SuppressWarnings("unchecked")
-  private void updateChangeForecast(final TAF source,
+  protected void updateChangeForecast(final TAF source,
       final TAFType target,
       final String issueTimeId,
       final String validTimeId,
       final String foid,
       final String processId,
-      final ConversionResult<String> result) {
+      final ConversionResult<?> result) {
 
     List<TAFChangeForecast> fcts = source.getChangeForecasts();
     if (fcts != null && fcts.size() > 0) {
@@ -348,7 +332,7 @@ private static final int AbstractTimeObjectType = 0;
 
   private void updateForecastResult(final TAF taf, final TAFForecast source,
       final OMObservationType target,
-      final ConversionResult<String> result) {
+      final ConversionResult<?> result) {
     if (source == null) {
       return;
     }
@@ -439,7 +423,7 @@ private static final int AbstractTimeObjectType = 0;
 
   private void updateForecastSurfaceWind(final TAFSurfaceWind source,
       final AerodromeSurfaceWindForecastType target,
-      final ConversionResult<String> result) {
+      final ConversionResult<?> result) {
         if (source != null) {
           NumericMeasure measure = source.getMeanWindSpeed();
             if (measure != null) {
@@ -459,7 +443,7 @@ private static final int AbstractTimeObjectType = 0;
 
   private void setAirTemperatureForecast(final TAFAirTemperatureForecast source,
       final AerodromeAirTemperatureForecastType target,
-      final ConversionResult<String> result) {
+      final ConversionResult<?> result) {
     if (source != null) {
       NumericMeasure measure = source.getMinTemperature();
       if (measure != null) {
@@ -490,7 +474,7 @@ private static final int AbstractTimeObjectType = 0;
     }
   }
 
-  private void updatePreviousReportReferences(final TAF source, final TAFType target, String aerodromeId, final ConversionResult<String> result) {
+  protected void updatePreviousReportReferences(final TAF source, final TAFType target, String aerodromeId, final ConversionResult<?> result) {
     if (TAFReportStatusType.CANCELLATION == target.getStatus() || TAFReportStatusType.CORRECTION == target.getStatus()
           || TAFReportStatusType.AMENDMENT == target.getStatus()) {
       TAF prevReport = source.getReferredReport();
@@ -530,7 +514,7 @@ private static final int AbstractTimeObjectType = 0;
     }
   }
 
-  private void updateMessageMetadata(final ConversionResult<?> results, final TAFType target) {
+  protected void updateMessageMetadata(final ConversionResult<?> results, final TAFType target) {
     if (ConversionResult.Status.SUCCESS != results.getStatus()) {
       target.setPermissibleUsage(PermissibleUsageType.NON_OPERATIONAL);
       List<ConversionIssue> issues = results.getConversionIssues();
@@ -542,7 +526,8 @@ private static final int AbstractTimeObjectType = 0;
     }
   }
 
-  private String renderXMLString(final TAFType tafElem, final ConversionHints hints) throws JAXBException {
+  
+  protected Document renderXMLDocument(final TAFType tafElem, final ConversionHints hints) throws JAXBException {
     StringWriter sw = new StringWriter();
     Marshaller marshaller = getJAXBContext().createMarshaller();
     marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -553,7 +538,7 @@ private static final int AbstractTimeObjectType = 0;
     return asCleanedUpXML(sw, hints);
   }
   
-  private String asCleanedUpXML(final StringWriter input, final ConversionHints hints) {
+  private Document asCleanedUpXML(final StringWriter input, final ConversionHints hints) {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setNamespaceAware(true);
@@ -561,19 +546,20 @@ private static final int AbstractTimeObjectType = 0;
       DocumentBuilder db = dbf.newDocumentBuilder();
       InputSource is = new InputSource(new StringReader(input.toString()));
       Document dom3Doc = db.parse(is);
-      StringWriter sw = new StringWriter();
-      Result cleanedResult = new StreamResult(sw);
+      //StringWriter sw = new StringWriter();
+      //Result cleanedResult = new StreamResult(sw);
+      DOMResult cleanedResult = new DOMResult();
       TransformerFactory tFactory = TransformerFactory.newInstance();
       
       //TODO: add a cleaning XSL transformation loading from resources:
       Transformer transformer = tFactory.newTransformer(this.getCleanupTransformationStylesheet(hints));
       
       //transformer.setOutputProperty( "omit-xml-declaration", "yes" );
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+      //transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      //transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       DOMSource dsource = new DOMSource(dom3Doc);
       transformer.transform(dsource, cleanedResult);
-      return sw.toString();
+      return (Document) cleanedResult.getNode();
     } catch (ParserConfigurationException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

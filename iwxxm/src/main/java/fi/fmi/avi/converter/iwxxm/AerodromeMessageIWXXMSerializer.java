@@ -55,7 +55,7 @@ public abstract class AerodromeMessageIWXXMSerializer extends IWXXMConverter {
 
   @SuppressWarnings("unchecked")
   protected void updateSamplingFeature(final Aerodrome input, final OMObservationType target, final String foiId, final String aerodromeId,
-      final ConversionResult<String> result) {
+      final ConversionResult<?> result) {
     if (input == null) {
       throw new IllegalArgumentException("Aerodrome info is null");
     }
@@ -192,7 +192,7 @@ public abstract class AerodromeMessageIWXXMSerializer extends IWXXMConverter {
     return retval;
   }
 
-  protected void updateForecastClouds(final CloudForecast source, final AerodromeCloudForecastType target,  final ConversionResult<String> result) {
+  protected void updateForecastClouds(final CloudForecast source, final AerodromeCloudForecastType target,  final ConversionResult<?> result) {
     if (source != null) {
       target.setId("cfct-" + UUID.randomUUID().toString());
       NumericMeasure measure = source.getVerticalVisibility();
