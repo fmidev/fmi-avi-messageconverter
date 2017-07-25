@@ -32,14 +32,14 @@
 	        "amount": "BKN",
 	      	"base": {
 	      	  "value": 1000,
-	      	  "uom": "ft"
+	      	  "uom": "[ft_i]"
 	      	}
 	      },
 	      {
 	        "amount": "BKN",
 	      	"base": {
 	      	  "value": 1500,
-	      	  "uom": "ft"
+	      	  "uom": "[ft_i]"
 	      	}
 	      }
 	    ]

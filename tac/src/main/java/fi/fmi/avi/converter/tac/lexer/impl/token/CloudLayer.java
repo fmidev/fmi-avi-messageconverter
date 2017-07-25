@@ -207,7 +207,7 @@ public class CloudLayer extends RegexMatchingLexemeVisitor {
             if (value != null) {
 				if ("hft".equalsIgnoreCase(value.getUom())) {
 					hftValue = Math.round(value.getValue());
-				} else if ("ft".equalsIgnoreCase(value.getUom())) {
+				} else if ("[ft_i]".equalsIgnoreCase(value.getUom())) {
 					hftValue = Math.round(value.getValue() / 100.0);
 				} else {
                     throw new SerializingException("Unable to reconstruct cloud layer / vertical visibility height with UoM '" + value.getUom() + "'");

@@ -348,7 +348,7 @@ public class METARTACParser extends AbstractTACParser<METAR> {
                         int height = ((Integer) value).intValue();
                         if ("hft".equals(unit)) {
                             height = height * 100;
-                            unit = "ft";
+                            unit = "[ft_i]";
                         }
                         clouds.setVerticalVisibility(new NumericMeasureImpl(height, unit));
                     } else {
@@ -791,7 +791,7 @@ public class METARTACParser extends AbstractTACParser<METAR> {
 	                                        int height = ((Integer) value).intValue();
 	                                        if ("hft".equals(unit)) {
 	                                            height = height * 100;
-	                                            unit = "ft";
+	                                            unit = "[ft_i]";
 	                                        }
 	                                        cloud.setVerticalVisibility(new NumericMeasureImpl(height, unit));
 	                                    } else {

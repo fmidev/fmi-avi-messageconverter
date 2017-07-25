@@ -88,7 +88,7 @@
   "clouds": {
     "verticalVisibility": {
       "value": 600.0,
-      "uom": "ft"
+      "uom": "[ft_i]"
     }
   },
   "altimeterSettingQNH": {
@@ -129,7 +129,7 @@
             "amount": "BKN",
             "base": {
               "value": 1200.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             },
             "cloudType": "CB"
           }

@@ -33,14 +33,14 @@
         "amount": "SCT",
         "base": {
           "value": 1300.0,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       },
       {
         "amount": "BKN",
         "base": {
           "value": 2500.0,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       }
     ]

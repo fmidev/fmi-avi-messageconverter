@@ -104,14 +104,14 @@
         "amount": "FEW",
         "base": {
           "value": 300,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       },
       {
         "amount": "SCT",
         "base": {
           "value": 5000,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       }
     ]

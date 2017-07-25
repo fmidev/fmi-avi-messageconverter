@@ -38,18 +38,22 @@ public class TAFIWXXMSerializerTest {
     @Test
     public void testTemplate() throws Exception {
         assertTrue(converter.isSpecificationSupported(IWXXMConverterConfig.TAF_POJO_TO_IWXXM21));
-        TAF t = readFromJSON("taf1.json");
+        TAF t = readFromJSON("taf12.json");
         Aerodrome airport = new Aerodrome();
 
-        airport.setDesignator("EFHK");
-        airport.setName("Helsinki Vantaa Airport");
-        airport.setFieldElevation(179.0);
-        airport.setLocationIndicatorICAO("EFHK");
-        airport.setReferencePoint(new GeoPosition("http://www.opengis.net/def/crs/EPSG/0/4326", 24.963300704956,60.317199707031));
+        airport.setDesignator("EFVA");
+        airport.setName("Vaasa Airport");
+        airport.setFieldElevation(6.0);
+        airport.setLocationIndicatorICAO("EFVA");
+        GeoPosition refPoint = new GeoPosition("http://www.opengis.net/def/crs/EPSG/0/4326", 21.764167,63.045278);
+        refPoint.setElevationValue(6.0);
+        refPoint.setElevationUom("m");
+        airport.setReferencePoint(refPoint);
+        
         t.amendAerodromeInfo(airport);
 
-        //Partial: 271137Z
-        ZonedDateTime issueTime = ZonedDateTime.of(2017,6,27,11,13,0,0, ZoneId.of("Z"));
+        //Partial: 301130Z
+        ZonedDateTime issueTime = ZonedDateTime.of(2017,7,29,21,0,0,0, ZoneId.of("Z"));
         t.amendTimeReferences(issueTime);
 
         ConversionResult<String> result = converter.convertMessage(t, IWXXMConverterConfig.TAF_POJO_TO_IWXXM21);

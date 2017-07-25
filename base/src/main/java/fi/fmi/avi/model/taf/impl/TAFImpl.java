@@ -30,7 +30,6 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
     private static final Pattern VALIDITY_PERIOD_PATTERN = Pattern.compile("^(([0-9]{2})([0-9]{2})([0-9]{2}))|(([0-9]{2})([0-9]{2})/([0-9]{2})([0-9]{2}))$");
     
     private TAFStatus status;
-    private Aerodrome aerodrome;
     private ZonedDateTime validityStartTime = null;
     private int validityStartDayOfMonth = -1;
     private int validityStartHour = -1;
@@ -48,7 +47,6 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
     public TAFImpl(final TAF input) {
         super(input);
         this.status = input.getStatus();
-        this.aerodrome = input.getAerodrome();
         if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
         	this.setValidityStartTime(input.getValidityStartTime());
         	this.setValidityEndTime(input.getValidityEndTime());
@@ -74,16 +72,6 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
     @Override
     public void setStatus(final TAFStatus status) {
         this.status = status;
-    }
-
-    @Override
-    public Aerodrome getAerodrome() {
-        return aerodrome;
-    }
-
-    @Override
-    public void setAerodrome(final Aerodrome aerodrome) {
-        this.aerodrome = aerodrome;
     }
 
     @Override

@@ -31,7 +31,7 @@
       "pastTendency": "NO_CHANGE",
       "meanRVR": {
         "value": 1500.0,
-        "uom": "ft"
+        "uom": "[ft_i]"
       }
     },
     {
@@ -88,7 +88,7 @@
   "clouds": {
     "verticalVisibility": {
       "value": 600.0,
-      "uom": "ft"
+      "uom": "[ft_i]"
     }
   },
   "altimeterSettingQNH": {

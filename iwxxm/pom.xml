@@ -23,6 +23,14 @@
       <artifactId>fmi-avi-xmlmodel-iwxxm21</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+    
+    <!-- Need for exposing the com.sum internal NamespacePrefixMapper classes -->
+    <dependency>
+      <groupId>com.googlecode.jaxb-namespaceprefixmapper-interfaces</groupId>
+      <artifactId>JAXBNamespacePrefixMapper</artifactId>
+      <version>2.2.4</version>
+    </dependency>
+    
     <dependency>
       <groupId>com.helger</groupId>
       <artifactId>ph-schematron</artifactId>

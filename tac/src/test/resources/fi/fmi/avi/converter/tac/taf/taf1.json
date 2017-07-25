@@ -36,14 +36,14 @@
           "amount": "SCT",
           "base": {
             "value": 2000,
-            "uom": "ft"
+            "uom": "[ft_i]"
           }
         },
         {
           "amount": "OVC",
           "base": {
             "value": 5000,
-            "uom": "ft"
+            "uom": "[ft_i]"
           }
         }
       ]
@@ -69,7 +69,7 @@
             "amount": "BKN",
             "base": {
               "value": 700,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           }
         ]
@@ -131,7 +131,7 @@
             "amount": "BKN",
             "base": {
               "value": 400,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           }
         ]

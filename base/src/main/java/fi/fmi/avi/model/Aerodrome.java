@@ -93,4 +93,65 @@ public class Aerodrome {
                 .append(this.referencePoint)
                 .toString();
     }
+    
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((designator == null) ? 0 : designator.hashCode());
+      result = prime * result + ((designatorIATA == null) ? 0 : designatorIATA.hashCode());
+      result = prime * result + ((fieldElevationUnit == null) ? 0 : fieldElevationUnit.hashCode());
+      result = prime * result + ((fieldElevationValue == null) ? 0 : fieldElevationValue.hashCode());
+      result = prime * result + ((locationIndicatorICAO == null) ? 0 : locationIndicatorICAO.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((referencePoint == null) ? 0 : referencePoint.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      Aerodrome other = (Aerodrome) obj;
+      if (designator == null) {
+        if (other.designator != null)
+          return false;
+      } else if (!designator.equals(other.designator))
+        return false;
+      if (designatorIATA == null) {
+        if (other.designatorIATA != null)
+          return false;
+      } else if (!designatorIATA.equals(other.designatorIATA))
+        return false;
+      if (fieldElevationUnit == null) {
+        if (other.fieldElevationUnit != null)
+          return false;
+      } else if (!fieldElevationUnit.equals(other.fieldElevationUnit))
+        return false;
+      if (fieldElevationValue == null) {
+        if (other.fieldElevationValue != null)
+          return false;
+      } else if (!fieldElevationValue.equals(other.fieldElevationValue))
+        return false;
+      if (locationIndicatorICAO == null) {
+        if (other.locationIndicatorICAO != null)
+          return false;
+      } else if (!locationIndicatorICAO.equals(other.locationIndicatorICAO))
+        return false;
+      if (name == null) {
+        if (other.name != null)
+          return false;
+      } else if (!name.equals(other.name))
+        return false;
+      if (referencePoint == null) {
+        if (other.referencePoint != null)
+          return false;
+      } else if (!referencePoint.equals(other.referencePoint))
+        return false;
+      return true;
+    }
 }

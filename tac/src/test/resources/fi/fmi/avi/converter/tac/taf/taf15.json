@@ -40,7 +40,7 @@
 	        "amount": "BKN",
             "base": {
               "value": 100.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
 	      }
 	    ]

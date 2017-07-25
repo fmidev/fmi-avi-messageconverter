@@ -29,7 +29,7 @@
 	      "amount": "OVC",
           "base": {
             "value": 800.0,
-            "uom": "ft"
+            "uom": "[ft_i]"
           }
 	    }
 	  ]
@@ -74,7 +74,7 @@
             "amount": "OVC",
             "base": {
               "value": 1000.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           }
         ]
@@ -106,14 +106,14 @@
             "amount": "SCT",
             "base": {
               "value": 1500.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           },
           {
             "amount": "BKN",
             "base": {
               "value": 2000.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           }
         ]
@@ -156,7 +156,7 @@
             "amount": "BKN",
             "base": {
               "value": 1200.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             },
             "cloudType": "CB"
           },
@@ -164,7 +164,7 @@
             "amount": "BKN",
             "base": {
               "value": 2000.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           }
         ]

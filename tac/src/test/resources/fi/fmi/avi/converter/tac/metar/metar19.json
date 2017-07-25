@@ -104,7 +104,7 @@
   "clouds": {
     "verticalVisibility": {
       "value": 600.0,
-      "uom": "ft"
+      "uom": "[ft_i]"
     }
   },
   "altimeterSettingQNH": {
@@ -171,7 +171,7 @@
       "cloud": {
         "verticalVisibility": {
           "value": 4000.0,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       }
     },

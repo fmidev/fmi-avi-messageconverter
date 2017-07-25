@@ -48,7 +48,7 @@
         "amount": "OVC",
         "base": {
           "value": 600,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       }
     ]

@@ -58,7 +58,7 @@ public class RunwayVisualRange extends RegexMatchingLexemeVisitor {
 		}
 		String unit = match.group(8);
 		if (unit != null) {
-			token.setParsedValue(UNIT, "ft");
+			token.setParsedValue(UNIT, "[ft_i]");
 		} else {
 			token.setParsedValue(UNIT, "m");
 		}
@@ -157,7 +157,7 @@ public class RunwayVisualRange extends RegexMatchingLexemeVisitor {
 			}
 
 			builder.append(String.format("%04d", value.intValue()));
-			if ("ft".equals(meanRvr.getUom())) {
+			if ("[ft_i]".equals(meanRvr.getUom())) {
 				appendUnit = "FT";
 			} else if (!"m".equals(meanRvr.getUom())) {
 				throw new SerializingException("Unknown unit of measure '" + meanRvr.getUom() + "' for RunwayVisualRange, allowed are 'm' and 'ft'");

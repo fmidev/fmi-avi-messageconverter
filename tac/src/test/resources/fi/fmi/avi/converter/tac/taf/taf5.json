@@ -35,7 +35,7 @@
 	       "amount": "FEW",
 	       "base": {
 	         "value": 1500.0,
-	         "uom": "ft"
+	         "uom": "[ft_i]"
 	       },
 	       "cloudType": "TCU"
 	    },
@@ -43,7 +43,7 @@
 	       "amount": "SCT",
 	       "base": {
 	         "value": 2500.0,
-	         "uom": "ft"
+	         "uom": "[ft_i]"
 	       }
 	    }
 	  ]
@@ -70,7 +70,7 @@
             "amount": "BKN",
             "base": {
               "value": 1200.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             },
             "cloudType": "CB"
 	      }

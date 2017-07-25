@@ -14,12 +14,16 @@ public class ConversionResult<T> {
 
     private T convertedMessage;
     private List<ConversionIssue> issues;
+    private Status explicitStatus;
 
     public ConversionResult() {
         issues = new ArrayList<>();
     }
 
     public Status getStatus() {
+      if (this.explicitStatus != null) {
+        return this.explicitStatus;
+      } else {
         if (convertedMessage == null) {
             return Status.FAIL;
         } else if (this.issues.size() == 0) {
@@ -27,6 +31,11 @@ public class ConversionResult<T> {
         } else {
             return Status.WITH_ERRORS;
         }
+      }
+    }
+    
+    public void setStatus(final Status status) {
+      this.explicitStatus = status;
     }
 
     public T getConvertedMessage() {
@@ -41,6 +50,7 @@ public class ConversionResult<T> {
     public void setConvertedMessage(T message) {
         this.convertedMessage = message;
     }
+    
 
     public void addIssue(ConversionIssue issue) {
         if (issue != null) {

@@ -497,7 +497,7 @@ public class TAFTACParser extends AbstractTACParser<TAF> {
                         height = (Integer) value;
                         if ("hft".equals(unit)) {
                             height = height * 100;
-                            unit = "ft";
+                            unit = "[ft_i]";
                         }
                     } else {
                         retval.add(new ConversionIssue(ConversionIssue.Type.SYNTAX_ERROR, "Cloud layer height is not an integer in " + match.getTACToken()));

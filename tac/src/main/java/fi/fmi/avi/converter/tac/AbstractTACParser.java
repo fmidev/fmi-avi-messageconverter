@@ -261,7 +261,7 @@ public abstract class AbstractTACParser<T extends AviationWeatherMessage> implem
             if (value instanceof Integer) {
                 Integer height = (Integer) value;
                 if ("hft".equals(unit)) {
-                    retval.setBase(new NumericMeasureImpl(height * 100, "ft"));
+                    retval.setBase(new NumericMeasureImpl(height * 100, "[ft_i]"));
                 } else {
                     retval.setBase(new NumericMeasureImpl(height, unit));
                 }

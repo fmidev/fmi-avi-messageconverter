@@ -93,14 +93,14 @@
         "amount": "BKN",
         "base": {
           "value": 2200,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       },
       {
         "amount": "OVC",
         "base": {
           "value": 5000,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       }
     ]

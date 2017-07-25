@@ -30,7 +30,7 @@
 	      "amount": "OVC",
           "base": {
             "value": 800.0,
-            "uom": "ft"
+            "uom": "[ft_i]"
           }
 	    }
 	  ]
@@ -48,7 +48,7 @@
             "amount": "BKN",
             "base": {
               "value": 400.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           }
         ]
@@ -74,7 +74,7 @@
             "amount": "BKN",
             "base": {
               "value": 400.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           }
         ]
@@ -100,7 +100,7 @@
             "amount": "BKN",
             "base": {
               "value": 400.0,
-              "uom": "ft"
+              "uom": "[ft_i]"
             }
           }
         ]
@@ -122,7 +122,7 @@
       "cloud": {
         "verticalVisibility": {
           "value": 200.0,
-          "uom": "ft"
+          "uom": "[ft_i]"
         }
       }
     }
