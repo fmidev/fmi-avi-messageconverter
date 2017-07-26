@@ -50,7 +50,7 @@ import net.opengis.sampling.spatial.ShapeType;
 /**
  * Created by rinne on 20/07/17.
  */
-public abstract class AerodromeMessageIWXXMSerializer extends IWXXMConverter {
+public abstract class AerodromeMessageIWXXMSerializerBase extends IWXXMConverterBase {
 
     public static final int MAX_CLOUD_LAYERS = 4;
 

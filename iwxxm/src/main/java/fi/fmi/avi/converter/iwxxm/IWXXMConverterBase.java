@@ -13,7 +13,7 @@ import javax.xml.bind.JAXBException;
 /**
  * Created by rinne on 20/07/17.
  */
-public abstract class IWXXMConverter {
+public abstract class IWXXMConverterBase {
     private static JAXBContext jaxbCtx = null;
     private static Map<String, Object> classToObjectFactory = new HashMap<>();
     private static Map<String, Object> objectFactoryMap = new HashMap<>();
@@ -123,7 +123,7 @@ public abstract class IWXXMConverter {
                         objectFactory = objectFactoryMap.get(objectFactoryName);
                         if (objectFactory == null) {
                             try {
-                                ofClass = IWXXMConverter.class.getClassLoader().loadClass(objectFactoryName);
+                                ofClass = IWXXMConverterBase.class.getClassLoader().loadClass(objectFactoryName);
                                 break;
                             } catch (ClassNotFoundException cnfe) {
                                 int nextDot = objectFactoryPath.lastIndexOf('.');

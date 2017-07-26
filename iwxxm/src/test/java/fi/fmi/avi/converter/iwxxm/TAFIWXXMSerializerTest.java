@@ -57,11 +57,11 @@ public class TAFIWXXMSerializerTest {
         t.amendTimeReferences(issueTime);
 
         ConversionResult<String> result = converter.convertMessage(t, IWXXMConverterConfig.TAF_POJO_TO_IWXXM21_STRING);
-        //System.out.println(result.getConversionIssues().toString());
+        System.out.println(result.getConversionIssues().toString());
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
 
         //TODO: XPAth query based content asserts
-        //System.out.println(result.getConvertedMessage());
+        System.out.println(result.getConvertedMessage());
     }
 
     protected TAF readFromJSON(String fileName) throws IOException {

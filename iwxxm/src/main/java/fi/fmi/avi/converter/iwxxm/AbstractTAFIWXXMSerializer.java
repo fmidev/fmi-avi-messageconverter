@@ -1,8 +1,16 @@
 package fi.fmi.avi.converter.iwxxm;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -14,6 +22,9 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,15 +36,27 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
+import com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler;
+import com.sun.org.apache.xerces.internal.xni.XMLResourceIdentifier;
+import com.sun.org.apache.xerces.internal.xni.XNIException;
+import com.sun.org.apache.xerces.internal.xni.parser.XMLEntityResolver;
+import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
 import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
 
 import aero.aixm511.AirportHeliportType;
+import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionIssue;
 import fi.fmi.avi.converter.ConversionResult;
@@ -86,7 +109,7 @@ import net.opengis.om20.TimeObjectPropertyType;
 
 import wmo.metce2013.ProcessType;
 
-public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXXMSerializer implements IWXXMSerializer<TAF, T> {
+public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXXMSerializerBase implements AviMessageSpecificConverter<TAF, T> {
     public static final int MAX_FCT_WEATHER_CODES = 3;
     public static final int MAX_FCT_TEMPERATURES = 2;
     public static final int MAX_CHANGE_FORECASTS = 7;
@@ -150,9 +173,13 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
             }
         }
         try {
-            result.setStatus(Status.SUCCESS);
             this.updateMessageMetadata(result, taf);
-            result.setConvertedMessage(this.render(taf, hints));
+            if (this.validateDocument(taf, hints, result)) {
+                result.setStatus(Status.SUCCESS);
+                result.setConvertedMessage(this.render(taf, hints));
+            } else {
+                result.setStatus(Status.FAIL);
+            }
         } catch (JAXBException e) {
             result.setStatus(Status.FAIL);
             result.addIssue(new ConversionIssue(ConversionIssue.Type.OTHER, "Unable to render IWXXM message to String", e));
@@ -514,13 +541,46 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
     protected Document renderXMLDocument(final TAFType tafElem, final ConversionHints hints) throws JAXBException {
         StringWriter sw = new StringWriter();
         Marshaller marshaller = getJAXBContext().createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
                 "http://icao.int/iwxxm/2.1 https://schemas.wmo.int/iwxxm/2.1/iwxxm.xsd http://def.wmo.int/metce/2013 http://schemas.wmo.int/metce/1.2/metce.xsd http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd");
         marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper", new IWXXMNamespaceMapper());
         marshaller.marshal(wrap(tafElem, TAFType.class), sw);
         return asCleanedUpXML(sw, hints);
+    }
+
+    protected boolean validateDocument(final TAFType tafElem, final ConversionHints hints, final ConversionResult<T> result) {
+        try {
+            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            //TODO: for some reason the SchemaFactory still tries to fetch some of the schemas directly using the schemaLocation, not using the
+            // resourceResolver provided!! Thus the validation does not work when offline
+            IWXXMSchemaResourceResolver resolver = new IWXXMSchemaResourceResolver();
+            schemaFactory.setResourceResolver(resolver);
+            schemaFactory.setProperty(XSDHandler.ENTITY_RESOLVER, resolver);
+            Schema iwxxmSchema = schemaFactory.newSchema(TAFType.class.getResource("/int/icao/iwxxm/2.1/iwxxm.xsd"));
+
+            Marshaller marshaller = getJAXBContext().createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
+                    "http://icao.int/iwxxm/2.1 https://schemas.wmo.int/iwxxm/2.1/iwxxm.xsd http://def.wmo.int/metce/2013 http://schemas.wmo.int/metce/1.2/metce.xsd http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd");
+            marshaller.setProperty("com.sun.xml.internal.bind.namespacePrefixMapper", new IWXXMNamespaceMapper());
+            marshaller.setSchema(iwxxmSchema);
+            ConverterValidationEventHandler<T> eventHandler = new ConverterValidationEventHandler<T>(result);
+            marshaller.setEventHandler(eventHandler);
+            marshaller.marshal(wrap(tafElem, TAFType.class), new DefaultHandler());
+            if (eventHandler.errorsFound()) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (PropertyException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private Document asCleanedUpXML(final StringWriter input, final ConversionHints hints) {
@@ -531,17 +591,9 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
             DocumentBuilder db = dbf.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(input.toString()));
             Document dom3Doc = db.parse(is);
-            //StringWriter sw = new StringWriter();
-            //Result cleanedResult = new StreamResult(sw);
             DOMResult cleanedResult = new DOMResult();
             TransformerFactory tFactory = TransformerFactory.newInstance();
-
-            //TODO: add a cleaning XSL transformation loading from resources:
             Transformer transformer = tFactory.newTransformer(this.getCleanupTransformationStylesheet(hints));
-
-            //transformer.setOutputProperty( "omit-xml-declaration", "yes" );
-            //transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            //transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource dsource = new DOMSource(dom3Doc);
             transformer.transform(dsource, cleanedResult);
             return (Document) cleanedResult.getNode();
@@ -590,6 +642,239 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
         @Override
         public String getPreferredPrefix(final String namespace, final String prefix, final boolean required) {
             return mapping.getOrDefault(namespace, prefix);
+        }
+    }
+
+    static class IWXXMSchemaResourceResolver implements LSResourceResolver, XMLEntityResolver {
+
+        @Override
+        public LSInput resolveResource(final String type, final String namespaceURI, final String publicId, final String systemId, final String baseURI) {
+            Class<?> cls = null;
+            String path = null;
+            switch (namespaceURI) {
+                case "http://www.w3.org/XML/1998/namespace":
+                    cls = null;
+                    path = "/org/w3/2001/03/" + systemId;
+                    break;
+                case "http://www.w3.org/1999/xlink":
+                    cls = org.w3c.xlink11.ResourceType.class;
+                    path = "/w3/xlink/1.1/" + systemId;
+                    break;
+                case "http://www.opengis.net/gml/3.2":
+                    cls = net.opengis.gml32.AbstractGMLType.class;
+                    path = "/net/opengis/gml/3.2.1/" + systemId;
+                    break;
+                case "http://www.isotc211.org/2005/gts":
+                    cls = org.iso19139.ogc2007.gts.TMPrimitivePropertyType.class;
+                    path = "/iso/19139/20070417/gts/" + systemId;
+                    break;
+                case "http://www.isotc211.org/2005/gsr":
+                    cls = org.iso19139.ogc2007.gsr.SCCRSPropertyType.class;
+                    path = "/iso/19139/20070417/gsr/" + systemId;
+                    break;
+                case "http://www.isotc211.org/2005/gss":
+                    cls = org.iso19139.ogc2007.gss.GMObjectPropertyType.class;
+                    path = "/iso/19139/20070417/gss/" + systemId;
+                    break;
+                case "http://www.isotc211.org/2005/gco":
+                    cls = org.iso19139.ogc2007.gco.AbstractObjectType.class;
+                    path = "/iso/19139/20070417/gco/" + systemId;
+                    break;
+                case "http://www.isotc211.org/2005/gmd":
+                    cls = org.iso19139.ogc2007.gmd.AbstractDQElementType.class;
+                    path = "/iso/19139/20070417/gmd/" + systemId;
+                    break;
+                case "http://www.opengis.net/om/2.0":
+                    cls = net.opengis.om20.OMObservationPropertyType.class;
+                    path = "/net/opengis/om/2.0/" + systemId;
+                    break;
+                case "http://www.opengis.net/sampling/2.0":
+                    cls = net.opengis.sampling.SamplingFeatureComplexType.class;
+                    path = "/net/opengis/sampling/2.0/" + systemId;
+                    break;
+                case "http://www.opengis.net/samplingSpatial/2.0":
+                    cls = net.opengis.sampling.spatial.SFSpatialSamplingFeatureType.class;
+                    path = "/net/opengis/samplingSpatial/2.0/" + systemId;
+                    break;
+                case "http://www.aixm.aero/schema/5.1.1":
+                    cls = aero.aixm511.CodeICAOType.class;
+                    path = "/aero/aixm/schema/5.1.1/" + systemId;
+                    break;
+                case "http://def.wmo.int/metce/2013":
+                    cls = wmo.metce2013.ProcessType.class;
+                    path = "/int/wmo/metce/1.2/" + systemId;
+                    break;
+                case "http://def.wmo.int/opm/2013":
+                    cls = wmo.opm2013.AbstractObservablePropertyPropertyType.class;
+                    path = "/int/wmo/opm/1.2/" + systemId;
+                    break;
+                case "http://icao.int/iwxxm/2.1":
+                    cls = icao.iwxxm21.TAFType.class;
+                    path = "/int/icao/iwxxm/2.1/" + systemId;
+
+            }
+            if (path != null) {
+                return new JARClassLoaderInput(cls, path, publicId, systemId, baseURI);
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public XMLInputSource resolveEntity(final XMLResourceIdentifier resourceIdentifier) throws XNIException, IOException {
+            LSInput inp = this.resolveResource(null,resourceIdentifier.getNamespace(), resourceIdentifier.getPublicId(), resourceIdentifier
+                    .getLiteralSystemId(), resourceIdentifier.getBaseSystemId());
+            return new XMLInputSource(inp.getPublicId(), inp.getSystemId(), inp.getBaseURI(),inp.getCharacterStream(), inp.getEncoding());
+        }
+    }
+
+    static class ConverterValidationEventHandler<V> implements ValidationEventHandler {
+        private ConversionResult<V> result;
+        private boolean errorsFound = false;
+        private boolean fatalErrorsFound = false;
+
+        ConverterValidationEventHandler(final ConversionResult<V> result) {
+            this.result = result;
+        }
+
+
+        public boolean handleEvent(ValidationEvent event) {
+            if (event.getSeverity() == ValidationEvent.ERROR) {
+                this.errorsFound = true;
+            } else if (event.getSeverity() == ValidationEvent.FATAL_ERROR) {
+                this.fatalErrorsFound = true;
+            }
+            this.result.addIssue(new ConversionIssue(Type.SYNTAX_ERROR, "XML Schema validation issue: " + event.getMessage()));
+            return true;
+        }
+
+        public boolean errorsFound() {
+            return this.errorsFound || this.fatalErrorsFound;
+        }
+
+        public boolean fatalErrorsFound() {
+            return this.fatalErrorsFound;
+        }
+    }
+
+    static class JARClassLoaderInput implements LSInput {
+        private URL url;
+        private String publicId;
+        private String systemId;
+        private String baseURI;
+
+        public JARClassLoaderInput(final Class<?> cls, final String path, final String publicId, final String systemId, final String baseURI) {
+            if (cls != null) {
+                this.url = cls.getResource(path);
+            } else {
+                this.url = JARClassLoaderInput.class.getClassLoader().getResource(path);
+            }
+            this.publicId = publicId;
+            this.systemId = systemId;
+            this.baseURI = baseURI;
+        }
+
+        @Override
+        public Reader getCharacterStream() {
+            if (this.url == null) return null;
+            try {
+                return new BufferedReader(new InputStreamReader(this.url.openStream()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public void setCharacterStream(final Reader characterStream) {
+            throw new UnsupportedOperationException("setCharacterStream(...) not yet implemented");
+        }
+
+        @Override
+        public InputStream getByteStream() {
+            if (this.url == null) return null;
+            try {
+                return this.url.openStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public void setByteStream(final InputStream byteStream) {
+            throw new UnsupportedOperationException("setByteStream(...) not yet implemented");
+        }
+
+        @Override
+        public String getStringData() {
+            if (this.url == null) return null;
+            Reader input = this.getCharacterStream();
+            if (input != null) {
+                try {
+                    StringWriter sw = new StringWriter();
+                    IOUtils.copy(input, sw);
+                    return sw.toString();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public void setStringData(final String stringData) {
+            throw new UnsupportedOperationException("setStringData(...) not yet implemented");
+        }
+
+        @Override
+        public String getSystemId() {
+            return this.systemId;
+        }
+
+        @Override
+        public void setSystemId(final String systemId) {
+            throw new UnsupportedOperationException("setSystemId(...) not yet implemented");
+        }
+
+        @Override
+        public String getPublicId() {
+            return this.publicId;
+        }
+
+        @Override
+        public void setPublicId(final String publicId) {
+            throw new UnsupportedOperationException("setPublicId(...) not yet implemented");
+        }
+
+        @Override
+        public String getBaseURI() {
+            return this.baseURI;
+        }
+
+        @Override
+        public void setBaseURI(final String baseURI) {
+            throw new UnsupportedOperationException("setBaseURI(...) not yet implemented");
+        }
+
+        @Override
+        public String getEncoding() {
+            return null;
+        }
+
+        @Override
+        public void setEncoding(final String encoding) {
+            throw new UnsupportedOperationException("setEncoding(...) not yet implemented");
+        }
+
+        @Override
+        public boolean getCertifiedText() {
+            return true;
+        }
+
+        @Override
+        public void setCertifiedText(final boolean certifiedText) {
+            throw new UnsupportedOperationException("setCertifiedText(...) not yet implemented");
         }
     }
 

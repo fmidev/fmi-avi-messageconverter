@@ -5,12 +5,9 @@ import javax.xml.bind.JAXBException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 import fi.fmi.avi.converter.AviMessageConverter;
-import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionSpecification;
-import fi.fmi.avi.converter.iwxxm.IWXXMSerializer;
 import fi.fmi.avi.converter.iwxxm.TAFIWXXMDOMSerializer;
 import fi.fmi.avi.converter.iwxxm.TAFIWXXMStringSerializer;
 import fi.fmi.avi.model.metar.METAR;
@@ -56,22 +53,9 @@ public class IWXXMConverterConfig {
     @Bean
     public AviMessageConverter aviMessageConverter() throws JAXBException {
         AviMessageConverter p = new AviMessageConverter();
-        p.setMessageSpecificConverter(TAF_POJO_TO_IWXXM21_DOM,iwxxm21TAFDOMSerializer());
-        p.setMessageSpecificConverter(TAF_POJO_TO_IWXXM21_STRING,iwxxm21TAFStringSerializer());
+        p.setMessageSpecificConverter(TAF_POJO_TO_IWXXM21_DOM,new TAFIWXXMDOMSerializer());
+        p.setMessageSpecificConverter(TAF_POJO_TO_IWXXM21_STRING,new TAFIWXXMStringSerializer());
         return p;
     }
-
-    AviMessageSpecificConverter<TAF, Document> iwxxm21TAFDOMSerializer() throws JAXBException {
-        IWXXMSerializer<TAF, Document> retval = new TAFIWXXMDOMSerializer();
-        return retval;
-    }
-    
-    AviMessageSpecificConverter<TAF, String> iwxxm21TAFStringSerializer() throws JAXBException {
-      IWXXMSerializer<TAF, String> retval = new TAFIWXXMStringSerializer();
-      return retval;
-  }
-
-
-    
 
 }
