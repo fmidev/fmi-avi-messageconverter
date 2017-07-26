@@ -552,13 +552,9 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
     protected boolean validateDocument(final TAFType tafElem, final ConversionHints hints, final ConversionResult<T> result) {
         try {
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            //TODO: for some reason the SchemaFactory still tries to fetch some of the schemas directly using the schemaLocation, not using the
-            // resourceResolver provided!! Thus the validation does not work when offline
             IWXXMSchemaResourceResolver resolver = new IWXXMSchemaResourceResolver();
             schemaFactory.setResourceResolver(resolver);
-            schemaFactory.setProperty(XSDHandler.ENTITY_RESOLVER, resolver);
             Schema iwxxmSchema = schemaFactory.newSchema(TAFType.class.getResource("/int/icao/iwxxm/2.1/iwxxm.xsd"));
-
             Marshaller marshaller = getJAXBContext().createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
@@ -645,86 +641,93 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
         }
     }
 
-    static class IWXXMSchemaResourceResolver implements LSResourceResolver, XMLEntityResolver {
-
+    static class IWXXMSchemaResourceResolver implements LSResourceResolver {
+        private Map<String, LSInput> cache = new HashMap<String, LSInput>();
         @Override
         public LSInput resolveResource(final String type, final String namespaceURI, final String publicId, final String systemId, final String baseURI) {
+            String cacheKey = namespaceURI + ":" + normalizeSystemId(systemId);
+            synchronized(this.cache) {
+                if (this.cache.containsKey(cacheKey)) {
+                    return this.cache.get(cacheKey);
+                }
+            }
+            
             Class<?> cls = null;
             String path = null;
             switch (namespaceURI) {
                 case "http://www.w3.org/XML/1998/namespace":
                     cls = null;
-                    path = "/org/w3/2001/03/" + systemId;
+                    path = "org/w3/2001/03/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.w3.org/1999/xlink":
                     cls = org.w3c.xlink11.ResourceType.class;
-                    path = "/w3/xlink/1.1/" + systemId;
+                    path = "org/w3/xlink/1.1/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.opengis.net/gml/3.2":
                     cls = net.opengis.gml32.AbstractGMLType.class;
-                    path = "/net/opengis/gml/3.2.1/" + systemId;
+                    path = "net/opengis/gml/3.2.1/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.isotc211.org/2005/gts":
                     cls = org.iso19139.ogc2007.gts.TMPrimitivePropertyType.class;
-                    path = "/iso/19139/20070417/gts/" + systemId;
+                    path = "iso/19139/20070417/gts/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.isotc211.org/2005/gsr":
                     cls = org.iso19139.ogc2007.gsr.SCCRSPropertyType.class;
-                    path = "/iso/19139/20070417/gsr/" + systemId;
+                    path = "iso/19139/20070417/gsr/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.isotc211.org/2005/gss":
                     cls = org.iso19139.ogc2007.gss.GMObjectPropertyType.class;
-                    path = "/iso/19139/20070417/gss/" + systemId;
+                    path = "iso/19139/20070417/gss/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.isotc211.org/2005/gco":
                     cls = org.iso19139.ogc2007.gco.AbstractObjectType.class;
-                    path = "/iso/19139/20070417/gco/" + systemId;
+                    path = "iso/19139/20070417/gco/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.isotc211.org/2005/gmd":
                     cls = org.iso19139.ogc2007.gmd.AbstractDQElementType.class;
-                    path = "/iso/19139/20070417/gmd/" + systemId;
+                    path = "iso/19139/20070417/gmd/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.opengis.net/om/2.0":
                     cls = net.opengis.om20.OMObservationPropertyType.class;
-                    path = "/net/opengis/om/2.0/" + systemId;
+                    path = "net/opengis/om/2.0/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.opengis.net/sampling/2.0":
                     cls = net.opengis.sampling.SamplingFeatureComplexType.class;
-                    path = "/net/opengis/sampling/2.0/" + systemId;
+                    path = "net/opengis/sampling/2.0/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.opengis.net/samplingSpatial/2.0":
                     cls = net.opengis.sampling.spatial.SFSpatialSamplingFeatureType.class;
-                    path = "/net/opengis/samplingSpatial/2.0/" + systemId;
+                    path = "net/opengis/samplingSpatial/2.0/" + normalizeSystemId(systemId);
                     break;
                 case "http://www.aixm.aero/schema/5.1.1":
                     cls = aero.aixm511.CodeICAOType.class;
-                    path = "/aero/aixm/schema/5.1.1/" + systemId;
+                    path = "aero/aixm/schema/5.1.1/" + normalizeSystemId(systemId);
                     break;
                 case "http://def.wmo.int/metce/2013":
                     cls = wmo.metce2013.ProcessType.class;
-                    path = "/int/wmo/metce/1.2/" + systemId;
+                    path = "int/wmo/metce/1.2/" + normalizeSystemId(systemId);
                     break;
                 case "http://def.wmo.int/opm/2013":
                     cls = wmo.opm2013.AbstractObservablePropertyPropertyType.class;
-                    path = "/int/wmo/opm/1.2/" + systemId;
+                    path = "int/wmo/opm/1.2/" + normalizeSystemId(systemId);
                     break;
                 case "http://icao.int/iwxxm/2.1":
                     cls = icao.iwxxm21.TAFType.class;
-                    path = "/int/icao/iwxxm/2.1/" + systemId;
+                    path = "int/icao/iwxxm/2.1/" + normalizeSystemId(systemId);
 
             }
             if (path != null) {
-                return new JARClassLoaderInput(cls, path, publicId, systemId, baseURI);
+                synchronized(this.cache) {
+                    this.cache.put(cacheKey, new JARClassLoaderInput(cls, path, publicId, systemId, baseURI));
+                    return this.cache.get(cacheKey);
+                }
             } else {
                 return null;
             }
         }
-
-        @Override
-        public XMLInputSource resolveEntity(final XMLResourceIdentifier resourceIdentifier) throws XNIException, IOException {
-            LSInput inp = this.resolveResource(null,resourceIdentifier.getNamespace(), resourceIdentifier.getPublicId(), resourceIdentifier
-                    .getLiteralSystemId(), resourceIdentifier.getBaseSystemId());
-            return new XMLInputSource(inp.getPublicId(), inp.getSystemId(), inp.getBaseURI(),inp.getCharacterStream(), inp.getEncoding());
+        
+        private String normalizeSystemId(final String systemId) {
+            return systemId.substring(systemId.lastIndexOf('/') + 1);
         }
     }
 
@@ -762,12 +765,16 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
         private String publicId;
         private String systemId;
         private String baseURI;
+        private String cachedContent;
 
-        public JARClassLoaderInput(final Class<?> cls, final String path, final String publicId, final String systemId, final String baseURI) {
+        public JARClassLoaderInput(final Class<?> cls, final String path, final String publicId, final String systemId, final String baseURI) throws IllegalArgumentException {
             if (cls != null) {
-                this.url = cls.getResource(path);
+                this.url = cls.getClassLoader().getResource(path);
             } else {
                 this.url = JARClassLoaderInput.class.getClassLoader().getResource(path);
+            }
+            if (this.url == null) {
+                throw new IllegalArgumentException("Resource '" + path + "' not found in classpath");
             }
             this.publicId = publicId;
             this.systemId = systemId;
@@ -787,7 +794,7 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
 
         @Override
         public void setCharacterStream(final Reader characterStream) {
-            throw new UnsupportedOperationException("setCharacterStream(...) not yet implemented");
+            throw new UnsupportedOperationException("not implemented");
         }
 
         @Override
@@ -803,28 +810,30 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
 
         @Override
         public void setByteStream(final InputStream byteStream) {
-            throw new UnsupportedOperationException("setByteStream(...) not yet implemented");
+            throw new UnsupportedOperationException("not implemented");
         }
 
         @Override
         public String getStringData() {
             if (this.url == null) return null;
-            Reader input = this.getCharacterStream();
-            if (input != null) {
-                try {
-                    StringWriter sw = new StringWriter();
-                    IOUtils.copy(input, sw);
-                    return sw.toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if (this.cachedContent == null) {
+                Reader input = this.getCharacterStream();
+                if (input != null) {
+                    try {
+                        StringWriter sw = new StringWriter();
+                        IOUtils.copy(input, sw);
+                        this.cachedContent = sw.toString();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            return null;
+            return this.cachedContent;
         }
 
         @Override
         public void setStringData(final String stringData) {
-            throw new UnsupportedOperationException("setStringData(...) not yet implemented");
+            throw new UnsupportedOperationException("not implemented");
         }
 
         @Override
@@ -834,7 +843,7 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
 
         @Override
         public void setSystemId(final String systemId) {
-            throw new UnsupportedOperationException("setSystemId(...) not yet implemented");
+            throw new UnsupportedOperationException("not implemented");
         }
 
         @Override
@@ -844,7 +853,7 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
 
         @Override
         public void setPublicId(final String publicId) {
-            throw new UnsupportedOperationException("setPublicId(...) not yet implemented");
+            throw new UnsupportedOperationException("not implemented");
         }
 
         @Override
@@ -854,7 +863,7 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
 
         @Override
         public void setBaseURI(final String baseURI) {
-            throw new UnsupportedOperationException("setBaseURI(...) not yet implemented");
+            throw new UnsupportedOperationException("not implemented");
         }
 
         @Override
@@ -864,7 +873,7 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
 
         @Override
         public void setEncoding(final String encoding) {
-            throw new UnsupportedOperationException("setEncoding(...) not yet implemented");
+            throw new UnsupportedOperationException("not implemented");
         }
 
         @Override
@@ -874,7 +883,7 @@ public abstract class AbstractTAFIWXXMSerializer<T> extends AerodromeMessageIWXX
 
         @Override
         public void setCertifiedText(final boolean certifiedText) {
-            throw new UnsupportedOperationException("setCertifiedText(...) not yet implemented");
+            throw new UnsupportedOperationException("not implemented");
         }
     }
 

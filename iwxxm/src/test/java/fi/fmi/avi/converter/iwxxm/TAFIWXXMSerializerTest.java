@@ -55,13 +55,11 @@ public class TAFIWXXMSerializerTest {
         //Partial: 301130Z
         ZonedDateTime issueTime = ZonedDateTime.of(2017,7,29,21,0,0,0, ZoneId.of("Z"));
         t.amendTimeReferences(issueTime);
-
         ConversionResult<String> result = converter.convertMessage(t, IWXXMConverterConfig.TAF_POJO_TO_IWXXM21_STRING);
-        System.out.println(result.getConversionIssues().toString());
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
 
         //TODO: XPAth query based content asserts
-        System.out.println(result.getConvertedMessage());
+        
     }
 
     protected TAF readFromJSON(String fileName) throws IOException {
