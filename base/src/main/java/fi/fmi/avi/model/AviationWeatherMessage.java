@@ -4,6 +4,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsage;
+import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
+
 /**
  * A generic interface for all aviation related weather reports and forecasts.
  *
@@ -45,6 +48,66 @@ public interface AviationWeatherMessage extends TimeReferenceAmendable {
      */
     List<String> getRemarks();
 
+    /**
+     * 
+     * @return
+     */
+    PermissibleUsage getPermissibleUsage();
+    
+    /**
+     * 
+     * @return
+     */
+    PermissibleUsageReason getPermissibleUsageReason();
+    
+    /**
+     * 
+     * @return
+     */
+    String getPermissibleUsageSupplementary();
+    
+    /**
+     * 
+     * @return
+     */
+    boolean isTranslated();
+    
+    /**
+     * 
+     * @return
+     */
+    String getTranslatedBulletinID();
+
+    /**
+     * 
+     * @return
+     */
+    ZonedDateTime getTranslatedBulletinReceptionTime();
+    
+    /**
+     * 
+     * @return
+     */
+    String getTranslationCentreDesignator();
+    
+    /**
+     * 
+     * @return
+     */
+    String getTranslationCentreName();
+    
+    /**
+     * 
+     * @return
+     */
+    ZonedDateTime getTranslationTime();
+    
+    /**
+     * 
+     * @return
+     */
+    String getTranslatedTAC();
+    
     /**
      * Sets the partial issue time as a formatted String. 
      * To get a fully resolved issue time, 
@@ -108,5 +171,64 @@ public interface AviationWeatherMessage extends TimeReferenceAmendable {
      */
     void setRemarks(List<String> remarks);
 
+    /**
+     * 
+     * @param usage
+     */
+    void setPermissibleUsage(PermissibleUsage usage);
 
+    /**
+     * 
+     * @param reason
+     */
+    void setPermissibleUsageReason(PermissibleUsageReason reason);
+    
+    /**
+     * 
+     * @param text
+     */
+    void setPermissibleUsageSupplementary(String text);
+    
+    /**
+     * 
+     * @param translated
+     */
+    void setTranslated(boolean translated);
+    
+    /**
+     * 
+     * @param id
+     */
+    void setTranslatedBulletinID(String id);
+
+    /**
+     * 
+     * @param time
+     */
+    void setTranslatedBulletinReceptionTime(ZonedDateTime time);
+    
+    /**
+     * 
+     * @param designator
+     */
+    void setTranslationCentreDesignator(String designator);
+    
+    /**
+     * 
+     * @param name
+     */
+    void setTranslationCentreName(String name);
+    
+    /**
+     * 
+     * @param time
+     */
+    void setTranslationTime(ZonedDateTime time);
+    
+    /**
+     * 
+     * @param originalTAC
+     */
+    void setTranslatedTAC(String originalTAC);
+    
 }

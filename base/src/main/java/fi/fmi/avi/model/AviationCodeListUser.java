@@ -395,5 +395,9 @@ public interface AviationCodeListUser {
             return operator;
         }
     }
+    
+    enum PermissibleUsage {OPERATIONAL, NON_OPERATIONAL}
+    
+    enum PermissibleUsageReason {TEST, EXERCISE}
 
 }

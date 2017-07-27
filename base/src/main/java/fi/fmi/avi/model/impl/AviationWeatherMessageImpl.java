@@ -16,6 +16,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.Weather;
 
+import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsage;
+import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
+
 /**
  * Created by rinne on 05/06/17.
  */
@@ -51,6 +54,26 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     private ZonedDateTime fullyResolvedIssueTime;
     
     private List<String> remarks;
+    
+    private PermissibleUsage permissibleUsage;
+
+    private PermissibleUsageReason permissibleUsageReason;
+
+    private String permissibleUsageSupplementary;
+
+    private String translatedBulletinID;
+
+    private ZonedDateTime translatedBulletinReceptionTime;
+
+    private String translationCentreDesignator;
+
+    private String translationCentreName;
+
+    private ZonedDateTime translationTime;
+
+    private String translatedTAC;
+
+    private boolean translated;
 
     public AviationWeatherMessageImpl() {
     }
@@ -63,6 +86,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     		this.setPartialIssueTime(input.getPartialIssueTime());
     	}
         this.remarks = input.getRemarks();
+        this.permissibleUsage = input.getPermissibleUsage();
     }
     
     @Override
@@ -173,38 +197,138 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
     
     @Override
+    public PermissibleUsage getPermissibleUsage() {
+        return permissibleUsage;
+    }
+    
+    @Override
+    public void setPermissibleUsage(PermissibleUsage permissibleUsage) {
+        this.permissibleUsage = permissibleUsage;
+    }
+    
+    @Override
+    public boolean isTranslated() {
+        return this.translated;
+    }
+    
+    @Override
+    public void setTranslated(boolean translated) {
+        this.translated = translated;
+    }
+    
+    @Override
+    public PermissibleUsageReason getPermissibleUsageReason() {
+        return this.permissibleUsageReason;
+    }
+
+    @Override
+    public String getPermissibleUsageSupplementary() {
+        return this.permissibleUsageSupplementary;
+    }
+
+    @Override
+    public String getTranslatedBulletinID() {
+        return this.translatedBulletinID;
+    }
+
+    @Override
+    public ZonedDateTime getTranslatedBulletinReceptionTime() {
+        return this.translatedBulletinReceptionTime;
+    }
+
+    @Override
+    public String getTranslationCentreDesignator() {
+        return this.translationCentreDesignator;
+    }
+
+    @Override
+    public String getTranslationCentreName() {
+       return this.translationCentreName;
+    }
+
+    @Override
+    public ZonedDateTime getTranslationTime() {
+       return this.translationTime;
+    }
+
+    @Override
+    public String getTranslatedTAC() {
+        return this.translatedTAC;
+    }
+
+    @Override
+    public void setPermissibleUsageReason(PermissibleUsageReason reason) {
+       this.permissibleUsageReason = reason;
+    }
+
+    @Override
+    public void setPermissibleUsageSupplementary(String text) {
+       this.permissibleUsageSupplementary = text;
+    }
+
+    @Override
+    public void setTranslatedBulletinID(String id) {
+        this.translatedBulletinID = id;
+    }
+
+    @Override
+    public void setTranslatedBulletinReceptionTime(ZonedDateTime time) {
+        this.translatedBulletinReceptionTime = time;
+    }
+
+    @Override
+    public void setTranslationCentreDesignator(String designator) {
+        this.translationCentreDesignator = designator;
+    }
+
+    @Override
+    public void setTranslationCentreName(String name) {
+        this.translationCentreName = name;
+    }
+
+    @Override
+    public void setTranslationTime(ZonedDateTime time) {
+        this.translationTime = time;
+    }
+
+    @Override
+    public void setTranslatedTAC(String originalTAC) {
+      this.translatedTAC = originalTAC;
+    }
+    
+    @Override
     public void amendTimeReferences(final ZonedDateTime referenceTime) {
-    	if (this.issueDayOfMonth > -1 && this.issueHour > -1 && this.issueMinute > -1 && this.timeZone != null) {
-	    	try {
-	    		if (this.issueHour == 24 && this.issueMinute == 0) {
-	    			this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, 0, 0), this.timeZone).plusDays(1));
-	    		} else {
-	    			this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, this.issueHour, this.issueMinute), this.timeZone));
-	    		}
-	    	} catch (DateTimeException dte) {
-	    		throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be amended with month '" + referenceTime.getMonth() + "'", dte);
-	    	}
-    	}
+        if (this.issueDayOfMonth > -1 && this.issueHour > -1 && this.issueMinute > -1 && this.timeZone != null) {
+            try {
+                if (this.issueHour == 24 && this.issueMinute == 0) {
+                    this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, 0, 0), this.timeZone).plusDays(1));
+                } else {
+                    this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, this.issueHour, this.issueMinute), this.timeZone));
+                }
+            } catch (DateTimeException dte) {
+                throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be amended with month '" + referenceTime.getMonth() + "'", dte);
+            }
+        }
     }
     
     @Override
     public boolean areTimeReferencesResolved() {
-    	return this.fullyResolvedIssueTime != null;
+        return this.fullyResolvedIssueTime != null;
     }
     
     private boolean timeOk(final int day, final int hour, final int minute) {
-    	if (day > 31) {
-			return false;
-    	}
-		if (hour > 24) {
-			return false;
-		} else if (hour == 24 && minute != 0) {
-			return false;
-		}
-		if (minute > 59) {
-			return false;
-		}
-		return true;
+        if (day > 31) {
+            return false;
+        }
+        if (hour > 24) {
+            return false;
+        } else if (hour == 24 && minute != 0) {
+            return false;
+        }
+        if (minute > 59) {
+            return false;
+        }
+        return true;
     }
-    
+ 
 }
