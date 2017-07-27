@@ -4,6 +4,7 @@ import static fi.fmi.avi.model.AviationCodeListUser.TrendForecastChangeIndicator
 import static fi.fmi.avi.model.AviationCodeListUser.TrendForecastChangeIndicator.TEMPORARY_FLUCTUATIONS;
 import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +102,10 @@ public class METARTACParser extends AbstractTACParser<METAR> {
                 result.addIssue(issues);
             }
             result.setConvertedMessage(new METARImpl());
-
+            if (lexed.getTAC() != null) {
+                result.getConvertedMessage().setTranslatedTAC(lexed.getTAC());
+                result.getConvertedMessage().setTranslationTime(ZonedDateTime.now());
+            }
             Identity[] stopAt = { Identity.AERODROME_DESIGNATOR, Identity.ISSUE_TIME, Identity.SURFACE_WIND, Identity.CAVOK, Identity.HORIZONTAL_VISIBILITY, Identity.CLOUD, Identity.AIR_DEWPOINT_TEMPERATURE,
                     Identity.AIR_PRESSURE_QNH, Identity.RECENT_WEATHER, Identity.WIND_SHEAR, Identity.SEA_STATE, Identity.RUNWAY_STATE, Identity.COLOR_CODE, Identity.FORECAST_CHANGE_INDICATOR, Identity.REMARKS_START };
             findNext(Identity.CORRECTION, lexed.getFirstLexeme(), stopAt, (match) -> result.getConvertedMessage().setStatus(AviationCodeListUser.MetarStatus.CORRECTION),

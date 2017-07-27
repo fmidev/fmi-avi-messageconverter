@@ -2,6 +2,7 @@ package fi.fmi.avi.converter.tac;
 
 import static fi.fmi.avi.converter.tac.lexer.Lexeme.Identity;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class TAFTACParser extends AbstractTACParser<TAF> {
             throw new IllegalStateException("TAC lexer not set");
         }
         lexed = this.lexer.lexMessage(input, hints);
+        
         if (Identity.TAF_START != lexed.getFirstLexeme().getIdentityIfAcceptable()) {
             retval.addIssue(new ConversionIssue(ConversionIssue.Type.SYNTAX_ERROR, "The input message is not recognized as TAF"));
             return retval;
@@ -65,6 +67,10 @@ public class TAFTACParser extends AbstractTACParser<TAF> {
         if (endsInEndToken(lexed, hints)) {
             retval.addIssue(checkZeroOrOne(lexed, zeroOrOneAllowed));
             TAF taf = new TAFImpl();
+            if (lexed.getTAC() != null) {
+                taf.setTranslatedTAC(lexed.getTAC());
+                taf.setTranslationTime(ZonedDateTime.now());
+            }
 
             retval.setConvertedMessage(taf);
             Identity[] stopAt = { Identity.AERODROME_DESIGNATOR, Identity.ISSUE_TIME, Identity.NIL, Identity.VALID_TIME, Identity.CANCELLATION, Identity.SURFACE_WIND, Identity.HORIZONTAL_VISIBILITY, Identity.WEATHER, Identity.CLOUD, Identity.CAVOK,
