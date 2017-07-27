@@ -32,11 +32,6 @@
     </dependency>
     
     <dependency>
-      <groupId>com.helger</groupId>
-      <artifactId>ph-schematron</artifactId>
-      <version>4.1.0</version>
-    </dependency>
-    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.4</version>

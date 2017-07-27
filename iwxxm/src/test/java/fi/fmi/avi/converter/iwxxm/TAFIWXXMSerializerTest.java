@@ -41,12 +41,12 @@ public class TAFIWXXMSerializerTest {
         TAF t = readFromJSON("taf12.json");
         Aerodrome airport = new Aerodrome();
 
-        airport.setDesignator("EFVA");
-        airport.setName("Vaasa Airport");
-        airport.setFieldElevation(6.0);
-        airport.setLocationIndicatorICAO("EFVA");
-        GeoPosition refPoint = new GeoPosition("http://www.opengis.net/def/crs/EPSG/0/4326", 21.764167,63.045278);
-        refPoint.setElevationValue(6.0);
+        airport.setDesignator("EETN");
+        airport.setName("Tallinn Airport");
+        airport.setFieldElevation(40.0);
+        airport.setLocationIndicatorICAO("EETN");
+        GeoPosition refPoint = new GeoPosition("http://www.opengis.net/def/crs/EPSG/0/4326", 24.8325, 59.413333);
+        refPoint.setElevationValue(40.0);
         refPoint.setElevationUom("m");
         airport.setReferencePoint(refPoint);
         
@@ -55,9 +55,19 @@ public class TAFIWXXMSerializerTest {
         //Partial: 301130Z
         ZonedDateTime issueTime = ZonedDateTime.of(2017,7,29,21,0,0,0, ZoneId.of("Z"));
         t.amendTimeReferences(issueTime);
+        
+        t.setTranslatedTAC("EETN 301130Z 3012/3112 14016G26KT 8000 BKN010 OVC015 TXM02/3015Z TNM10/3103Z " + 
+                "TEMPO 3012/3018 3000 RADZ BR OVC004 " +
+                "BECMG 3018/3020 BKN008 SCT015CB " + 
+                "TEMPO 3102/3112 3000 SHRASN BKN006 BKN015CB " + 
+                "BECMG 3104/3106 21016G30KT=");
+        t.setTranslationTime(ZonedDateTime.now());
+        
         ConversionResult<String> result = converter.convertMessage(t, IWXXMConverterConfig.TAF_POJO_TO_IWXXM21_STRING);
+        System.out.println(result.getConversionIssues());
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
-
+        
+        System.out.print(result.getConvertedMessage());
         //TODO: XPAth query based content asserts
         
     }

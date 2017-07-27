@@ -1,9 +1,8 @@
 package fi.fmi.avi.converter.iwxxm;
 
-import javax.xml.bind.JAXBException;
-
 import org.w3c.dom.Document;
 
+import fi.fmi.avi.converter.ConversionException;
 import fi.fmi.avi.converter.ConversionHints;
 import icao.iwxxm21.TAFType;
 
@@ -16,7 +15,7 @@ public class TAFIWXXMDOMSerializer extends AbstractTAFIWXXMSerializer<Document> 
     }
 
     @Override
-    protected Document render(final TAFType taf, final ConversionHints hints) throws JAXBException {
+    protected Document render(final TAFType taf, final ConversionHints hints) throws ConversionException {
         return this.renderXMLDocument(taf, hints);
     }
 

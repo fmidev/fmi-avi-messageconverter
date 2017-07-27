@@ -23,11 +23,11 @@
       },
       "meanWindSpeed": {
         "value": 15.0,
-        "uom": "kt"
+        "uom": "[kn_i]"
       },
       "windGust": {
         "value": 25.0,
-        "uom": "kt"
+        "uom": "[kn_i]"
       }
     },
     "cloud": {
@@ -100,7 +100,7 @@
         },
         "meanWindSpeed": {
           "value": 12.0,
-          "uom": "kt"
+          "uom": "[kn_i]"
         }
       }
     },

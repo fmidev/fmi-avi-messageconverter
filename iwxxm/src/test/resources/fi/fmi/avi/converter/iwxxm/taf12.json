@@ -2,7 +2,7 @@
   "status": "NORMAL",
   "partialIssueTime": "301130Z",
   "aerodrome": {
-     "designator": "EFVA"
+     "designator": "EETN"
   },
   "partialValidityTimePeriod": "3012/3112",
   "baseForecast": {
@@ -14,11 +14,11 @@
 	  },
 	  "meanWindSpeed": {
 	    "value": 16.0,
-	    "uom": "kt"
+	    "uom": "[kn_i]"
 	  },
 	  "windGust": {
 	    "value": 26.0,
-	    "uom": "kt"
+	    "uom": "[kn_i]"
 	  }
 	},
 	
@@ -165,11 +165,11 @@
 	    },
 	    "meanWindSpeed": {
 	      "value": 16.0,
-	      "uom": "kt"
+	      "uom": "[kn_i]"
 	    },
 	    "windGust": {
 	      "value": 30.0,
-	      "uom": "kt"
+	      "uom": "[kn_i]"
 	    }
 	  }
     }
