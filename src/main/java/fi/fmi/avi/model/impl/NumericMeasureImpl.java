@@ -58,4 +58,8 @@ public class NumericMeasureImpl implements NumericMeasure {
     public void setUom(final String uom) {
         this.uom = uom;
     }
+    
+    public String toString() {
+        return String.format("%.2f %s", this.value, this.uom);
+    }
 }
