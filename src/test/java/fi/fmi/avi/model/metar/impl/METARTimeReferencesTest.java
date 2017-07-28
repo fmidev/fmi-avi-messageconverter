@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.impl.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.metar.TrendForecast;
 import fi.fmi.avi.model.metar.TrendTimeGroups;
@@ -45,6 +47,7 @@ public class METARTimeReferencesTest {
 		assertEquals(ZonedDateTime.of(2017, 12, 20, 18, 30, 0, 0, ZoneId.of("Z")), msg.getTrends().get(0).getTimeGroups().getStartTime());
 		assertEquals(ZonedDateTime.of(2017, 12, 21, 0, 0, 0, 0, ZoneId.of("Z")), msg.getTrends().get(0).getTimeGroups().getEndTime());
 		assertTrue(msg.areTimeReferencesResolved());
+		
 	}
 
 }

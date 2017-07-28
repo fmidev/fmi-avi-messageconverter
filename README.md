@@ -81,17 +81,61 @@ fields, such as `fi.fmi.avi.converter.tac.TACConverter.TAC_TO_TAF_POJO` or
 The recommended way of configuring the converter is using Spring Java configuration:
 
 ```java
- @Bean
- public AviMessageConverter aviMessageConverter() throws JAXBException {
-    AviMessageConverter p = new AviMessageConverter();
-    p.setMessageSpecificConverter(TACConverter.TAC_TO_METAR_POJO, metarTACParser());
-    p.setMessageSpecificConverter(TACConverter.TAC_TO_TAF_POJO, tafTACParser());
-    p.setMessageSpecificConverter(TACConverter.METAR_POJO_TO_TAC, metarTACSerializer());
-    p.setMessageSpecificConverter(TACConverter.TAF_POJO_TO_TAC, tafTACSerializer());
-    p.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_DOM, tafIWXXMDOMSerializer());
-    p.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_STRING, tafIWXXMStringSerializer());
-    return p;
- }
+package my.stuff;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.w3c.dom.Document;
+
+import fi.fmi.avi.converter.AviMessageConverter;
+import fi.fmi.avi.converter.AviMessageSpecificConverter;
+
+import fi.fmi.avi.model.taf.TAF;
+import fi.fmi.avi.model.metar.METAR;
+
+@Configuration
+@Import(fi.fmi.avi.converter.tac.TACConverter.class)
+@Import(fi.fmi.avi.converter.iwxxm.IWXXMConverter.class)
+public class MyMessageConverterConfig {
+    
+    @Autowired
+    @Qualifier("metarTACParser")
+    private AviMessageSpecificConverter<String, METAR> metarTACParser;
+    
+    @Autowired
+    @Qualifier("tafTACParser")
+    private AviMessageSpecificConverter<String, TAF> tafTACParser;
+    
+    @Autowired
+    @Qualifier("metarTACSerializer")
+    private AviMessageSpecificConverter<METAR, String> metarTACSerializer;
+    
+    @Autowired
+    @Qualifier("tafTACSerializer")
+    private AviMessageSpecificConverter<TAF, String> tafTACSerializer;
+    
+    @Autowired
+    @Qualifier("tafIWXXMDOMSerializer")
+    private AviMessageSpecificConverter<TAF, Document> tafIWXXMDOMSerializer;
+    
+    @Autowired
+    @Qualifier("tafIWXXMStringSerializer")
+    private AviMessageSpecificConverter<TAF, String> tafIWXXMStringSerializer;
+    
+    @Bean
+    public AviMessageConverter aviMessageConverter() {
+        AviMessageConverter p = new AviMessageConverter();
+        p.setMessageSpecificConverter(TACConverter.TAC_TO_METAR_POJO, metarTACParser);
+        p.setMessageSpecificConverter(TACConverter.TAC_TO_TAF_POJO, tafTACParser);
+        p.setMessageSpecificConverter(TACConverter.METAR_POJO_TO_TAC, metarTACSerializer);
+        p.setMessageSpecificConverter(TACConverter.TAF_POJO_TO_TAC, tafTACSerializer);
+        p.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_DOM, tafIWXXMDOMSerializer);
+        p.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_STRING, tafIWXXMStringSerializer);
+        return p;
+    }
+
+}
 ```
 
 The AviMessageConverter uses the AviMessageSpecificConverter instance given with an exactly matching 
