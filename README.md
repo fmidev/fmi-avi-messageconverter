@@ -7,10 +7,30 @@ and serializing implementations between the aviation weather message model objec
 
 ## Get started
 For parsing/serialization functionality for a one format, use the specific Maven project, such as
-[fmi-avi-messageconverter-tac](https://github.com/fmidev/fmi-avi-messageconverter-tac). For 
+[fmi-avi-messageconverter-tac](https://github.com/fmidev/fmi-avi-messageconverter-tac) and 
+[fmi-avi-messageconverter-iwxxm](https://github.com/fmidev/fmi-avi-messageconverter-iwxxm). For 
 conversions between two formats, such as TAC to IWXXM, include both, and configure the 
 AviMessageConverter class to handle all the necessary formats. See Configuring converter 
 below for more details.
+
+These projects is available as maven dependencies in the FMI OS maven repository. To access them, 
+add this repository to your project pom, or in your settings:
+
+```xml
+<repositories>
+  <repository>
+    <id>fmi-os-mvn-release-repo</id>
+    <url>https://raw.githubusercontent.com/fmidev/fmi-os-mvn-repo/master</url>
+    <snapshots>
+      <enabled>false</enabled>
+    </snapshots>
+    <releases>
+      <enabled>true</enabled>
+      <updatePolicy>daily</updatePolicy>
+    </releases>
+  </repository>
+</repositories>
+``` 
 
 Once the converter has been configured to support the wanted conversion specifications, running 
 the conversion is straight-forward:
