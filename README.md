@@ -32,6 +32,8 @@ add this repository to your project pom, or in your settings:
 </repositories>
 ``` 
 
+For the copy-paste maven dependency blocks, see the Readme of each conversion module.
+
 Once the converter has been configured to support the wanted conversion specifications, running 
 the conversion is straight-forward:
 
@@ -49,14 +51,14 @@ To create a custom conversion chain from one format to another, just combine two
 String tac = "TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=";
 ConversionResult<TAF> result1 = converter.convertMessage(tac,TACConverter.TAC_TO_TAF_POJO);
  if (ConversionResult.Status.SUCCESS = result1.getStatus()) {
-   TAF tafPojo = result.getConvertedMessage();
+   TAF tafPojo = result1.getConvertedMessage();
    tafPojo.setTranslated(true);
    //provide additional info, such as the target aerodrome & complete reference time:
    tafPojo.amendAerodromeInfo(aerodrome);
    tafPojo.amendTimeReferences(referenceTime);
    ConversionResult<Document> result2 = converter.convertMessage(tafPojo,IWXXMConverter.TAF_POJO_TO_IWXXM21_DOM);
    if (ConversionResult.Status.SUCCESS = result2.getStatus()) {
-     Document iwxxmTAF = result.getConvertedMessage();
+     Document iwxxmTAF = result2.getConvertedMessage();
      [do your stuff with the IWXXM TAF DOM Document]
    }
  }
