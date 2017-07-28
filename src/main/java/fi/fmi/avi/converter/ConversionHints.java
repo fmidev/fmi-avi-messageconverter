@@ -9,7 +9,6 @@ import java.util.Set;
 
 
 /**
- *
  * ConversionHints provides lexing, parsing and serializing related
  * implementation hints for aviation weather message processing operations.
  *

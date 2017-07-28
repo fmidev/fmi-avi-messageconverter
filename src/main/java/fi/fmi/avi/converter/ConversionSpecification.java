@@ -1,8 +1,5 @@
 package fi.fmi.avi.converter;
 
-import fi.fmi.avi.model.metar.METAR;
-import fi.fmi.avi.model.taf.TAF;
-
 /**
  * Specifies an aviation weather message conversion from one format to another.
  *
@@ -102,7 +99,7 @@ public class ConversionSpecification<S, T> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ConversionSpecification other = (ConversionSpecification) obj;
+        ConversionSpecification<?,?> other = (ConversionSpecification<?,?>) obj;
         if (inputClass == null) {
             if (other.inputClass != null)
                 return false;

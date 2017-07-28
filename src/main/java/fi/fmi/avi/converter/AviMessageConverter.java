@@ -10,7 +10,7 @@ import java.util.Set;
  *
  * Example:
  * <pre>
- *  ConversionResult&lt;TAF&gt; result = converter.convertMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=",ConversionSpecification.TAC_TO_TAF_POJO);
+ *  ConversionResult&lt;TAF&gt; result = converter.convertMessage("TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=",TACConverter.TAC_TO_TAF_POJO);
  *  if (ConversionResult.Status.SUCCESS = result.getStatus()) {
  *      TAF pojo = result.getConvertedMessage();
  *  }
@@ -57,6 +57,7 @@ public class AviMessageConverter {
      *
      * @return the result of the conversion
      */
+    @SuppressWarnings("unchecked")
     public <S, T> ConversionResult<T> convertMessage(S input, ConversionSpecification<S, T> spec, ConversionHints hints) {
         for (ConversionSpecification<?, ?> toMatch : parsers.keySet()) {
             if (toMatch.equals(spec)) {
