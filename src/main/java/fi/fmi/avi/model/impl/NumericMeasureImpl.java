@@ -23,7 +23,10 @@ public class NumericMeasureImpl implements NumericMeasure {
     }
 
     public NumericMeasureImpl(final NumericMeasure measure) {
-        this(measure.getValue(), measure.getUom());
+        if (measure != null) {
+            this.setValue(measure.getValue());
+            this.setUom(measure.getUom());
+        }
     }
 
 

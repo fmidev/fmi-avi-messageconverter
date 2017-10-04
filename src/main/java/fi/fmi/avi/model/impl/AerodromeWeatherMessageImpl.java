@@ -13,7 +13,9 @@ public abstract class AerodromeWeatherMessageImpl extends AviationWeatherMessage
 	
 	public AerodromeWeatherMessageImpl(AerodromeWeatherMessage input) {
 		super(input);
-		this.aerodrome = input.getAerodrome();
+		if (input != null) {
+			this.aerodrome = input.getAerodrome();
+		}
 	}
 
 	 @Override

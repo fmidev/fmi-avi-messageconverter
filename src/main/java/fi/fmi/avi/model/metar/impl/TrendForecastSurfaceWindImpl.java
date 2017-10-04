@@ -21,9 +21,11 @@ public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind {
     }
 
     public TrendForecastSurfaceWindImpl(final TrendForecastSurfaceWind input) {
-        this.meanWindDirection = new NumericMeasureImpl(input.getMeanWindDirection());
-        this.meanWindSpeed = new NumericMeasureImpl(input.getMeanWindSpeed());
-        this.windGust = new NumericMeasureImpl(input.getWindGust());
+        if (input != null) {
+            this.meanWindDirection = new NumericMeasureImpl(input.getMeanWindDirection());
+            this.meanWindSpeed = new NumericMeasureImpl(input.getMeanWindSpeed());
+            this.windGust = new NumericMeasureImpl(input.getWindGust());
+        }
     }
 
     /* (non-Javadoc)

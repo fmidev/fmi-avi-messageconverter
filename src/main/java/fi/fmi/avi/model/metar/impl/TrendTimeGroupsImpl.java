@@ -31,17 +31,19 @@ public class TrendTimeGroupsImpl implements TrendTimeGroups {
     }
 
     public TrendTimeGroupsImpl(final TrendTimeGroups input) {
-    	if (input.getStartTime() != null) {
-    		this.setStartTime(input.getStartTime());
-    	} else {
-    		this.setPartialStartTime(input.getPartialStartTime());
-    	}
-    	if (input.getEndTime() != null) {
-    		this.setEndTime(input.getEndTime());
-    	} else {
-    		this.setPartialEndTime(input.getPartialEndTime());
-    	}
-        this.isSingular = input.isSingleInstance();
+    	if (input != null) {
+			if (input.getStartTime() != null) {
+				this.setStartTime(input.getStartTime());
+			} else {
+				this.setPartialStartTime(input.getPartialStartTime());
+			}
+			if (input.getEndTime() != null) {
+				this.setEndTime(input.getEndTime());
+			} else {
+				this.setPartialEndTime(input.getPartialEndTime());
+			}
+			this.isSingular = input.isSingleInstance();
+		}
     }
     
     public String getPartialStartTime() {

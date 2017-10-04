@@ -36,15 +36,17 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 
     public TAFChangeForecastImpl(final TAFChangeForecast input) {
         super(input);
-        this.setChangeIndicator(input.getChangeIndicator());
-        if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
-        	this.setValidityStartTime(input.getValidityStartTime());
-        	this.setValidityEndTime(input.getValidityEndTime());
-        } else if (input.getPartialValidityTimePeriod() != null) {
-        	this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
-        } else {
-        	this.setPartialValidityStartTime(input.getPartialValidityStartTime());
-        }
+        if (input != null) {
+			this.setChangeIndicator(input.getChangeIndicator());
+			if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
+				this.setValidityStartTime(input.getValidityStartTime());
+				this.setValidityEndTime(input.getValidityEndTime());
+			} else if (input.getPartialValidityTimePeriod() != null) {
+				this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
+			} else {
+				this.setPartialValidityStartTime(input.getPartialValidityStartTime());
+			}
+		}
     }
 
     @Override
@@ -134,9 +136,6 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 	@Override
 	public void setPartialValidityStartTime(int day, int hour, int minute) {
 		if (timeOk(day, hour, minute)) {
-			this.validityStartDayOfMonth = day;
-			this.validityStartHour = hour;
-			this.validityStartMinute = minute;
 			if (this.validityStartTime != null) {
 				if ( (this.validityStartDayOfMonth != day)
 						|| (this.validityStartHour != hour)
@@ -144,6 +143,9 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 					this.validityStartTime = null;
 				}
 			}
+			this.validityStartDayOfMonth = day;
+			this.validityStartHour = hour;
+			this.validityStartMinute = minute;
 		}
 	}
 

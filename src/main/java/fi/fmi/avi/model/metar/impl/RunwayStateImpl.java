@@ -35,18 +35,20 @@ public class RunwayStateImpl implements RunwayState {
     }
     
     public RunwayStateImpl(final RunwayState input) {
-        this.allRunways = input.isAllRunways();
-        this.cleared = input.isCleared();
-        this.estimatedSurfaceFrictionUnreliable = input.isEstimatedSurfaceFrictionUnreliable();
-        this.snowClosure = input.isSnowClosure();
-        this.repetition = input.isRepetition();
-        this.runwayDirection = input.getRunwayDirection();
-        this.deposit = input.getDeposit();
-        this.contamination = input.getContamination();
-        this.depthOfDeposit = new NumericMeasureImpl(input.getDepthOfDeposit());
-        this.depthOperator = input.getDepthOperator();
-        this.estimatedSurfaceFriction = input.getEstimatedSurfaceFriction();
-        this.breakingAction = input.getBreakingAction();
+        if (input != null) {
+            this.allRunways = input.isAllRunways();
+            this.cleared = input.isCleared();
+            this.estimatedSurfaceFrictionUnreliable = input.isEstimatedSurfaceFrictionUnreliable();
+            this.snowClosure = input.isSnowClosure();
+            this.repetition = input.isRepetition();
+            this.runwayDirection = input.getRunwayDirection();
+            this.deposit = input.getDeposit();
+            this.contamination = input.getContamination();
+            this.depthOfDeposit = new NumericMeasureImpl(input.getDepthOfDeposit());
+            this.depthOperator = input.getDepthOperator();
+            this.estimatedSurfaceFriction = input.getEstimatedSurfaceFriction();
+            this.breakingAction = input.getBreakingAction();
+        }
     }
 
     /* (non-Javadoc)

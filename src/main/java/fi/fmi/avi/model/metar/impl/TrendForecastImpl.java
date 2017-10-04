@@ -39,16 +39,19 @@ public class TrendForecastImpl implements TrendForecast {
     }
 
     public TrendForecastImpl(final TrendForecast input) {
-        this.timeGroups = input.getTimeGroups();
-        this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
-        this.changeIndicator = input.getChangeIndicator();
-        this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
-        this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
-        this.surfaceWind = new TrendForecastSurfaceWindImpl(input.getSurfaceWind());
-        this.forecastWeather = new ArrayList<>(input.getForecastWeather());
-        this.noSignificantWeather = input.isNoSignificantWeather();
-        this.cloud = new CloudForecastImpl(input.getCloud());
-        this.colorState = input.getColorState();
+        this.forecastWeather = new ArrayList<>();
+        if (input != null) {
+            this.timeGroups = input.getTimeGroups();
+            this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
+            this.changeIndicator = input.getChangeIndicator();
+            this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
+            this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
+            this.surfaceWind = new TrendForecastSurfaceWindImpl(input.getSurfaceWind());
+            this.forecastWeather.addAll(input.getForecastWeather());
+            this.noSignificantWeather = input.isNoSignificantWeather();
+            this.cloud = new CloudForecastImpl(input.getCloud());
+            this.colorState = input.getColorState();
+        }
     }
 
     /* (non-Javadoc)

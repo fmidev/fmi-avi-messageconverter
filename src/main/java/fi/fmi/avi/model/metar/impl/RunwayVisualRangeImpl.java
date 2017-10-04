@@ -29,12 +29,14 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     }
 
     public RunwayVisualRangeImpl(final RunwayVisualRange input) {
-        this.runwayDirection = input.getRunwayDirection();
-        this.meanRVR = new NumericMeasureImpl(input.getMeanRVR());
-        this.meanRVROperator = input.getMeanRVROperator();
-        this.minRVROperator = input.getVaryingRVRMinimumOperator();
-        this.maxRVROperator = input.getVaryingRVRMaximumOperator();
-        this.pastTendency = input.getPastTendency();
+        if (input != null) {
+            this.runwayDirection = input.getRunwayDirection();
+            this.meanRVR = new NumericMeasureImpl(input.getMeanRVR());
+            this.meanRVROperator = input.getMeanRVROperator();
+            this.minRVROperator = input.getVaryingRVRMinimumOperator();
+            this.maxRVROperator = input.getVaryingRVRMaximumOperator();
+            this.pastTendency = input.getPastTendency();
+        }
     }
 
     /* (non-Javadoc)

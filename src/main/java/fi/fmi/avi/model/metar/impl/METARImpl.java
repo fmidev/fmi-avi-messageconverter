@@ -56,32 +56,35 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 
     public METARImpl(final METAR input) {
         super(input);
-        this.automatedStation = input.isAutomatedStation();
-        this.status = input.getStatus();
-        this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
-        this.airTemperature = new NumericMeasureImpl(input.getAirTemperature());
-        this.dewpointTemperature = new NumericMeasureImpl(input.getDewpointTemperature());
-        this.altimeterSettingQNH = new NumericMeasureImpl(input.getAltimeterSettingQNH());
-        this.surfaceWind = new ObservedSurfaceWindImpl(input.getSurfaceWind());
-        this.visibility = new HorizontalVisibilityImpl(input.getVisibility());
         this.runwayVisualRanges = new ArrayList<RunwayVisualRange>();
-        for (RunwayVisualRange range : input.getRunwayVisualRanges()) {
-            this.runwayVisualRanges.add(new RunwayVisualRangeImpl(range));
-        }
-        this.presentWeather = input.getPresentWeather();
-        this.clouds = new ObservedCloudsImpl(input.getClouds());
-        this.recentWeather = input.getRecentWeather();
-        this.windShear = new WindShearImpl(input.getWindShear());
-        this.seaState = new SeaStateImpl(input.getSeaState());
         this.runwayStates = new ArrayList<RunwayState>();
-        for (RunwayState state : input.getRunwayStates()) {
-            this.runwayStates.add(new RunwayStateImpl(state));
-        }
         this.trends = new ArrayList<TrendForecast>();
-        for (TrendForecast trend : input.getTrends()) {
-            this.trends.add(new TrendForecastImpl(trend));
+        if (input != null) {
+            this.automatedStation = input.isAutomatedStation();
+            this.status = input.getStatus();
+            this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
+            this.airTemperature = new NumericMeasureImpl(input.getAirTemperature());
+            this.dewpointTemperature = new NumericMeasureImpl(input.getDewpointTemperature());
+            this.altimeterSettingQNH = new NumericMeasureImpl(input.getAltimeterSettingQNH());
+            this.surfaceWind = new ObservedSurfaceWindImpl(input.getSurfaceWind());
+            this.visibility = new HorizontalVisibilityImpl(input.getVisibility());
+
+            for (RunwayVisualRange range : input.getRunwayVisualRanges()) {
+                this.runwayVisualRanges.add(new RunwayVisualRangeImpl(range));
+            }
+            this.presentWeather = input.getPresentWeather();
+            this.clouds = new ObservedCloudsImpl(input.getClouds());
+            this.recentWeather = input.getRecentWeather();
+            this.windShear = new WindShearImpl(input.getWindShear());
+            this.seaState = new SeaStateImpl(input.getSeaState());
+            for (RunwayState state : input.getRunwayStates()) {
+                this.runwayStates.add(new RunwayStateImpl(state));
+            }
+            for (TrendForecast trend : input.getTrends()) {
+                this.trends.add(new TrendForecastImpl(trend));
+            }
+            this.colorState = input.getColorState();
         }
-        this.colorState = input.getColorState();
     }
 
     /* (non-Javadoc)

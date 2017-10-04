@@ -22,9 +22,11 @@ public class CloudLayerImpl implements CloudLayer {
     }
 
     public CloudLayerImpl(final CloudLayer input) {
-        this.amount = input.getAmount();
-        this.base = new NumericMeasureImpl(input.getBase());
-        this.cloudType = input.getCloudType();
+        if (input != null) {
+            this.amount = input.getAmount();
+            this.base = new NumericMeasureImpl(input.getBase());
+            this.cloudType = input.getCloudType();
+        }
     }
 
     /* (non-Javadoc)

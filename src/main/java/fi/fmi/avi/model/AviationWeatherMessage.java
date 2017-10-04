@@ -34,8 +34,8 @@ public interface AviationWeatherMessage extends TimeReferenceAmendable {
      * 
      * @return the fully resolved issue time, or null if not available
      * 
-     * @see {@link #areTimeReferencesResolved()}
-     * @see {@link #amendTimeReferences(int, int)}
+     * @see #areTimeReferencesResolved()
+     * @see #amendTimeReferences(ZonedDateTime)
      */
     ZonedDateTime getIssueTime();
 
@@ -116,9 +116,9 @@ public interface AviationWeatherMessage extends TimeReferenceAmendable {
      * 
      * @param time formatted as ddHHmmz (201004Z)
      * 
-     * @see {@link #getIssueTime()}
-     * @see {@link #amendTimeReferences(int, int)}
-     * @see {@link #areTimeReferncesResolved()}
+     * @see #getIssueTime()
+     * @see #amendTimeReferences(ZonedDateTime)
+     * @see #areTimeReferencesResolved()
      */
     void setPartialIssueTime(final String time);
    
@@ -131,9 +131,9 @@ public interface AviationWeatherMessage extends TimeReferenceAmendable {
      * @param hour issue time hour-of-day
      * @param minute issue time minute-of-hour
      * 
-     * @see {@link #getIssueTime()}
-     * @see {@link #amendTimeReferences(int, int)}
-     * @see {@link #areTimeReferncesResolved()}
+     * @see #getIssueTime()
+     * @see #amendTimeReferences(ZonedDateTime)
+     * @see #areTimeReferencesResolved()
      */
     void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute);
     

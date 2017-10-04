@@ -14,8 +14,10 @@ public class WeatherImpl implements Weather {
 	}
 
 	public WeatherImpl(final Weather weather) {
-		this.code = weather.getCode();
-		this.description = weather.getDescription();
+		if (weather != null) {
+			this.code = weather.getCode();
+			this.description = weather.getDescription();
+		}
 	}
 
 	@Override

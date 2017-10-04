@@ -23,9 +23,11 @@ public class SeaStateImpl implements SeaState {
     }
 
     public SeaStateImpl(final SeaState input) {
-        this.seaSurfaceTemperature = new NumericMeasureImpl(input.getSeaSurfaceTemperature());
-        this.significantWaveHeight = new NumericMeasureImpl(input.getSignificantWaveHeight());
-        this.seaSurfaceState = input.getSeaSurfaceState();
+        if (input != null) {
+            this.seaSurfaceTemperature = new NumericMeasureImpl(input.getSeaSurfaceTemperature());
+            this.significantWaveHeight = new NumericMeasureImpl(input.getSignificantWaveHeight());
+            this.seaSurfaceState = input.getSeaSurfaceState();
+        }
     }
 
     /* (non-Javadoc)

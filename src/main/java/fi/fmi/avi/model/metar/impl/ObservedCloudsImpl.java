@@ -29,12 +29,14 @@ public class ObservedCloudsImpl implements ObservedClouds {
     }
 
     public ObservedCloudsImpl(final ObservedClouds input) {
-        this.amountAndHeightUnobservableByAutoSystem = input.isAmountAndHeightUnobservableByAutoSystem();
-        this.isNoSignificantCloud = input.isNoSignificantCloud();
-        this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
         this.layers = new ArrayList<CloudLayer>();
-        for (CloudLayer layer:input.getLayers()) {
-            this.layers.add(new CloudLayerImpl(layer));
+        if (input != null) {
+            this.amountAndHeightUnobservableByAutoSystem = input.isAmountAndHeightUnobservableByAutoSystem();
+            this.isNoSignificantCloud = input.isNoSignificantCloud();
+            this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
+            for (CloudLayer layer:input.getLayers()) {
+                this.layers.add(new CloudLayerImpl(layer));
+            }
         }
     }
 

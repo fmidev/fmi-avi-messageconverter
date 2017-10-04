@@ -46,22 +46,24 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 
     public TAFImpl(final TAF input) {
         super(input);
-        this.status = input.getStatus();
-        if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
-        	this.setValidityStartTime(input.getValidityStartTime());
-        	this.setValidityEndTime(input.getValidityEndTime());
-        } else {
-        	this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
-        }
-        
-        this.baseForecast = new TAFBaseForecastImpl(input.getBaseForecast());
-        this.changeForecasts = new ArrayList<TAFChangeForecast>();
-        for (TAFChangeForecast fct : input.getChangeForecasts()) {
-            this.changeForecasts.add(new TAFChangeForecastImpl(fct));
-        }
-        this.referredReport = input.getReferredReport();
+        this.changeForecasts = new ArrayList<>();
         this.remarks = new ArrayList<>();
-        this.remarks.addAll(input.getRemarks());
+        if (input != null) {
+			this.status = input.getStatus();
+			if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
+				this.setValidityStartTime(input.getValidityStartTime());
+				this.setValidityEndTime(input.getValidityEndTime());
+			} else {
+				this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
+			}
+
+			this.baseForecast = new TAFBaseForecastImpl(input.getBaseForecast());
+			for (TAFChangeForecast fct : input.getChangeForecasts()) {
+				this.changeForecasts.add(new TAFChangeForecastImpl(fct));
+			}
+			this.referredReport = input.getReferredReport();
+			this.remarks.addAll(input.getRemarks());
+		}
     }
 
     @Override

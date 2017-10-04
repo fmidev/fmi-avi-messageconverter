@@ -24,11 +24,15 @@ public class CloudForecastImpl implements CloudForecast {
     }
 
     public CloudForecastImpl(final CloudForecast input) {
-        this.isNoSignificantCloud = input.isNoSignificantCloud();
-        this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
         this.layers = new ArrayList<CloudLayer>();
-        for (CloudLayer layer: input.getLayers()) {
-            this.layers.add(new CloudLayerImpl(layer));
+        if (input != null) {
+            this.isNoSignificantCloud = input.isNoSignificantCloud();
+            if (input.getVerticalVisibility() != null) {
+                this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
+            }
+            for (CloudLayer layer : input.getLayers()) {
+                this.layers.add(new CloudLayerImpl(layer));
+            }
         }
     }
 

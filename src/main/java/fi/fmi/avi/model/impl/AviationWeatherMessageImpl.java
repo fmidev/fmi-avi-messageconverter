@@ -79,14 +79,16 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
 
     public AviationWeatherMessageImpl(AviationWeatherMessage input) {
-    	if (input.getIssueTime() != null) {
-    		this.setIssueTime(input.getIssueTime());
-    	} else {
-    		this.fullyResolvedIssueTime = null;
-    		this.setPartialIssueTime(input.getPartialIssueTime());
-    	}
-        this.remarks = input.getRemarks();
-        this.permissibleUsage = input.getPermissibleUsage();
+        if (input != null) {
+            if (input.getIssueTime() != null) {
+                this.setIssueTime(input.getIssueTime());
+            } else {
+                this.fullyResolvedIssueTime = null;
+                this.setPartialIssueTime(input.getPartialIssueTime());
+            }
+            this.remarks = input.getRemarks();
+            this.permissibleUsage = input.getPermissibleUsage();
+        }
     }
     
     @Override
