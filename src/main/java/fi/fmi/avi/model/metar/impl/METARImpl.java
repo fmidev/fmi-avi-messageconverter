@@ -43,7 +43,6 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     private List<RunwayVisualRange> runwayVisualRanges;
     private List<Weather> presentWeather;
     private ObservedClouds clouds;
-    private boolean noSignificantCloud;
     private List<Weather> recentWeather;
     private WindShear windShear;
     private SeaState seaState;
