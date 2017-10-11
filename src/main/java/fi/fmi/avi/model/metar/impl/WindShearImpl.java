@@ -24,10 +24,11 @@ public class WindShearImpl implements WindShear {
     }
 
     public WindShearImpl(final WindShear input) {
-        this.runwayDirections = new ArrayList<RunwayDirection>();
         if (input != null) {
             this.allRunways = input.isAllRunways();
-            this.runwayDirections.addAll(input.getRunwayDirections());
+            if (input.getRunwayDirections() != null) {
+                this.runwayDirections = new ArrayList<>(input.getRunwayDirections());
+            }
         }
     }
 

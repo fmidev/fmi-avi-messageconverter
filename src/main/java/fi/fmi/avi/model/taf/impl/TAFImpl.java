@@ -39,7 +39,6 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
     private TAFBaseForecast baseForecast;
     private List<TAFChangeForecast> changeForecasts;
     private TAF referredReport;
-    private List<String> remarks;
 
     public TAFImpl() {
     }
@@ -47,7 +46,6 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
     public TAFImpl(final TAF input) {
         super(input);
         this.changeForecasts = new ArrayList<>();
-        this.remarks = new ArrayList<>();
         if (input != null) {
 			this.status = input.getStatus();
 			if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
@@ -56,13 +54,11 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 			} else {
 				this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
 			}
-
 			this.baseForecast = new TAFBaseForecastImpl(input.getBaseForecast());
 			for (TAFChangeForecast fct : input.getChangeForecasts()) {
 				this.changeForecasts.add(new TAFChangeForecastImpl(fct));
 			}
 			this.referredReport = input.getReferredReport();
-			this.remarks.addAll(input.getRemarks());
 		}
     }
 

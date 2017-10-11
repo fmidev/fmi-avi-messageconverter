@@ -39,7 +39,6 @@ public class TrendForecastImpl implements TrendForecast {
     }
 
     public TrendForecastImpl(final TrendForecast input) {
-        this.forecastWeather = new ArrayList<>();
         if (input != null) {
             this.timeGroups = input.getTimeGroups();
             this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
@@ -47,7 +46,9 @@ public class TrendForecastImpl implements TrendForecast {
             this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
             this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
             this.surfaceWind = new TrendForecastSurfaceWindImpl(input.getSurfaceWind());
-            this.forecastWeather.addAll(input.getForecastWeather());
+            if (input.getForecastWeather() != null) {
+                this.forecastWeather = new ArrayList<>(input.getForecastWeather());
+            }
             this.noSignificantWeather = input.isNoSignificantWeather();
             this.cloud = new CloudForecastImpl(input.getCloud());
             this.colorState = input.getColorState();
