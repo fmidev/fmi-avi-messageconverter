@@ -14,7 +14,7 @@ import fi.fmi.avi.model.NumericMeasure;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class CloudForecastImpl implements CloudForecast {
+public class CloudForecastImpl implements CloudForecast, Cloneable {
 
 	private boolean isNoSignificantCloud;
     private NumericMeasure verticalVisibility; // only if no layers
@@ -24,14 +24,16 @@ public class CloudForecastImpl implements CloudForecast {
     }
 
     public CloudForecastImpl(final CloudForecast input) {
-        this.layers = new ArrayList<CloudLayer>();
         if (input != null) {
             this.isNoSignificantCloud = input.isNoSignificantCloud();
             if (input.getVerticalVisibility() != null) {
                 this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
             }
-            for (CloudLayer layer : input.getLayers()) {
-                this.layers.add(new CloudLayerImpl(layer));
+            if (input.getLayers() != null) {
+                this.layers = new ArrayList<CloudLayer>();
+                for (CloudLayer layer : input.getLayers()) {
+                    this.layers.add(new CloudLayerImpl(layer));
+                }
             }
         }
     }

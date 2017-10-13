@@ -28,11 +28,21 @@ public class ObservedSurfaceWindImpl implements ObservedSurfaceWind {
     public ObservedSurfaceWindImpl(final ObservedSurfaceWind input) {
         if (input != null) {
             this.variableDirection = input.isVariableDirection();
-            this.meanWindDirection = new NumericMeasureImpl(input.getMeanWindDirection());
-            this.meanWindSpeed = new NumericMeasureImpl(input.getMeanWindSpeed());
-            this.windGust = new NumericMeasureImpl(input.getWindGust());
-            this.extremeClockwiseWindDirection = new NumericMeasureImpl(input.getExtremeClockwiseWindDirection());
-            this.extremeCounterClockwiseWindDirection = new NumericMeasureImpl(input.getExtremeCounterClockwiseWindDirection());
+            if (input.getMeanWindDirection() != null) {
+                this.meanWindDirection = new NumericMeasureImpl(input.getMeanWindDirection());
+            }
+            if (input.getMeanWindSpeed() != null) {
+                this.meanWindSpeed = new NumericMeasureImpl(input.getMeanWindSpeed());
+            }
+            if (input.getWindGust() != null) {
+                this.windGust = new NumericMeasureImpl(input.getWindGust());
+            }
+            if (input.getExtremeClockwiseWindDirection() != null) {
+                this.extremeClockwiseWindDirection = new NumericMeasureImpl(input.getExtremeClockwiseWindDirection());
+            }
+            if (input.getExtremeCounterClockwiseWindDirection() != null) {
+                this.extremeCounterClockwiseWindDirection = new NumericMeasureImpl(input.getExtremeCounterClockwiseWindDirection());
+            }
         }
     }
 

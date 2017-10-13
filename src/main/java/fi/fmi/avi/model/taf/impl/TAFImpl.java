@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.AerodromeUpdateEvent;
 import fi.fmi.avi.model.impl.AerodromeWeatherMessageImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBaseForecast;
@@ -45,7 +46,6 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 
     public TAFImpl(final TAF input) {
         super(input);
-        this.changeForecasts = new ArrayList<>();
         if (input != null) {
 			this.status = input.getStatus();
 			if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
@@ -54,11 +54,18 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 			} else {
 				this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
 			}
-			this.baseForecast = new TAFBaseForecastImpl(input.getBaseForecast());
-			for (TAFChangeForecast fct : input.getChangeForecasts()) {
-				this.changeForecasts.add(new TAFChangeForecastImpl(fct));
+			if (input.getBaseForecast() != null) {
+				this.baseForecast = new TAFBaseForecastImpl(input.getBaseForecast());
 			}
-			this.referredReport = input.getReferredReport();
+			if (input.getChangeForecasts() != null) {
+				this.changeForecasts = new ArrayList<>();
+				for (TAFChangeForecast fct : input.getChangeForecasts()) {
+					this.changeForecasts.add(new TAFChangeForecastImpl(fct));
+				}
+			}
+			if (input.getReferredReport() != null) {
+				this.referredReport = new TAFImpl(input.getReferredReport());
+			}
 		}
     }
 
@@ -370,9 +377,17 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
     }
 
 	@Override
-	protected void syncAerodromeInfo(Aerodrome fullInfo) {
-		//No need to disseminate Aerodrome info the properties for TAFImpl
+	public void aerodromeInfoAdded(final AerodromeUpdateEvent e) {
+   		//NOOP
 	}
 
-	
+	@Override
+	public void aerodromeInfoRemoved(final AerodromeUpdateEvent e) {
+		//NOOP
+	}
+
+	@Override
+	public void aerodromeInfoChanged(final AerodromeUpdateEvent e) {
+    	//NOOP
+	}
 }

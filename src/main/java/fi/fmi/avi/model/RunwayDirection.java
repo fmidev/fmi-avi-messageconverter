@@ -15,6 +15,15 @@ public class RunwayDirection {
 
     public RunwayDirection() {
     }
+
+    public RunwayDirection(final RunwayDirection input) {
+        this.designator = input.designator;
+        this.trueBearing = input.trueBearing;
+        this.elevationTDZMeters = input.elevationTDZMeters;
+        if (input.associatedAirportHeliport != null) {
+            this.associatedAirportHeliport = new Aerodrome(input.associatedAirportHeliport);
+        }
+    }
     
     public RunwayDirection(final String designator) {
         this.designator = designator;

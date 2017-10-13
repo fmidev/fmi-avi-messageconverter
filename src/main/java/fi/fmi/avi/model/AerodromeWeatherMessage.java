@@ -1,6 +1,6 @@
 package fi.fmi.avi.model;
 
-public interface AerodromeWeatherMessage extends AviationWeatherMessage {
+public interface AerodromeWeatherMessage extends AviationWeatherMessage, AerodromeUpdateListener {
 
 	Aerodrome getAerodrome();
 
@@ -8,7 +8,7 @@ public interface AerodromeWeatherMessage extends AviationWeatherMessage {
 	
 	boolean isAerodromeInfoResolved();
 	
-	void amendAerodromeInfo(Aerodrome fullInfo);
+	void amendAerodromeInfo(Aerodrome fullInfo) throws IllegalArgumentException;
 	
 
 }

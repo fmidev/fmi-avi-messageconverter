@@ -37,14 +37,23 @@ public abstract class TAFForecastImpl implements TAFForecast {
     public TAFForecastImpl(final TAFForecast input) {
         if (input != null) {
             this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
-            this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
+            if (input.getPrevailingVisibility() != null) {
+                this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
+            }
             this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
-            this.surfaceWind = new TAFSurfaceWindImpl(input.getSurfaceWind());
+            if (input.getSurfaceWind() != null) {
+                this.surfaceWind = new TAFSurfaceWindImpl(input.getSurfaceWind());
+            }
             if (input.getForecastWeather() != null) {
-                this.forecastWeather = new ArrayList<>(input.getForecastWeather());
+                this.forecastWeather = new ArrayList<>();
+                for (Weather w:input.getForecastWeather()) {
+                    this.forecastWeather.add(new WeatherImpl(w));
+                }
             }
             this.noSignificantWeather = input.isNoSignificantWeather();
-            this.cloud = new CloudForecastImpl(input.getCloud());
+            if (input.getCloud() != null) {
+                this.cloud = new CloudForecastImpl(input.getCloud());
+            }
         }
     }
 

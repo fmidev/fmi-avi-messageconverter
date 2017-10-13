@@ -18,7 +18,18 @@ public class Aerodrome {
 
     public Aerodrome() {
     }
-    
+
+    public Aerodrome(final Aerodrome input) {
+        this.designator = input.designator;
+        this.name = input.name;
+        this.locationIndicatorICAO = input.locationIndicatorICAO;
+        this.designatorIATA = input.designatorIATA;
+        this.fieldElevationValue = input.fieldElevationValue;
+        this.fieldElevationUnit = input.fieldElevationUnit;
+        if (input.referencePoint != null) {
+            this.setReferencePoint(new GeoPosition(input.referencePoint.getCoordinateReferenceSystemId(), input.referencePoint.getCoordinates()));
+        }
+    }
     public Aerodrome(final String designator) {
         this.designator = designator;
     }
@@ -154,4 +165,5 @@ public class Aerodrome {
         return false;
       return true;
     }
+
 }

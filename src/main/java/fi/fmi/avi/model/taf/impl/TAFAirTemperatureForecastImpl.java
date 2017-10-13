@@ -36,7 +36,9 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 
     public TAFAirTemperatureForecastImpl(final TAFAirTemperatureForecast input) {
     	if (input != null) {
-			this.maxTemperature = new NumericMeasureImpl(input.getMaxTemperature());
+    		if (input.getMaxTemperature() != null) {
+				this.maxTemperature = new NumericMeasureImpl(input.getMaxTemperature());
+			}
 			if (input.getMaxTemperatureTime() != null) {
 				this.setMaxTemperatureTime(input.getMaxTemperatureTime());
 			} else {
@@ -47,7 +49,9 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 			} else {
 				this.setPartialMinTemperatureTime(input.getPartialMinTemperatureTime());
 			}
-			this.minTemperature = new NumericMeasureImpl(input.getMinTemperature());
+			if (input.getMinTemperature() != null) {
+				this.minTemperature = new NumericMeasureImpl(input.getMinTemperature());
+			}
 		}
     }
 

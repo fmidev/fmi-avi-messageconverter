@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.Weather;
 
@@ -23,7 +24,7 @@ import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
  * Created by rinne on 05/06/17.
  */
 
-public abstract class AviationWeatherMessageImpl implements AviationWeatherMessage {
+public abstract class AviationWeatherMessageImpl implements AviationWeatherMessage, Cloneable {
 
     public static List<String> getAsWeatherCodes(final List<Weather> weatherList) {
         return getAsWeatherCodes(weatherList, null);
@@ -353,7 +354,12 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     public boolean areTimeReferencesResolved() {
         return this.fullyResolvedIssueTime != null;
     }
-    
+
+    public Object clone() throws CloneNotSupportedException {
+        AviationWeatherMessageImpl retval = (AviationWeatherMessageImpl) super.clone();
+        return retval;
+    }
+
     private boolean timeOk(final int day, final int hour, final int minute) {
         if (day > 31) {
             return false;

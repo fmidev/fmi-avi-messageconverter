@@ -11,6 +11,11 @@ public class GeoPosition {
 	
 	public GeoPosition() {
 	}
+
+	public GeoPosition(final GeoPosition input) {
+	    this.coordinateReferenceSystemId = input.coordinateReferenceSystemId;
+	    this.coordinates = input.coordinates;
+    }
 	
 	public GeoPosition(final String crsID, Double...coordinates) {
 		this.coordinateReferenceSystemId = crsID;
@@ -98,4 +103,5 @@ public class GeoPosition {
       return false;
     return true;
   }
+
 }

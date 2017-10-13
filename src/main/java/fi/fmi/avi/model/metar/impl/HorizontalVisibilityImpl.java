@@ -25,10 +25,16 @@ public class HorizontalVisibilityImpl implements HorizontalVisibility {
 
     public HorizontalVisibilityImpl(final HorizontalVisibility input) {
         if (input != null) {
-            this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
+            if (input.getPrevailingVisibility() != null) {
+                this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
+            }
             this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
-            this.minimumVisibility = new NumericMeasureImpl(input.getMinimumVisibility());
-            this.minimumVisibilityDirection = new NumericMeasureImpl(input.getMinimumVisibilityDirection());
+            if (input.getMinimumVisibility() != null) {
+                this.minimumVisibility = new NumericMeasureImpl(input.getMinimumVisibility());
+            }
+            if (input.getMinimumVisibilityDirection() != null) {
+                this.minimumVisibilityDirection = new NumericMeasureImpl(input.getMinimumVisibilityDirection());
+            }
         }
     }
 

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 
 import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.AerodromeUpdateEvent;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.RunwayDirection;
 import fi.fmi.avi.model.Weather;
@@ -55,32 +56,63 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 
     public METARImpl(final METAR input) {
         super(input);
-        this.runwayVisualRanges = new ArrayList<RunwayVisualRange>();
-        this.runwayStates = new ArrayList<RunwayState>();
-        this.trends = new ArrayList<TrendForecast>();
         if (input != null) {
             this.automatedStation = input.isAutomatedStation();
             this.status = input.getStatus();
             this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
-            this.airTemperature = new NumericMeasureImpl(input.getAirTemperature());
-            this.dewpointTemperature = new NumericMeasureImpl(input.getDewpointTemperature());
-            this.altimeterSettingQNH = new NumericMeasureImpl(input.getAltimeterSettingQNH());
-            this.surfaceWind = new ObservedSurfaceWindImpl(input.getSurfaceWind());
-            this.visibility = new HorizontalVisibilityImpl(input.getVisibility());
-
-            for (RunwayVisualRange range : input.getRunwayVisualRanges()) {
-                this.runwayVisualRanges.add(new RunwayVisualRangeImpl(range));
+            if (input.getAirTemperature() != null) {
+                this.airTemperature = new NumericMeasureImpl(input.getAirTemperature());
             }
-            this.presentWeather = input.getPresentWeather();
-            this.clouds = new ObservedCloudsImpl(input.getClouds());
-            this.recentWeather = input.getRecentWeather();
-            this.windShear = new WindShearImpl(input.getWindShear());
-            this.seaState = new SeaStateImpl(input.getSeaState());
-            for (RunwayState state : input.getRunwayStates()) {
-                this.runwayStates.add(new RunwayStateImpl(state));
+            if (input.getDewpointTemperature() != null) {
+                this.dewpointTemperature = new NumericMeasureImpl(input.getDewpointTemperature());
             }
-            for (TrendForecast trend : input.getTrends()) {
-                this.trends.add(new TrendForecastImpl(trend));
+            if (input.getAltimeterSettingQNH() != null) {
+                this.altimeterSettingQNH = new NumericMeasureImpl(input.getAltimeterSettingQNH());
+            }
+            if (input.getSurfaceWind() != null) {
+                this.surfaceWind = new ObservedSurfaceWindImpl(input.getSurfaceWind());
+            }
+            if (input.getVisibility() != null) {
+                this.visibility = new HorizontalVisibilityImpl(input.getVisibility());
+            }
+            if (input.getRunwayVisualRanges() != null) {
+                this.runwayVisualRanges = new ArrayList<>();
+                for (RunwayVisualRange range : input.getRunwayVisualRanges()) {
+                    this.runwayVisualRanges.add(new RunwayVisualRangeImpl(range));
+                }
+            }
+            if (input.getPresentWeather() != null) {
+                this.presentWeather = new ArrayList<>();
+                for (Weather w: input.getPresentWeather()) {
+                    this.presentWeather.add(new WeatherImpl(w));
+                }
+            }
+            if (input.getClouds() != null) {
+                this.clouds = new ObservedCloudsImpl(input.getClouds());
+            }
+            if (input.getRecentWeather() != null) {
+                this.recentWeather = new ArrayList<>();
+                for (Weather w: input.getRecentWeather()) {
+                    this.recentWeather.add(new WeatherImpl(w));
+                }
+            }
+            if (input.getWindShear() != null) {
+                this.windShear = new WindShearImpl(input.getWindShear());
+            }
+            if (input.getSeaState() != null) {
+                this.seaState = new SeaStateImpl(input.getSeaState());
+            }
+            if (input.getRunwayStates() != null) {
+                this.runwayStates = new ArrayList<>();
+                for (RunwayState state : input.getRunwayStates()) {
+                    this.runwayStates.add(new RunwayStateImpl(state));
+                }
+            }
+            if (input.getTrends() != null) {
+                this.trends = new ArrayList<>();
+                for (TrendForecast trend : input.getTrends()) {
+                    this.trends.add(new TrendForecastImpl(trend));
+                }
             }
             this.colorState = input.getColorState();
         }
@@ -466,7 +498,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 	}
 	
 	
-	protected void syncAerodromeInfo(final Aerodrome fullInfo) {
+	private void syncAerodromeInfo(final Aerodrome fullInfo) {
 		if (this.runwayStates != null) {
 			for (RunwayState rws:this.runwayStates) {
 				if (rws.getRunwayDirection() != null) {
@@ -486,6 +518,20 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 				rwd.setAssociatedAirportHeliport(fullInfo);
 			}
 		}
-	}	
-	
+	}
+
+    @Override
+    public void aerodromeInfoAdded(final AerodromeUpdateEvent e) {
+        syncAerodromeInfo(e.getAerodrome());
+    }
+
+    @Override
+    public void aerodromeInfoRemoved(final AerodromeUpdateEvent e) {
+        syncAerodromeInfo(e.getAerodrome());
+    }
+
+    @Override
+    public void aerodromeInfoChanged(final AerodromeUpdateEvent e) {
+        syncAerodromeInfo(e.getAerodrome());
+    }
 }

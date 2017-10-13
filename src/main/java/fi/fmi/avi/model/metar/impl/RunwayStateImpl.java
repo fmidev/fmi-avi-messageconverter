@@ -15,7 +15,6 @@ import fi.fmi.avi.model.metar.RunwayState;
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RunwayStateImpl implements RunwayState {
-
     private boolean allRunways;
     private boolean cleared;
     private boolean estimatedSurfaceFrictionUnreliable;
@@ -41,10 +40,14 @@ public class RunwayStateImpl implements RunwayState {
             this.estimatedSurfaceFrictionUnreliable = input.isEstimatedSurfaceFrictionUnreliable();
             this.snowClosure = input.isSnowClosure();
             this.repetition = input.isRepetition();
-            this.runwayDirection = input.getRunwayDirection();
+            if (input.getRunwayDirection() != null) {
+                this.runwayDirection = new RunwayDirection(input.getRunwayDirection());
+            }
             this.deposit = input.getDeposit();
             this.contamination = input.getContamination();
-            this.depthOfDeposit = new NumericMeasureImpl(input.getDepthOfDeposit());
+            if (input.getDepthOfDeposit() != null) {
+                this.depthOfDeposit = new NumericMeasureImpl(input.getDepthOfDeposit());
+            }
             this.depthOperator = input.getDepthOperator();
             this.estimatedSurfaceFriction = input.getEstimatedSurfaceFriction();
             this.breakingAction = input.getBreakingAction();
