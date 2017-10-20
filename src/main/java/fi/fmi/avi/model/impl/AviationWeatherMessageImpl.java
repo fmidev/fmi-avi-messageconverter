@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.Weather;
 
@@ -24,7 +23,7 @@ import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
  * Created by rinne on 05/06/17.
  */
 
-public abstract class AviationWeatherMessageImpl implements AviationWeatherMessage, Cloneable {
+public abstract class AviationWeatherMessageImpl implements AviationWeatherMessage {
 
     public static List<String> getAsWeatherCodes(final List<Weather> weatherList) {
         return getAsWeatherCodes(weatherList, null);
