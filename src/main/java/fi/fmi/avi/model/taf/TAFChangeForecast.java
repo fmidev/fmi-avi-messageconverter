@@ -3,12 +3,10 @@ package fi.fmi.avi.model.taf;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import fi.fmi.avi.model.TimeReferenceAmendable;
-
 /**
  * Created by rinne on 30/01/15.
  */
-public interface TAFChangeForecast extends TAFForecast, TimeReferenceAmendable {
+public interface TAFChangeForecast extends TAFForecast {
 
     TAFChangeIndicator getChangeIndicator();
 

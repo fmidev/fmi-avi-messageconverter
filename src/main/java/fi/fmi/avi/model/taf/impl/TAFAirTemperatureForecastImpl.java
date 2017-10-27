@@ -141,8 +141,7 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 		return this.minTemperatureTime;
 	}
 
-	@Override
-	public void amendTimeReferences(final ZonedDateTime referenceTime) {
+	public void completeTimeReferences(final ZonedDateTime referenceTime) {
 		if (referenceTime != null) {
 			if (this.minTemperatureHour > -1) {
 				if (this.minTemperatureDayOfMonth > -1) {
@@ -172,17 +171,6 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 				}
 			}
 		}
-	}
-
-	@Override
-	public boolean areTimeReferencesResolved() {
-		if (this.minTemperatureHour > -1 && this.minTemperatureTime == null) {
-			return false;
-		}
-		if (this.maxTemperatureHour > -1 && this.maxTemperatureTime == null) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override

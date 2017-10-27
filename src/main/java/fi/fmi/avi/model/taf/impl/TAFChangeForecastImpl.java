@@ -23,6 +23,7 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
     private static final Pattern VALIDITY_START_PATTERN = Pattern.compile("^(FM)?([0-9]{2})?([0-9]{2})([0-9]{2})$");
     
 	private TAFChangeIndicator changeIndicator;
+	//TODO: use a concrete implementation of PartialOrCompleTimePeriodImpl for valid time handling, as in TAFImpl
     private ZonedDateTime validityStartTime = null;
     private int validityStartDayOfMonth = -1;
     private int validityStartHour = -1;
@@ -298,6 +299,7 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 		this.validityEndHour = time.getHour();		
 	}
 
+	/*
 	@Override
 	public void amendTimeReferences(ZonedDateTime referenceTime) {
 		if (referenceTime != null) {
@@ -381,6 +383,7 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 		}
 		return true;
 	}
+	*/
 
 	
 

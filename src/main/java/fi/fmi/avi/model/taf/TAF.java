@@ -63,5 +63,26 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     void setReferredReport(TAF referredReport);
 
+    /**
+     * Completes the partial forecast start and end times by providing the missing year and month information.
+     *
+     * @param issueYear the (expected or known) year of the message issue time.
+     * @param issueMonth the (expected or known) month (1-12) of message issue time.
+     * @param issueDay the (expected or known) day-of-month (1-31) of the message issue time.
+     * @param issueHour the (expected or known) hour-of-day (0-23) of the message issue time.
+     * @param tz timezone
+     *
+     * @throws IllegalArgumentException when the time references cannot be completed by combining the existing partial times and the provided additional
+     * information.
+     */
+    void completeForecastTimeReferences(int issueYear, int issueMonth, int issueDay, int issueHour, ZoneId tz);
+
+    /**
+     * Indicates whether there are partial trend time references in the message.
+     *
+     * @return true, if the all trend time references are complete or there are no trends, false otherwise.
+     */
+    boolean areForecastTimeReferencesComplete();
+
 
 }

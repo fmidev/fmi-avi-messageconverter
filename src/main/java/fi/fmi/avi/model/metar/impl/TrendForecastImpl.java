@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.metar.impl;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -225,19 +224,4 @@ public class TrendForecastImpl implements TrendForecast {
         this.colorState = colorState;
     }
 
-	@Override
-	public void amendTimeReferences(final ZonedDateTime issueTime) {
-		if (this.timeGroups != null) {
-			this.timeGroups.amendTimeReferences(issueTime);
-		}
-	}
-
-	@Override
-	public boolean areTimeReferencesResolved() {
-		if (this.timeGroups != null) {
-			return this.timeGroups.areTimeReferencesResolved();
-		} else {
-			return false;
-		}
-	}
 }

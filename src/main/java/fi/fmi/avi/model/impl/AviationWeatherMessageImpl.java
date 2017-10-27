@@ -2,6 +2,7 @@ package fi.fmi.avi.model.impl;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.fmi.avi.model.AviationWeatherMessage;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.Weather;
 
 import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsage;
@@ -42,6 +44,54 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
             }
         }
         return retval;
+    }
+
+    public static void completePartialTimeReferenceList(List<? extends PartialOrCompleteTimePeriod> references, final ZonedDateTime referenceTime) {
+        if (references != null) {
+            //Assumption: the start times come in chronological order, but the periods may be (partly) overlapping
+            LocalDateTime ref = LocalDateTime.from(referenceTime);
+            for (PartialOrCompleteTimePeriod period:references) {
+                if (period != null) {
+                    if (period.hasStartTime()) {
+                        if (period.getPartialStartTimeHour() < referenceTime.getHour()) {
+                            //Roll over to the same time on the next day
+                            ref = ref.plusDays(1).withHour(period.getPartialStartTimeHour()).withMinute(period.getPartialStartTimeMinute());
+                        } else {
+                            //The same day as the previous reference time
+                            ref = ref.withHour(period.getPartialStartTimeHour()).withMinute(period.getPartialStartTimeMinute());
+                        }
+                        period.setCompleteStartTime(ZonedDateTime.of(ref, referenceTime.getZone()));
+                        if (period.hasEndTime()) {
+                            //Must be greater than the start time, but may be after the next timeGroup's reference time:
+                            LocalDateTime endTime = LocalDateTime.from(period.getCompleteStartTime());
+                            if (period.getPartialEndTimeHour() < endTime.getHour()) {
+                                //Roll over to the same time on the next day
+                                endTime = endTime.plusDays(1).withHour(period.getPartialEndTimeHour()).withMinute(period.getPartialEndTimeMinute());
+                            } else {
+                                //The same day as the start time
+                                endTime = endTime.withHour(period.getPartialEndTimeHour()).withMinute(period.getPartialEndTimeMinute());
+                            }
+                            period.setCompleteEndTime(ZonedDateTime.of(endTime, referenceTime.getZone()));
+                        }
+                    }
+                    else if (period.hasEndTime()) {
+                        if (period.endsAtMidnight()) {
+                            // partial time given as "2400", the day is actually the next day and time is "0000":
+                            ref = ref.plusDays(1).withHour(0).withMinute(0);
+                        } else {
+                            if (period.getPartialEndTimeHour() < referenceTime.getHour()) {
+                                //Roll over to the same time on the next day
+                                ref = ref.plusDays(1).withHour(period.getPartialEndTimeHour()).withMinute(period.getPartialEndTimeMinute());
+                            } else {
+                                //The same day as the previous start time
+                                ref = ref.withHour(period.getPartialEndTimeHour()).withMinute(period.getPartialEndTimeMinute());
+                            }
+                        }
+                        period.setCompleteEndTime(ZonedDateTime.of(ref, referenceTime.getZone()));
+                    }
+                }
+            }
+        }
     }
     
     private static final Pattern DAY_HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})([0-9]{2})([A-Z]+)");
@@ -335,7 +385,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
     
     @Override
-    public void amendTimeReferences(final ZonedDateTime referenceTime) {
+    public void completeIssueTime(final YearMonth referenceTime) {
         if (this.issueDayOfMonth > -1 && this.issueHour > -1 && this.issueMinute > -1 && this.timeZone != null) {
             try {
                 if (this.issueHour == 24 && this.issueMinute == 0) {
@@ -344,19 +394,15 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
                     this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, this.issueHour, this.issueMinute), this.timeZone));
                 }
             } catch (DateTimeException dte) {
-                throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be amended with month '" + referenceTime.getMonth() + "'", dte);
+                throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be completed with month '" +
+                        referenceTime.getMonth() + "'", dte);
             }
         }
     }
     
     @Override
-    public boolean areTimeReferencesResolved() {
+    public boolean isIssueTimeComplete() {
         return this.fullyResolvedIssueTime != null;
-    }
-
-    public Object clone() throws CloneNotSupportedException {
-        AviationWeatherMessageImpl retval = (AviationWeatherMessageImpl) super.clone();
-        return retval;
     }
 
     private boolean timeOk(final int day, final int hour, final int minute) {
