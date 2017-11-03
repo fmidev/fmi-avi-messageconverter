@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.impl.PartialOrCompleteTimePeriodImpl;
 import fi.fmi.avi.model.taf.TAFChangeForecast;
 
 /**
@@ -23,20 +25,15 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
     private static final Pattern VALIDITY_START_PATTERN = Pattern.compile("^(FM)?([0-9]{2})?([0-9]{2})([0-9]{2})$");
     
 	private TAFChangeIndicator changeIndicator;
-	//TODO: use a concrete implementation of PartialOrCompleTimePeriodImpl for valid time handling, as in TAFImpl
-    private ZonedDateTime validityStartTime = null;
-    private int validityStartDayOfMonth = -1;
-    private int validityStartHour = -1;
-    private int validityStartMinute = -1;
-    private ZonedDateTime validityEndTime = null; 
-    private int validityEndDayOfMonth = -1;
-    private int validityEndHour = -1;
+	private ChangeForecastValidityTime validityTime;
 
     public TAFChangeForecastImpl(){
+		this.validityTime = new ChangeForecastValidityTime();
     }
 
     public TAFChangeForecastImpl(final TAFChangeForecast input) {
         super(input);
+		this.validityTime = new ChangeForecastValidityTime();
         if (input != null) {
 			this.setChangeIndicator(input.getChangeIndicator());
 			if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
@@ -64,43 +61,43 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
     @Override
     @JsonIgnore
     public int getValidityStartDayOfMonth() {
-        return validityStartDayOfMonth;
+        return this.validityTime.getStartTimeDay();
     }
 
     @Override
     @JsonIgnore
     public int getValidityStartHour() {
-        return validityStartHour;
+        return this.validityTime.getStartTimeHour();
     }
 
     @Override
     @JsonIgnore
     public int getValidityStartMinute() {
-        return validityStartMinute;
+        return this.validityTime.getStartTimeMinute();
     }
 
 
     @Override
     @JsonIgnore
     public int getValidityEndDayOfMonth() {
-        return validityEndDayOfMonth;
+        return this.validityTime.getEndTimeDay();
     }
 
     @Override
     @JsonIgnore
     public int getValidityEndHour() {
-        return validityEndHour;
+        return this.validityTime.getEndTimeHour();
     }
    
     @Override
     @JsonProperty("partialValidityStartTime")
    	public String getPartialValidityStartTime() {
-       	if (this.validityEndHour == -1 && this.validityStartHour > -1 && this.validityStartMinute > -1) {
+       	if (this.validityTime.getEndTimeHour() == -1 && this.validityTime.getStartTimeHour() > -1 && this.validityTime.getStartTimeMinute() > -1) {
        		StringBuilder sb = new StringBuilder();
-       		if (this.validityStartDayOfMonth > -1) {
-       			sb.append(String.format("%02d", this.validityStartDayOfMonth));
+       		if (this.validityTime.getStartTimeDay() > -1) {
+       			sb.append(String.format("%02d", this.validityTime.getStartTimeDay()));
        		}
-       		sb.append(String.format("%02d%02d", this.validityStartHour, this.validityStartMinute));
+       		sb.append(String.format("%02d%02d", this.validityTime.getStartTimeHour(), this.validityTime.getStartTimeMinute()));
        		
        		return sb.toString();
        	} else {
@@ -136,40 +133,25 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 	
 	@Override
 	public void setPartialValidityStartTime(int day, int hour, int minute) {
-		if (timeOk(day, hour, minute)) {
-			if (this.validityStartTime != null) {
-				if ( (this.validityStartDayOfMonth != day)
-						|| (this.validityStartHour != hour)
-						|| (this.validityStartMinute != minute)) {
-					this.validityStartTime = null;
-				}
-			}
-			this.validityStartDayOfMonth = day;
-			this.validityStartHour = hour;
-			this.validityStartMinute = minute;
-		}
+        this.validityTime.setPartialStartTime(day, hour,minute);
 	}
 
 	@Override
 	public void setPartialValidityEndTime(int day, int hour) {
-		if (timeOk(day, hour, -1)) {
-			this.validityEndDayOfMonth = day;
-			this.validityEndHour = hour;
-			this.validityEndTime = null;
-		}
+        this.validityTime.setPartialEndTime(day, hour, 0);
 	}
 
 	
     @Override
 	public String getPartialValidityTimePeriod() {
-    	if (this.validityStartHour > -1 && this.validityEndHour > -1) {
+    	if (this.validityTime.getStartTimeHour() > -1 && this.validityTime.getEndTimeHour() > -1) {
     		StringBuilder sb = new StringBuilder();
-    		if (this.validityStartDayOfMonth > -1 && this.validityEndDayOfMonth > -1) {
-    			sb.append(String.format("%02d%02d", this.validityStartDayOfMonth, this.validityStartHour));
+    		if (this.validityTime.getStartTimeDay() > -1 && this.validityTime.getEndTimeDay() > -1) {
+    			sb.append(String.format("%02d%02d", this.validityTime.getStartTimeDay(), this.validityTime.getStartTimeHour()));
     			sb.append('/');
-    			sb.append(String.format("%02d%02d", this.validityEndDayOfMonth, this.validityEndHour));
+    			sb.append(String.format("%02d%02d", this.validityTime.getEndTimeDay(), this.validityTime.getEndTimeHour()));
     		} else {
-    			sb.append(String.format("%02d%02d", this.validityStartHour, this.validityEndHour));
+    			sb.append(String.format("%02d%02d", this.validityTime.getStartTimeHour(), this.validityTime.getEndTimeHour()));
     		}
     		return sb.toString();
     	} else {
@@ -199,7 +181,6 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 	                int toHour = Integer.parseInt(m.group(8));
 	                this.setPartialValidityTimePeriod(fromDay, toDay, fromHour, toHour);
 	            }
-	    		this.validityStartMinute = -1;
     		} else {
     			throw new IllegalArgumentException("Time period is not either 'ddHHHH' or 'ddHH/ddHH'");
     		}
@@ -214,43 +195,32 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 
 	@Override
 	public void setPartialValidityTimePeriod(int startDay, int endDay, int startHour, int endHour) {
-		if (timeOk(startDay, startHour, -1) && timeOk(endDay, endHour, -1)) {
-			this.validityStartDayOfMonth = startDay;
-			this.validityStartHour = startHour;
-			this.validityStartMinute = -1;
-			this.validityEndDayOfMonth = endDay;
-			this.validityEndHour = endHour;
-			if (this.validityStartTime != null) {
-				if ( (this.validityStartTime.getDayOfMonth() != startDay) || (this.validityStartTime.getHour() != startHour) ) {
-					this.validityStartTime = null;
-				}
-			}
-			if (this.validityEndTime != null) {
-				if ( (this.validityEndTime.getDayOfMonth() != endDay) || (this.validityEndTime.getHour() != endHour) ) {
-					this.validityEndTime = null;
-				}
-			}
+		if (ChangeForecastValidityTime.timeOk(startDay, startHour, 0) && ChangeForecastValidityTime.timeOk(endDay, endHour, -1)) {
+			this.validityTime.setPartialStartTime(startDay, startHour, 0);
+			this.validityTime.setPartialEndTime(endDay, endHour, 0);
+		} else {
+			throw new IllegalArgumentException("Start '" + startDay + "/" + startHour + "' and/or end time '" + endDay + "/" + endHour + "' is not allowed");
 		}
 	}
 	
 	@JsonProperty("validityStartTime")
     public String getValidityStartTimeISO() {
-    	if (this.validityStartTime != null) {
-    		return this.validityStartTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-    	} else {
-    		return null;
-    	}
+        if (this.validityTime.getCompleteStartTime() != null) {
+            return this.validityTime.getCompleteStartTimeAsISOString();
+        } else {
+            return null;
+        }
     }
 	
 	@Override
 	@JsonIgnore
 	public ZonedDateTime getValidityStartTime() {
-		return this.validityStartTime;
+		return this.validityTime.getCompleteStartTime();
 	}
 	
 	@JsonProperty("validityStartTime")
 	public void setValidityStartTimeISO(final String time) {
-		this.setValidityStartTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+		this.validityTime.setCompleteStartTimeAsISOString(time);
 	}
 	
 	@Override
@@ -260,19 +230,12 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 
 	@Override
 	public void setValidityStartTime(ZonedDateTime time) {
-		this.validityStartTime = time;
-		this.validityStartDayOfMonth = time.getDayOfMonth();
-		this.validityStartHour = time.getHour();
-		this.validityStartMinute = time.getMinute();
+		this.validityTime.setCompleteStartTime(time);
 	}
 
 	@JsonProperty("validityEndTime")
     public String getValidityEndTimeISO() {
-    	if (this.validityEndTime != null) {
-    		return this.validityEndTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-    	} else {
-    		return null;
-    	}
+        return this.validityTime.getCompleteEndTimeAsISOString();
     }
 	
 	@JsonProperty("validityEndTime")
@@ -283,7 +246,7 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 	@Override
 	@JsonIgnore
 	public ZonedDateTime getValidityEndTime() {
-		return this.validityEndTime;
+		return this.validityTime.getCompleteEndTime();
 	}
 	
 	
@@ -294,96 +257,61 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
 
 	@Override
 	public void setValidityEndTime(ZonedDateTime time) {
-		this.validityEndTime = time;
-		this.validityEndDayOfMonth = time.getDayOfMonth();
-		this.validityEndHour = time.getHour();		
+		this.validityTime.setCompleteEndTime(time);
 	}
 
-	/*
-	@Override
-	public void amendTimeReferences(ZonedDateTime referenceTime) {
-		if (referenceTime != null) {
-			if (this.validityStartDayOfMonth > -1 && this.validityStartHour > -1) {
-				if (this.validityStartDayOfMonth < referenceTime.getDayOfMonth()) {
-					// roll over the next month
-					ZonedDateTime t = referenceTime.plusMonths(1);
-					this.setValidityStartTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), this.validityStartDayOfMonth, this.validityStartHour, this.validityStartMinute > -1?this.validityStartMinute:0), referenceTime.getZone()));
-				} else if (this.validityStartDayOfMonth == referenceTime.getDayOfMonth()) {
-					ZonedDateTime t = referenceTime;
-					if (this.validityStartHour < referenceTime.getHour()) {
-						// roll over to the next day
-						t = t.plusDays(1);
-					}
-					this.setValidityStartTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), t.getDayOfMonth(), this.validityStartHour, this.validityStartMinute > -1?this.validityStartMinute:0), t.getZone()));
-				} else {
-					// the same month but a later day
-					this.setValidityStartTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.validityStartDayOfMonth, this.validityStartHour, this.validityStartMinute > -1?this.validityStartMinute:0), referenceTime.getZone()));
-				}
-				
-				if (this.validityEndHour > -1) {
-					ZonedDateTime t = this.validityStartTime;
-					if (this.validityEndDayOfMonth > -1) {
-						if (this.validityEndDayOfMonth < this.validityStartDayOfMonth) {
-							//roll over to next month
-							t = t.plusMonths(1);
-							this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), this.validityEndDayOfMonth, this.validityEndHour, 0), t.getZone()));
-						} else if (this.validityEndDayOfMonth == this.validityStartDayOfMonth) {
-							if (this.validityEndHour < this.validityStartHour) {
-								//roll over to the next day
-								t = t.plusDays(1);
-								this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), t.getDayOfMonth(), this.validityEndHour, 0), t.getZone()));
-							} else if (this.validityEndHour == 24) {
-								this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), this.validityEndDayOfMonth, 0, 0), t.getZone()).plusDays(1));
-							} else {
-								this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), this.validityEndDayOfMonth, this.validityEndHour, 0), t.getZone()));
-							}
-						} else {
-							// the same month but a later day
-							this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), this.validityEndDayOfMonth, this.validityEndHour, 0), t.getZone()));
-						}
-					} else {
-						if (this.validityEndHour < this.validityStartHour) {
-							//roll over to the next day
-							t = t.plusDays(1);
-							this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), t.getDayOfMonth(), this.validityEndHour, 0), t.getZone()));
-						} else if (this.validityEndHour == 24) {
-							this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), t.getDayOfMonth(), 0, 0), t.getZone()).plusDays(1));
-						} else {
-							this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(t.getYear(), t.getMonth(), t.getDayOfMonth(), this.validityEndHour, 0), t.getZone()));
-						}
-					}
-				}
-			}
-		}
-	}
+	PartialOrCompleteTimePeriod getValidityTimeInternal() {
+        return this.validityTime;
+    }
 
-	@Override
-	public boolean areTimeReferencesResolved() {
-		if (this.validityStartDayOfMonth > -1 && this.validityStartHour > -1 && this.validityStartTime == null) {
-			return false;
-		}
-		if (this.validityEndHour > -1 && this.validityEndTime == null) {
-			return false;
-		}
-		return true;
-	}
-	
-	private boolean timeOk(final int day, final int hour, final int minute) {
-		if (day > 31) {
-			return false;
-		}
-		if (hour > 24) {
-			return false;
-		}
-		if (minute > 59) {
-			return false;
-		}
-		if ((hour == 24) && (minute > 0)) {
-			return false;
-		}
-		return true;
-	}
-	*/
+
+    private class ChangeForecastValidityTime extends PartialOrCompleteTimePeriodImpl {
+
+        @Override
+        public String getPartialStartTime() {
+            throw new UnsupportedOperationException("getPartialStartTime(...) not implemented");
+        }
+
+        @Override
+        public String getPartialEndTime() {
+            throw new UnsupportedOperationException("getPartialEndTime(...) not implemented");
+        }
+
+        @Override
+        protected boolean matchesPartialTimePattern(final String partialString) {
+            throw new UnsupportedOperationException("matchesPartialTimePattern(...) not implemented");
+        }
+
+        @Override
+        protected Pattern getPartialTimePattern() {
+            throw new UnsupportedOperationException("getPartialTimePattern(...) not implemented");
+        }
+
+        @Override
+        protected int extractDayFromPartial(final String partialString) {
+            throw new UnsupportedOperationException("extractDayFromPartial(...) not implemented");
+        }
+
+        @Override
+        protected int extractHourFromPartial(final String partialString) {
+            throw new UnsupportedOperationException("extractHourFromPartial(...) not implemented");
+        }
+
+        @Override
+        protected int extractMinuteFromPartial(final String partialString) {
+            throw new UnsupportedOperationException("extractMinuteFromPartial(...) not implemented");
+        }
+
+        @Override
+        public boolean hasStartTime() {
+            return this.getStartTimeHour() > -1;
+        }
+
+        @Override
+        public boolean hasEndTime() {
+            return this.getEndTimeHour() > -1;
+        }
+    }
 
 	
 

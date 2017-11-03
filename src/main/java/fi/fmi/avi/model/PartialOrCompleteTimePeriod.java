@@ -11,11 +11,11 @@ public interface PartialOrCompleteTimePeriod {
 
     String getPartialStartTime();
 
-    int getPartialStartTimeDay();
+    int getStartTimeDay();
 
-    int getPartialStartTimeHour();
+    int getStartTimeHour();
 
-    int getPartialStartTimeMinute();
+    int getStartTimeMinute();
 
     ZonedDateTime getCompleteStartTime();
 
@@ -24,11 +24,11 @@ public interface PartialOrCompleteTimePeriod {
 
     String getPartialEndTime();
 
-    int getPartialEndTimeDay();
+    int getEndTimeDay();
 
-    int getPartialEndTimeHour();
+    int getEndTimeHour();
 
-    int getPartialEndTimeMinute();
+    int getEndTimeMinute();
 
     ZonedDateTime getCompleteEndTime();
 
@@ -84,6 +84,10 @@ public interface PartialOrCompleteTimePeriod {
     boolean hasStartTime();
 
     boolean hasEndTime();
+
+    boolean isStartTimeComplete();
+
+    boolean isEndTimeComplete();
 
     boolean endsAtMidnight();
 }

@@ -77,7 +77,11 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 
     @Override
     public int getMaxTemperatureHour() {
-        return maxTemperatureHour;
+    	if (this.maxTemperatureTime != null) {
+    		return this.maxTemperatureTime.getHour();
+		} else {
+			return maxTemperatureHour;
+		}
     }
 
     @Override
@@ -102,16 +106,20 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 
     @Override
     public int getMinTemperatureHour() {
-        return minTemperatureHour;
+    	if (this.minTemperatureTime != null) {
+    		return this.minTemperatureTime.getHour();
+		} else {
+			return minTemperatureHour;
+		}
     }
 
 	@Override
 	public String getPartialMaxTemperatureTime() {
-		if (this.maxTemperatureHour > -1){
-			if (this.maxTemperatureDayOfMonth> -1){ 
-				return String.format("%02d%02dZ", this.maxTemperatureDayOfMonth, this.maxTemperatureHour);
+		if (this.getMaxTemperatureHour() > -1){
+			if (this.getMaxTemperatureDayOfMonth() > -1){
+				return String.format("%02d%02dZ", this.getMaxTemperatureDayOfMonth(), this.getMaxTemperatureHour());
 			} else {
-				return String.format("%02dZ", this.maxTemperatureHour);
+				return String.format("%02dZ", this.getMaxTemperatureHour());
 			}
     	} else {
     		return null;
@@ -125,11 +133,11 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 
 	@Override
 	public String getPartialMinTemperatureTime() {
-		if (this.minTemperatureHour > -1){
-			if (this.minTemperatureDayOfMonth> -1){ 
-				return String.format("%02d%02dZ", this.minTemperatureDayOfMonth, this.minTemperatureHour);
+		if (this.getMinTemperatureHour() > -1){
+			if (this.getMinTemperatureDayOfMonth() > -1){
+				return String.format("%02d%02dZ", this.getMinTemperatureDayOfMonth(), this.getMinTemperatureHour());
 			} else {
-				return String.format("%02dZ", this.minTemperatureHour);
+				return String.format("%02dZ", this.getMinTemperatureHour());
 			}
     	} else {
     		return null;
@@ -141,36 +149,57 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 		return this.minTemperatureTime;
 	}
 
-	public void completeTimeReferences(final ZonedDateTime referenceTime) {
-		if (referenceTime != null) {
+	@Override
+	public void completeForecastTimeReferences(final ZonedDateTime approximateIssueTime) {
+		if (approximateIssueTime != null) {
 			if (this.minTemperatureHour > -1) {
 				if (this.minTemperatureDayOfMonth > -1) {
-					if (this.minTemperatureDayOfMonth < referenceTime.getDayOfMonth()) {
+					if (this.minTemperatureDayOfMonth < approximateIssueTime.getDayOfMonth()) {
 						//Assume the next month
-						ZonedDateTime oneMonthAfterIssue = referenceTime.plusMonths(1);
+						ZonedDateTime oneMonthAfterIssue = approximateIssueTime.plusMonths(1);
 						this.setMinTemperatureTime(ZonedDateTime.of(LocalDateTime.of(oneMonthAfterIssue.getYear(), oneMonthAfterIssue.getMonth(), this.minTemperatureDayOfMonth, this.minTemperatureHour, 0), oneMonthAfterIssue.getZone()));
 					} else {
-						this.setMinTemperatureTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.minTemperatureDayOfMonth, this.minTemperatureHour, 0), referenceTime.getZone()));
+						this.setMinTemperatureTime(ZonedDateTime.of(LocalDateTime.of(approximateIssueTime.getYear(), approximateIssueTime.getMonth(), this
+										.minTemperatureDayOfMonth,
+								this.minTemperatureHour, 0), approximateIssueTime.getZone()));
 					}
 				} else {
-					this.minTemperatureTime = ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), referenceTime.getDayOfMonth(), this.minTemperatureHour, 0), referenceTime.getZone());
+					this.minTemperatureTime = ZonedDateTime.of(LocalDateTime.of(approximateIssueTime.getYear(), approximateIssueTime.getMonth(), approximateIssueTime
+									.getDayOfMonth(),
+							this
+							.minTemperatureHour, 0), approximateIssueTime.getZone());
 				}
 			}
 			
 			if (this.maxTemperatureHour > -1) {
 				if (this.maxTemperatureDayOfMonth > -1) {
-					if (this.maxTemperatureDayOfMonth < referenceTime.getDayOfMonth()) {
+					if (this.maxTemperatureDayOfMonth < approximateIssueTime.getDayOfMonth()) {
 						//Assume the next month
-						ZonedDateTime oneMonthAfterIssue = referenceTime.plusMonths(1);
+						ZonedDateTime oneMonthAfterIssue = approximateIssueTime.plusMonths(1);
 						this.setMaxTemperatureTime(ZonedDateTime.of(LocalDateTime.of(oneMonthAfterIssue.getYear(), oneMonthAfterIssue.getMonth(), this.maxTemperatureDayOfMonth, this.maxTemperatureHour, 0), oneMonthAfterIssue.getZone()));
 					} else {
-						this.setMaxTemperatureTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.maxTemperatureDayOfMonth, this.maxTemperatureHour, 0), referenceTime.getZone()));
+						this.setMaxTemperatureTime(ZonedDateTime.of(LocalDateTime.of(approximateIssueTime.getYear(), approximateIssueTime.getMonth(), this
+										.maxTemperatureDayOfMonth,
+								this.maxTemperatureHour, 0), approximateIssueTime.getZone()));
 					}
 				} else {
-					this.maxTemperatureTime = ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), referenceTime.getDayOfMonth(), this.maxTemperatureHour, 0), referenceTime.getZone());
+					this.maxTemperatureTime = ZonedDateTime.of(LocalDateTime.of(approximateIssueTime.getYear(), approximateIssueTime.getMonth(), approximateIssueTime
+									.getDayOfMonth(),
+							this
+							.maxTemperatureHour, 0), approximateIssueTime.getZone());
 				}
 			}
 		}
+	}
+
+	@Override
+	public void resetForecastTimeReferences() {
+		this.minTemperatureTime = null;
+		this.maxTemperatureTime = null;
+	}
+
+	public boolean areForecastTimeReferencesComplete() {
+    	return this.minTemperatureTime != null && this.maxTemperatureTime != null;
 	}
 
 	@Override
@@ -224,8 +253,6 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 	@Override
 	public void setMinTemperatureTime(final ZonedDateTime time) {
 		this.minTemperatureTime = time;
-		this.minTemperatureDayOfMonth = time.getDayOfMonth();
-		this.minTemperatureHour = time.getHour();
 	}
 
 	@Override
@@ -281,8 +308,6 @@ public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast 
 	@Override
 	public void setMaxTemperatureTime(ZonedDateTime time) {
 		this.maxTemperatureTime = time;
-		this.maxTemperatureDayOfMonth = time.getDayOfMonth();
-		this.maxTemperatureHour = time.getHour();
 		
 	}
 	

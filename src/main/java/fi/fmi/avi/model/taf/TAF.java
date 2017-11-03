@@ -77,6 +77,8 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
      */
     void completeForecastTimeReferences(int issueYear, int issueMonth, int issueDay, int issueHour, ZoneId tz);
 
+    void resetForecastTimeReferences();
+
     /**
      * Indicates whether there are partial trend time references in the message.
      *

@@ -56,4 +56,10 @@ public interface TAFAirTemperatureForecast extends AviationCodeListUser {
 
     void setMaxTemperatureTime(final ZonedDateTime time);
 
+    void completeForecastTimeReferences(ZonedDateTime approximateIssueTime);
+
+    void resetForecastTimeReferences();
+
+    boolean areForecastTimeReferencesComplete();
+
 }

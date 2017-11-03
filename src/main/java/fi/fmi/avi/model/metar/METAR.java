@@ -99,6 +99,8 @@ public interface METAR extends RunwaySpecificWeatherMessage, AviationCodeListUse
      */
     void completeTrendTimeReferences(int issueYear, int issueMonth, int issueDay, int issueHour, ZoneId tz);
 
+    void resetTrendTimeReferences();
+
     /**
      * Indicates whether there are partial trend time references in the message.
      *

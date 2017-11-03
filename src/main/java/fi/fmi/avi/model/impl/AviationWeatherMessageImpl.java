@@ -53,39 +53,59 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
             for (PartialOrCompleteTimePeriod period:references) {
                 if (period != null) {
                     if (period.hasStartTime()) {
-                        if (period.getPartialStartTimeHour() < referenceTime.getHour()) {
-                            //Roll over to the same time on the next day
-                            ref = ref.plusDays(1).withHour(period.getPartialStartTimeHour()).withMinute(period.getPartialStartTimeMinute());
+                        if (period.getStartTimeDay() == -1) {
+                            if (period.getStartTimeHour() <= ref.getHour()) {
+                                //Roll over to the next day
+                                ref = ref.plusDays(1);
+                            }
                         } else {
-                            //The same day as the previous reference time
-                            ref = ref.withHour(period.getPartialStartTimeHour()).withMinute(period.getPartialStartTimeMinute());
+                            if (period.getStartTimeDay() < ref.getDayOfMonth()) {
+                                //Roll over to the next month
+                                ref = ref.plusMonths(1);
+                            }
+                            ref = ref.withDayOfMonth(period.getStartTimeDay());
                         }
+                        ref = ref.withHour(period.getStartTimeHour()).withMinute(period.getStartTimeMinute());
                         period.setCompleteStartTime(ZonedDateTime.of(ref, referenceTime.getZone()));
+
                         if (period.hasEndTime()) {
-                            //Must be greater than the start time, but may be after the next timeGroup's reference time:
                             LocalDateTime endTime = LocalDateTime.from(period.getCompleteStartTime());
-                            if (period.getPartialEndTimeHour() < endTime.getHour()) {
-                                //Roll over to the same time on the next day
-                                endTime = endTime.plusDays(1).withHour(period.getPartialEndTimeHour()).withMinute(period.getPartialEndTimeMinute());
+                            if (period.getEndTimeDay() == -1) {
+                                if (period.getEndTimeHour() <= endTime.getHour()) {
+                                    endTime = endTime.plusDays(1);
+                                }
                             } else {
-                                //The same day as the start time
-                                endTime = endTime.withHour(period.getPartialEndTimeHour()).withMinute(period.getPartialEndTimeMinute());
+                                //We know the day
+                                if (period.getEndTimeDay() < period.getCompleteStartTime().getDayOfMonth()) {
+                                    //Roll over to the next month
+                                    endTime = endTime.plusMonths(1);
+                                }
+                                endTime = endTime.withDayOfMonth(period.getEndTimeDay());
+                            }
+                            if (period.endsAtMidnight()) {
+                                endTime = endTime.plusDays(1).withHour(0).withMinute(0);
+                            } else {
+                                endTime = endTime.withHour(period.getEndTimeHour()).withMinute(period.getEndTimeMinute());
                             }
                             period.setCompleteEndTime(ZonedDateTime.of(endTime, referenceTime.getZone()));
                         }
-                    }
-                    else if (period.hasEndTime()) {
-                        if (period.endsAtMidnight()) {
-                            // partial time given as "2400", the day is actually the next day and time is "0000":
-                            ref = ref.plusDays(1).withHour(0).withMinute(0);
-                        } else {
-                            if (period.getPartialEndTimeHour() < referenceTime.getHour()) {
-                                //Roll over to the same time on the next day
-                                ref = ref.plusDays(1).withHour(period.getPartialEndTimeHour()).withMinute(period.getPartialEndTimeMinute());
-                            } else {
-                                //The same day as the previous start time
-                                ref = ref.withHour(period.getPartialEndTimeHour()).withMinute(period.getPartialEndTimeMinute());
+                    } else if (period.hasEndTime()) {
+                        if (period.getEndTimeDay() == -1) {
+                            if (period.endsAtMidnight() || period.getEndTimeHour() <= ref.getHour()) {
+                                ref = ref.plusDays(1);
                             }
+                        } else {
+                            //We know the day
+                            if (period.getEndTimeDay() < period.getCompleteStartTime().getDayOfMonth()) {
+                                //Roll over to the next month
+                                ref = ref.plusMonths(1);
+                            }
+                            ref = ref.withDayOfMonth(period.getEndTimeDay());
+                        }
+                        if (period.endsAtMidnight()) {
+                            ref = ref.withHour(0).withMinute(0);
+                        } else {
+                            ref = ref.withHour(period.getEndTimeHour()).withMinute(period.getEndTimeMinute());
                         }
                         period.setCompleteEndTime(ZonedDateTime.of(ref, referenceTime.getZone()));
                     }

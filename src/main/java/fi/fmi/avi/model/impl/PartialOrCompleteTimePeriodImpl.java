@@ -47,20 +47,32 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
 
     @Override
     @JsonIgnore
-    public int getPartialStartTimeDay() {
-        return this.startDay;
+    public int getStartTimeDay() {
+        if (this.from != null) {
+            return this.from.getDayOfMonth();
+        } else {
+            return this.startDay;
+        }
     }
 
     @Override
     @JsonIgnore
-    public int getPartialStartTimeHour() {
-        return this.startHour;
+    public int getStartTimeHour() {
+        if (this.from != null) {
+            return this.from.getHour();
+        } else {
+            return this.startHour;
+        }
     }
 
     @Override
     @JsonIgnore
-    public int getPartialStartTimeMinute() {
-        return this.startMinute;
+    public int getStartTimeMinute() {
+        if (this.from != null) {
+            return this.from.getMinute();
+        } else {
+            return this.startMinute;
+        }
     }
 
     @JsonProperty("partialStartTime")
@@ -83,20 +95,32 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
 
     @Override
     @JsonIgnore
-    public int getPartialEndTimeDay() {
-        return this.endDay;
+    public int getEndTimeDay() {
+        if (this.to != null) {
+            return this.to.getDayOfMonth();
+        } else {
+            return this.endDay;
+        }
     }
 
     @Override
     @JsonIgnore
-    public int getPartialEndTimeHour() {
-        return this.endHour;
+    public int getEndTimeHour() {
+        if (this.to != null) {
+            return this.to.getHour();
+        } else {
+            return this.endHour;
+        }
     }
 
     @Override
     @JsonIgnore
-    public int getPartialEndTimeMinute() {
-        return this.endMinute;
+    public int getEndTimeMinute() {
+        if (this.to != null) {
+            return this.to.getMinute();
+        } else {
+            return this.endMinute;
+        }
     }
 
 
@@ -160,14 +184,15 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
     @JsonIgnore
     public void setCompleteStartTime(ZonedDateTime time) {
         this.from = time;
-        this.startDay = this.from.getDayOfMonth();
-        this.startHour = this.from.getHour();
-        this.startMinute = this.from.getMinute();
     }
 
     @JsonProperty("startTime")
     public void setCompleteStartTimeAsISOString(final String time) {
-        this.setCompleteStartTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+        if (time == null) {
+            this.from = null;
+        } else {
+            this.setCompleteStartTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+        }
     }
 
 
@@ -218,22 +243,25 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
     @JsonIgnore
     public void setCompleteEndTime(ZonedDateTime time) {
         this.to = time;
-        this.endDay = time.getDayOfMonth();
-        int hour = time.getHour();
-        int minute = time.getMinute();
-        if (hour == 0 && minute == 0) {
-            this.endHour = 24;
-            this.endHourIs24 = true;
-        } else {
-            this.endHour = this.to.getHour();
-            this.endHourIs24 = false;
-        }
-        this.endMinute = minute;
     }
 
     @JsonProperty("endTime")
     public void setCompleteEndTimeAsISOString(final String time) {
-        this.setCompleteEndTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+        if (time == null) {
+            this.to = null;
+        } else {
+            this.setCompleteEndTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
+        }
+    }
+
+    @Override
+    public boolean isStartTimeComplete() {
+        return this.from != null;
+    }
+
+    @Override
+    public boolean isEndTimeComplete() {
+        return this.to != null;
     }
 
     @Override
@@ -251,5 +279,63 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
     protected abstract int extractHourFromPartial(final String partialString);
 
     protected abstract int extractMinuteFromPartial(final String partialString);
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (this.hasStartTime()) {
+            sb.append("start: ");
+            if (this.from != null) {
+                sb.append("complete:");
+                sb.append(this.getCompleteStartTimeAsISOString());
+            } else {
+                sb.append("partial, day:");
+                if (this.startDay != -1) {
+                    sb.append(this.startDay);
+                } else {
+                    sb.append("n/a");
+                }
+                sb.append(", hour:");
+                if (this.startHour != -1) {
+                    sb.append(this.startHour);
+                } else {
+                    sb.append("n/a");
+                }
+                sb.append(", minute:");
+                if (this.startMinute != -1) {
+                    sb.append(this.startMinute);
+                } else {
+                    sb.append("n/a");
+                }
+            }
+        }
+        if (this.hasEndTime()) {
+            sb.append("; end: ");
+            if (this.to != null) {
+                sb.append("complete:");
+                sb.append(this.getCompleteEndTimeAsISOString());
+            } else {
+                sb.append("partial, day:");
+                if (this.endDay != -1) {
+                    sb.append(this.endDay);
+                } else {
+                    sb.append("n/a");
+                }
+                sb.append(", hour:");
+                if (this.endHour != -1) {
+                    sb.append(this.endHour);
+                } else {
+                    sb.append("n/a");
+                }
+                sb.append(", minute:");
+                if (this.endMinute != -1) {
+                    sb.append(this.endMinute);
+                } else {
+                    sb.append("n/a");
+                }
+            }
+        }
+        return sb.toString();
+    }
 
 }

@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -46,7 +47,7 @@ public class TrendTimeGroupsImpl extends PartialOrCompleteTimePeriodImpl impleme
     @Override
     public String getPartialStartTime() {
         if (this.hasStartTime()) {
-            return String.format("%02d%02d", this.getPartialStartTimeHour(), this.getPartialStartTimeMinute());
+            return String.format("%02d%02d", this.getStartTimeHour(), this.getStartTimeMinute());
         } else {
             return null;
         }
@@ -55,7 +56,7 @@ public class TrendTimeGroupsImpl extends PartialOrCompleteTimePeriodImpl impleme
     @Override
     public String getPartialEndTime() {
         if (this.hasEndTime()) {
-            return String.format("%02d%02d", this.getPartialEndTimeHour(), this.getPartialEndTimeMinute());
+            return String.format("%02d%02d", this.getEndTimeHour(), this.getEndTimeMinute());
         } else {
             return null;
         }
@@ -63,12 +64,12 @@ public class TrendTimeGroupsImpl extends PartialOrCompleteTimePeriodImpl impleme
 
     @Override
     public boolean hasStartTime() {
-        return this.getPartialStartTimeHour() > -1 && this.getPartialStartTimeMinute() > -1;
+        return this.getStartTimeHour() > -1 && this.getStartTimeMinute() > -1;
     }
 
     @Override
     public boolean hasEndTime() {
-        return this.getPartialEndTimeHour() > -1 && this.getPartialEndTimeMinute() > -1;
+        return this.getEndTimeHour() > -1 && this.getEndTimeMinute() > -1;
     }
 
     @Override
@@ -88,14 +89,19 @@ public class TrendTimeGroupsImpl extends PartialOrCompleteTimePeriodImpl impleme
 
     @Override
     protected int extractHourFromPartial(final String partialString) {
-        return Integer.parseInt(HOUR_MINUTE_PATTERN.matcher(partialString).group(1));
+        Matcher m = HOUR_MINUTE_PATTERN.matcher(partialString);
+        if (m.matches()) {
+            return Integer.parseInt(m.group(1));
+        } else {
+            return -1;
+        }
     }
 
     @Override
     protected int extractMinuteFromPartial(final String partialString) {
-        String s = HOUR_MINUTE_PATTERN.matcher(partialString).group(2);
-        if (s != null) {
-            return Integer.parseInt(s);
+        Matcher m = HOUR_MINUTE_PATTERN.matcher(partialString);
+        if (m.matches()) {
+            return Integer.parseInt(m.group(2));
         } else {
             return -1;
         }
