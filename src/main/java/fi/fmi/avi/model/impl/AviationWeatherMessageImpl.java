@@ -54,7 +54,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
                 if (period != null) {
                     if (period.hasStartTime()) {
                         if (period.getStartTimeDay() == -1) {
-                            if (period.getStartTimeHour() <= ref.getHour()) {
+                            if (period.getStartTimeHour() < ref.getHour()) {
                                 //Roll over to the next day
                                 ref = ref.plusDays(1);
                             }

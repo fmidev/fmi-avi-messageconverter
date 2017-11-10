@@ -118,7 +118,7 @@ public class TAFTimeReferencesTest {
 		assertTrue(msg.areForecastTimeReferencesComplete());
 
 
-		msg.resetForecastTimeReferences();
+		msg.uncompleteForecastTimeReferences();
 		assertNull(msg.getValidityStartTime());
 		assertNull(msg.getValidityEndTime());
 		assertFalse(msg.areForecastTimeReferencesComplete());

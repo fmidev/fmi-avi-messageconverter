@@ -65,6 +65,8 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     /**
      * Completes the partial forecast start and end times by providing the missing year and month information.
+     * The given year, month, day-of-month and hour-of-day values should match the corresponding
+     * values of the expected TAF issue time.
      *
      * @param issueYear the (expected or known) year of the message issue time.
      * @param issueMonth the (expected or known) month (1-12) of message issue time.
@@ -77,12 +79,21 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
      */
     void completeForecastTimeReferences(int issueYear, int issueMonth, int issueDay, int issueHour, ZoneId tz);
 
-    void resetForecastTimeReferences();
+    /**
+     * Resets the fully-qualified forecast time references.
+     *
+     * If partial time values have been set previously,and those have been completed
+     * using {@link #completeForecastTimeReferences(int, int, int, int, ZoneId)}, the complete
+     * time references must no longer be available after this call. Also the methods
+     * returning partial time values must return the times based on the originally
+     * provided partial time components.
+     */
+    void uncompleteForecastTimeReferences();
 
     /**
-     * Indicates whether there are partial trend time references in the message.
+     * Indicates whether there are partial forecast time references in this TAF.
      *
-     * @return true, if the all trend time references are complete or there are no trends, false otherwise.
+     * @return true, if the all time references are complete or there are no time references given, false otherwise.
      */
     boolean areForecastTimeReferencesComplete();
 

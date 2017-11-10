@@ -86,6 +86,11 @@ public class METARTimeReferencesTest {
 		assertEquals(ZonedDateTime.of(2017, 2, 1, 12, 0, 0, 0, ZoneId.of("Z")), timeGroups.getCompleteStartTime());
 		assertEquals(ZonedDateTime.of(2017, 2, 2, 0, 0, 0, 0, ZoneId.of("Z")), timeGroups.getCompleteEndTime());
 
+		msg.uncompleteTrendTimeReferences();
+		assertNull(timeGroups.getCompleteStartTime());
+		assertNull(timeGroups.getCompleteEndTime());
+		assertFalse(timeGroups.isStartTimeComplete());
+		assertFalse(timeGroups.isEndTimeComplete());
 
 		msg.completeTrendTimeReferences(2018, 5, 31, 12, ZoneId.of("Z"));
 

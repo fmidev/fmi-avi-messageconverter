@@ -276,7 +276,7 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 	}
 
     @Override
-	public void resetForecastTimeReferences() {
+	public void uncompleteForecastTimeReferences() {
         this.validityTime.setCompleteStartTime(null);
         this.validityTime.setCompleteEndTime(null);
         if (this.baseForecast != null && this.baseForecast.getTemperatures() != null) {

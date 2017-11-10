@@ -486,7 +486,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 	}
 
 	@Override
-	public void resetTrendTimeReferences() {
+	public void uncompleteTrendTimeReferences() {
         if (this.trends != null) {
             for (TrendForecast trend:this.trends) {
                 if (trend.getTimeGroups() != null) {
@@ -505,7 +505,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 			    PartialOrCompleteTimePeriod tGroups = fct.getTimeGroups();
 				if (tGroups != null) {
                     //If either the start or the end time is given, but as partial:
-                    if ((tGroups.hasStartTime() && tGroups.isStartTimeComplete()) || (tGroups.hasEndTime() && tGroups.isEndTimeComplete())) {
+                    if ((tGroups.hasStartTime() && !tGroups.isStartTimeComplete()) || (tGroups.hasEndTime() && !tGroups.isEndTimeComplete())) {
                         retval = false;
                         break;
                     }

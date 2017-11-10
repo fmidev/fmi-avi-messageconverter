@@ -99,7 +99,16 @@ public interface METAR extends RunwaySpecificWeatherMessage, AviationCodeListUse
      */
     void completeTrendTimeReferences(int issueYear, int issueMonth, int issueDay, int issueHour, ZoneId tz);
 
-    void resetTrendTimeReferences();
+    /**
+     * Resets the fully-qualified trend time references.
+     *
+     * If partial time values have been set previously,and those have been completed
+     * using {@link #completeTrendTimeReferences(int, int, int, int, ZoneId)}, the complete
+     * time references must no longer be available after this call. Also the methods
+     * returning partial time values must return the times based on the originally
+     * provided partial time components.
+     */
+    void uncompleteTrendTimeReferences();
 
     /**
      * Indicates whether there are partial trend time references in the message.
