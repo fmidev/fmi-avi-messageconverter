@@ -1,5 +1,6 @@
 package fi.fmi.avi.model;
 
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -12,9 +13,9 @@ import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
  *
  * Note that as TAC encoding does not contain the month and year
  * data, a fully resolved issue time can only be constructed by
- * providing this info externally using {@link #amendTimeReferences(ZonedDateTime)}.
+ * providing this info externally using {@link #completeIssueTime(YearMonth)}
  */
-public interface AviationWeatherMessage extends TimeReferenceAmendable {
+public interface AviationWeatherMessage {
 
     /**
      * Returns the partial issue time (day of month, hour & minute) 
@@ -34,8 +35,8 @@ public interface AviationWeatherMessage extends TimeReferenceAmendable {
      * 
      * @return the fully resolved issue time, or null if not available
      * 
-     * @see #areTimeReferencesResolved()
-     * @see #amendTimeReferences(ZonedDateTime)
+     * @see #isIssueTimeComplete()
+     * @see #completeIssueTime(YearMonth)
      */
     ZonedDateTime getIssueTime();
 
@@ -112,28 +113,28 @@ public interface AviationWeatherMessage extends TimeReferenceAmendable {
      * Sets the partial issue time as a formatted String. 
      * To get a fully resolved issue time, 
      * the missing month of year and year data needs to be 
-     * provided using {@link #amendTimeReferences}. 
+     * provided using {@link #completeIssueTime(YearMonth)}.
      * 
      * @param time formatted as ddHHmmz (201004Z)
      * 
      * @see #getIssueTime()
-     * @see #amendTimeReferences(ZonedDateTime)
-     * @see #areTimeReferencesResolved()
+     * @see #completeIssueTime(YearMonth)
+     * @see #isIssueTimeComplete()
      */
     void setPartialIssueTime(final String time);
    
     /**
      * Sets the partially resolved issue time in UTC. To get a fully resolved issue time, 
      * the missing month-of-year and year data needs to be provided using 
-     * {@link #amendTimeReferences}. 
+     * {@link #completeIssueTime(YearMonth)}.
      *
      * @param dayOfMonth issue time day-of-month
      * @param hour issue time hour-of-day
      * @param minute issue time minute-of-hour
      * 
      * @see #getIssueTime()
-     * @see #amendTimeReferences(ZonedDateTime)
-     * @see #areTimeReferencesResolved()
+     * @see #completeIssueTime(YearMonth)
+     * @see #isIssueTimeComplete()
      */
     void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute);
     
@@ -230,5 +231,22 @@ public interface AviationWeatherMessage extends TimeReferenceAmendable {
      * @param originalTAC
      */
     void setTranslatedTAC(String originalTAC);
+
+    /**
+     * Completes the partial message issue time by providing the missing year and month information.
+     *
+     * @param reference the year and month for the issue time
+     * @throws IllegalArgumentException when the issue time cannot be completed by combining the existing partial issue time and the provided additional
+     * information.
+     */
+    void completeIssueTime(YearMonth reference) throws IllegalArgumentException;
+
+    /**
+     * Indicates whether the message issue time is partial (year and month missing) or complete.
+     * Only when this method returns true, the {@link #getIssueTime()} is guaranteed to return a non-null result.
+     *
+     * @return true, if the issue time is complete, false otherwise.
+     */
+    boolean isIssueTimeComplete();
     
 }

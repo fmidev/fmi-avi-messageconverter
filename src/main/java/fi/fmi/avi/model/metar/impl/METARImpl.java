@@ -1,11 +1,14 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,6 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AerodromeUpdateEvent;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.RunwayDirection;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.impl.AerodromeWeatherMessageImpl;
@@ -28,6 +32,7 @@ import fi.fmi.avi.model.metar.RunwayState;
 import fi.fmi.avi.model.metar.RunwayVisualRange;
 import fi.fmi.avi.model.metar.SeaState;
 import fi.fmi.avi.model.metar.TrendForecast;
+import fi.fmi.avi.model.metar.TrendTimeGroups;
 import fi.fmi.avi.model.metar.WindShear;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -472,26 +477,39 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 	}
 	
 	@Override
-	public void amendTimeReferences(final ZonedDateTime referenceTime) {
-		super.amendTimeReferences(referenceTime);
+	public void completeTrendTimeReferences(final int issueYear, final int issueMonth, final int issueDay, final int issueHour, final ZoneId timeZone) {
 		if (this.trends != null) {
-			for (TrendForecast fct:this.trends) {
-				if (!fct.areTimeReferencesResolved()) {
-					fct.amendTimeReferences(this.getIssueTime());
-				}
-			}
+            ZonedDateTime referenceTime = ZonedDateTime.of(LocalDateTime.of(issueYear, issueMonth, issueDay, issueHour, 0), timeZone);
+            List<PartialOrCompleteTimePeriod> periods = this.trends.stream().map((trend) -> trend.getTimeGroups()).collect(Collectors.toList());
+            completePartialTimeReferenceList(periods, referenceTime);
 		}
 	}
 
 	@Override
-	public boolean areTimeReferencesResolved() {
-		boolean retval = super.areTimeReferencesResolved();
-		if (retval && this.trends != null) {
+	public void uncompleteTrendTimeReferences() {
+        if (this.trends != null) {
+            for (TrendForecast trend:this.trends) {
+                if (trend.getTimeGroups() != null) {
+                    trend.getTimeGroups().setCompleteStartTime(null);
+                    trend.getTimeGroups().setCompleteEndTime(null);
+                }
+            }
+        }
+    }
+
+	@Override
+	public boolean areTrendTimeReferencesComplete() {
+        boolean retval = true;
+		if (this.trends != null) {
 			for (TrendForecast fct:this.trends) {
-				if (!fct.areTimeReferencesResolved()) {
-					retval = false;
-					break;
-				}
+			    PartialOrCompleteTimePeriod tGroups = fct.getTimeGroups();
+				if (tGroups != null) {
+                    //If either the start or the end time is given, but as partial:
+                    if ((tGroups.hasStartTime() && !tGroups.isStartTimeComplete()) || (tGroups.hasEndTime() && !tGroups.isEndTimeComplete())) {
+                        retval = false;
+                        break;
+                    }
+                }
 			}
 		}
 		return retval;

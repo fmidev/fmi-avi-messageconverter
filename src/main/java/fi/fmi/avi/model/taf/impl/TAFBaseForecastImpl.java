@@ -44,27 +44,5 @@ public class TAFBaseForecastImpl extends TAFForecastImpl implements TAFBaseForec
         this.temperatures = temperatures;
     }
 
-	@Override
-	public void amendTimeReferences(ZonedDateTime referenceTime) {
-		if (this.temperatures != null) {
-			for (TAFAirTemperatureForecast fct:this.temperatures) {
-				if (!fct.areTimeReferencesResolved()) {
-					fct.amendTimeReferences(referenceTime);
-				}
-			}
-		}
-	}
-
-	@Override
-	public boolean areTimeReferencesResolved() {
-		if (this.temperatures != null) {
-			for (TAFAirTemperatureForecast fct:this.temperatures) {
-				if (!fct.areTimeReferencesResolved()) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
 
 }

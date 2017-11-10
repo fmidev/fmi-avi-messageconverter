@@ -2,6 +2,7 @@ package fi.fmi.avi.model.impl;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.fmi.avi.model.AviationWeatherMessage;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.Weather;
 
 import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsage;
@@ -42,6 +44,74 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
             }
         }
         return retval;
+    }
+
+    public static void completePartialTimeReferenceList(List<? extends PartialOrCompleteTimePeriod> references, final ZonedDateTime referenceTime) {
+        if (references != null) {
+            //Assumption: the start times come in chronological order, but the periods may be (partly) overlapping
+            LocalDateTime ref = LocalDateTime.from(referenceTime);
+            for (PartialOrCompleteTimePeriod period:references) {
+                if (period != null) {
+                    if (period.hasStartTime()) {
+                        if (period.getStartTimeDay() == -1) {
+                            if (period.getStartTimeHour() < ref.getHour()) {
+                                //Roll over to the next day
+                                ref = ref.plusDays(1);
+                            }
+                        } else {
+                            if (period.getStartTimeDay() < ref.getDayOfMonth()) {
+                                //Roll over to the next month
+                                ref = ref.plusMonths(1);
+                            }
+                            ref = ref.withDayOfMonth(period.getStartTimeDay());
+                        }
+                        ref = ref.withHour(period.getStartTimeHour()).withMinute(period.getStartTimeMinute());
+                        period.setCompleteStartTime(ZonedDateTime.of(ref, referenceTime.getZone()));
+
+                        if (period.hasEndTime()) {
+                            LocalDateTime endTime = LocalDateTime.from(period.getCompleteStartTime());
+                            if (period.getEndTimeDay() == -1) {
+                                if (period.getEndTimeHour() <= endTime.getHour()) {
+                                    endTime = endTime.plusDays(1);
+                                }
+                            } else {
+                                //We know the day
+                                if (period.getEndTimeDay() < period.getCompleteStartTime().getDayOfMonth()) {
+                                    //Roll over to the next month
+                                    endTime = endTime.plusMonths(1);
+                                }
+                                endTime = endTime.withDayOfMonth(period.getEndTimeDay());
+                            }
+                            if (period.endsAtMidnight()) {
+                                endTime = endTime.plusDays(1).withHour(0).withMinute(0);
+                            } else {
+                                endTime = endTime.withHour(period.getEndTimeHour()).withMinute(period.getEndTimeMinute());
+                            }
+                            period.setCompleteEndTime(ZonedDateTime.of(endTime, referenceTime.getZone()));
+                        }
+                    } else if (period.hasEndTime()) {
+                        if (period.getEndTimeDay() == -1) {
+                            if (period.endsAtMidnight() || period.getEndTimeHour() <= ref.getHour()) {
+                                ref = ref.plusDays(1);
+                            }
+                        } else {
+                            //We know the day
+                            if (period.getEndTimeDay() < period.getCompleteStartTime().getDayOfMonth()) {
+                                //Roll over to the next month
+                                ref = ref.plusMonths(1);
+                            }
+                            ref = ref.withDayOfMonth(period.getEndTimeDay());
+                        }
+                        if (period.endsAtMidnight()) {
+                            ref = ref.withHour(0).withMinute(0);
+                        } else {
+                            ref = ref.withHour(period.getEndTimeHour()).withMinute(period.getEndTimeMinute());
+                        }
+                        period.setCompleteEndTime(ZonedDateTime.of(ref, referenceTime.getZone()));
+                    }
+                }
+            }
+        }
     }
     
     private static final Pattern DAY_HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})([0-9]{2})([A-Z]+)");
@@ -335,7 +405,7 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
     }
     
     @Override
-    public void amendTimeReferences(final ZonedDateTime referenceTime) {
+    public void completeIssueTime(final YearMonth referenceTime) {
         if (this.issueDayOfMonth > -1 && this.issueHour > -1 && this.issueMinute > -1 && this.timeZone != null) {
             try {
                 if (this.issueHour == 24 && this.issueMinute == 0) {
@@ -344,19 +414,15 @@ public abstract class AviationWeatherMessageImpl implements AviationWeatherMessa
                     this.setIssueTime(ZonedDateTime.of(LocalDateTime.of(referenceTime.getYear(), referenceTime.getMonth(), this.issueDayOfMonth, this.issueHour, this.issueMinute), this.timeZone));
                 }
             } catch (DateTimeException dte) {
-                throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be amended with month '" + referenceTime.getMonth() + "'", dte);
+                throw new IllegalArgumentException("Issue time with day of month '" + this.issueDayOfMonth + "' cannot be completed with month '" +
+                        referenceTime.getMonth() + "'", dte);
             }
         }
     }
     
     @Override
-    public boolean areTimeReferencesResolved() {
+    public boolean isIssueTimeComplete() {
         return this.fullyResolvedIssueTime != null;
-    }
-
-    public Object clone() throws CloneNotSupportedException {
-        AviationWeatherMessageImpl retval = (AviationWeatherMessageImpl) super.clone();
-        return retval;
     }
 
     private boolean timeOk(final int day, final int hour, final int minute) {

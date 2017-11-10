@@ -5,12 +5,11 @@ import java.time.ZonedDateTime;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.TimeReferenceAmendable;
 
 /**
  * Created by rinne on 30/01/15.
  */
-public interface TAFAirTemperatureForecast extends AviationCodeListUser, TimeReferenceAmendable {
+public interface TAFAirTemperatureForecast extends AviationCodeListUser {
 
     NumericMeasure getMaxTemperature();
 
@@ -56,5 +55,11 @@ public interface TAFAirTemperatureForecast extends AviationCodeListUser, TimeRef
     void setMaxTemperatureTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final ZoneId timeZone);
 
     void setMaxTemperatureTime(final ZonedDateTime time);
+
+    void completeForecastTimeReferences(ZonedDateTime approximateIssueTime);
+
+    void resetForecastTimeReferences();
+
+    boolean areForecastTimeReferencesComplete();
 
 }

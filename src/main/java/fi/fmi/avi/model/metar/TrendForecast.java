@@ -1,15 +1,15 @@
 package fi.fmi.avi.model.metar;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.TimeReferenceAmendable;
 import fi.fmi.avi.model.Weather;
 
 
-public interface TrendForecast extends AviationCodeListUser, TimeReferenceAmendable {
+public interface TrendForecast extends AviationCodeListUser {
 
     TrendTimeGroups getTimeGroups();
 
@@ -33,7 +33,11 @@ public interface TrendForecast extends AviationCodeListUser, TimeReferenceAmenda
 
     ColorState getColorState();
 
-    
+    /**
+     * Sets the time groups of the trend forecast.
+     *
+     * @param timeGroups
+     */
     void setTimeGroups(TrendTimeGroups timeGroups);
 
     void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
