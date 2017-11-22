@@ -5,7 +5,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -21,8 +20,7 @@ import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 import fi.fmi.avi.model.taf.TAFBaseForecast;
 import fi.fmi.avi.model.taf.TAFChangeForecast;
-import fi.fmi.avi.model.impl.PartialOrCompleteTimePeriodImpl;
-
+import fi.fmi.avi.model.taf.TAFReference;
 
 /**
  * Created by rinne on 30/01/15.
@@ -30,13 +28,13 @@ import fi.fmi.avi.model.impl.PartialOrCompleteTimePeriodImpl;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 	
-    private static final Pattern VALIDITY_PERIOD_PATTERN = Pattern.compile("^(([0-9]{2})([0-9]{2})([0-9]{2}))|(([0-9]{2})([0-9]{2})/([0-9]{2})([0-9]{2}))$");
+    public static final Pattern VALIDITY_PERIOD_PATTERN = Pattern.compile("^(([0-9]{2})([0-9]{2})([0-9]{2}))|(([0-9]{2})([0-9]{2})/([0-9]{2})([0-9]{2}))$");
 
     private TAFValidityTime validityTime;
     private TAFStatus status;
     private TAFBaseForecast baseForecast;
     private List<TAFChangeForecast> changeForecasts;
-    private TAF referredReport;
+    private TAFReference referredReport;
 
     public TAFImpl() {
 		this.validityTime = new TAFValidityTime();
@@ -63,7 +61,7 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 				}
 			}
 			if (input.getReferredReport() != null) {
-				this.referredReport = new TAFImpl(input.getReferredReport());
+				this.referredReport = new TAFReference(input.getReferredReport());
 			}
 		}
     }
@@ -125,59 +123,25 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
     }
 
     @Override
-    public TAF getReferredReport() {
+    public TAFReference getReferredReport() {
         return this.referredReport;
     }
 
     @Override
-    @JsonDeserialize(as = TAFImpl.class)
-    public void setReferredReport(final TAF referredReport) {
+    public void setReferredReport(final TAFReference referredReport) {
         this.referredReport = referredReport;
     }
 
     @Override
+    @JsonProperty("partialValidityTimePeriod")
     public String getPartialValidityTimePeriod() {
-    	if (this.validityTime.getStartTimeDay() > -1 && this.validityTime.getStartTimeHour() > -1 && this.validityTime.getEndTimeHour() > -1) {
-    		StringBuilder sb = new StringBuilder();
-    		sb.append(String.format("%02d%02d", this.validityTime.getStartTimeDay(), this.validityTime.getStartTimeHour()));
-    		if (this.validityTime.getEndTimeDay() > -1) {
-    			sb.append('/');
-    			sb.append(String.format("%02d%02d", this.validityTime.getEndTimeDay(), this.validityTime.getEndTimeHour()));
-    		} else {
-    			sb.append(String.format("%02d", this.validityTime.getEndTimeHour()));
-    		}
-    		return sb.toString();
-    	} else {
-    		return null;
-    	}
+    	return this.validityTime.getPartialValidityTimePeriod();
     }
 	
 	@Override
 	@JsonProperty("partialValidityTimePeriod")
 	public void setPartialValidityTimePeriod(String time) {
-		if (time == null) {
-			this.setPartialValidityTimePeriod(-1, -1, -1, -1);
-    	} else {
-    		Matcher m = VALIDITY_PERIOD_PATTERN.matcher(time);
-    		if (m.matches()) {
-	    		if (m.group(1) != null) {
-	                //old 24h TAF, just one day field
-	                int day = Integer.parseInt(m.group(2));
-	                int fromHour = Integer.parseInt(m.group(3));
-	                int toHour = Integer.parseInt(m.group(4));
-	                this.setPartialValidityTimePeriod(day, fromHour, toHour);
-	            } else {
-	                //30h TAF
-	                int fromDay = Integer.parseInt(m.group(6));
-	                int fromHour = Integer.parseInt(m.group(7));
-	                int toDay = Integer.parseInt(m.group(8));
-	                int toHour = Integer.parseInt(m.group(9));
-	                this.setPartialValidityTimePeriod(fromDay, toDay, fromHour, toHour);
-	            }
-    		} else {
-    			throw new IllegalArgumentException("Time period is not either 'ddHHHH' or 'ddHH/ddHH'");
-    		}
-    	}
+		this.validityTime.setPartialValidityTimePeriod(time);
 	}
 	
 	@Override
@@ -187,12 +151,7 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 
 	@Override
 	public void setPartialValidityTimePeriod(int startDay, int endDay, int startHour, int endHour) {
-		if (TAFValidityTime.timeOk(startDay, startHour,0) && TAFValidityTime.timeOk(endDay, endHour, 0)) {
-			this.validityTime.setPartialStartTime(startDay, startHour, 0);
-			this.validityTime.setPartialEndTime(endDay, endHour, 0);
-		} else {
-			throw new IllegalArgumentException("Start '" + startDay + "/" + startHour + "' and/or end time '" + endDay + "/" + endHour + "' is not allowed");
-		}
+		this.validityTime.setPartialValidityTimePeriod(startDay, endDay,startHour, endHour);
 	}
 
 	@Override
@@ -203,11 +162,7 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 	
 	@JsonProperty("validityStartTime")
     public String getValidityStartTimeISO() {
-    	if (this.validityTime.isStartTimeComplete()) {
-    		return this.validityTime.getCompleteStartTimeAsISOString();
-    	} else {
-    		return null;
-    	}
+    	return this.validityTime.getValidityStartTimeISO();
     }
     
 	@Override
@@ -234,11 +189,7 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 	
 	@JsonProperty("validityEndTime")
     public String getValidityEndTimeISO() {
-    	if (this.validityTime.isEndTimeComplete()) {
-    		return this.validityTime.getCompleteEndTimeAsISOString();
-    	} else {
-    		return null;
-    	}
+    	return this.validityTime.getValidityEndTimeISO();
     }
 	
 	@Override
@@ -335,53 +286,5 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 	public void aerodromeInfoChanged(final AerodromeUpdateEvent e) {
     	//NOOP
 	}
-
-    private class TAFValidityTime extends PartialOrCompleteTimePeriodImpl {
-
-        @Override
-        public String getPartialStartTime() {
-            throw new UnsupportedOperationException("getPartialStartTime(...) not implemented");
-        }
-
-        @Override
-        public String getPartialEndTime() {
-            throw new UnsupportedOperationException("getPartialEndTime(...) not implemented");
-        }
-
-        @Override
-        protected boolean matchesPartialTimePattern(final String partialString) {
-            throw new UnsupportedOperationException("matchesPartialTimePattern(...) not implemented");
-        }
-
-        @Override
-        protected Pattern getPartialTimePattern() {
-            throw new UnsupportedOperationException("getPartialTimePattern(...) not implemented");
-        }
-
-        @Override
-        protected int extractDayFromPartial(final String partialString) {
-            throw new UnsupportedOperationException("extractDayFromPartial(...) not implemented");
-        }
-
-        @Override
-        protected int extractHourFromPartial(final String partialString) {
-            throw new UnsupportedOperationException("extractHourFromPartial(...) not implemented");
-        }
-
-        @Override
-        protected int extractMinuteFromPartial(final String partialString) {
-            throw new UnsupportedOperationException("extractMinuteFromPartial(...) not implemented");
-        }
-
-        @Override
-        public boolean hasStartTime() {
-            return this.getStartTimeDay() > -1 && this.getStartTimeHour() > -1;
-        }
-
-        @Override
-        public boolean hasEndTime() {
-            return this.getEndTimeHour() > -1;
-        }
-    }
 
 }
