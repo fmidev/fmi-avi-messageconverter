@@ -68,9 +68,11 @@ public class AviMessageConverter {
     }
     
     /**
-     * 
-     * @param spec
-     * @param converter
+     * Sets the message specific converter
+     * @param spec the provided specification
+     * @param converter the converter implementation
+     * @param <S> source object class
+     * @param <T> target object class
      */
     public <S, T> void setMessageSpecificConverter(ConversionSpecification<S, T> spec, AviMessageSpecificConverter<S, T> converter) {
         this.parsers.put(spec, converter);

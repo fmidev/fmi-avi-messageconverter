@@ -18,7 +18,7 @@ import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
 public interface AviationWeatherMessage {
 
     /**
-     * Returns the partial issue time (day of month, hour & minute) 
+     * Returns the partial issue time (day of month, hour and minute)
      * of the message issue time in format ddHHmmz.
      * This should always be available regardless of the message 
      * source.
@@ -50,62 +50,72 @@ public interface AviationWeatherMessage {
     List<String> getRemarks();
 
     /**
-     * 
-     * @return
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @return permissible usage,
      */
     PermissibleUsage getPermissibleUsage();
     
     /**
-     * 
-     * @return
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @return permissible usage reason,
      */
     PermissibleUsageReason getPermissibleUsageReason();
     
     /**
-     * 
-     * @return
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @return permissible usage supplementary
      */
     String getPermissibleUsageSupplementary();
     
     /**
-     * 
-     * @return
+     * Indication of the message has been created by automatic translation from another format.
+     *
+     * @return true if the message has been translated
      */
     boolean isTranslated();
     
     /**
-     * 
-     * @return
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @return bulleting id of the original message (if available),
      */
     String getTranslatedBulletinID();
 
     /**
-     * 
-     * @return
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @return reception time of the original bulletin (if available)
      */
     ZonedDateTime getTranslatedBulletinReceptionTime();
     
     /**
-     * 
-     * @return
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @return translation centre designator (if available)
      */
     String getTranslationCentreDesignator();
     
     /**
-     * 
-     * @return
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @return translation centre name (if available)
      */
     String getTranslationCentreName();
     
     /**
-     * 
-     * @return
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @return time the translation occurred
      */
     ZonedDateTime getTranslationTime();
     
     /**
-     * 
-     * @return
+     * Returns the original TAC format message, if available.
+     *
+     * @return the original TAC message before translation
      */
     String getTranslatedTAC();
     
@@ -137,30 +147,39 @@ public interface AviationWeatherMessage {
      * @see #isIssueTimeComplete()
      */
     void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute);
-    
+
     /**
-     * 
-     * @param dayOfMonth
-     * @param hour
-     * @param minute
-     * @param timeZoneID
+     * Sets the partially resolved issue time in UTC. To get a fully resolved issue time,
+     * the missing month-of-year and year data needs to be provided using
+     * {@link #completeIssueTime(YearMonth)}.
+     *
+     * @param dayOfMonth issue time day-of-month
+     * @param hour issue time hour-of-day
+     * @param minute issue time minute-of-hour
+     * @param timeZoneID the timezone
+     *
+     * @see #getIssueTime()
+     * @see #completeIssueTime(YearMonth)
+     * @see #isIssueTimeComplete()
      */
     void setPartialIssueTime(final int dayOfMonth, final int hour, final int minute, final ZoneId timeZoneID);
 
     /**
-     * 
-     * @param year
-     * @param monthOfYear
-     * @param dayOfMonth
-     * @param hour
-     * @param minute
-     * @param timeZoneID
+     * Sets the complete issue time of the message.
+     *
+     * @param year issue time year
+     * @param monthOfYear issue time month-of-year
+     * @param dayOfMonth issue time day-of-month
+     * @param hour issue time hour-of-day
+     * @param minute issue time minute-of-hour
+     * @param timeZoneID the timezone
      */
     void setIssueTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZoneID);
 
     /**
-     * 
-     * @param issueTime
+     * Sets the complete issue time.
+     *
+     * @param issueTime the time of issue
      */
     void setIssueTime(final ZonedDateTime issueTime);
     
@@ -173,62 +192,71 @@ public interface AviationWeatherMessage {
     void setRemarks(List<String> remarks);
 
     /**
-     * 
-     * @param usage
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @param usage the usage
      */
     void setPermissibleUsage(PermissibleUsage usage);
 
     /**
-     * 
-     * @param reason
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @param reason description of the reason for usage restriction
      */
     void setPermissibleUsageReason(PermissibleUsageReason reason);
     
     /**
-     * 
-     * @param text
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @param text free text to describe the permissible usage in more detail
      */
     void setPermissibleUsageSupplementary(String text);
     
     /**
-     * 
-     * @param translated
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @param translated true to set as translated
      */
     void setTranslated(boolean translated);
     
     /**
-     * 
-     * @param id
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @param id the bulletin ID
      */
     void setTranslatedBulletinID(String id);
 
     /**
-     * 
-     * @param time
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @param time time of reception
      */
     void setTranslatedBulletinReceptionTime(ZonedDateTime time);
     
     /**
-     * 
-     * @param designator
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     * @param designator centre designator
      */
     void setTranslationCentreDesignator(String designator);
     
     /**
-     * 
-     * @param name
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @param name name the centre which has done the translation
      */
     void setTranslationCentreName(String name);
     
     /**
-     * 
-     * @param time
+     * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
+     *
+     * @param time time of the actual translation
      */
     void setTranslationTime(ZonedDateTime time);
     
     /**
-     * 
-     * @param originalTAC
+     * The original message in TAC format before translation.
+     *
+     * @param originalTAC the TAC message
      */
     void setTranslatedTAC(String originalTAC);
 

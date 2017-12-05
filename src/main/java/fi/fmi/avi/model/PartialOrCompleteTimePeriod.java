@@ -38,16 +38,18 @@ public interface PartialOrCompleteTimePeriod {
      * Sets the partial start time using the implementation specific pattern.
      * Sets he complete start time to null.
      *
-     * @param time
+     * @param time the time as String
      */
     void setPartialStartTime(String time);
 
     /**
+     * Sets the partial start time using day, hour and minute.
+     *
      * Sets the complete start time to null.
      *
-     * @param day
-     * @param hour
-     * @param minute
+     * @param day the start day-of-month
+     * @param hour the start hour-of-day
+     * @param minute the start minute-of-hour
      */
     void setPartialStartTime(int day, int hour, int minute);
 
@@ -59,18 +61,20 @@ public interface PartialOrCompleteTimePeriod {
     void setCompleteStartTimeAsISOString(String isoDateTime);
 
     /**
+     * Sets the partial start time using the implementation specific pattern.
+     *
      * Sets the complete end time to null.
      *
-     * @param time
+     * @param time the time as String
      */
     void setPartialEndTime(String time);
 
     /**
      * Sets the complete end time to null.
      *
-     * @param day
-     * @param hour
-     * @param minute
+     * @param day the end day-of-month
+     * @param hour the end hour-of-day
+     * @param minute the end minute-of-hour
      */
     void setPartialEndTime(int day, int hour, int minute);
 
