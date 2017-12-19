@@ -3,7 +3,6 @@ package fi.fmi.avi.model.metar.impl;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AerodromeUpdateEvent;
@@ -32,13 +30,13 @@ import fi.fmi.avi.model.metar.RunwayState;
 import fi.fmi.avi.model.metar.RunwayVisualRange;
 import fi.fmi.avi.model.metar.SeaState;
 import fi.fmi.avi.model.metar.TrendForecast;
-import fi.fmi.avi.model.metar.TrendTimeGroups;
 import fi.fmi.avi.model.metar.WindShear;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 
     private boolean automatedStation;
+    private boolean delayed;
     private MetarStatus status;
     private boolean ceilingAndVisibilityOk;
     private NumericMeasure airTemperature;
@@ -64,6 +62,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
         if (input != null) {
             this.automatedStation = input.isAutomatedStation();
             this.status = input.getStatus();
+            this.delayed = input.isDelayed();
             this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
             if (input.getAirTemperature() != null) {
                 this.airTemperature = new NumericMeasureImpl(input.getAirTemperature());
@@ -137,6 +136,16 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     @Override
     public void setAutomatedStation(final boolean automatedStation) {
         this.automatedStation = automatedStation;
+    }
+
+    @Override
+    public boolean isDelayed() {
+        return delayed;
+    }
+
+    @Override
+    public void setDelayed(final boolean delayed) {
+        this.delayed = delayed;
     }
 
     /* (non-Javadoc)
