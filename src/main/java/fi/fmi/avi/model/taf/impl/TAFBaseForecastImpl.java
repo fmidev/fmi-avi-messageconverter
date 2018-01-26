@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.taf.impl;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,19 +17,19 @@ public class TAFBaseForecastImpl extends TAFForecastImpl implements TAFBaseForec
 
     private List<TAFAirTemperatureForecast> temperatures;
 
-    public TAFBaseForecastImpl(){
+    public TAFBaseForecastImpl() {
     }
 
     public TAFBaseForecastImpl(final TAFBaseForecast input) {
         super(input);
         if (input != null) {
-        	if (input.getTemperatures() != null) {
-				this.temperatures = new ArrayList<>();
-				for (TAFAirTemperatureForecast temp: input.getTemperatures()) {
-					this.temperatures.add(new TAFAirTemperatureForecastImpl(temp));
-				}
-			}
-		}
+            if (input.getTemperatures() != null) {
+                this.temperatures = new ArrayList<>();
+                for (final TAFAirTemperatureForecast temp : input.getTemperatures()) {
+                    this.temperatures.add(new TAFAirTemperatureForecastImpl(temp));
+                }
+            }
+        }
     }
 
     @Override
@@ -43,6 +42,5 @@ public class TAFBaseForecastImpl extends TAFForecastImpl implements TAFBaseForec
     public void setTemperatures(final List<TAFAirTemperatureForecast> temperatures) {
         this.temperatures = temperatures;
     }
-
 
 }

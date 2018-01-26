@@ -43,22 +43,6 @@ public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecastSurfaceWind#getMeanWindSpeed()
-     */
-    @Override
-    public NumericMeasure getMeanWindSpeed() {
-        return meanWindSpeed;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecastSurfaceWind#getWindGust()
-     */
-    @Override
-    public NumericMeasure getWindGust() {
-        return windGust;
-    }
-
-    /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecastSurfaceWind#setMeanWindDirection(fi.fmi.avi.model.NumericMeasure)
      */
     @Override
@@ -68,12 +52,28 @@ public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecastSurfaceWind#getMeanWindSpeed()
+     */
+    @Override
+    public NumericMeasure getMeanWindSpeed() {
+        return meanWindSpeed;
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecastSurfaceWind#setMeanWindSpeed(fi.fmi.avi.model.NumericMeasure)
      */
     @Override
     @JsonDeserialize(as = NumericMeasureImpl.class)
     public void setMeanWindSpeed(final NumericMeasure meanWindSpeed) {
         this.meanWindSpeed = meanWindSpeed;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecastSurfaceWind#getWindGust()
+     */
+    @Override
+    public NumericMeasure getWindGust() {
+        return windGust;
     }
 
     /* (non-Javadoc)

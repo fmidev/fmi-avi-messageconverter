@@ -81,13 +81,13 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
             }
             if (input.getRunwayVisualRanges() != null) {
                 this.runwayVisualRanges = new ArrayList<>();
-                for (RunwayVisualRange range : input.getRunwayVisualRanges()) {
+                for (final RunwayVisualRange range : input.getRunwayVisualRanges()) {
                     this.runwayVisualRanges.add(new RunwayVisualRangeImpl(range));
                 }
             }
             if (input.getPresentWeather() != null) {
                 this.presentWeather = new ArrayList<>();
-                for (Weather w: input.getPresentWeather()) {
+                for (final Weather w : input.getPresentWeather()) {
                     this.presentWeather.add(new WeatherImpl(w));
                 }
             }
@@ -96,7 +96,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
             }
             if (input.getRecentWeather() != null) {
                 this.recentWeather = new ArrayList<>();
-                for (Weather w: input.getRecentWeather()) {
+                for (final Weather w : input.getRecentWeather()) {
                     this.recentWeather.add(new WeatherImpl(w));
                 }
             }
@@ -108,13 +108,13 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
             }
             if (input.getRunwayStates() != null) {
                 this.runwayStates = new ArrayList<>();
-                for (RunwayState state : input.getRunwayStates()) {
+                for (final RunwayState state : input.getRunwayStates()) {
                     this.runwayStates.add(new RunwayStateImpl(state));
                 }
             }
             if (input.getTrends() != null) {
                 this.trends = new ArrayList<>();
-                for (TrendForecast trend : input.getTrends()) {
+                for (final TrendForecast trend : input.getTrends()) {
                     this.trends.add(new TrendForecastImpl(trend));
                 }
             }
@@ -281,19 +281,10 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     public void setRunwayVisualRanges(final List<RunwayVisualRange> runwayVisualRange) {
         this.runwayVisualRanges = runwayVisualRange;
     }
-    
+
     @Override
     public List<Weather> getPresentWeather() {
-    	return this.presentWeather;
-    }
-    
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#getPresentWeatherCodes()
-     */
-    @Override
-    @JsonIgnore
-    public List<String> getPresentWeatherCodes() {
-        return getAsWeatherCodes(this.presentWeather);
+        return this.presentWeather;
     }
 
     /* (non-Javadoc)
@@ -306,33 +297,34 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.METAR#getPresentWeatherCodes()
+     */
+    @Override
+    @JsonIgnore
+    public List<String> getPresentWeatherCodes() {
+        return getAsWeatherCodes(this.presentWeather);
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.METAR#getClouds()
      */
     @Override
     public ObservedClouds getClouds() {
         return clouds;
     }
-    
+
     /* (non-Javadoc)
-         * @see fi.fmi.avi.data.METAR#setClouds(fi.fmi.avi.data.ObservedCloudsImpl)
-         */
+     * @see fi.fmi.avi.data.METAR#setClouds(fi.fmi.avi.data.ObservedCloudsImpl)
+     */
     @Override
     @JsonDeserialize(as = ObservedCloudsImpl.class)
     public void setClouds(final ObservedClouds clouds) {
         this.clouds = clouds;
     }
 
-    public List<Weather> getRecentWeather() {
-    	return this.recentWeather;
-    }
-    
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.METAR#getRecentWeatherCodes()
-     */
     @Override
-    @JsonIgnore
-    public List<String> getRecentWeatherCodes() {
-        return getAsWeatherCodes(this.recentWeather, "RE");
+    public List<Weather> getRecentWeather() {
+        return this.recentWeather;
     }
 
     /* (non-Javadoc)
@@ -342,6 +334,15 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     @JsonDeserialize(contentAs = WeatherImpl.class)
     public void setRecentWeather(final List<Weather> recentWeather) {
         this.recentWeather = recentWeather;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.METAR#getRecentWeatherCodes()
+     */
+    @Override
+    @JsonIgnore
+    public List<String> getRecentWeatherCodes() {
+        return getAsWeatherCodes(this.recentWeather, "RE");
     }
 
     /* (non-Javadoc)
@@ -412,7 +413,6 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
         this.trends = trends;
     }
 
-
     @Override
     public ColorState getColorState() {
         return this.colorState;
@@ -423,81 +423,83 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
         this.colorState = colorState;
     }
 
-	@Override
-	@JsonIgnore
-	public Set<String> getUnresolvedRunwayDirectionDesignators() {
-		Set<String> retval = new HashSet<>();
-		if (this.runwayStates != null) {
-			for (RunwayState rws:this.runwayStates) {
-				if (rws.getRunwayDirection() != null && !rws.getRunwayDirection().isResolved()) {
-					retval.add(rws.getRunwayDirection().getDesignator());
-				}
-			}
-		}
-		if (this.runwayVisualRanges != null) {
-			for (RunwayVisualRange rvr:this.runwayVisualRanges) {
-				if (rvr.getRunwayDirection() != null && !rvr.getRunwayDirection().isResolved()) {
-					retval.add(rvr.getRunwayDirection().getDesignator());
-				}
-			}
-		}
-		if (this.windShear != null) {
-			for (RunwayDirection rwd:this.windShear.getRunwayDirections()) {
-				if (!rwd.isResolved()){
-					retval.add(rwd.getDesignator());
-				}
-			}
-		}
-		return retval;
-	}
+    @Override
+    @JsonIgnore
+    public Set<String> getUnresolvedRunwayDirectionDesignators() {
+        final Set<String> retval = new HashSet<>();
+        if (this.runwayStates != null) {
+            for (final RunwayState rws : this.runwayStates) {
+                if (rws.getRunwayDirection() != null && !rws.getRunwayDirection().isResolved()) {
+                    retval.add(rws.getRunwayDirection().getDesignator());
+                }
+            }
+        }
+        if (this.runwayVisualRanges != null) {
+            for (final RunwayVisualRange rvr : this.runwayVisualRanges) {
+                if (rvr.getRunwayDirection() != null && !rvr.getRunwayDirection().isResolved()) {
+                    retval.add(rvr.getRunwayDirection().getDesignator());
+                }
+            }
+        }
+        if (this.windShear != null) {
+            for (final RunwayDirection rwd : this.windShear.getRunwayDirections()) {
+                if (!rwd.isResolved()) {
+                    retval.add(rwd.getDesignator());
+                }
+            }
+        }
+        return retval;
+    }
 
-	@Override
-	public void amendRunwayDirectionInfo(RunwayDirection fullInfo) {
-		if (this.getAerodrome() == null) {
-			throw new IllegalStateException("Set target aerodrome before amending runway direction info");
-		}
-		if (fullInfo.getAssociatedAirportHeliport() != null && this.getAerodrome().getDesignator().equals(fullInfo.getAssociatedAirportHeliport().getDesignator())) {
-			if (this.runwayStates != null) {
-				for (RunwayState rws:this.runwayStates) {
-					if (rws.getRunwayDirection() != null && !rws.getRunwayDirection().getDesignator().equals(fullInfo.getDesignator())) {
-						rws.setRunwayDirection(fullInfo);
-					}
-				}
-			}
-			if (this.runwayVisualRanges != null) {
-				for (RunwayVisualRange rvr:this.runwayVisualRanges) {
-					if (rvr.getRunwayDirection() != null && !rvr.getRunwayDirection().getDesignator().equals(fullInfo.getDesignator())) {
-						rvr.setRunwayDirection(fullInfo);
-					}
-				}
-			}
-			if (this.windShear != null) {
-				List<RunwayDirection> amendedList = new ArrayList<>();
-				for (RunwayDirection rwd:this.windShear.getRunwayDirections()) {
-					if (rwd.getDesignator().equals(fullInfo.getDesignator())){
-						amendedList.add(fullInfo);
-					} else {
-						amendedList.add(rwd);
-					}
-				}
-				this.windShear.setRunwayDirections(amendedList);
-			}
-		}
-	}
-	
-	@Override
-	public void completeTrendTimeReferences(final int issueYear, final int issueMonth, final int issueDay, final int issueHour, final ZoneId timeZone) {
-		if (this.trends != null) {
-            ZonedDateTime referenceTime = ZonedDateTime.of(LocalDateTime.of(issueYear, issueMonth, issueDay, issueHour, 0), timeZone);
-            List<PartialOrCompleteTimePeriod> periods = this.trends.stream().map((trend) -> trend.getTimeGroups()).collect(Collectors.toList());
-            completePartialTimeReferenceList(periods, referenceTime);
-		}
-	}
+    @Override
+    public void amendRunwayDirectionInfo(final RunwayDirection fullInfo) {
+        if (this.getAerodrome() == null) {
+            throw new IllegalStateException("Set target aerodrome before amending runway direction info");
+        }
+        if (fullInfo.getAssociatedAirportHeliport() != null && this.getAerodrome()
+                .getDesignator()
+                .equals(fullInfo.getAssociatedAirportHeliport().getDesignator())) {
+            if (this.runwayStates != null) {
+                for (final RunwayState rws : this.runwayStates) {
+                    if (rws.getRunwayDirection() != null && !rws.getRunwayDirection().getDesignator().equals(fullInfo.getDesignator())) {
+                        rws.setRunwayDirection(fullInfo);
+                    }
+                }
+            }
+            if (this.runwayVisualRanges != null) {
+                for (final RunwayVisualRange rvr : this.runwayVisualRanges) {
+                    if (rvr.getRunwayDirection() != null && !rvr.getRunwayDirection().getDesignator().equals(fullInfo.getDesignator())) {
+                        rvr.setRunwayDirection(fullInfo);
+                    }
+                }
+            }
+            if (this.windShear != null) {
+                final List<RunwayDirection> amendedList = new ArrayList<>();
+                for (final RunwayDirection rwd : this.windShear.getRunwayDirections()) {
+                    if (rwd.getDesignator().equals(fullInfo.getDesignator())) {
+                        amendedList.add(fullInfo);
+                    } else {
+                        amendedList.add(rwd);
+                    }
+                }
+                this.windShear.setRunwayDirections(amendedList);
+            }
+        }
+    }
 
-	@Override
-	public void uncompleteTrendTimeReferences() {
+    @Override
+    public void completeTrendTimeReferences(final int issueYear, final int issueMonth, final int issueDay, final int issueHour, final ZoneId timeZone) {
         if (this.trends != null) {
-            for (TrendForecast trend:this.trends) {
+            final ZonedDateTime referenceTime = ZonedDateTime.of(LocalDateTime.of(issueYear, issueMonth, issueDay, issueHour, 0), timeZone);
+            final List<PartialOrCompleteTimePeriod> periods = this.trends.stream().map(TrendForecast::getTimeGroups).collect(Collectors.toList());
+            completePartialTimeReferenceList(periods, referenceTime);
+        }
+    }
+
+    @Override
+    public void uncompleteTrendTimeReferences() {
+        if (this.trends != null) {
+            for (final TrendForecast trend : this.trends) {
                 if (trend.getTimeGroups() != null) {
                     trend.getTimeGroups().setCompleteStartTime(null);
                     trend.getTimeGroups().setCompleteEndTime(null);
@@ -506,46 +508,45 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
         }
     }
 
-	@Override
-	public boolean areTrendTimeReferencesComplete() {
+    @Override
+    public boolean areTrendTimeReferencesComplete() {
         boolean retval = true;
-		if (this.trends != null) {
-			for (TrendForecast fct:this.trends) {
-			    PartialOrCompleteTimePeriod tGroups = fct.getTimeGroups();
-				if (tGroups != null) {
+        if (this.trends != null) {
+            for (final TrendForecast fct : this.trends) {
+                final PartialOrCompleteTimePeriod tGroups = fct.getTimeGroups();
+                if (tGroups != null) {
                     //If either the start or the end time is given, but as partial:
                     if ((tGroups.hasStartTime() && !tGroups.isStartTimeComplete()) || (tGroups.hasEndTime() && !tGroups.isEndTimeComplete())) {
                         retval = false;
                         break;
                     }
                 }
-			}
-		}
-		return retval;
-	}
-	
-	
-	private void syncAerodromeInfo(final Aerodrome fullInfo) {
-		if (this.runwayStates != null) {
-			for (RunwayState rws:this.runwayStates) {
-				if (rws.getRunwayDirection() != null) {
-					rws.getRunwayDirection().setAssociatedAirportHeliport(fullInfo);
-				}
-			}
-		}
-		if (this.runwayVisualRanges != null) {
-			for (RunwayVisualRange rvr:this.runwayVisualRanges) {
-				if (rvr.getRunwayDirection() != null) {
-					rvr.getRunwayDirection().setAssociatedAirportHeliport(fullInfo);
-				}
-			}
-		}
-		if (this.windShear != null) {
-			for (RunwayDirection rwd:this.windShear.getRunwayDirections()) {
-				rwd.setAssociatedAirportHeliport(fullInfo);
-			}
-		}
-	}
+            }
+        }
+        return retval;
+    }
+
+    private void syncAerodromeInfo(final Aerodrome fullInfo) {
+        if (this.runwayStates != null) {
+            for (final RunwayState rws : this.runwayStates) {
+                if (rws.getRunwayDirection() != null) {
+                    rws.getRunwayDirection().setAssociatedAirportHeliport(fullInfo);
+                }
+            }
+        }
+        if (this.runwayVisualRanges != null) {
+            for (final RunwayVisualRange rvr : this.runwayVisualRanges) {
+                if (rvr.getRunwayDirection() != null) {
+                    rvr.getRunwayDirection().setAssociatedAirportHeliport(fullInfo);
+                }
+            }
+        }
+        if (this.windShear != null) {
+            for (final RunwayDirection rwd : this.windShear.getRunwayDirections()) {
+                rwd.setAssociatedAirportHeliport(fullInfo);
+            }
+        }
+    }
 
     @Override
     public void aerodromeInfoAdded(final AerodromeUpdateEvent e) {

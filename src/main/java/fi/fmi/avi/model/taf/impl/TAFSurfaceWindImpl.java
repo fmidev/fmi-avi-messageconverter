@@ -13,7 +13,7 @@ public class TAFSurfaceWindImpl extends TrendForecastSurfaceWindImpl implements 
 
     private boolean variableDirection;
 
-    public TAFSurfaceWindImpl(){
+    public TAFSurfaceWindImpl() {
     }
 
     public TAFSurfaceWindImpl(final TAFSurfaceWind input) {

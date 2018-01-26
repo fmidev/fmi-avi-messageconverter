@@ -13,9 +13,7 @@ import fi.fmi.avi.model.impl.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.ObservedClouds;
 
 /**
- * 
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
- * 
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ObservedCloudsImpl implements ObservedClouds {
@@ -38,7 +36,7 @@ public class ObservedCloudsImpl implements ObservedClouds {
             }
             if (input.getLayers() != null) {
                 this.layers = new ArrayList<>();
-                for (CloudLayer layer : input.getLayers()) {
+                for (final CloudLayer layer : input.getLayers()) {
                     this.layers.add(new CloudLayerImpl(layer));
                 }
             }
@@ -54,27 +52,19 @@ public class ObservedCloudsImpl implements ObservedClouds {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.ObservedClouds#getVerticalVisibility()
-     */
-    @Override
-    public NumericMeasure getVerticalVisibility() {
-        return verticalVisibility;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.ObservedClouds#getLayers()
-     */
-    @Override
-    public List<CloudLayer> getLayers() {
-        return layers;
-    }
-
-    /* (non-Javadoc)
      * @see fi.fmi.avi.data.ObservedClouds#setAmountAndHeightUnobservableByAutoSystem(boolean)
      */
     @Override
     public void setAmountAndHeightUnobservableByAutoSystem(final boolean amountAndHeightUnobservableByAutoSystem) {
         this.amountAndHeightUnobservableByAutoSystem = amountAndHeightUnobservableByAutoSystem;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.ObservedClouds#getVerticalVisibility()
+     */
+    @Override
+    public NumericMeasure getVerticalVisibility() {
+        return verticalVisibility;
     }
 
     /* (non-Javadoc)
@@ -87,6 +77,14 @@ public class ObservedCloudsImpl implements ObservedClouds {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.ObservedClouds#getLayers()
+     */
+    @Override
+    public List<CloudLayer> getLayers() {
+        return layers;
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.ObservedClouds#setLayers(java.util.List)
      */
     @Override
@@ -95,14 +93,14 @@ public class ObservedCloudsImpl implements ObservedClouds {
         this.layers = layers;
     }
 
-	@Override
-	public boolean isNoSignificantCloud() {
-		return this.isNoSignificantCloud;
-	}
+    @Override
+    public boolean isNoSignificantCloud() {
+        return this.isNoSignificantCloud;
+    }
 
-	@Override
-	public void setNoSignificantCloud(boolean nsc) {
-		this.isNoSignificantCloud = nsc;
-		
-	}
+    @Override
+    public void setNoSignificantCloud(final boolean nsc) {
+        this.isNoSignificantCloud = nsc;
+
+    }
 }

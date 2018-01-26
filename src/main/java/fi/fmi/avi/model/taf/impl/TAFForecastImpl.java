@@ -22,7 +22,7 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class TAFForecastImpl implements TAFForecast {
-	
+
     private boolean ceilingAndVisibilityOk;
     private boolean noSignificantWeather;
     private NumericMeasure prevailingVisibility;
@@ -31,10 +31,10 @@ public abstract class TAFForecastImpl implements TAFForecast {
     private List<Weather> forecastWeather;
     private CloudForecast cloud;
 
-    public TAFForecastImpl(){
+    protected TAFForecastImpl() {
     }
 
-    public TAFForecastImpl(final TAFForecast input) {
+    protected TAFForecastImpl(final TAFForecast input) {
         if (input != null) {
             this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
             if (input.getPrevailingVisibility() != null) {
@@ -46,7 +46,7 @@ public abstract class TAFForecastImpl implements TAFForecast {
             }
             if (input.getForecastWeather() != null) {
                 this.forecastWeather = new ArrayList<>();
-                for (Weather w:input.getForecastWeather()) {
+                for (final Weather w : input.getForecastWeather()) {
                     this.forecastWeather.add(new WeatherImpl(w));
                 }
             }
@@ -104,15 +104,16 @@ public abstract class TAFForecastImpl implements TAFForecast {
         return forecastWeather;
     }
 
-    @JsonIgnore
-    public List<String> getForecastWeatherCodes() {
-        return AviationWeatherMessageImpl.getAsWeatherCodes(this.forecastWeather);
-    }
-
     @Override
     @JsonDeserialize(contentAs = WeatherImpl.class)
     public void setForecastWeather(final List<Weather> forecastWeather) {
         this.forecastWeather = forecastWeather;
+    }
+
+    @Override
+    @JsonIgnore
+    public List<String> getForecastWeatherCodes() {
+        return AviationWeatherMessageImpl.getAsWeatherCodes(this.forecastWeather);
     }
 
     @Override

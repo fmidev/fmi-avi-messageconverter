@@ -9,9 +9,7 @@ import fi.fmi.avi.model.impl.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.RunwayVisualRange;
 
 /**
- * 
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
- * 
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RunwayVisualRangeImpl implements RunwayVisualRange {
@@ -52,55 +50,19 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayVisualRange#getMeanRVR()
-     */
-    @Override
-    public NumericMeasure getMeanRVR() {
-        return meanRVR;
-    }
-
-    @Override
-    public NumericMeasure getVaryingRVRMinimum() {
-        return this.varyingMinRVR;
-    }
-
-    @Override
-    public NumericMeasure getVaryingRVRMaximum() {
-        return this.varyingMaxRVR;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayVisualRange#getMeanRVROperator()
-     */
-    @Override
-    public RelationalOperator getMeanRVROperator() {
-        return meanRVROperator;
-    }
-    
-    @Override
-    public RelationalOperator getVaryingRVRMinimumOperator() {
-        return minRVROperator;
-    }
-    
-    @Override
-    public RelationalOperator getVaryingRVRMaximumOperator() {
-        return maxRVROperator;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayVisualRange#getPastTendency()
-     */
-    @Override
-    public VisualRangeTendency getPastTendency() {
-        return pastTendency;
-    }
-
-    /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayVisualRange#setRunwayDirection()
      */
     @Override
     public void setRunwayDirection(final RunwayDirection runwayDirection) {
         this.runwayDirection = runwayDirection;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayVisualRange#getMeanRVR()
+     */
+    @Override
+    public NumericMeasure getMeanRVR() {
+        return meanRVR;
     }
 
     /* (non-Javadoc)
@@ -113,9 +75,19 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     }
 
     @Override
+    public NumericMeasure getVaryingRVRMinimum() {
+        return this.varyingMinRVR;
+    }
+
+    @Override
     @JsonDeserialize(as = NumericMeasureImpl.class)
     public void setVaryingRVRMinimum(final NumericMeasure minimum) {
         this.varyingMinRVR = minimum;
+    }
+
+    @Override
+    public NumericMeasure getVaryingRVRMaximum() {
+        return this.varyingMaxRVR;
     }
 
     @Override
@@ -125,21 +97,47 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayVisualRange#getMeanRVROperator()
+     */
+    @Override
+    public RelationalOperator getMeanRVROperator() {
+        return meanRVROperator;
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayVisualRange#setMeanRVROperator(fi.fmi.avi.model.AviationCodeListUser.RelationalOperator)
      */
     @Override
     public void setMeanRVROperator(final RelationalOperator meanRVROperator) {
         this.meanRVROperator = meanRVROperator;
     }
-    
+
+    @Override
+    public RelationalOperator getVaryingRVRMinimumOperator() {
+        return minRVROperator;
+    }
+
     @Override
     public void setVaryingRVRMinimumOperator(final RelationalOperator minRVROperator) {
         this.minRVROperator = minRVROperator;
     }
-    
+
+    @Override
+    public RelationalOperator getVaryingRVRMaximumOperator() {
+        return maxRVROperator;
+    }
+
     @Override
     public void setVaryingRVRMaximumOperator(final RelationalOperator maxRVROperator) {
         this.maxRVROperator = maxRVROperator;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayVisualRange#getPastTendency()
+     */
+    @Override
+    public VisualRangeTendency getPastTendency() {
+        return pastTendency;
     }
 
     /* (non-Javadoc)

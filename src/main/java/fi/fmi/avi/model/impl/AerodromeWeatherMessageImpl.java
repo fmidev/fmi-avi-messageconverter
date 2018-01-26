@@ -6,22 +6,22 @@ import fi.fmi.avi.model.AerodromeWeatherMessage;
 
 public abstract class AerodromeWeatherMessageImpl extends AviationWeatherMessageImpl implements AerodromeWeatherMessage {
 
-	private Aerodrome aerodrome;
+    private Aerodrome aerodrome;
 
-	public AerodromeWeatherMessageImpl() {
-		super();
-	}
-	
-	public AerodromeWeatherMessageImpl(AerodromeWeatherMessage input) {
-		super(input);
-		if (input != null) {
-		    if (input.getAerodrome() != null) {
+    protected AerodromeWeatherMessageImpl() {
+        super();
+    }
+
+    protected AerodromeWeatherMessageImpl(final AerodromeWeatherMessage input) {
+        super(input);
+        if (input != null) {
+            if (input.getAerodrome() != null) {
                 this.aerodrome = new Aerodrome(input.getAerodrome());
             }
-		}
-	}
+        }
+    }
 
-	 @Override
+    @Override
     public Aerodrome getAerodrome() {
         return aerodrome;
     }
@@ -29,7 +29,7 @@ public abstract class AerodromeWeatherMessageImpl extends AviationWeatherMessage
     @Override
     public void setAerodrome(final Aerodrome aerodrome) {
         if (aerodrome == null) {
-            AerodromeUpdateEvent evt = new AerodromeUpdateEvent(this.aerodrome);
+            final AerodromeUpdateEvent evt = new AerodromeUpdateEvent(this.aerodrome);
             this.aerodrome = null;
             this.aerodromeInfoRemoved(evt);
         } else {
@@ -39,26 +39,25 @@ public abstract class AerodromeWeatherMessageImpl extends AviationWeatherMessage
 
     }
 
+    @Override
+    public boolean isAerodromeInfoResolved() {
+        return this.aerodrome != null && this.aerodrome.isResolved();
+    }
 
     @Override
-	public boolean isAerodromeInfoResolved() {
-		return this.aerodrome != null && this.aerodrome.isResolved();
-	}
-
-	@Override
-	public void amendAerodromeInfo(Aerodrome fullInfo) throws IllegalArgumentException {
-		if (this.aerodrome != null) {
-			if (this.aerodrome.getDesignator().equals(fullInfo.getDesignator())) {
-				this.aerodrome = fullInfo;
-				this.aerodromeInfoChanged(new AerodromeUpdateEvent(this.aerodrome));
-			} else {
+    public void amendAerodromeInfo(final Aerodrome fullInfo) throws IllegalArgumentException {
+        if (this.aerodrome != null) {
+            if (this.aerodrome.getDesignator().equals(fullInfo.getDesignator())) {
+                this.aerodrome = fullInfo;
+                this.aerodromeInfoChanged(new AerodromeUpdateEvent(this.aerodrome));
+            } else {
                 throw new IllegalArgumentException("Cannot amend aerodrome info, designator of the amening aerodrome '" + fullInfo.getDesignator() + "' does "
                         + "not match the designator of the current aerodrome '" + this.aerodrome.getDesignator() + "'");
             }
-		} else {
-			this.aerodrome = fullInfo;
-			this.aerodromeInfoAdded(new AerodromeUpdateEvent(this.aerodrome));
-		}
-	}
+        } else {
+            this.aerodrome = fullInfo;
+            this.aerodromeInfoAdded(new AerodromeUpdateEvent(this.aerodrome));
+        }
+    }
 
 }

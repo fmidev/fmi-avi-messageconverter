@@ -1,13 +1,7 @@
 package fi.fmi.avi.model.taf.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import fi.fmi.avi.model.impl.PartialOrCompleteTimePeriodImpl;
 
@@ -80,10 +74,9 @@ public class TAFValidityTime extends PartialOrCompleteTimePeriodImpl {
         return this.getEndTimeHour() > -1;
     }
 
-
     public String getPartialValidityTimePeriod() {
         if (this.getStartTimeDay() > -1 && this.getStartTimeHour() > -1 && this.getEndTimeHour() > -1) {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append(String.format("%02d%02d", this.getStartTimeDay(), this.getStartTimeHour()));
             if (this.getEndTimeDay() > -1) {
                 sb.append('/');
@@ -97,24 +90,24 @@ public class TAFValidityTime extends PartialOrCompleteTimePeriodImpl {
         }
     }
 
-    public void setPartialValidityTimePeriod(String time) {
+    public void setPartialValidityTimePeriod(final String time) {
         if (time == null) {
             this.setPartialValidityTimePeriod(-1, -1, -1, -1);
         } else {
-            Matcher m = TAFImpl.VALIDITY_PERIOD_PATTERN.matcher(time);
+            final Matcher m = TAFImpl.VALIDITY_PERIOD_PATTERN.matcher(time);
             if (m.matches()) {
                 if (m.group(1) != null) {
                     //old 24h TAF, just one day field
-                    int day = Integer.parseInt(m.group(2));
-                    int fromHour = Integer.parseInt(m.group(3));
-                    int toHour = Integer.parseInt(m.group(4));
+                    final int day = Integer.parseInt(m.group(2));
+                    final int fromHour = Integer.parseInt(m.group(3));
+                    final int toHour = Integer.parseInt(m.group(4));
                     this.setPartialValidityTimePeriod(day, fromHour, toHour);
                 } else {
                     //30h TAF
-                    int fromDay = Integer.parseInt(m.group(6));
-                    int fromHour = Integer.parseInt(m.group(7));
-                    int toDay = Integer.parseInt(m.group(8));
-                    int toHour = Integer.parseInt(m.group(9));
+                    final int fromDay = Integer.parseInt(m.group(6));
+                    final int fromHour = Integer.parseInt(m.group(7));
+                    final int toDay = Integer.parseInt(m.group(8));
+                    final int toHour = Integer.parseInt(m.group(9));
                     this.setPartialValidityTimePeriod(fromDay, toDay, fromHour, toHour);
                 }
             } else {
@@ -123,13 +116,12 @@ public class TAFValidityTime extends PartialOrCompleteTimePeriodImpl {
         }
     }
 
-    public void setPartialValidityTimePeriod(int day, int startHour, int endHour) {
+    public void setPartialValidityTimePeriod(final int day, final int startHour, final int endHour) {
         this.setPartialValidityTimePeriod(day, -1, startHour, endHour);
     }
 
-
-    public void setPartialValidityTimePeriod(int startDay, int endDay, int startHour, int endHour) {
-        if (TAFValidityTime.timeOk(startDay, startHour,0) && TAFValidityTime.timeOk(endDay, endHour, 0)) {
+    public void setPartialValidityTimePeriod(final int startDay, final int endDay, final int startHour, final int endHour) {
+        if (TAFValidityTime.timeOk(startDay, startHour, 0) && TAFValidityTime.timeOk(endDay, endHour, 0)) {
             this.setPartialStartTime(startDay, startHour, 0);
             this.setPartialEndTime(endDay, endHour, 0);
         } else {

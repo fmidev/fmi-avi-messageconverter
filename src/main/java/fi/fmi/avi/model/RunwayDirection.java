@@ -24,7 +24,7 @@ public class RunwayDirection {
             this.associatedAirportHeliport = new Aerodrome(input.associatedAirportHeliport);
         }
     }
-    
+
     public RunwayDirection(final String designator) {
         this.designator = designator;
     }
@@ -60,10 +60,11 @@ public class RunwayDirection {
     public void setAssociatedAirportHeliport(final Aerodrome airportHeliport) {
         this.associatedAirportHeliport = airportHeliport;
     }
-    
+
     @JsonIgnore
     public boolean isResolved() {
-    	return this.designator != null && this.associatedAirportHeliport != null && this.associatedAirportHeliport.isResolved() && this.trueBearing != null && this.elevationTDZMeters != null;
+        return this.designator != null && this.associatedAirportHeliport != null && this.associatedAirportHeliport.isResolved() && this.trueBearing != null
+                && this.elevationTDZMeters != null;
     }
 
 }

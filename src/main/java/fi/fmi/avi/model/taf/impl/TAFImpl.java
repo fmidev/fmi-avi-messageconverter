@@ -27,43 +27,43 @@ import fi.fmi.avi.model.taf.TAFReference;
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
-	
+
     public static final Pattern VALIDITY_PERIOD_PATTERN = Pattern.compile("^(([0-9]{2})([0-9]{2})([0-9]{2}))|(([0-9]{2})([0-9]{2})/([0-9]{2})([0-9]{2}))$");
 
-    private TAFValidityTime validityTime;
+    private final TAFValidityTime validityTime;
     private TAFStatus status;
     private TAFBaseForecast baseForecast;
     private List<TAFChangeForecast> changeForecasts;
     private TAFReference referredReport;
 
     public TAFImpl() {
-		this.validityTime = new TAFValidityTime();
+        this.validityTime = new TAFValidityTime();
     }
 
     public TAFImpl(final TAF input) {
         super(input);
         this.validityTime = new TAFValidityTime();
         if (input != null) {
-			this.status = input.getStatus();
-			if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
-				this.setValidityStartTime(input.getValidityStartTime());
-				this.setValidityEndTime(input.getValidityEndTime());
-			} else {
-				this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
-			}
-			if (input.getBaseForecast() != null) {
-				this.baseForecast = new TAFBaseForecastImpl(input.getBaseForecast());
-			}
-			if (input.getChangeForecasts() != null) {
-				this.changeForecasts = new ArrayList<>();
-				for (TAFChangeForecast fct : input.getChangeForecasts()) {
-					this.changeForecasts.add(new TAFChangeForecastImpl(fct));
-				}
-			}
-			if (input.getReferredReport() != null) {
-				this.referredReport = new TAFReference(input.getReferredReport());
-			}
-		}
+            this.status = input.getStatus();
+            if (input.getValidityStartTime() != null && input.getValidityEndTime() != null) {
+                this.setValidityStartTime(input.getValidityStartTime());
+                this.setValidityEndTime(input.getValidityEndTime());
+            } else {
+                this.setPartialValidityTimePeriod(input.getPartialValidityTimePeriod());
+            }
+            if (input.getBaseForecast() != null) {
+                this.baseForecast = new TAFBaseForecastImpl(input.getBaseForecast());
+            }
+            if (input.getChangeForecasts() != null) {
+                this.changeForecasts = new ArrayList<>();
+                for (final TAFChangeForecast fct : input.getChangeForecasts()) {
+                    this.changeForecasts.add(new TAFChangeForecastImpl(fct));
+                }
+            }
+            if (input.getReferredReport() != null) {
+                this.referredReport = new TAFReference(input.getReferredReport());
+            }
+        }
     }
 
     @Override
@@ -135,156 +135,155 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
     @Override
     @JsonProperty("partialValidityTimePeriod")
     public String getPartialValidityTimePeriod() {
-    	return this.validityTime.getPartialValidityTimePeriod();
+        return this.validityTime.getPartialValidityTimePeriod();
     }
-	
-	@Override
-	@JsonProperty("partialValidityTimePeriod")
-	public void setPartialValidityTimePeriod(String time) {
-		this.validityTime.setPartialValidityTimePeriod(time);
-	}
-	
-	@Override
-	public void setPartialValidityTimePeriod(int day, int startHour, int endHour) {
-		this.setPartialValidityTimePeriod(day, -1, startHour, endHour);
-	}
 
-	@Override
-	public void setPartialValidityTimePeriod(int startDay, int endDay, int startHour, int endHour) {
-		this.validityTime.setPartialValidityTimePeriod(startDay, endDay,startHour, endHour);
-	}
+    @Override
+    @JsonProperty("partialValidityTimePeriod")
+    public void setPartialValidityTimePeriod(final String time) {
+        this.validityTime.setPartialValidityTimePeriod(time);
+    }
 
-	@Override
-	public void setValidityStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
-		this.setValidityStartTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour,  minute), timeZone));
-		
-	}
-	
-	@JsonProperty("validityStartTime")
+    @Override
+    public void setPartialValidityTimePeriod(final int day, final int startHour, final int endHour) {
+        this.setPartialValidityTimePeriod(day, -1, startHour, endHour);
+    }
+
+    @Override
+    public void setPartialValidityTimePeriod(final int startDay, final int endDay, final int startHour, final int endHour) {
+        this.validityTime.setPartialValidityTimePeriod(startDay, endDay, startHour, endHour);
+    }
+
+    @Override
+    public void setValidityStartTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone) {
+        this.setValidityStartTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour, minute), timeZone));
+
+    }
+
+    @JsonProperty("validityStartTime")
     public String getValidityStartTimeISO() {
-    	return this.validityTime.getValidityStartTimeISO();
+        return this.validityTime.getValidityStartTimeISO();
     }
-    
-	@Override
-	@JsonIgnore
-	public ZonedDateTime getValidityStartTime() {
-		return this.validityTime.getCompleteStartTime();
-	}
-	
-	@JsonProperty("validityStartTime")
+
+    @JsonProperty("validityStartTime")
     public void setValidityStartTimeISO(final String time) {
-    	this.validityTime.setCompleteStartTimeAsISOString(time);
+        this.validityTime.setCompleteStartTimeAsISOString(time);
     }
-	 
-	@Override
-	public void setValidityStartTime(ZonedDateTime time) {
-		this.validityTime.setCompleteStartTime(time);
-	}
 
-	@Override
-	public void setValidityEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
-		this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour,  minute), timeZone));
-		
-	}
-	
-	@JsonProperty("validityEndTime")
+    @Override
+    @JsonIgnore
+    public ZonedDateTime getValidityStartTime() {
+        return this.validityTime.getCompleteStartTime();
+    }
+
+    @Override
+    public void setValidityStartTime(final ZonedDateTime time) {
+        this.validityTime.setCompleteStartTime(time);
+    }
+
+    @Override
+    public void setValidityEndTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone) {
+        this.setValidityEndTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour, minute), timeZone));
+
+    }
+
+    @JsonProperty("validityEndTime")
     public String getValidityEndTimeISO() {
-    	return this.validityTime.getValidityEndTimeISO();
+        return this.validityTime.getValidityEndTimeISO();
     }
-	
-	@Override
-	@JsonIgnore
-	public ZonedDateTime getValidityEndTime() {
-		return this.validityTime.getCompleteEndTime();
-	}
 
-	@JsonProperty("validityEndTime")
+    @JsonProperty("validityEndTime")
     public void setValidityEndTimeISO(final String time) {
-		this.validityTime.setCompleteEndTimeAsISOString(time);
-	}
-	
-	@Override
-	public void setValidityEndTime(ZonedDateTime time) {
-		this.validityTime.setCompleteEndTime(time);
-	}
+        this.validityTime.setCompleteEndTimeAsISOString(time);
+    }
 
-	@Override
-	public void completeForecastTimeReferences(int issueYear, int issueMonth, int issueDay, int issueHour, ZoneId tz) {
-		ZonedDateTime approximateIssueTime = ZonedDateTime.of(LocalDateTime.of(issueYear, issueMonth, issueDay, issueHour, 0), tz);
-		List<PartialOrCompleteTimePeriod> list = new ArrayList<>();
-		list.add(this.validityTime);
-		completePartialTimeReferenceList(list, approximateIssueTime);
+    @Override
+    @JsonIgnore
+    public ZonedDateTime getValidityEndTime() {
+        return this.validityTime.getCompleteEndTime();
+    }
 
-		if (this.baseForecast != null && this.baseForecast.getTemperatures() != null) {
-			for (TAFAirTemperatureForecast airTemp:this.baseForecast.getTemperatures()) {
-				airTemp.completeForecastTimeReferences(approximateIssueTime);
-			}
-		}
-		if (this.changeForecasts != null) {
+    @Override
+    public void setValidityEndTime(final ZonedDateTime time) {
+        this.validityTime.setCompleteEndTime(time);
+    }
+
+    @Override
+    public void completeForecastTimeReferences(final int issueYear, final int issueMonth, final int issueDay, final int issueHour, final ZoneId tz) {
+        final ZonedDateTime approximateIssueTime = ZonedDateTime.of(LocalDateTime.of(issueYear, issueMonth, issueDay, issueHour, 0), tz);
+        List<PartialOrCompleteTimePeriod> list = new ArrayList<>();
+        list.add(this.validityTime);
+        completePartialTimeReferenceList(list, approximateIssueTime);
+
+        if (this.baseForecast != null && this.baseForecast.getTemperatures() != null) {
+            for (final TAFAirTemperatureForecast airTemp : this.baseForecast.getTemperatures()) {
+                airTemp.completeForecastTimeReferences(approximateIssueTime);
+            }
+        }
+        if (this.changeForecasts != null) {
             list = this.changeForecasts.stream().map((fct) -> ((TAFChangeForecastImpl) fct).getValidityTimeInternal()).collect(Collectors.toList());
             completePartialTimeReferenceList(list, approximateIssueTime);
         }
-	}
+    }
 
     @Override
-	public void uncompleteForecastTimeReferences() {
+    public void uncompleteForecastTimeReferences() {
         this.validityTime.setCompleteStartTime(null);
         this.validityTime.setCompleteEndTime(null);
         if (this.baseForecast != null && this.baseForecast.getTemperatures() != null) {
-            for (TAFAirTemperatureForecast airTemp : this.baseForecast.getTemperatures()) {
+            for (final TAFAirTemperatureForecast airTemp : this.baseForecast.getTemperatures()) {
                 airTemp.resetForecastTimeReferences();
             }
         }
         if (this.changeForecasts != null) {
-            for (TAFChangeForecast fct:this.changeForecasts) {
+            for (final TAFChangeForecast fct : this.changeForecasts) {
                 fct.setValidityStartTime(null);
                 fct.setValidityEndTime(null);
             }
         }
     }
 
-	@Override
-	public boolean areForecastTimeReferencesComplete() {
-		if (!this.validityTime.isStartTimeComplete()) {
-			return false;
-		}
-		if (!this.validityTime.isEndTimeComplete()) {
-			return false;
-		}
-		if (this.baseForecast != null && this.baseForecast.getTemperatures() != null) {
-			for (TAFAirTemperatureForecast airTemp:this.baseForecast.getTemperatures()) {
-				if (!airTemp.areForecastTimeReferencesComplete()) {
-					return false;
-				}
-			}
-		}
-		if (this.changeForecasts != null) {
-			for (TAFChangeForecast fct:this.changeForecasts) {
-				if (fct.getValidityStartTime() == null) {
-					return false;
-				}
-				if (fct.getValidityEndTime() == null) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean areForecastTimeReferencesComplete() {
+        if (!this.validityTime.isStartTimeComplete()) {
+            return false;
+        }
+        if (!this.validityTime.isEndTimeComplete()) {
+            return false;
+        }
+        if (this.baseForecast != null && this.baseForecast.getTemperatures() != null) {
+            for (final TAFAirTemperatureForecast airTemp : this.baseForecast.getTemperatures()) {
+                if (!airTemp.areForecastTimeReferencesComplete()) {
+                    return false;
+                }
+            }
+        }
+        if (this.changeForecasts != null) {
+            for (final TAFChangeForecast fct : this.changeForecasts) {
+                if (fct.getValidityStartTime() == null) {
+                    return false;
+                }
+                if (fct.getValidityEndTime() == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
+    @Override
+    public void aerodromeInfoAdded(final AerodromeUpdateEvent e) {
+        //NOOP
+    }
 
-	@Override
-	public void aerodromeInfoAdded(final AerodromeUpdateEvent e) {
-   		//NOOP
-	}
+    @Override
+    public void aerodromeInfoRemoved(final AerodromeUpdateEvent e) {
+        //NOOP
+    }
 
-	@Override
-	public void aerodromeInfoRemoved(final AerodromeUpdateEvent e) {
-		//NOOP
-	}
-
-	@Override
-	public void aerodromeInfoChanged(final AerodromeUpdateEvent e) {
-    	//NOOP
-	}
+    @Override
+    public void aerodromeInfoChanged(final AerodromeUpdateEvent e) {
+        //NOOP
+    }
 
 }

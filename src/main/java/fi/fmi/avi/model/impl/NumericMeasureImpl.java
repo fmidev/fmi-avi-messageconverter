@@ -17,7 +17,7 @@ public class NumericMeasureImpl implements NumericMeasure {
         this.value = value;
         this.uom = uom;
     }
-    
+
     public NumericMeasureImpl(final Integer value, final String uom) {
         this(new Double(value), uom);
     }
@@ -28,7 +28,6 @@ public class NumericMeasureImpl implements NumericMeasure {
             this.setUom(measure.getUom());
         }
     }
-
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.model.NumericMeasure#getValue()
@@ -61,7 +60,7 @@ public class NumericMeasureImpl implements NumericMeasure {
     public void setUom(final String uom) {
         this.uom = uom;
     }
-    
+
     public String toString() {
         return String.format("%.2f %s", this.value, this.uom);
     }
