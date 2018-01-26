@@ -15,6 +15,8 @@ import fi.fmi.avi.model.taf.TAFBaseForecast;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TAFBaseForecastImpl extends TAFForecastImpl implements TAFBaseForecast {
 
+    private static final long serialVersionUID = 3222263003456389705L;
+
     private List<TAFAirTemperatureForecast> temperatures;
 
     public TAFBaseForecastImpl() {

@@ -1,8 +1,11 @@
 package fi.fmi.avi.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class GeoPosition {
+public class GeoPosition implements Serializable {
+    private static final long serialVersionUID = 4270383287980746512L;
+
     private Double[] coordinates;
     private String coordinateReferenceSystemId;
     private Double elevationValue = null;

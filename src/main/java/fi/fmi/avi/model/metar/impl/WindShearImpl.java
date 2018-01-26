@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import fi.fmi.avi.model.metar.WindShear;
  */
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class WindShearImpl implements WindShear {
+public class WindShearImpl implements WindShear, Serializable {
+
+    private static final long serialVersionUID = 3050515717307269346L;
 
     private boolean allRunways;
     private List<RunwayDirection> runwayDirections;

@@ -6,6 +6,8 @@ import fi.fmi.avi.model.AerodromeWeatherMessage;
 
 public abstract class AerodromeWeatherMessageImpl extends AviationWeatherMessageImpl implements AerodromeWeatherMessage {
 
+    private static final long serialVersionUID = 6279277951363832370L;
+
     private Aerodrome aerodrome;
 
     protected AerodromeWeatherMessageImpl() {

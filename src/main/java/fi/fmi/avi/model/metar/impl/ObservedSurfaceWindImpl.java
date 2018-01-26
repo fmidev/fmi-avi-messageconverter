@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -11,7 +13,9 @@ import fi.fmi.avi.model.metar.ObservedSurfaceWind;
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class ObservedSurfaceWindImpl implements ObservedSurfaceWind {
+public class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Serializable {
+
+    private static final long serialVersionUID = -1181686746391897382L;
 
     private boolean variableDirection;
     private NumericMeasure meanWindDirection; // 0-359 degrees

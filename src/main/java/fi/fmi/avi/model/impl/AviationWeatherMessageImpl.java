@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -24,8 +25,9 @@ import fi.fmi.avi.model.Weather;
  * Created by rinne on 05/06/17.
  */
 
-public abstract class AviationWeatherMessageImpl implements AviationWeatherMessage {
+public abstract class AviationWeatherMessageImpl implements AviationWeatherMessage, Serializable {
 
+    private static final long serialVersionUID = 8312777322652247635L;
     private static final Pattern DAY_HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})([0-9]{2})([A-Z]+)");
 
     private int issueDayOfMonth = -1;

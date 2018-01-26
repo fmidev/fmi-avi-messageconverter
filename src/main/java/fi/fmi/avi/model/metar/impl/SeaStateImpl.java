@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -11,7 +13,9 @@ import fi.fmi.avi.model.metar.SeaState;
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class SeaStateImpl implements SeaState {
+public class SeaStateImpl implements SeaState, Serializable {
+
+    private static final long serialVersionUID = 2298444419074688003L;
 
     private NumericMeasure seaSurfaceTemperature;
     private NumericMeasure significantWaveHeight;

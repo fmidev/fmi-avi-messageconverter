@@ -1,11 +1,15 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.fmi.avi.model.NumericMeasure;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class NumericMeasureImpl implements NumericMeasure {
+public class NumericMeasureImpl implements NumericMeasure, Serializable {
+
+    private static final long serialVersionUID = 8778896552671170215L;
 
     private Double value;
     private String uom;

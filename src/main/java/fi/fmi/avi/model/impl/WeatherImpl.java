@@ -1,11 +1,15 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.fmi.avi.model.Weather;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class WeatherImpl implements Weather {
+public class WeatherImpl implements Weather, Serializable {
+
+    private static final long serialVersionUID = 1177912400096822098L;
 
     private String code;
     private String description;

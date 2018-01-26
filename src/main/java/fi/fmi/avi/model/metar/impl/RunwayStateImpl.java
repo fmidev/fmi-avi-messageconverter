@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -12,7 +14,9 @@ import fi.fmi.avi.model.metar.RunwayState;
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class RunwayStateImpl implements RunwayState {
+public class RunwayStateImpl implements RunwayState, Serializable {
+    private static final long serialVersionUID = -1923288775734786495L;
+
     private boolean allRunways;
     private boolean cleared;
     private boolean estimatedSurfaceFrictionUnreliable;

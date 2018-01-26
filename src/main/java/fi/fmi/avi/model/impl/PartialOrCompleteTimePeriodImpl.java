@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -14,7 +15,9 @@ import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 /**
  * Created by rinne on 27/10/17.
  */
-public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrCompleteTimePeriod {
+public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrCompleteTimePeriod, Serializable {
+
+    private static final long serialVersionUID = 4320281984162003389L;
 
     private int startDay = -1;
     private int startHour = -1;

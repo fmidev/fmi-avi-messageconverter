@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -7,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Container for the metadata for a single aerodrome.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class Aerodrome {
+public class Aerodrome implements Serializable {
+    private static final long serialVersionUID = 4530699187269337382L;
+
     private String designator = null;
     private String name = null;
     private String locationIndicatorICAO = null;

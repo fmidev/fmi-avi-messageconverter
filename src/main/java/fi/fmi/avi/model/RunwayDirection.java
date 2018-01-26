@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -7,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Container for a single runway direction within an aerodrome, as part of a runway.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class RunwayDirection {
+public class RunwayDirection implements Serializable {
+    private static final long serialVersionUID = -2271762476194661527L;
+
     private String designator;
     private Double trueBearing;
     private Double elevationTDZMeters;

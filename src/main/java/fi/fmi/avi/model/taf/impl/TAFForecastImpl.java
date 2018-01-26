@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.taf.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,9 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
  * Created by rinne on 30/01/15.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class TAFForecastImpl implements TAFForecast {
+public abstract class TAFForecastImpl implements TAFForecast, Serializable {
+
+    private static final long serialVersionUID = 3185195917149867678L;
 
     private boolean ceilingAndVisibilityOk;
     private boolean noSignificantWeather;

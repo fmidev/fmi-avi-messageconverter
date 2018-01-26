@@ -10,6 +10,7 @@ import fi.fmi.avi.model.metar.TrendTimeGroups;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TrendTimeGroupsImpl extends PartialOrCompleteTimePeriodImpl implements TrendTimeGroups {
+    private static final long serialVersionUID = 6914674508553651926L;
     private static final Pattern HOUR_MINUTE_PATTERN = Pattern.compile("([0-9]{2})([0-9]{2})?");
 
     private boolean isSingular = false;

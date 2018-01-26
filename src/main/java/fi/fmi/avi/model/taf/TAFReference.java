@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.taf;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -11,7 +12,9 @@ import fi.fmi.avi.model.Aerodrome;
 /**
  * Created by rinne on 22/11/17.
  */
-public class TAFReference {
+public class TAFReference implements Serializable {
+
+    private static final long serialVersionUID = 3614074296244140508L;
 
     private Aerodrome aerodrome;
     private ZonedDateTime issueTime;

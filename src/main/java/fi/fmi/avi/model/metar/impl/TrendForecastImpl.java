@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,9 @@ import fi.fmi.avi.model.metar.TrendTimeGroups;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TrendForecastImpl implements TrendForecast {
+public class TrendForecastImpl implements TrendForecast, Serializable {
+
+    private static final long serialVersionUID = 6810184324056939712L;
 
     private TrendTimeGroups timeGroups;
     private boolean ceilingAndVisibilityOk;

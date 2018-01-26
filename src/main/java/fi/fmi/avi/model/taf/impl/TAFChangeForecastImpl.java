@@ -21,6 +21,7 @@ import fi.fmi.avi.model.taf.TAFChangeForecast;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeForecast {
 
+    private static final long serialVersionUID = 4204829487109076764L;
     private static final Pattern VALIDITY_PERIOD_PATTERN = Pattern.compile("^(([0-9]{2})([0-9]{2}))|(([0-9]{2})([0-9]{2})/([0-9]{2})([0-9]{2}))$");
     private static final Pattern VALIDITY_START_PATTERN = Pattern.compile("^(FM)?([0-9]{2})?([0-9]{2})([0-9]{2})$");
 
@@ -261,6 +262,8 @@ public class TAFChangeForecastImpl extends TAFForecastImpl implements TAFChangeF
     }
 
     private static class ChangeForecastValidityTime extends PartialOrCompleteTimePeriodImpl {
+
+        private static final long serialVersionUID = 9121690608709851093L;
 
         @Override
         public String getPartialStartTime() {

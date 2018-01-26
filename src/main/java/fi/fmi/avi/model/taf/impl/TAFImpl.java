@@ -30,7 +30,10 @@ public class TAFImpl extends AerodromeWeatherMessageImpl implements TAF {
 
     public static final Pattern VALIDITY_PERIOD_PATTERN = Pattern.compile("^(([0-9]{2})([0-9]{2})([0-9]{2}))|(([0-9]{2})([0-9]{2})/([0-9]{2})([0-9]{2}))$");
 
+    private static final long serialVersionUID = -301638584095863176L;
+
     private final TAFValidityTime validityTime;
+
     private TAFStatus status;
     private TAFBaseForecast baseForecast;
     private List<TAFChangeForecast> changeForecasts;

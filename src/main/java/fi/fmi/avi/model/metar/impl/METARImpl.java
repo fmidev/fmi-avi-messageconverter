@@ -35,6 +35,8 @@ import fi.fmi.avi.model.metar.WindShear;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
 
+    private static final long serialVersionUID = 1874662043381875429L;
+
     private boolean automatedStation;
     private boolean delayed;
     private MetarStatus status;

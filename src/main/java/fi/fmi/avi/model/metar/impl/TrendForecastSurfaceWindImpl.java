@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -11,7 +13,9 @@ import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind {
+public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind, Serializable {
+
+    private static final long serialVersionUID = -1781120609683606626L;
 
     private NumericMeasure meanWindDirection;
     private NumericMeasure meanWindSpeed;

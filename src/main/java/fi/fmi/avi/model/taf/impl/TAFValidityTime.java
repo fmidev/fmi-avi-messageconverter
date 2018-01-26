@@ -10,6 +10,8 @@ import fi.fmi.avi.model.impl.PartialOrCompleteTimePeriodImpl;
  */
 public class TAFValidityTime extends PartialOrCompleteTimePeriodImpl {
 
+    private static final long serialVersionUID = 8089894543673443539L;
+
     public TAFValidityTime() {
     }
 

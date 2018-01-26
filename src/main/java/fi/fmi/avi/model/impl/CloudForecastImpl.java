@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,9 @@ import fi.fmi.avi.model.NumericMeasure;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class CloudForecastImpl implements CloudForecast, Cloneable {
+public class CloudForecastImpl implements CloudForecast, Cloneable, Serializable {
+
+    private static final long serialVersionUID = 3260177137474861151L;
 
     private boolean isNoSignificantCloud;
     private NumericMeasure verticalVisibility; // only if no layers

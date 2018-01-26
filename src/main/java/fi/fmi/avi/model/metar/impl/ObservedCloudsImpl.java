@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,9 @@ import fi.fmi.avi.model.metar.ObservedClouds;
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class ObservedCloudsImpl implements ObservedClouds {
+public class ObservedCloudsImpl implements ObservedClouds, Serializable {
+
+    private static final long serialVersionUID = -334324227386059302L;
 
     private boolean amountAndHeightUnobservableByAutoSystem;
     private boolean isNoSignificantCloud;

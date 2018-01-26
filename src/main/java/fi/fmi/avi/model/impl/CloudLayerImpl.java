@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -10,7 +12,9 @@ import fi.fmi.avi.model.NumericMeasure;
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class CloudLayerImpl implements CloudLayer {
+public class CloudLayerImpl implements CloudLayer, Serializable {
+
+    private static final long serialVersionUID = -7243774945464808589L;
 
     private CloudAmount amount;
     private NumericMeasure base;

@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.taf.impl;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -18,8 +19,9 @@ import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
  * Created by rinne on 30/01/15.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast {
+public class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast, Serializable {
 
+    private static final long serialVersionUID = 9211887065072755362L;
     private static final Pattern DAY_HOUR_PATTERN = Pattern.compile("([0-9]{2})?([0-9]{2})([A-Z]*)");
 
     private NumericMeasure maxTemperature;

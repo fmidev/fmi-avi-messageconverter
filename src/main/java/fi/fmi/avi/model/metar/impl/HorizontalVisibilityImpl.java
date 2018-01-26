@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -11,7 +13,9 @@ import fi.fmi.avi.model.metar.HorizontalVisibility;
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class HorizontalVisibilityImpl implements HorizontalVisibility {
+public class HorizontalVisibilityImpl implements HorizontalVisibility, Serializable {
+
+    private static final long serialVersionUID = 1817741452760054326L;
 
     private NumericMeasure prevailingVisibility;
     private RelationalOperator prevailingVisibilityOperator;
