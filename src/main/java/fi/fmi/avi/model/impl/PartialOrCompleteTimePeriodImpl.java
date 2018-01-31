@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -14,7 +15,22 @@ import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 /**
  * Created by rinne on 27/10/17.
  */
-public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrCompleteTimePeriod {
+public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrCompleteTimePeriod, Serializable {
+
+    private static final long serialVersionUID = 4320281984162003389L;
+
+    private int startDay = -1;
+    private int startHour = -1;
+    private int startMinute = -1;
+    private int endDay = -1;
+    private int endHour = -1;
+    private int endMinute = -1;
+    private boolean endHourIs24 = false;
+    private ZonedDateTime from;
+    private ZonedDateTime to;
+
+    protected PartialOrCompleteTimePeriodImpl() {
+    }
 
     public static boolean timeOk(final int day, final int hour, final int minute) {
         if (day > 31) {
@@ -30,19 +46,6 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
             return false;
         }
         return true;
-    }
-
-    private int startDay = -1;
-    private int startHour = -1;
-    private int startMinute = -1;
-    private int endDay = -1;
-    private int endHour = -1;
-    private int endMinute = -1;
-    private boolean endHourIs24 = false;
-    private ZonedDateTime from;
-    private ZonedDateTime to;
-
-    public PartialOrCompleteTimePeriodImpl() {
     }
 
     @Override
@@ -75,8 +78,28 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
         }
     }
 
+    @Override
     @JsonProperty("partialStartTime")
     public abstract String getPartialStartTime();
+
+    @Override
+    @JsonProperty("partialStartTime")
+    public void setPartialStartTime(final String time) {
+        if (time == null) {
+            this.startDay = -1;
+            this.startHour = -1;
+            this.startMinute = -1;
+            this.from = null;
+        } else if (this.matchesPartialTimePattern(time)) {
+            final int day = this.extractDayFromPartial(time);
+            final int hour = this.extractHourFromPartial(time);
+            final int minute = this.extractMinuteFromPartial(time);
+            this.setPartialStartTime(day, hour, minute);
+        } else {
+            throw new IllegalArgumentException("Time '" + time + "' is not in the expected format '" + this.getPartialTimePattern() + "'");
+        }
+
+    }
 
     @Override
     @JsonIgnore
@@ -84,12 +107,29 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
         return this.from;
     }
 
+    @Override
+    @JsonIgnore
+    public void setCompleteStartTime(final ZonedDateTime time) {
+        this.from = time;
+    }
+
+    @Override
     @JsonProperty("startTime")
     public String getCompleteStartTimeAsISOString() {
         if (this.from != null) {
             return this.from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    @JsonProperty("startTime")
+    public void setCompleteStartTimeAsISOString(final String time) {
+        if (time == null) {
+            this.from = null;
+        } else {
+            this.setCompleteStartTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
         }
     }
 
@@ -123,9 +163,28 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
         }
     }
 
-
+    @Override
     @JsonProperty("partialEndTime")
     public abstract String getPartialEndTime();
+
+    @Override
+    @JsonProperty("partialEndTime")
+    public void setPartialEndTime(final String time) {
+        if (time == null) {
+            this.endDay = -1;
+            this.endHour = -1;
+            this.endMinute = -1;
+            this.to = null;
+        } else if (this.matchesPartialTimePattern(time)) {
+            final int day = this.extractDayFromPartial(time);
+            final int hour = this.extractHourFromPartial(time);
+            final int minute = this.extractMinuteFromPartial(time);
+            this.setPartialEndTime(day, hour, minute);
+        } else {
+            throw new IllegalArgumentException("Time '" + time + "' is not in the expected format '" + this.getPartialTimePattern() + "'");
+        }
+
+    }
 
     @Override
     @JsonIgnore
@@ -133,12 +192,29 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
         return this.to;
     }
 
+    @Override
+    @JsonIgnore
+    public void setCompleteEndTime(final ZonedDateTime time) {
+        this.to = time;
+    }
+
+    @Override
     @JsonProperty("endTime")
     public String getCompleteEndTimeAsISOString() {
         if (this.to != null) {
             return this.to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    @JsonProperty("endTime")
+    public void setCompleteEndTimeAsISOString(final String time) {
+        if (time == null) {
+            this.to = null;
+        } else {
+            this.setCompleteEndTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
         }
     }
 
@@ -156,45 +232,10 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
     }
 
     @Override
-    @JsonProperty("partialStartTime")
-    public void setPartialStartTime(final String time) {
-        if (time == null) {
-            this.startDay = -1;
-            this.startHour = -1;
-            this.startMinute = -1;
-            this.from = null;
-        } else if (this.matchesPartialTimePattern(time)) {
-            int day = this.extractDayFromPartial(time);
-            int hour = this.extractHourFromPartial(time);
-            int minute = this.extractMinuteFromPartial(time);
-            this.setPartialStartTime(day, hour, minute);
-        } else {
-            throw new IllegalArgumentException("Time '" + time + "' is not in the expected format '" + this.getPartialTimePattern() + "'");
-        }
-
-    }
-
-    @Override
     @JsonIgnore
-    public void setCompleteStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
+    public void setCompleteStartTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone) {
         this.setCompleteStartTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour, minute), timeZone));
     }
-
-    @Override
-    @JsonIgnore
-    public void setCompleteStartTime(ZonedDateTime time) {
-        this.from = time;
-    }
-
-    @JsonProperty("startTime")
-    public void setCompleteStartTimeAsISOString(final String time) {
-        if (time == null) {
-            this.from = null;
-        } else {
-            this.setCompleteStartTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
-        }
-    }
-
 
     @Override
     @JsonIgnore
@@ -215,43 +256,9 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
     }
 
     @Override
-    @JsonProperty("partialEndTime")
-    public void setPartialEndTime(final String time) {
-        if (time == null) {
-            this.endDay = -1;
-            this.endHour = -1;
-            this.endMinute = -1;
-            this.to = null;
-        } else if (this.matchesPartialTimePattern(time)){
-            int day = this.extractDayFromPartial(time);
-            int hour = this.extractHourFromPartial(time);
-            int minute = this.extractMinuteFromPartial(time);
-            this.setPartialEndTime(day, hour,minute);
-        } else {
-            throw new IllegalArgumentException("Time '" + time + "' is not in the expected format '" + this.getPartialTimePattern() + "'");
-        }
-
-    }
-
-    @Override
     @JsonIgnore
-    public void setCompleteEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone) {
+    public void setCompleteEndTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone) {
         this.setCompleteEndTime(ZonedDateTime.of(LocalDateTime.of(year, monthOfYear, dayOfMonth, hour, minute), timeZone));
-    }
-
-    @Override
-    @JsonIgnore
-    public void setCompleteEndTime(ZonedDateTime time) {
-        this.to = time;
-    }
-
-    @JsonProperty("endTime")
-    public void setCompleteEndTimeAsISOString(final String time) {
-        if (time == null) {
-            this.to = null;
-        } else {
-            this.setCompleteEndTime(ZonedDateTime.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(time)));
-        }
     }
 
     @Override
@@ -270,19 +277,19 @@ public abstract class PartialOrCompleteTimePeriodImpl implements PartialOrComple
         return this.endHourIs24;
     }
 
-    protected abstract boolean matchesPartialTimePattern(final String partialString);
+    protected abstract boolean matchesPartialTimePattern(String partialString);
 
     protected abstract Pattern getPartialTimePattern();
 
-    protected abstract int extractDayFromPartial(final String partialString);
+    protected abstract int extractDayFromPartial(String partialString);
 
-    protected abstract int extractHourFromPartial(final String partialString);
+    protected abstract int extractHourFromPartial(String partialString);
 
-    protected abstract int extractMinuteFromPartial(final String partialString);
+    protected abstract int extractMinuteFromPartial(String partialString);
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (this.hasStartTime()) {
             sb.append("start: ");
             if (this.from != null) {

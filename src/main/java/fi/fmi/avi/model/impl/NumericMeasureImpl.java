@@ -1,11 +1,15 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.fmi.avi.model.NumericMeasure;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class NumericMeasureImpl implements NumericMeasure {
+public class NumericMeasureImpl implements NumericMeasure, Serializable {
+
+    private static final long serialVersionUID = 8778896552671170215L;
 
     private Double value;
     private String uom;
@@ -17,7 +21,7 @@ public class NumericMeasureImpl implements NumericMeasure {
         this.value = value;
         this.uom = uom;
     }
-    
+
     public NumericMeasureImpl(final Integer value, final String uom) {
         this(new Double(value), uom);
     }
@@ -28,7 +32,6 @@ public class NumericMeasureImpl implements NumericMeasure {
             this.setUom(measure.getUom());
         }
     }
-
 
     /* (non-Javadoc)
      * @see fi.fmi.avi.model.NumericMeasure#getValue()
@@ -61,7 +64,7 @@ public class NumericMeasureImpl implements NumericMeasure {
     public void setUom(final String uom) {
         this.uom = uom;
     }
-    
+
     public String toString() {
         return String.format("%.2f %s", this.value, this.uom);
     }

@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -11,7 +13,9 @@ import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind {
+public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind, Serializable {
+
+    private static final long serialVersionUID = -1781120609683606626L;
 
     private NumericMeasure meanWindDirection;
     private NumericMeasure meanWindSpeed;
@@ -43,22 +47,6 @@ public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecastSurfaceWind#getMeanWindSpeed()
-     */
-    @Override
-    public NumericMeasure getMeanWindSpeed() {
-        return meanWindSpeed;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecastSurfaceWind#getWindGust()
-     */
-    @Override
-    public NumericMeasure getWindGust() {
-        return windGust;
-    }
-
-    /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecastSurfaceWind#setMeanWindDirection(fi.fmi.avi.model.NumericMeasure)
      */
     @Override
@@ -68,12 +56,28 @@ public class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecastSurfaceWind#getMeanWindSpeed()
+     */
+    @Override
+    public NumericMeasure getMeanWindSpeed() {
+        return meanWindSpeed;
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecastSurfaceWind#setMeanWindSpeed(fi.fmi.avi.model.NumericMeasure)
      */
     @Override
     @JsonDeserialize(as = NumericMeasureImpl.class)
     public void setMeanWindSpeed(final NumericMeasure meanWindSpeed) {
         this.meanWindSpeed = meanWindSpeed;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecastSurfaceWind#getWindGust()
+     */
+    @Override
+    public NumericMeasure getWindGust() {
+        return windGust;
     }
 
     /* (non-Javadoc)

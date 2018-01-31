@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +19,12 @@ import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
 import fi.fmi.avi.model.metar.TrendTimeGroups;
 
 /**
- * 
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TrendForecastImpl implements TrendForecast {
+public class TrendForecastImpl implements TrendForecast, Serializable {
+
+    private static final long serialVersionUID = 6810184324056939712L;
 
     private TrendTimeGroups timeGroups;
     private boolean ceilingAndVisibilityOk;
@@ -42,7 +45,7 @@ public class TrendForecastImpl implements TrendForecast {
             this.timeGroups = input.getTimeGroups();
             this.ceilingAndVisibilityOk = input.isCeilingAndVisibilityOk();
             this.changeIndicator = input.getChangeIndicator();
-            if (input.getPrevailingVisibility() != null){
+            if (input.getPrevailingVisibility() != null) {
                 this.prevailingVisibility = new NumericMeasureImpl(input.getPrevailingVisibility());
             }
             this.prevailingVisibilityOperator = input.getPrevailingVisibilityOperator();
@@ -51,7 +54,7 @@ public class TrendForecastImpl implements TrendForecast {
             }
             if (input.getForecastWeather() != null) {
                 this.forecastWeather = new ArrayList<>();
-                for (Weather w: input.getForecastWeather()) {
+                for (final Weather w : input.getForecastWeather()) {
                     this.forecastWeather.add(new WeatherImpl(w));
                 }
             }
@@ -71,12 +74,26 @@ public class TrendForecastImpl implements TrendForecast {
         return this.timeGroups;
     }
 
+    @Override
+    @JsonDeserialize(as = TrendTimeGroupsImpl.class)
+    public void setTimeGroups(final TrendTimeGroups timeGroups) {
+        this.timeGroups = timeGroups;
+    }
+
     /* (non-Javadoc)
-         * @see fi.fmi.avi.data.TrendForecast#isCeilingAndVisibilityOk()
-         */
+     * @see fi.fmi.avi.data.TrendForecast#isCeilingAndVisibilityOk()
+     */
     @Override
     public boolean isCeilingAndVisibilityOk() {
         return ceilingAndVisibilityOk;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecast#setCeilingAndVisibilityOk(boolean)
+     */
+    @Override
+    public void setCeilingAndVisibilityOk(final boolean ceilingAndVisibilityOk) {
+        this.ceilingAndVisibilityOk = ceilingAndVisibilityOk;
     }
 
     /* (non-Javadoc)
@@ -88,81 +105,19 @@ public class TrendForecastImpl implements TrendForecast {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecast#getPrevailingVisibility()
-     */
-    @Override
-    public NumericMeasure getPrevailingVisibility() {
-        return prevailingVisibility;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecast#getPrevailingVisibilityOperator()
-     */
-    @Override
-    public RelationalOperator getPrevailingVisibilityOperator() {
-        return prevailingVisibilityOperator;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecast#getSurfaceWind()
-     */
-    @Override
-    public TrendForecastSurfaceWind getSurfaceWind() {
-        return surfaceWind;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecast#getForecastWeather()
-     */
-    @Override
-    public List<Weather> getForecastWeather() {
-        return forecastWeather;
-    }
-
-    @Override
-    public List<String> getForecastWeatherCodes() {
-        return AviationWeatherMessageImpl.getAsWeatherCodes(this.forecastWeather);
-    }
-
-    @Override
-    public boolean isNoSignificantWeather() {
-        return this.noSignificantWeather;
-    }
-
-
-    /* (non-Javadoc)
-         * @see fi.fmi.avi.data.TrendForecast#getCloud()
-         */
-    @Override
-    public CloudForecast getCloud() {
-        return cloud;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecast#setTimeGroups(fi.fmi.avi.data.TrendForecastImpl.TimeGroups)
-     */
-
-    @Override
-    @JsonDeserialize(as = TrendTimeGroupsImpl.class)
-    public void setTimeGroups(final TrendTimeGroups timeGroups) {
-        this.timeGroups = timeGroups;
-    }
-    
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.TrendForecast#setCeilingAndVisibilityOk(boolean)
-     */
-    @Override
-    public void setCeilingAndVisibilityOk(final boolean ceilingAndVisibilityOk) {
-        this.ceilingAndVisibilityOk = ceilingAndVisibilityOk;
-    }
-
-    /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecast#setChangeIndicator(fi.fmi.avi.model.AviationCodeListUser.ForecastChangeIndicator)
      */
     @Override
     public void setChangeIndicator(final TrendForecastChangeIndicator changeIndicator) {
         this.changeIndicator = changeIndicator;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecast#getPrevailingVisibility()
+     */
+    @Override
+    public NumericMeasure getPrevailingVisibility() {
+        return prevailingVisibility;
     }
 
     /* (non-Javadoc)
@@ -175,11 +130,31 @@ public class TrendForecastImpl implements TrendForecast {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecast#getPrevailingVisibilityOperator()
+     */
+    @Override
+    public RelationalOperator getPrevailingVisibilityOperator() {
+        return prevailingVisibilityOperator;
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecast#setPrevailingVisibilityOperator(fi.fmi.avi.model.AviationCodeListUser.RelationalOperator)
      */
     @Override
     public void setPrevailingVisibilityOperator(final RelationalOperator prevailingVisibilityOperator) {
         this.prevailingVisibilityOperator = prevailingVisibilityOperator;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecast#setTimeGroups(fi.fmi.avi.data.TrendForecastImpl.TimeGroups)
+     */
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecast#getSurfaceWind()
+     */
+    @Override
+    public TrendForecastSurfaceWind getSurfaceWind() {
+        return surfaceWind;
     }
 
     /* (non-Javadoc)
@@ -192,6 +167,14 @@ public class TrendForecastImpl implements TrendForecast {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecast#getForecastWeather()
+     */
+    @Override
+    public List<Weather> getForecastWeather() {
+        return forecastWeather;
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.TrendForecast#setForecastWeather(java.util.List)
      */
     @Override
@@ -201,8 +184,26 @@ public class TrendForecastImpl implements TrendForecast {
     }
 
     @Override
+    public List<String> getForecastWeatherCodes() {
+        return AviationWeatherMessageImpl.getAsWeatherCodes(this.forecastWeather);
+    }
+
+    @Override
+    public boolean isNoSignificantWeather() {
+        return this.noSignificantWeather;
+    }
+
+    @Override
     public void setNoSignificantWeather(final boolean nsw) {
         this.noSignificantWeather = nsw;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.TrendForecast#getCloud()
+     */
+    @Override
+    public CloudForecast getCloud() {
+        return cloud;
     }
 
     /* (non-Javadoc)

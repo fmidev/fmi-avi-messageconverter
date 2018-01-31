@@ -35,7 +35,7 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     List<TAFChangeForecast> getChangeForecasts();
 
-    TAF getReferredReport();
+    TAFReference getReferredReport();
 
 
     void setStatus(TAFStatus status);
@@ -61,7 +61,7 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     void setChangeForecasts(List<TAFChangeForecast> changeForecasts);
 
-    void setReferredReport(TAF referredReport);
+    void setReferredReport(TAFReference referredReport);
 
     /**
      * Completes the partial forecast start and end times by providing the missing year and month information.

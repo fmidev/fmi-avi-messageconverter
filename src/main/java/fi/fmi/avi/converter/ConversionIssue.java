@@ -28,8 +28,8 @@ public class ConversionIssue {
     /**
      * Creates an issue with type and a message.
      *
-     * @param type
-     * @param message
+     * @param type issue kind
+     * @param message error message
      */
     public ConversionIssue(final Type type, final String message) {
        this(type, message, null);

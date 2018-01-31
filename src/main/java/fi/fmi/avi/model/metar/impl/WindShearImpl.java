@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,13 +10,13 @@ import fi.fmi.avi.model.RunwayDirection;
 import fi.fmi.avi.model.metar.WindShear;
 
 /**
- * 
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
- * 
  */
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class WindShearImpl implements WindShear {
+public class WindShearImpl implements WindShear, Serializable {
+
+    private static final long serialVersionUID = 3050515717307269346L;
 
     private boolean allRunways;
     private List<RunwayDirection> runwayDirections;
@@ -28,7 +29,7 @@ public class WindShearImpl implements WindShear {
             this.allRunways = input.isAllRunways();
             if (input.getRunwayDirections() != null) {
                 this.runwayDirections = new ArrayList<>();
-                for (RunwayDirection rwd: input.getRunwayDirections()) {
+                for (final RunwayDirection rwd : input.getRunwayDirections()) {
                     this.runwayDirections.add(new RunwayDirection(rwd));
                 }
             }
@@ -44,19 +45,19 @@ public class WindShearImpl implements WindShear {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.WindShear#getRunwayDirections()
-     */
-    @Override
-    public List<RunwayDirection> getRunwayDirections() {
-        return runwayDirections;
-    }
-
-    /* (non-Javadoc)
      * @see fi.fmi.avi.data.WindShear#setAllRunways(boolean)
      */
     @Override
     public void setAllRunways(final boolean allRunways) {
         this.allRunways = allRunways;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.WindShear#getRunwayDirections()
+     */
+    @Override
+    public List<RunwayDirection> getRunwayDirections() {
+        return runwayDirections;
     }
 
     /* (non-Javadoc)

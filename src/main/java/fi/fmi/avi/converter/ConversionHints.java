@@ -142,6 +142,26 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_SERIALIZATION_POLICY_ANNEX3_16TH = "ANNEX3_16TH";
 
     /**
+     * Controlling the allowed weather code values
+     */
+    public static final Key KEY_WEATHER_CODES;
+
+    /**
+     * The code values not on the list https://codes.wmo.int/306/4678 must be silently ignored.
+     */
+    public static final Object VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678 = "IGNORE NON WMO 306 4678";
+
+    /**
+     * The code values not on the list https://codes.wmo.int/306/4678 must be reported as errors.
+     */
+    public static final Object VALUE_WEATHER_CODES_STRICT_WMO_4678 = "STRICT WMO 306 4678";
+
+    /**
+     * Any weather codes must be allowed.
+     */
+    public static final Object VALUE_WEATHER_CODES_ALLOW_ANY = "ALLOW ANY";
+
+    /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
      */
     public static final ConversionHints METAR;
@@ -186,7 +206,10 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
         KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags",
         		VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
-        
+
+        KEY_WEATHER_CODES = new KeyImpl(7, "Control the checks on the used weather codes", VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678,
+                VALUE_WEATHER_CODES_STRICT_WMO_4678, VALUE_WEATHER_CODES_ALLOW_ANY);
+
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
         SPECI = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SPECI);

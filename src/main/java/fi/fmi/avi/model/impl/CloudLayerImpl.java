@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -7,12 +9,12 @@ import fi.fmi.avi.model.CloudLayer;
 import fi.fmi.avi.model.NumericMeasure;
 
 /**
- * 
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
- * 
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class CloudLayerImpl implements CloudLayer {
+public class CloudLayerImpl implements CloudLayer, Serializable {
+
+    private static final long serialVersionUID = -7243774945464808589L;
 
     private CloudAmount amount;
     private NumericMeasure base;
@@ -40,27 +42,19 @@ public class CloudLayerImpl implements CloudLayer {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.model.CloudLayer#getBase()
-     */
-    @Override
-    public NumericMeasure getBase() {
-        return base;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.model.CloudLayer#getCloudType()
-     */
-    @Override
-    public CloudType getCloudType() {
-        return cloudType;
-    }
-
-    /* (non-Javadoc)
      * @see fi.fmi.avi.model.CloudLayer#setAmount(fi.fmi.avi.model.AviationCodeListUser.CloudAmount)
      */
     @Override
     public void setAmount(final CloudAmount amount) {
         this.amount = amount;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.model.CloudLayer#getBase()
+     */
+    @Override
+    public NumericMeasure getBase() {
+        return base;
     }
 
     /* (non-Javadoc)
@@ -70,6 +64,14 @@ public class CloudLayerImpl implements CloudLayer {
     @JsonDeserialize(as = NumericMeasureImpl.class)
     public void setBase(final NumericMeasure base) {
         this.base = base;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.model.CloudLayer#getCloudType()
+     */
+    @Override
+    public CloudType getCloudType() {
+        return cloudType;
     }
 
     /* (non-Javadoc)

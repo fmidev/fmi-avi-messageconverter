@@ -1,43 +1,47 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import fi.fmi.avi.model.Weather;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class WeatherImpl implements Weather {
+public class WeatherImpl implements Weather, Serializable {
 
-	private String code;
-	private String description;
+    private static final long serialVersionUID = 1177912400096822098L;
 
-	public WeatherImpl() {
-	}
+    private String code;
+    private String description;
 
-	public WeatherImpl(final Weather weather) {
-		if (weather != null) {
-			this.code = weather.getCode();
-			this.description = weather.getDescription();
-		}
-	}
+    public WeatherImpl() {
+    }
 
-	@Override
-	public String getCode() {
-		return this.code;
-	}
+    public WeatherImpl(final Weather weather) {
+        if (weather != null) {
+            this.code = weather.getCode();
+            this.description = weather.getDescription();
+        }
+    }
 
-	@Override
-	public String getDescription() {
-		return this.description;
-	}
+    @Override
+    public String getCode() {
+        return this.code;
+    }
 
-	@Override
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    @Override
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	@Override
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    @Override
+    public String getDescription() {
+        return this.description;
+    }
+
+    @Override
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
 }

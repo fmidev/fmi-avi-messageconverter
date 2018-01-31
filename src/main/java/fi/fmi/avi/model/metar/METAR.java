@@ -12,6 +12,8 @@ public interface METAR extends RunwaySpecificWeatherMessage, AviationCodeListUse
 
     boolean isAutomatedStation();
 
+    boolean isDelayed();
+
     MetarStatus getStatus();
 
     boolean isCeilingAndVisibilityOk();
@@ -51,6 +53,8 @@ public interface METAR extends RunwaySpecificWeatherMessage, AviationCodeListUse
 
 
     void setAutomatedStation(boolean automatedStation);
+
+    void setDelayed(boolean delayed);
 
     void setStatus(MetarStatus status);
 

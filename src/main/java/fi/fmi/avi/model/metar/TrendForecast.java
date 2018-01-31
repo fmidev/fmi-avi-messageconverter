@@ -36,7 +36,7 @@ public interface TrendForecast extends AviationCodeListUser {
     /**
      * Sets the time groups of the trend forecast.
      *
-     * @param timeGroups
+     * @param timeGroups the time groups
      */
     void setTimeGroups(TrendTimeGroups timeGroups);
 

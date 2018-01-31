@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.metar.impl;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -9,12 +11,12 @@ import fi.fmi.avi.model.impl.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.RunwayState;
 
 /**
- * 
  * @author Ilkka Rinne / Spatineo Inc for the Finnish Meteorological Institute
- * 
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class RunwayStateImpl implements RunwayState {
+public class RunwayStateImpl implements RunwayState, Serializable {
+    private static final long serialVersionUID = -1923288775734786495L;
+
     private boolean allRunways;
     private boolean cleared;
     private boolean estimatedSurfaceFrictionUnreliable;
@@ -32,7 +34,7 @@ public class RunwayStateImpl implements RunwayState {
 
     public RunwayStateImpl() {
     }
-    
+
     public RunwayStateImpl(final RunwayState input) {
         if (input != null) {
             this.allRunways = input.isAllRunways();
@@ -63,103 +65,19 @@ public class RunwayStateImpl implements RunwayState {
     }
 
     /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#isCleared()
-     */
-    @Override
-    public boolean isCleared() {
-        return cleared;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#isEstimatedSurfaceFrictionUnreliable()
-     */
-    @Override
-    public boolean isEstimatedSurfaceFrictionUnreliable() {
-        return estimatedSurfaceFrictionUnreliable;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#isSnowClosure()
-     */
-    @Override
-    public boolean isSnowClosure() {
-        return snowClosure;
-    }
-    
-    @Override
-    public boolean isRepetition() {
-    	return repetition;
-    }
-    
-    @Override
-    public boolean isDepthNotMeasurable() {
-    	return this.depthNotMeasurable;
-    }
-    
-    @Override
-    public boolean isRunwayNotOperational() {
-    	return this.runwayNotOperational;
-    }
-    
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#getRunwayDirection()
-     */
-    @Override
-    public RunwayDirection getRunwayDirection() {
-        return runwayDirection;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#getDeposit()
-     */
-    @Override
-    public RunwayDeposit getDeposit() {
-        return deposit;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#getContamination()
-     */
-    @Override
-    public RunwayContamination getContamination() {
-        return contamination;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#getDepthOfDeposit()
-     */
-    @Override
-    public NumericMeasure getDepthOfDeposit() {
-        return depthOfDeposit;
-    }
-    
-    @Override
-    public RelationalOperator getDepthOperator() {
-    	return this.depthOperator;
-    }
-    
-
-    /* (non-Javadoc)
-     * @see fi.fmi.avi.data.RunwayState#getEstimatedSurfaceFriction()
-     */
-    @Override
-    public Double getEstimatedSurfaceFriction() {
-        return estimatedSurfaceFriction;
-    }
-    
-    @Override
-    public BreakingAction getBreakingAction() {
-    	return this.breakingAction;
-    }
-
-
-    /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#setAllRunways(boolean)
      */
     @Override
     public void setAllRunways(final boolean allRunways) {
         this.allRunways = allRunways;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayState#isCleared()
+     */
+    @Override
+    public boolean isCleared() {
+        return cleared;
     }
 
     /* (non-Javadoc)
@@ -171,11 +89,27 @@ public class RunwayStateImpl implements RunwayState {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayState#isEstimatedSurfaceFrictionUnreliable()
+     */
+    @Override
+    public boolean isEstimatedSurfaceFrictionUnreliable() {
+        return estimatedSurfaceFrictionUnreliable;
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#setEstimatedSurfaceFrictionUnreliable(boolean)
      */
     @Override
     public void setEstimatedSurfaceFrictionUnreliable(final boolean estimatedSurfaceFrictionUnreliable) {
         this.estimatedSurfaceFrictionUnreliable = estimatedSurfaceFrictionUnreliable;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayState#isSnowClosure()
+     */
+    @Override
+    public boolean isSnowClosure() {
+        return snowClosure;
     }
 
     /* (non-Javadoc)
@@ -185,27 +119,59 @@ public class RunwayStateImpl implements RunwayState {
     public void setSnowClosure(final boolean snowClosure) {
         this.snowClosure = snowClosure;
     }
-    
+
+    @Override
+    public boolean isRepetition() {
+        return repetition;
+    }
+
     @Override
     public void setRepetition(final boolean repetition) {
-    	this.repetition = repetition;
+        this.repetition = repetition;
     }
-    
+
+    @Override
+    public boolean isDepthNotMeasurable() {
+        return this.depthNotMeasurable;
+    }
+
     @Override
     public void setDepthNotMeasurable(final boolean notMeasurable) {
         this.depthNotMeasurable = notMeasurable;
     }
 
     @Override
+    public boolean isRunwayNotOperational() {
+        return this.runwayNotOperational;
+    }
+
+    @Override
     public void setRunwayNotOperational(final boolean notOperational) {
         this.runwayNotOperational = notOperational;
     }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayState#getRunwayDirection()
+     */
+    @Override
+    public RunwayDirection getRunwayDirection() {
+        return runwayDirection;
+    }
+
     /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#setRunwayDirectionDesignator(java.lang.String)
      */
     @Override
     public void setRunwayDirection(final RunwayDirection runwayDirection) {
         this.runwayDirection = runwayDirection;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayState#getDeposit()
+     */
+    @Override
+    public RunwayDeposit getDeposit() {
+        return deposit;
     }
 
     /* (non-Javadoc)
@@ -217,11 +183,27 @@ public class RunwayStateImpl implements RunwayState {
     }
 
     /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayState#getContamination()
+     */
+    @Override
+    public RunwayContamination getContamination() {
+        return contamination;
+    }
+
+    /* (non-Javadoc)
      * @see fi.fmi.avi.data.RunwayState#setContamination(fi.fmi.avi.model.AviationCodeListUser.RunwayContamination)
      */
     @Override
     public void setContamination(final RunwayContamination contamination) {
         this.contamination = contamination;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayState#getDepthOfDeposit()
+     */
+    @Override
+    public NumericMeasure getDepthOfDeposit() {
+        return depthOfDeposit;
     }
 
     /* (non-Javadoc)
@@ -232,10 +214,23 @@ public class RunwayStateImpl implements RunwayState {
     public void setDepthOfDeposit(final NumericMeasure depthOfDeposit) {
         this.depthOfDeposit = depthOfDeposit;
     }
-    
+
+    @Override
+    public RelationalOperator getDepthOperator() {
+        return this.depthOperator;
+    }
+
     @Override
     public void setDepthOperator(final RelationalOperator operator) {
         this.depthOperator = operator;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.fmi.avi.data.RunwayState#getEstimatedSurfaceFriction()
+     */
+    @Override
+    public Double getEstimatedSurfaceFriction() {
+        return estimatedSurfaceFriction;
     }
 
     /* (non-Javadoc)
@@ -245,9 +240,15 @@ public class RunwayStateImpl implements RunwayState {
     public void setEstimatedSurfaceFriction(final Double estimatedSurfaceFriction) {
         this.estimatedSurfaceFriction = estimatedSurfaceFriction;
     }
-    
+
+    @Override
+    public BreakingAction getBreakingAction() {
+        return this.breakingAction;
+    }
+
+    @Override
     public void setBreakingAction(final BreakingAction action) {
-    	this.breakingAction = action;
+        this.breakingAction = action;
     }
 
 }

@@ -11,9 +11,11 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class TAFSurfaceWindImpl extends TrendForecastSurfaceWindImpl implements TAFSurfaceWind {
 
+    private static final long serialVersionUID = -5551786258099528718L;
+
     private boolean variableDirection;
 
-    public TAFSurfaceWindImpl(){
+    public TAFSurfaceWindImpl() {
     }
 
     public TAFSurfaceWindImpl(final TAFSurfaceWind input) {

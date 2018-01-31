@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +15,11 @@ import fi.fmi.avi.model.NumericMeasure;
  *
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class CloudForecastImpl implements CloudForecast, Cloneable {
+public class CloudForecastImpl implements CloudForecast, Cloneable, Serializable {
 
-	private boolean isNoSignificantCloud;
+    private static final long serialVersionUID = 3260177137474861151L;
+
+    private boolean isNoSignificantCloud;
     private NumericMeasure verticalVisibility; // only if no layers
     private List<CloudLayer> layers;
 
@@ -30,8 +33,8 @@ public class CloudForecastImpl implements CloudForecast, Cloneable {
                 this.verticalVisibility = new NumericMeasureImpl(input.getVerticalVisibility());
             }
             if (input.getLayers() != null) {
-                this.layers = new ArrayList<CloudLayer>();
-                for (CloudLayer layer : input.getLayers()) {
+                this.layers = new ArrayList<>();
+                for (final CloudLayer layer : input.getLayers()) {
                     this.layers.add(new CloudLayerImpl(layer));
                 }
             }
@@ -72,14 +75,14 @@ public class CloudForecastImpl implements CloudForecast, Cloneable {
         this.layers = layers;
     }
 
-	@Override
-	public boolean isNoSignificantCloud() {
-		return this.isNoSignificantCloud;
-	}
+    @Override
+    public boolean isNoSignificantCloud() {
+        return this.isNoSignificantCloud;
+    }
 
-	@Override
-	public void setNoSignificantCloud(boolean nsc) {
-		this.isNoSignificantCloud = nsc;
-		
-	}
+    @Override
+    public void setNoSignificantCloud(final boolean nsc) {
+        this.isNoSignificantCloud = nsc;
+
+    }
 }
