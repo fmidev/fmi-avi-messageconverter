@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.RunwayDirection;
+import fi.fmi.avi.model.RunwayDirectionImpl;
 import fi.fmi.avi.model.impl.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.RunwayVisualRange;
 
@@ -18,7 +18,7 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange, Serializable {
 
     private static final long serialVersionUID = -5828225096013766498L;
 
-    private RunwayDirection runwayDirection;
+    private RunwayDirectionImpl runwayDirection;
     private NumericMeasure meanRVR;
     private NumericMeasure varyingMinRVR;
     private NumericMeasure varyingMaxRVR;
@@ -33,7 +33,7 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange, Serializable {
     public RunwayVisualRangeImpl(final RunwayVisualRange input) {
         if (input != null) {
             if (input.getRunwayDirection() != null) {
-                this.runwayDirection = new RunwayDirection(input.getRunwayDirection());
+                this.runwayDirection = new RunwayDirectionImpl(input.getRunwayDirection());
             }
             if (input.getMeanRVR() != null) {
                 this.meanRVR = new NumericMeasureImpl(input.getMeanRVR());
@@ -49,7 +49,7 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange, Serializable {
      * @see fi.fmi.avi.data.RunwayVisualRange#getRunwayDirection()
      */
     @Override
-    public RunwayDirection getRunwayDirection() {
+    public RunwayDirectionImpl getRunwayDirection() {
         return runwayDirection;
     }
 
@@ -57,7 +57,7 @@ public class RunwayVisualRangeImpl implements RunwayVisualRange, Serializable {
      * @see fi.fmi.avi.data.RunwayVisualRange#setRunwayDirection()
      */
     @Override
-    public void setRunwayDirection(final RunwayDirection runwayDirection) {
+    public void setRunwayDirection(final RunwayDirectionImpl runwayDirection) {
         this.runwayDirection = runwayDirection;
     }
 

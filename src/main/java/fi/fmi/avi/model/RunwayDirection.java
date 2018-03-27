@@ -1,74 +1,24 @@
 package fi.fmi.avi.model;
 
-import java.io.Serializable;
+import org.inferred.freebuilder.FreeBuilder;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-/**
- * Container for a single runway direction within an aerodrome, as part of a runway.
- */
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class RunwayDirection implements Serializable {
-    private static final long serialVersionUID = -2271762476194661527L;
+@FreeBuilder
+@JsonDeserialize(builder = RunwayDirection.Builder.class)
+public interface RunwayDirection {
 
-    private String designator;
-    private Double trueBearing;
-    private Double elevationTDZMeters;
-    private Aerodrome associatedAirportHeliport;
+    String getDesignator();
 
-    public RunwayDirection() {
-    }
+    Double getTrueBearing();
 
-    public RunwayDirection(final RunwayDirection input) {
-        this.designator = input.designator;
-        this.trueBearing = input.trueBearing;
-        this.elevationTDZMeters = input.elevationTDZMeters;
-        if (input.associatedAirportHeliport != null) {
-            this.associatedAirportHeliport = new Aerodrome(input.associatedAirportHeliport);
-        }
-    }
+    Double getElevationTDZMeters();
 
-    public RunwayDirection(final String designator) {
-        this.designator = designator;
-    }
+    Aerodrome getAssociatedAirportHeliport();
 
-    public String getDesignator() {
-        return designator;
-    }
+    boolean isResolved();
 
-    public void setDesignator(final String designator) {
-        this.designator = designator;
-    }
-
-    public Double getTrueBearing() {
-        return trueBearing;
-    }
-
-    public void setTrueBearing(final Double trueBearing) {
-        this.trueBearing = trueBearing;
-    }
-
-    public Double getElevationTDZMeters() {
-        return elevationTDZMeters;
-    }
-
-    public void setElevationTDZMeters(final Double elevationTDZMeters) {
-        this.elevationTDZMeters = elevationTDZMeters;
-    }
-
-    public Aerodrome getAssociatedAirportHeliport() {
-        return this.associatedAirportHeliport;
-    }
-
-    public void setAssociatedAirportHeliport(final Aerodrome airportHeliport) {
-        this.associatedAirportHeliport = airportHeliport;
-    }
-
-    @JsonIgnore
-    public boolean isResolved() {
-        return this.designator != null && this.associatedAirportHeliport != null && this.associatedAirportHeliport.isResolved() && this.trueBearing != null
-                && this.elevationTDZMeters != null;
-    }
-
+    Builder toBuilder();
+    
+    class Builder extends RunwayDirection_Builder {}
 }

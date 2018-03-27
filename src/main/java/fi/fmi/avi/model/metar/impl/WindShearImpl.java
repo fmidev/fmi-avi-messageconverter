@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import fi.fmi.avi.model.RunwayDirection;
+import fi.fmi.avi.model.RunwayDirectionImpl;
 import fi.fmi.avi.model.metar.WindShear;
 
 /**
@@ -19,7 +19,7 @@ public class WindShearImpl implements WindShear, Serializable {
     private static final long serialVersionUID = 3050515717307269346L;
 
     private boolean allRunways;
-    private List<RunwayDirection> runwayDirections;
+    private List<RunwayDirectionImpl> runwayDirections;
 
     public WindShearImpl() {
     }
@@ -29,8 +29,8 @@ public class WindShearImpl implements WindShear, Serializable {
             this.allRunways = input.isAllRunways();
             if (input.getRunwayDirections() != null) {
                 this.runwayDirections = new ArrayList<>();
-                for (final RunwayDirection rwd : input.getRunwayDirections()) {
-                    this.runwayDirections.add(new RunwayDirection(rwd));
+                for (final RunwayDirectionImpl rwd : input.getRunwayDirections()) {
+                    this.runwayDirections.add(new RunwayDirectionImpl(rwd));
                 }
             }
         }
@@ -56,7 +56,7 @@ public class WindShearImpl implements WindShear, Serializable {
      * @see fi.fmi.avi.data.WindShear#getRunwayDirections()
      */
     @Override
-    public List<RunwayDirection> getRunwayDirections() {
+    public List<RunwayDirectionImpl> getRunwayDirections() {
         return runwayDirections;
     }
 
@@ -64,7 +64,7 @@ public class WindShearImpl implements WindShear, Serializable {
      * @see fi.fmi.avi.data.WindShear#setRunwayDirections(java.util.List)
      */
     @Override
-    public void setRunwayDirections(final List<RunwayDirection> runwayDirections) {
+    public void setRunwayDirections(final List<RunwayDirectionImpl> runwayDirections) {
         this.runwayDirections = runwayDirections;
     }
 

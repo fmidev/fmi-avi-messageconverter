@@ -23,7 +23,7 @@ public class TAFReference implements Serializable {
     private TAF.TAFStatus status;
 
     public TAFReference(final TAFReference source) {
-        this.aerodrome = new Aerodrome(source.getAerodrome());
+        this.aerodrome = source.getAerodrome();
         this.issueTime = source.getIssueTime();
         this.validTimeStart = source.getValidityStartTime();
         this.validTimeEnd = source.getValidityEndTime();

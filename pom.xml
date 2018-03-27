@@ -75,6 +75,12 @@
       <version>2.8.9</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    <groupId>org.inferred</groupId>
+    <artifactId>freebuilder</artifactId>
+    <version>1.14.8</version>
+    <optional>true</optional>
+  </dependency>
   </dependencies>
 
 </project>

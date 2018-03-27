@@ -13,11 +13,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.AerodromeImpl;
 import fi.fmi.avi.model.AerodromeUpdateEvent;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.RunwayDirection;
+import fi.fmi.avi.model.RunwayDirectionImpl;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.impl.AerodromeWeatherMessageImpl;
 import fi.fmi.avi.model.impl.NumericMeasureImpl;
@@ -454,7 +455,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
     }
 
     @Override
-    public void amendRunwayDirectionInfo(final RunwayDirection fullInfo) {
+    public void amendRunwayDirectionInfo(final RunwayDirectionImpl fullInfo) {
         if (this.getAerodrome() == null) {
             throw new IllegalStateException("Set target aerodrome before amending runway direction info");
         }
@@ -476,8 +477,8 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
                 }
             }
             if (this.windShear != null) {
-                final List<RunwayDirection> amendedList = new ArrayList<>();
-                for (final RunwayDirection rwd : this.windShear.getRunwayDirections()) {
+                final List<RunwayDirectionImpl> amendedList = new ArrayList<>();
+                for (final RunwayDirectionImpl rwd : this.windShear.getRunwayDirections()) {
                     if (rwd.getDesignator().equals(fullInfo.getDesignator())) {
                         amendedList.add(fullInfo);
                     } else {
@@ -528,7 +529,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
         return retval;
     }
 
-    private void syncAerodromeInfo(final Aerodrome fullInfo) {
+    private void syncAerodromeInfo(final AerodromeImpl fullInfo) {
         if (this.runwayStates != null) {
             for (final RunwayState rws : this.runwayStates) {
                 if (rws.getRunwayDirection() != null) {
@@ -544,7 +545,7 @@ public class METARImpl extends AerodromeWeatherMessageImpl implements METAR {
             }
         }
         if (this.windShear != null) {
-            for (final RunwayDirection rwd : this.windShear.getRunwayDirections()) {
+            for (final RunwayDirectionImpl rwd : this.windShear.getRunwayDirections()) {
                 rwd.setAssociatedAirportHeliport(fullInfo);
             }
         }

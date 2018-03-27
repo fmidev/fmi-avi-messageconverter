@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.RunwayDirection;
+import fi.fmi.avi.model.RunwayDirectionImpl;
 import fi.fmi.avi.model.impl.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.RunwayState;
 
@@ -24,7 +24,7 @@ public class RunwayStateImpl implements RunwayState, Serializable {
     private boolean repetition;
     private boolean depthNotMeasurable;
     private boolean runwayNotOperational;
-    private RunwayDirection runwayDirection;
+    private RunwayDirectionImpl runwayDirection;
     private RunwayDeposit deposit;
     private RunwayContamination contamination;
     private NumericMeasure depthOfDeposit;
@@ -43,7 +43,7 @@ public class RunwayStateImpl implements RunwayState, Serializable {
             this.snowClosure = input.isSnowClosure();
             this.repetition = input.isRepetition();
             if (input.getRunwayDirection() != null) {
-                this.runwayDirection = new RunwayDirection(input.getRunwayDirection());
+                this.runwayDirection = new RunwayDirectionImpl(input.getRunwayDirection());
             }
             this.deposit = input.getDeposit();
             this.contamination = input.getContamination();
@@ -154,7 +154,7 @@ public class RunwayStateImpl implements RunwayState, Serializable {
      * @see fi.fmi.avi.data.RunwayState#getRunwayDirection()
      */
     @Override
-    public RunwayDirection getRunwayDirection() {
+    public RunwayDirectionImpl getRunwayDirection() {
         return runwayDirection;
     }
 
@@ -162,7 +162,7 @@ public class RunwayStateImpl implements RunwayState, Serializable {
      * @see fi.fmi.avi.data.RunwayState#setRunwayDirectionDesignator(java.lang.String)
      */
     @Override
-    public void setRunwayDirection(final RunwayDirection runwayDirection) {
+    public void setRunwayDirection(final RunwayDirectionImpl runwayDirection) {
         this.runwayDirection = runwayDirection;
     }
 
