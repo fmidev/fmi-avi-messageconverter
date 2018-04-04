@@ -1,7 +1,10 @@
 package fi.fmi.avi.model.taf.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -9,6 +12,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import fi.fmi.avi.model.PartialOrCompleteTimeInstance;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 import fi.fmi.avi.model.taf.TAFBaseForecast;
@@ -17,22 +22,66 @@ import fi.fmi.avi.model.taf.TAFChangeForecast;
 public class TAFTimeReferencesTest {
 
 	@Test
-	public void testCompleteValidTimeReferences() {
-		TAF msg = new TAFImpl();
-		TAFBaseForecast baseForecast = new TAFBaseForecastImpl();
-		TAFAirTemperatureForecast tempFct = new TAFAirTemperatureForecastImpl();
-		List<TAFAirTemperatureForecast> temperatures = new ArrayList<>();
-		temperatures.add(tempFct);
-		baseForecast.setTemperatures(temperatures);
-		msg.setBaseForecast(baseForecast);
-		List<TAFChangeForecast> changeForecasts = new ArrayList<>();
-		TAFChangeForecast changeFct1 = new TAFChangeForecastImpl();
-		TAFChangeForecast changeFct2 = new TAFChangeForecastImpl();
-		TAFChangeForecast changeFct3 = new TAFChangeForecastImpl();
-		changeForecasts.add(changeFct1);
-		changeForecasts.add(changeFct2);
-		changeForecasts.add(changeFct3);
-		msg.setChangeForecasts(changeForecasts);
+    public void testCompleteValidityTimeReferences() {
+
+        List<TAFChangeForecast> changeForecasts = new ArrayList<>();
+        changeForecasts.add(new TAFChangeForecast.Builder().validityTime(new PartialOrCompleteTimePeriod.Builder().startTime(
+                new PartialOrCompleteTimeInstance.Builder().partialTime("3119").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
+                .endTime(new PartialOrCompleteTimeInstance.Builder().partialTime("3124")
+                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                .build()).buildPartial());
+        changeForecasts.add(new TAFChangeForecast.Builder().validityTime(new PartialOrCompleteTimePeriod.Builder().startTime(
+                new PartialOrCompleteTimeInstance.Builder().partialTime("0100").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
+                .endTime(new PartialOrCompleteTimeInstance.Builder().partialTime("0106")
+                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                .build()).buildPartial());
+        changeForecasts.add(new TAFChangeForecast.Builder().validityTime(new PartialOrCompleteTimePeriod.Builder().startTime(
+                new PartialOrCompleteTimeInstance.Builder().partialTime("0102").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
+                .endTime(new PartialOrCompleteTimeInstance.Builder().partialTime("0112")
+                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                .build()).buildPartial());
+
+        List<TAFAirTemperatureForecast> temperatures = new ArrayList<>();
+        temperatures.add(new TAFAirTemperatureForecast.Builder().maxTemperatureTime(
+                new PartialOrCompleteTimeInstance.Builder().partialTime("3118").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
+                .minTemperatureTime(new PartialOrCompleteTimeInstance.Builder().partialTime("0104")
+                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                .buildPartial());
+
+        TAF msg = new TAF.Builder().validityTime(new PartialOrCompleteTimePeriod.Builder().startTime(
+                new PartialOrCompleteTimeInstance.Builder().partialTime("3118").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
+                .endTime(new PartialOrCompleteTimeInstance.Builder().partialTime("0118")
+                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                .build()).baseForecast(new TAFBaseForecast.Builder().temperatures(temperatures).buildPartial()).changeForecasts(changeForecasts).buildPartial();
+
+        msg = msg.toBuilder().withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z")).buildPartial();
+
+        ZonedDateTime toMatch = ZonedDateTime.of(2017, 12, 31, 18, 0, 0, 0, ZoneId.of("Z"));
+
+        assertTrue(msg.validityTime().isPresent());
+        PartialOrCompleteTimePeriod validityTime = msg.validityTime().get();
+
+        assertFalse(validityTime.startTime().midnight24h());
+        assertTrue(validityTime.startTime().completeTime().isPresent());
+        assertTrue(validityTime.startTime().completeTime().get().equals(toMatch));
+        assertTrue(validityTime.startTime().completeTimeAsISOString().isPresent());
+        assertTrue(validityTime.startTime().completeTimeAsISOString().get().equals("2017-12-31T18:00:00Z"));
+
+        toMatch = ZonedDateTime.of(2018, 1, 31, 18, 0, 0, 0, ZoneId.of("Z"));
+        assertTrue(validityTime.endTime().isPresent());
+        assertFalse(validityTime.endTime().get().midnight24h());
+        assertTrue(validityTime.endTime().get().completeTime().isPresent());
+        assertTrue(validityTime.endTime().get().completeTime().get().equals(toMatch));
+        assertTrue(validityTime.endTime().get().completeTimeAsISOString().isPresent());
+        assertTrue(validityTime.endTime().get().completeTimeAsISOString().get().equals("2018-01-01T18:00:00Z"));
+
+        /*
+        msg.setChangeForecasts(changeForecasts);
 
 		assertNull(msg.getIssueTime());
 		assertNull(msg.getPartialIssueTime());
@@ -70,13 +119,14 @@ public class TAFTimeReferencesTest {
 		assertEquals(ZonedDateTime.of(2018, 1, 1, 2, 0, 0, 0, ZoneId.of("Z")), msg.getChangeForecasts().get(2).getValidityStartTime());
 		assertEquals(ZonedDateTime.of(2018, 1, 1, 12, 0, 0, 0, ZoneId.of("Z")), msg.getChangeForecasts().get(2).getValidityEndTime());
 		assertTrue(msg.areForecastTimeReferencesComplete());
-		
-		
-	}
+		*/
+
+    }
 
 	@Test
 	public void testCompleteValidTimeReferencesWithoutDayOfMonths() {
-		TAF msg = new TAFImpl();
+        /*
+        TAF msg = new TAFImpl();
 		List<TAFChangeForecast> changeForecasts = new ArrayList<>();
 		TAFChangeForecast changeFct1 = new TAFChangeForecastImpl();
 		TAFChangeForecast changeFct2 = new TAFChangeForecastImpl();
@@ -129,7 +179,7 @@ public class TAFTimeReferencesTest {
 		assertEquals(ZonedDateTime.of(2017, 12, 9, 12, 0, 0, 0, ZoneId.of("Z")), msg.getValidityStartTime());
 		assertEquals(ZonedDateTime.of(2017, 12, 10, 12, 0, 0, 0, ZoneId.of("Z")), msg.getValidityEndTime());
 		assertTrue(msg.areForecastTimeReferencesComplete());
-
+*/
 	}
 
 

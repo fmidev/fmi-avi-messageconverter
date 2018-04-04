@@ -1,97 +1,103 @@
 package fi.fmi.avi.model;
 
-import java.time.ZoneId;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.google.common.base.Preconditions;
 
 /**
- * Created by rinne on 27/10/17.
+ * Created by rinne on 04/04/2018.
  */
+@FreeBuilder
 public interface PartialOrCompleteTimePeriod {
 
-    String getPartialStartTime();
+    static List<PartialOrCompleteTimePeriod> completePartialTimeReferenceList(final List<? extends PartialOrCompleteTimePeriod> input,
+            final ZonedDateTime referenceTime) {
+        Preconditions.checkNotNull(input, "Input list cannot be null");
 
-    int getStartTimeDay();
+        //Assumption: the start times come in chronological order, but the periods may be (partly) overlapping
+        List<PartialOrCompleteTimePeriod> revisedList = new ArrayList<>(input.size());
+        ZonedDateTime ref = ZonedDateTime.from(referenceTime);
+        for (final PartialOrCompleteTimePeriod period : input) {
+            revisedList.add(completePartialTimeReference(period, ref));
+        }
+        return revisedList;
+    }
 
-    int getStartTimeHour();
+    static PartialOrCompleteTimePeriod completePartialTimeReference(final PartialOrCompleteTimePeriod input, ZonedDateTime ref) {
+        PartialOrCompleteTimePeriod retval = null;
+        if (input != null) {
+            PartialOrCompleteTimeInstance startTime = input.startTime();
+            int startHour = startTime.partialTimeHour();
+            int startDay = startTime.partialTimeDay();
+            int startMinute = startTime.partialTimeMinute();
+            if (startMinute == -1) {
+                startMinute = 0;
+            }
 
-    int getStartTimeMinute();
+            if (startDay == -1) {
+                if (startHour < ref.getHour()) {
+                    //Roll over to the next day
+                    ref = ref.plusDays(1);
+                }
+            } else {
+                if (startDay < ref.getDayOfMonth()) {
+                    //Roll over to the next month
+                    ref = ref.plusMonths(1);
+                }
+                ref = ref.withDayOfMonth(startDay);
+            }
+            ref = ref.withHour(startHour).withMinute(startMinute);
+            startTime = input.startTime().toBuilder().completeTime(ref).build();
 
-    ZonedDateTime getCompleteStartTime();
+            if (input.endTime().isPresent()) {
+                //FIXME: the end time is not using the end time here, but start time, check from the original algorithm:
+                ZonedDateTime newEndTime = ZonedDateTime.of(LocalDateTime.from(startTime.completeTime().get()), ref.getZone());
+                PartialOrCompleteTimeInstance endTime = input.startTime();
+                int endHour = endTime.partialTimeHour();
+                int endDay = endTime.partialTimeDay();
+                int endMinute = endTime.partialTimeMinute();
+                if (endMinute == -1) {
+                    endMinute = 0;
+                }
 
-    String getCompleteStartTimeAsISOString();
+                if (endDay == -1) {
+                    if (endHour <= newEndTime.getHour()) {
+                        newEndTime = newEndTime.plusDays(1);
+                    }
+                } else {
+                    //We know the day
+                    if (endDay < startDay) {
+                        //Roll over to the next month
+                        newEndTime = newEndTime.plusMonths(1);
+                    }
+                    newEndTime = newEndTime.withDayOfMonth(endDay);
+                }
+                if (endTime.midnight24h()) {
+                    newEndTime = newEndTime.plusDays(1).withHour(0).withMinute(0);
+                } else {
+                    newEndTime = newEndTime.withHour(endHour).withMinute(endMinute);
+                }
+                endTime = input.endTime().get().toBuilder().completeTime(newEndTime).build();
+                retval = input.toBuilder().startTime(startTime).endTime(endTime).build();
+            } else {
+                retval = input.toBuilder().startTime(startTime).build();
+            }
+        }
+        return retval;
+    }
 
+    PartialOrCompleteTimeInstance startTime();
 
-    String getPartialEndTime();
+    Optional<PartialOrCompleteTimeInstance> endTime();
 
-    int getEndTimeDay();
+    Builder toBuilder();
 
-    int getEndTimeHour();
-
-    int getEndTimeMinute();
-
-    ZonedDateTime getCompleteEndTime();
-
-    String getCompleteEndTimeAsISOString();
-
-    /**
-     * Sets the partial start time using the implementation specific pattern.
-     * Sets he complete start time to null.
-     *
-     * @param time the time as String
-     */
-    void setPartialStartTime(String time);
-
-    /**
-     * Sets the partial start time using day, hour and minute.
-     *
-     * Sets the complete start time to null.
-     *
-     * @param day the start day-of-month
-     * @param hour the start hour-of-day
-     * @param minute the start minute-of-hour
-     */
-    void setPartialStartTime(int day, int hour, int minute);
-
-
-    void setCompleteStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone);
-
-    void setCompleteStartTime(ZonedDateTime time);
-
-    void setCompleteStartTimeAsISOString(String isoDateTime);
-
-    /**
-     * Sets the partial start time using the implementation specific pattern.
-     *
-     * Sets the complete end time to null.
-     *
-     * @param time the time as String
-     */
-    void setPartialEndTime(String time);
-
-    /**
-     * Sets the complete end time to null.
-     *
-     * @param day the end day-of-month
-     * @param hour the end hour-of-day
-     * @param minute the end minute-of-hour
-     */
-    void setPartialEndTime(int day, int hour, int minute);
-
-    void setCompleteEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone);
-
-    void setCompleteEndTime(ZonedDateTime time);
-
-    void setCompleteEndTimeAsISOString(String isoDateTime);
-
-
-    boolean hasStartTime();
-
-    boolean hasEndTime();
-
-    boolean isStartTimeComplete();
-
-    boolean isEndTimeComplete();
-
-    boolean endsAtMidnight();
+    class Builder extends PartialOrCompleteTimePeriod_Builder {
+    }
 }

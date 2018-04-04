@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import java.util.Optional;
+
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -8,19 +10,18 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = Aerodrome.Builder.class)
 public interface Aerodrome {
 
-    String getDesignator();
+    String designator();
 
-    String getName();
+    Optional<String> name();
 
-    String getLocationIndicatorICAO();
+    Optional<String> locationIndicatorICAO();
 
-    String getDesignatorIATA();
+    Optional<String> designatorIATA();
 
-    Double getFieldElevationValue();
+    Optional<Double> fieldElevationValue();
 
-    GeoPosition getReferencePoint();
-    
-    boolean isResolved();
+    Optional<GeoPosition> referencePoint();
+
 
     Builder toBuilder();
     

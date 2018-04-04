@@ -1,21 +1,27 @@
 package fi.fmi.avi.model.metar;
 
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 
+@FreeBuilder
+@JsonDeserialize(builder = TrendForecastSurfaceWind.Builder.class)
 public interface TrendForecastSurfaceWind extends AviationCodeListUser {
 
-    NumericMeasure getMeanWindDirection();
+    NumericMeasure meanWindDirection();
 
-    NumericMeasure getMeanWindSpeed();
+    NumericMeasure meanWindSpeed();
 
-    NumericMeasure getWindGust();
+    Optional<NumericMeasure> windGust();
 
+    Builder toBuilder();
 
-    void setMeanWindDirection(NumericMeasure meanWindDirection);
-
-    void setMeanWindSpeed(NumericMeasure meanWindSpeed);
-
-    void setWindGust(NumericMeasure windGust);
+    class Builder extends TrendForecastSurfaceWind_Builder {
+    }
 
 }

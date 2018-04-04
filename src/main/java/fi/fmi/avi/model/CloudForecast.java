@@ -1,19 +1,24 @@
 package fi.fmi.avi.model;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.inferred.freebuilder.FreeBuilder;
+
+@FreeBuilder
 public interface CloudForecast extends AviationCodeListUser {
 
-	boolean isNoSignificantCloud();
-	  
-    NumericMeasure getVerticalVisibility();
-    
-    void setNoSignificantCloud(boolean nsc);
+    boolean noSignificantCloud();
 
-    void setVerticalVisibility(NumericMeasure verticalVisibility);
+    Optional<NumericMeasure> verticalVisibility();
 
-    List<CloudLayer> getLayers();
+    Optional<List<CloudLayer>> layers();
 
-    void setLayers(List<CloudLayer> layers);
+    Builder toBuilder();
 
+    class Builder extends CloudForecast_Builder {
+        public Builder() {
+            noSignificantCloud(false);
+        }
+    }
 }

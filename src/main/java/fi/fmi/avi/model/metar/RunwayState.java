@@ -1,66 +1,50 @@
 package fi.fmi.avi.model.metar;
 
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.RunwayDirection;
 
+@FreeBuilder
+@JsonDeserialize(builder = RunwayState.Builder.class)
 public interface RunwayState extends AviationCodeListUser {
 
-    boolean isAllRunways();
+    boolean allRunways();
 
-    boolean isCleared();
+    boolean cleared();
 
-    boolean isEstimatedSurfaceFrictionUnreliable();
+    boolean estimatedSurfaceFrictionUnreliable();
 
-    boolean isSnowClosure();
-    
-    boolean isRepetition();
-    
-    boolean isDepthNotMeasurable();
-    
-    boolean isRunwayNotOperational();
+    boolean snowClosure();
 
-    RunwayDirection getRunwayDirection();
+    boolean repetition();
 
-    RunwayDeposit getDeposit();
+    boolean depthNotMeasurable();
 
-    RunwayContamination getContamination();
+    boolean runwayNotOperational();
 
-    NumericMeasure getDepthOfDeposit();
-    
-    RelationalOperator getDepthOperator();
+    Optional<RunwayDirection> runwayDirection();
 
-    Double getEstimatedSurfaceFriction();
-    
-    BreakingAction getBreakingAction();
-    
+    Optional<RunwayDeposit> deposit();
 
-    void setAllRunways(boolean allRunways);
+    Optional<RunwayContamination> contamination();
 
-    void setCleared(boolean cleared);
+    Optional<NumericMeasure> depthOfDeposit();
 
-    void setEstimatedSurfaceFrictionUnreliable(boolean estimatedSurfaceFrictionUnreliable);
+    Optional<RelationalOperator> depthOperator();
 
-    void setSnowClosure(boolean snowClosure);
-    
-    void setRepetition(boolean repetition);
-    
-    void setDepthNotMeasurable(boolean notMeasurable);
-    
-    void setRunwayNotOperational(boolean notOperational);
+    Optional<Double> estimatedSurfaceFriction();
 
-    void setRunwayDirection(RunwayDirection runwayDirection);
+    Optional<BreakingAction> breakingAction();
 
-    void setDeposit(RunwayDeposit deposit);
+    Builder toBuilder();
 
-    void setContamination(RunwayContamination contamination);
-
-    void setDepthOfDeposit(NumericMeasure depthOfDeposit);
-   
-    void setDepthOperator(RelationalOperator operator); 
-
-    void setEstimatedSurfaceFriction(Double estimatedSurfaceFriction);
-    
-    void setBreakingAction(BreakingAction action);
+    class Builder extends RunwayState_Builder {
+    }
 
 }

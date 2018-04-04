@@ -1,65 +1,31 @@
 package fi.fmi.avi.model.taf;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstance;
 
 /**
  * Created by rinne on 30/01/15.
  */
+@FreeBuilder
+@JsonDeserialize(builder = TAFAirTemperatureForecast.Builder.class)
 public interface TAFAirTemperatureForecast extends AviationCodeListUser {
 
-    NumericMeasure getMaxTemperature();
+    NumericMeasure maxTemperature();
 
-    int getMaxTemperatureDayOfMonth();
+    PartialOrCompleteTimeInstance maxTemperatureTime();
 
-    int getMaxTemperatureHour();
+    NumericMeasure minTemperature();
 
-    String getPartialMaxTemperatureTime();
-    
-    ZonedDateTime getMaxTemperatureTime();
-    
-    NumericMeasure getMinTemperature();
+    PartialOrCompleteTimeInstance minTemperatureTime();
 
-    int getMinTemperatureDayOfMonth();
+    Builder toBuilder();
 
-    int getMinTemperatureHour();
-    
-    String getPartialMinTemperatureTime();
-    
-    ZonedDateTime getMinTemperatureTime();
-
-
-    void setMinTemperature(NumericMeasure maxTemperature);
-    
-    void setPartialMinTemperatureTime(final String time);
-    
-    void setPartialMinTemperatureTime(final int hour);
-    
-    void setPartialMinTemperatureTime(final int day, final int hour);
-    
-    void setMinTemperatureTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final ZoneId timeZone);
-
-    void setMinTemperatureTime(final ZonedDateTime time);
-    
-    void setMaxTemperature(NumericMeasure maxTemperature);
-    
-    void setPartialMaxTemperatureTime(final String time);
-    
-    void setPartialMaxTemperatureTime(final int hour);
-    
-    void setPartialMaxTemperatureTime(final int day, final int hour);
-    
-    void setMaxTemperatureTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final ZoneId timeZone);
-
-    void setMaxTemperatureTime(final ZonedDateTime time);
-
-    void completeForecastTimeReferences(ZonedDateTime approximateIssueTime);
-
-    void resetForecastTimeReferences();
-
-    boolean areForecastTimeReferencesComplete();
+    class Builder extends TAFAirTemperatureForecast_Builder {
+    }
 
 }

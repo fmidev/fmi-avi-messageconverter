@@ -1,14 +1,21 @@
 package fi.fmi.avi.model;
 
+import java.util.Optional;
 
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@FreeBuilder
+@JsonDeserialize(builder = Weather.Builder.class)
 public interface Weather {
 
-    String getCode();
+    String code();
 
-    String getDescription();
+    Optional<String> description();
 
-    void setCode(final String code);
+    Builder toBuilder();
 
-    void setDescription(final String description);
-
+    class Builder extends Weather_Builder {
+    }
 }

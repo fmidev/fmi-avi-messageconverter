@@ -1,5 +1,11 @@
 package fi.fmi.avi.model;
 
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@FreeBuilder
+@JsonDeserialize(builder = NumericMeasure.Builder.class)
 public interface NumericMeasure extends AviationCodeListUser {
 
     /**
@@ -10,12 +16,12 @@ public interface NumericMeasure extends AviationCodeListUser {
      *
      * @return the provided measure value.
      */
-    Double getValue();
+    Double value();
 
-    void setValue(Double value);
+    String uom();
 
-    String getUom();
+    Builder toBuilder();
 
-    void setUom(String uom);
-
+    class Builder extends NumericMeasure_Builder {
+    }
 }

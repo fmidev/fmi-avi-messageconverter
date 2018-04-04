@@ -1,61 +1,45 @@
 package fi.fmi.avi.model.metar;
 
-import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.Weather;
 
-
+@FreeBuilder
+@JsonDeserialize(builder = TrendForecast.Builder.class)
 public interface TrendForecast extends AviationCodeListUser {
 
-    TrendTimeGroups getTimeGroups();
+    PartialOrCompleteTimePeriod validityTime();
 
-    boolean isCeilingAndVisibilityOk();
+    boolean ceilingAndVisibilityOk();
 
-    TrendForecastChangeIndicator getChangeIndicator();
+    TrendForecastChangeIndicator changeIndicator();
 
-    NumericMeasure getPrevailingVisibility();
+    Optional<NumericMeasure> prevailingVisibility();
 
-    RelationalOperator getPrevailingVisibilityOperator();
+    Optional<RelationalOperator> prevailingVisibilityOperator();
 
-    TrendForecastSurfaceWind getSurfaceWind();
+    Optional<TrendForecastSurfaceWind> surfaceWind();
 
-    List<Weather> getForecastWeather();
+    Optional<List<Weather>> forecastWeather();
 
-    List<String> getForecastWeatherCodes();
+    boolean noSignificantWeather();
 
-    boolean isNoSignificantWeather();
+    Optional<CloudForecast> cloud();
 
-    CloudForecast getCloud();
+    Optional<ColorState> colorState();
 
-    ColorState getColorState();
+    Builder toBuilder();
 
-    /**
-     * Sets the time groups of the trend forecast.
-     *
-     * @param timeGroups the time groups
-     */
-    void setTimeGroups(TrendTimeGroups timeGroups);
-
-    void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
-
-    void setChangeIndicator(TrendForecastChangeIndicator changeIndicator);
-
-    void setPrevailingVisibility(NumericMeasure prevailingVisibility);
-
-    void setPrevailingVisibilityOperator(RelationalOperator prevailingVisibilityOperator);
-
-    void setSurfaceWind(TrendForecastSurfaceWind surfaceWind);
-
-    void setForecastWeather(List<Weather> forecastWeather);
-
-    void setNoSignificantWeather(boolean nsw);
-
-    void setCloud(CloudForecast cloud);
-
-    void setColorState(ColorState color);
+    class Builder extends TrendForecast_Builder {
+    }
 
 }

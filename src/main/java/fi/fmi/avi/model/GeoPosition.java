@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import java.util.Optional;
+
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -8,13 +10,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = GeoPosition.Builder.class)
 public interface GeoPosition {
 
-    String getCoordinateReferenceSystemId();
+    String coordinateReferenceSystemId();
 
-    Double[] getCoordinates();
+    Double[] coordinates();
 
-    Double getElevationValue();
+    Optional<Double> elevationValue();
 
-    String getElevationUom();
+    Optional<String> elevationUom();
+
 
     Builder toBuilder();
     

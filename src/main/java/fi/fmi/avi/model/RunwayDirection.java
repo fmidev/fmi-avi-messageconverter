@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import java.util.Optional;
+
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -8,15 +10,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = RunwayDirection.Builder.class)
 public interface RunwayDirection {
 
-    String getDesignator();
+    String designator();
 
-    Double getTrueBearing();
+    Optional<Double> trueBearing();
 
-    Double getElevationTDZMeters();
+    Optional<Double> elevationTDZMeters();
 
-    Aerodrome getAssociatedAirportHeliport();
+    Optional<Aerodrome> associatedAirportHeliport();
 
-    boolean isResolved();
 
     Builder toBuilder();
     

@@ -1,19 +1,26 @@
 package fi.fmi.avi.model.metar;
 
 import java.util.List;
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.RunwayDirection;
 
+@FreeBuilder
+@JsonDeserialize(builder = WindShear.Builder.class)
 public interface WindShear extends AviationCodeListUser {
 
-    boolean isAllRunways();
+    boolean allRunways();
 
-    List<RunwayDirection> getRunwayDirections();
+    Optional<List<RunwayDirection>> runwayDirections();
 
+    Builder toBuilder();
 
-    void setAllRunways(boolean allRunways);
-
-    void setRunwayDirections(List<RunwayDirection> runwayDirections);
+    class Builder extends WindShear_Builder {
+    }
 
 }

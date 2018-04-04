@@ -1,56 +1,46 @@
 package fi.fmi.avi.model.taf;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.CloudForecast;
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.Weather;
 
 /**
  * Created by rinne on 30/01/15.
  */
-public interface TAFChangeForecast extends TAFForecast {
+@FreeBuilder
+@JsonDeserialize(builder = TAFChangeForecast.Builder.class)
+public interface TAFChangeForecast extends AviationCodeListUser {
 
-    TAFChangeIndicator getChangeIndicator();
+    TAFChangeIndicator changeIndicator();
 
-    int getValidityStartDayOfMonth();
+    PartialOrCompleteTimePeriod validityTime();
 
-    int getValidityStartHour();
+    boolean ceilingAndVisibilityOk();
 
-    int getValidityStartMinute();
+    Optional<NumericMeasure> prevailingVisibility();
 
-    String getPartialValidityTimePeriod();
-    
-    String getPartialValidityStartTime();
-    
-    ZonedDateTime getValidityStartTime();
-    
-    int getValidityEndDayOfMonth();
+    Optional<RelationalOperator> prevailingVisibilityOperator();
 
-    int getValidityEndHour();
-    
-    ZonedDateTime getValidityEndTime();
+    Optional<TAFSurfaceWind> surfaceWind();
 
-    void setChangeIndicator(TAFChangeIndicator changeIndicator);
+    Optional<List<Weather>> forecastWeather();
 
-    void setPartialValidityTimePeriod(final String time);
-    
-    void setPartialValidityTimePeriod(int startHour, int endHour);
-    
-    void setPartialValidityTimePeriod(int startDay, int endDay, int startHour, int endHour);
-    
-    void setPartialValidityStartTime(final String time);
-    
-    void setPartialValidityStartTime(final int hour, final int minute);
-    
-    void setPartialValidityStartTime(final int day, final int hour, final int minute);
-    
-    void setValidityStartTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone);
+    boolean noSignificantWeather();
 
-    void setValidityStartTime(final ZonedDateTime time);
-    
-    void setPartialValidityEndTime(final int day, final int hour);
-    
-    void setValidityEndTime(final int year, final int monthOfYear, final int dayOfMonth, final int hour, final int minute, final ZoneId timeZone);
+    Optional<CloudForecast> cloud();
 
-    void setValidityEndTime(final ZonedDateTime time);
-    
+    Builder toBuilder();
+
+    class Builder extends TAFChangeForecast_Builder {
+    }
 
 }

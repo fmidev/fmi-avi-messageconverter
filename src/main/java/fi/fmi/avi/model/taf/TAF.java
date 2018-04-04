@@ -1,101 +1,83 @@
 package fi.fmi.avi.model.taf;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.AerodromeWeatherMessage;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 
 /**
  * Created by rinne on 30/01/15.
  */
+@FreeBuilder
+@JsonDeserialize(builder = TAF.Builder.class)
 public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
-    TAFStatus getStatus();
+    TAFStatus status();
 
-    String getPartialValidityTimePeriod();
-    
-    
-    int getValidityStartDayOfMonth();
+    Optional<PartialOrCompleteTimePeriod> validityTime();
 
-    int getValidityStartHour();
-    
-    ZonedDateTime getValidityStartTime();
-    
+    Optional<TAFBaseForecast> baseForecast();
 
-    int getValidityEndDayOfMonth();
+    Optional<List<TAFChangeForecast>> changeForecasts();
 
-    int getValidityEndHour();
-    
-    ZonedDateTime getValidityEndTime();
+    Optional<TAFReference> referredReport();
 
-    
-    TAFBaseForecast getBaseForecast();
+    Builder toBuilder();
 
-    List<TAFChangeForecast> getChangeForecasts();
+    class Builder extends TAF_Builder {
+        public Builder() {
+            translated(false);
+            status(TAFStatus.NORMAL);
+        }
 
-    TAFReference getReferredReport();
+        public TAF.Builder withCompleteForecastTimes(final YearMonth issueYearMonth, int issueDay, int issueHour, final ZoneId tz)
+                throws IllegalArgumentException {
+            final ZonedDateTime approximateIssueTime = ZonedDateTime.of(
+                    LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz);
+            TAF.Builder retval = this;
+            if (validityTime().isPresent()) {
+                retval = retval.mapValidityTime(vTime -> PartialOrCompleteTimePeriod.completePartialTimeReference(vTime, approximateIssueTime));
+            }
 
+            if (baseForecast().isPresent() && baseForecast().get().temperatures().isPresent()) {
+                List<TAFAirTemperatureForecast> newTemps = new ArrayList<>();
+                for (final TAFAirTemperatureForecast airTemp : baseForecast().get().temperatures().get()) {
+                    newTemps.add(airTemp.toBuilder()
+                            .mutateMinTemperatureTime(time -> time.completedWithYearMonthDay(issueYearMonth, issueDay).build())
+                            .mutateMaxTemperatureTime(time -> time.completedWithYearMonthDay(issueYearMonth, issueDay).build())
+                            .build());
+                }
+                retval = retval.mapBaseForecast(fct -> fct.toBuilder().temperatures(newTemps).build());
 
-    void setStatus(TAFStatus status);
+            }
+            if (changeForecasts().isPresent() && !changeForecasts().get().isEmpty()) {
+                List<TAFChangeForecast> oldFcts = changeForecasts().get();
+                List<PartialOrCompleteTimePeriod> list = oldFcts.stream().map(fct -> fct.validityTime()).collect(Collectors.toList());
+                list = PartialOrCompleteTimePeriod.completePartialTimeReferenceList(list, approximateIssueTime);
+                List<TAFChangeForecast> newFcts = new ArrayList<>();
+                for (int i = 0; i < list.size(); i++) {
+                    newFcts.add(oldFcts.get(i).toBuilder().validityTime(list.get(i)).build());
+                }
+                retval = retval.changeForecasts(newFcts);
+            }
+            return retval;
+        }
 
-    
-    void setPartialValidityTimePeriod(String time);
-    
-    void setPartialValidityTimePeriod(int day, int startHour, int endHour);
-    
-    void setPartialValidityTimePeriod(int startDay, int endDay, int startHour, int endHour);
-    
-    
-    void setValidityStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone);
-
-    void setValidityStartTime(ZonedDateTime time);
-    
-    void setValidityEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone);
-
-    void setValidityEndTime(ZonedDateTime time);
-    
-    
-    void setBaseForecast(TAFBaseForecast baseForecast);
-
-    void setChangeForecasts(List<TAFChangeForecast> changeForecasts);
-
-    void setReferredReport(TAFReference referredReport);
-
-    /**
-     * Completes the partial forecast start and end times by providing the missing year and month information.
-     * The given year, month, day-of-month and hour-of-day values should match the corresponding
-     * values of the expected TAF issue time.
-     *
-     * @param issueYear the (expected or known) year of the message issue time.
-     * @param issueMonth the (expected or known) month (1-12) of message issue time.
-     * @param issueDay the (expected or known) day-of-month (1-31) of the message issue time.
-     * @param issueHour the (expected or known) hour-of-day (0-23) of the message issue time.
-     * @param tz timezone
-     *
-     * @throws IllegalArgumentException when the time references cannot be completed by combining the existing partial times and the provided additional
-     * information.
-     */
-    void completeForecastTimeReferences(int issueYear, int issueMonth, int issueDay, int issueHour, ZoneId tz);
-
-    /**
-     * Resets the fully-qualified forecast time references.
-     *
-     * If partial time values have been set previously,and those have been completed
-     * using {@link #completeForecastTimeReferences(int, int, int, int, ZoneId)}, the complete
-     * time references must no longer be available after this call. Also the methods
-     * returning partial time values must return the times based on the originally
-     * provided partial time components.
-     */
-    void uncompleteForecastTimeReferences();
-
-    /**
-     * Indicates whether there are partial forecast time references in this TAF.
-     *
-     * @return true, if the all time references are complete or there are no time references given, false otherwise.
-     */
-    boolean areForecastTimeReferencesComplete();
-
+        public TAF.Builder withCompleteIssueTime(final YearMonth yearMonth) throws IllegalArgumentException {
+            return mutateIssueTime((input) -> input.completedWithYearMonth(yearMonth));
+        }
+    }
 
 }

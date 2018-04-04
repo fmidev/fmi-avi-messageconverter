@@ -1,33 +1,33 @@
 package fi.fmi.avi.model.metar;
 
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 
+@FreeBuilder
+@JsonDeserialize(builder = ObservedSurfaceWind.Builder.class)
 public interface ObservedSurfaceWind extends AviationCodeListUser {
 
-    boolean isVariableDirection();
+    boolean variableDirection();
 
-    NumericMeasure getMeanWindDirection();
+    NumericMeasure meanWindDirection();
 
-    NumericMeasure getMeanWindSpeed();
+    NumericMeasure meanWindSpeed();
 
-    NumericMeasure getWindGust();
+    Optional<NumericMeasure> windGust();
 
-    NumericMeasure getExtremeClockwiseWindDirection();
+    Optional<NumericMeasure> extremeClockwiseWindDirection();
 
-    NumericMeasure getExtremeCounterClockwiseWindDirection();
+    Optional<NumericMeasure> extremeCounterClockwiseWindDirection();
 
+    Builder toBuilder();
 
-    void setVariableDirection(boolean variableDirection);
-
-    void setMeanWindDirection(NumericMeasure meanWindDirection);
-
-    void setMeanWindSpeed(NumericMeasure meanWindSpeed);
-
-    void setWindGust(NumericMeasure windGust);
-
-    void setExtremeClockwiseWindDirection(NumericMeasure extremeClockwiseWindDirection);
-
-    void setExtremeCounterClockwiseWindDirection(NumericMeasure extremeCounterClockwiseWindDirection);
+    class Builder extends ObservedSurfaceWind_Builder {
+    }
 
 }

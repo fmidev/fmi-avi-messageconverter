@@ -1,26 +1,28 @@
 package fi.fmi.avi.model.metar;
 
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 
+@FreeBuilder
+@JsonDeserialize(builder = HorizontalVisibility.Builder.class)
 public interface HorizontalVisibility extends AviationCodeListUser {
 
+    NumericMeasure prevailingVisibility();
 
-    NumericMeasure getPrevailingVisibility();
+    Optional<RelationalOperator> prevailingVisibilityOperator();
 
-    RelationalOperator getPrevailingVisibilityOperator();
+    Optional<NumericMeasure> minimumVisibility();
 
-    NumericMeasure getMinimumVisibility();
+    Optional<NumericMeasure> minimumVisibilityDirection();
 
-    NumericMeasure getMinimumVisibilityDirection();
+    Builder toBuilder();
 
-
-    void setPrevailingVisibility(NumericMeasure prevailingVisibility);
-
-    void setPrevailingVisibilityOperator(RelationalOperator prevailingVisibilityOperator);
-
-    void setMinimumVisibility(NumericMeasure minimumVisibility);
-
-    void setMinimumVisibilityDirection(NumericMeasure minimumVisibilityDirection);
-
+    class Builder extends HorizontalVisibility_Builder {
+    }
 }

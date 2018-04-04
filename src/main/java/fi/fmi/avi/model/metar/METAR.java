@@ -1,125 +1,68 @@
 package fi.fmi.avi.model.metar;
 
-import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fi.fmi.avi.model.AerodromeWeatherMessage;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.RunwaySpecificWeatherMessage;
 import fi.fmi.avi.model.Weather;
 
-public interface METAR extends RunwaySpecificWeatherMessage, AviationCodeListUser {
+@FreeBuilder
+@JsonDeserialize(builder = METAR.Builder.class)
+public interface METAR extends AerodromeWeatherMessage, AviationCodeListUser {
 
-    boolean isAutomatedStation();
+    boolean special();
 
-    boolean isDelayed();
+    boolean automatedStation();
 
-    MetarStatus getStatus();
+    boolean delayed();
 
-    boolean isCeilingAndVisibilityOk();
+    MetarStatus status();
 
-    NumericMeasure getAirTemperature();
+    boolean ceilingAndVisibilityOk();
 
-    NumericMeasure getDewpointTemperature();
+    Optional<NumericMeasure> airTemperature();
 
-    NumericMeasure getAltimeterSettingQNH();
+    Optional<NumericMeasure> dewpointTemperature();
 
-    ObservedSurfaceWind getSurfaceWind();
+    Optional<NumericMeasure> altimeterSettingQNH();
 
-    HorizontalVisibility getVisibility();
+    Optional<ObservedSurfaceWind> surfaceWind();
 
-    List<RunwayVisualRange> getRunwayVisualRanges();
+    Optional<HorizontalVisibility> visibility();
 
-    List<Weather> getPresentWeather();
+    Optional<List<RunwayVisualRange>> runwayVisualRanges();
 
-    List<String> getPresentWeatherCodes();
-    
-    ObservedClouds getClouds();
+    Optional<List<Weather>> presentWeather();
 
-    List<Weather> getRecentWeather();
-    
-    List<String> getRecentWeatherCodes();
+    Optional<List<String>> presentWeatherCodes();
 
-    WindShear getWindShear();
+    Optional<ObservedClouds> clouds();
 
-    SeaState getSeaState();
+    Optional<List<Weather>> recentWeather();
 
-    List<RunwayState> getRunwayStates();
+    Optional<List<String>> recentWeatherCodes();
 
-    List<TrendForecast> getTrends();
+    Optional<WindShear> windShear();
 
-    ColorState getColorState();
+    Optional<SeaState> seaState();
 
+    Optional<List<RunwayState>> runwayStates();
 
+    Optional<List<TrendForecast>> trends();
 
-    void setAutomatedStation(boolean automatedStation);
+    Optional<ColorState> colorState();
 
-    void setDelayed(boolean delayed);
+    Builder toBuilder();
 
-    void setStatus(MetarStatus status);
+    class Builder extends METAR_Builder {
 
-    void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
-
-    void setAirTemperature(NumericMeasure airTemperature);
-
-    void setDewpointTemperature(NumericMeasure dewpointTemperature);
-
-    void setAltimeterSettingQNH(NumericMeasure altimeterSettingQNH);
-
-    void setSurfaceWind(ObservedSurfaceWind surfaceWind);
-
-    void setVisibility(HorizontalVisibility visibility);
-
-    void setRunwayVisualRanges(List<RunwayVisualRange> runwayVisualRange);
-
-    void setPresentWeather(List<Weather> presentWeather);
-
-    void setClouds(ObservedClouds clouds);
-
-    void setRecentWeather(List<Weather> recentWeather);
-
-    void setWindShear(WindShear windShear);
-
-    void setSeaState(SeaState seaState);
-
-    void setRunwayStates(List<RunwayState> runwayStates);
-
-    void setTrends(List<TrendForecast> trends);
-
-    void setColorState(ColorState color);
-
-    /**
-     * Completes the partial trend start and end times by providing the missing year and month information.
-     * If no trend information if given, this method has no effect.
-     *
-     * @param issueYear the (expected or known) year of the message issue time.
-     * @param issueMonth the (expected or known) month (1-12) of message issue time.
-     * @param issueDay the (expected or known) day-of-month (1-31) of the message issue time.
-     * @param issueHour the (expected or known) hour-of-day (0-23) of the message issue time.
-     * @param tz timezone
-     *
-     * @throws IllegalArgumentException when the time references cannot be completed by combining the existing partial times and the provided additional
-     * information.
-     */
-    void completeTrendTimeReferences(int issueYear, int issueMonth, int issueDay, int issueHour, ZoneId tz);
-
-    /**
-     * Resets the fully-qualified trend time references.
-     *
-     * If partial time values have been set previously,and those have been completed
-     * using {@link #completeTrendTimeReferences(int, int, int, int, ZoneId)}, the complete
-     * time references must no longer be available after this call. Also the methods
-     * returning partial time values must return the times based on the originally
-     * provided partial time components.
-     */
-    void uncompleteTrendTimeReferences();
-
-    /**
-     * Indicates whether there are partial trend time references in the message.
-     *
-     * @return true, if the all trend time references are complete or there are no trends, false otherwise.
-     */
-    boolean areTrendTimeReferencesComplete();
+    }
 
 
 }

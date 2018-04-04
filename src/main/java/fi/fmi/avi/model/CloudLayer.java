@@ -1,17 +1,23 @@
 package fi.fmi.avi.model;
 
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@FreeBuilder
+@JsonDeserialize(builder = CloudLayer.Builder.class)
 public interface CloudLayer extends AviationCodeListUser {
 
-    CloudAmount getAmount();
+    CloudAmount amount();
 
-    NumericMeasure getBase();
+    Optional<NumericMeasure> base();
 
-    CloudType getCloudType();
+    Optional<CloudType> cloudType();
 
-    void setAmount(CloudAmount amount);
+    Builder toBuilder();
 
-    void setBase(NumericMeasure base);
-
-    void setCloudType(CloudType cloudType);
-
+    class Builder extends CloudLayer_Builder {
+    }
 }
