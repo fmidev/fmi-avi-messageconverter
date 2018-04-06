@@ -15,13 +15,13 @@ import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 @JsonDeserialize(builder = TAFReference.Builder.class)
 public interface TAFReference {
 
-    Aerodrome aerodrome();
+    Aerodrome getAerodrome();
 
-    PartialOrCompleteTimeInstance issueTime();
+    PartialOrCompleteTimeInstance getIssueTime();
 
-    PartialOrCompleteTimePeriod validityTime();
+    PartialOrCompleteTimePeriod getValidityTime();
 
-    TAF.TAFStatus status();
+    TAF.TAFStatus getStatus();
 
     Builder toBuilder();
 

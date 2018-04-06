@@ -14,21 +14,21 @@ import fi.fmi.avi.model.RunwayDirection;
 @JsonDeserialize(builder = RunwayVisualRange.Builder.class)
 public interface RunwayVisualRange extends AviationCodeListUser {
 
-    RunwayDirection runwayDirection();
+    RunwayDirection getRunwayDirection();
 
-    NumericMeasure meanRVR();
+    NumericMeasure getMeanRVR();
 
-    Optional<NumericMeasure> varyingRVRMinimum();
+    Optional<NumericMeasure> getVaryingRVRMinimum();
 
-    Optional<NumericMeasure> varyingRVRMaximum();
+    Optional<NumericMeasure> getVaryingRVRMaximum();
 
-    Optional<RelationalOperator> meanRVROperator();
+    Optional<RelationalOperator> getMeanRVROperator();
 
-    Optional<RelationalOperator> varyingRVRMinimumOperator();
+    Optional<RelationalOperator> getVaryingRVRMinimumOperator();
 
-    Optional<RelationalOperator> varyingRVRMaximumOperator();
+    Optional<RelationalOperator> getVaryingRVRMaximumOperator();
 
-    Optional<VisualRangeTendency> pastTendency();
+    Optional<VisualRangeTendency> getPastTendency();
 
     Builder toBuilder();
 

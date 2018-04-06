@@ -20,23 +20,23 @@ import fi.fmi.avi.model.Weather;
 @JsonDeserialize(builder = TAFChangeForecast.Builder.class)
 public interface TAFChangeForecast extends AviationCodeListUser {
 
-    TAFChangeIndicator changeIndicator();
+    TAFChangeIndicator getChangeIndicator();
 
-    PartialOrCompleteTimePeriod validityTime();
+    PartialOrCompleteTimePeriod getValidityTime();
 
-    boolean ceilingAndVisibilityOk();
+    boolean isCeilingAndVisibilityOk();
 
-    Optional<NumericMeasure> prevailingVisibility();
+    Optional<NumericMeasure> getPrevailingVisibility();
 
-    Optional<RelationalOperator> prevailingVisibilityOperator();
+    Optional<RelationalOperator> getPrevailingVisibilityOperator();
 
-    Optional<TAFSurfaceWind> surfaceWind();
+    Optional<TAFSurfaceWind> getSurfaceWind();
 
-    Optional<List<Weather>> forecastWeather();
+    Optional<List<Weather>> getForecastWeather();
 
-    boolean noSignificantWeather();
+    boolean isNoSignificantWeather();
 
-    Optional<CloudForecast> cloud();
+    Optional<CloudForecast> getCloud();
 
     Builder toBuilder();
 

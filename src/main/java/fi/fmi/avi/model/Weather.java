@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = Weather.Builder.class)
 public interface Weather {
 
-    String code();
+    String getCode();
 
-    Optional<String> description();
+    Optional<String> getDescription();
 
     Builder toBuilder();
 

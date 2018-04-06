@@ -15,13 +15,13 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonDeserialize(builder = ObservedClouds.Builder.class)
 public interface ObservedClouds extends AviationCodeListUser {
 
-    boolean amountAndHeightUnobservableByAutoSystem();
+    boolean isAmountAndHeightUnobservableByAutoSystem();
 
-    boolean noSignificantCloud();
+    boolean isNoSignificantCloud();
 
-    Optional<NumericMeasure> verticalVisibility();
+    Optional<NumericMeasure> getVerticalVisibility();
 
-    Optional<List<CloudLayer>> layers();
+    Optional<List<CloudLayer>> getLayers();
 
     Builder toBuilder();
 

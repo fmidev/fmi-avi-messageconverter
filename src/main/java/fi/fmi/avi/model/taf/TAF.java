@@ -24,22 +24,23 @@ import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 @JsonDeserialize(builder = TAF.Builder.class)
 public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
-    TAFStatus status();
+    TAFStatus getStatus();
 
-    Optional<PartialOrCompleteTimePeriod> validityTime();
+    Optional<PartialOrCompleteTimePeriod> getValidityTime();
 
-    Optional<TAFBaseForecast> baseForecast();
+    Optional<TAFBaseForecast> getBaseForecast();
 
-    Optional<List<TAFChangeForecast>> changeForecasts();
+    Optional<List<TAFChangeForecast>> getChangeForecasts();
 
-    Optional<TAFReference> referredReport();
+    Optional<TAFReference> getReferredReport();
 
     Builder toBuilder();
 
+
     class Builder extends TAF_Builder {
         public Builder() {
-            translated(false);
-            status(TAFStatus.NORMAL);
+            setTranslated(false);
+            setStatus(TAFStatus.NORMAL);
         }
 
         public TAF.Builder withCompleteForecastTimes(final YearMonth issueYearMonth, int issueDay, int issueHour, final ZoneId tz)
@@ -47,30 +48,30 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
             final ZonedDateTime approximateIssueTime = ZonedDateTime.of(
                     LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz);
             TAF.Builder retval = this;
-            if (validityTime().isPresent()) {
+            if (getValidityTime().isPresent()) {
                 retval = retval.mapValidityTime(vTime -> PartialOrCompleteTimePeriod.completePartialTimeReference(vTime, approximateIssueTime));
             }
 
-            if (baseForecast().isPresent() && baseForecast().get().temperatures().isPresent()) {
+            if (getBaseForecast().isPresent() && getBaseForecast().get().getTemperatures().isPresent()) {
                 List<TAFAirTemperatureForecast> newTemps = new ArrayList<>();
-                for (final TAFAirTemperatureForecast airTemp : baseForecast().get().temperatures().get()) {
+                for (final TAFAirTemperatureForecast airTemp : getBaseForecast().get().getTemperatures().get()) {
                     newTemps.add(airTemp.toBuilder()
                             .mutateMinTemperatureTime(time -> time.completedWithYearMonthDay(issueYearMonth, issueDay).build())
                             .mutateMaxTemperatureTime(time -> time.completedWithYearMonthDay(issueYearMonth, issueDay).build())
                             .build());
                 }
-                retval = retval.mapBaseForecast(fct -> fct.toBuilder().temperatures(newTemps).build());
+                retval = retval.mapBaseForecast(fct -> fct.toBuilder().setTemperatures(newTemps).build());
 
             }
-            if (changeForecasts().isPresent() && !changeForecasts().get().isEmpty()) {
-                List<TAFChangeForecast> oldFcts = changeForecasts().get();
-                List<PartialOrCompleteTimePeriod> list = oldFcts.stream().map(fct -> fct.validityTime()).collect(Collectors.toList());
+            if (getChangeForecasts().isPresent() && !getChangeForecasts().get().isEmpty()) {
+                List<TAFChangeForecast> oldFcts = getChangeForecasts().get();
+                List<PartialOrCompleteTimePeriod> list = oldFcts.stream().map(fct -> fct.getValidityTime()).collect(Collectors.toList());
                 list = PartialOrCompleteTimePeriod.completePartialTimeReferenceList(list, approximateIssueTime);
                 List<TAFChangeForecast> newFcts = new ArrayList<>();
                 for (int i = 0; i < list.size(); i++) {
-                    newFcts.add(oldFcts.get(i).toBuilder().validityTime(list.get(i)).build());
+                    newFcts.add(oldFcts.get(i).toBuilder().setValidityTime(list.get(i)).build());
                 }
-                retval = retval.changeForecasts(newFcts);
+                retval = retval.setChangeForecasts(newFcts);
             }
             return retval;
         }

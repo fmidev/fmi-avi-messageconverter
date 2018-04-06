@@ -14,9 +14,9 @@ import com.google.common.base.Preconditions;
  * Created by rinne on 04/04/2018.
  */
 @FreeBuilder
-public interface PartialOrCompleteTimePeriod {
+public abstract class PartialOrCompleteTimePeriod {
 
-    static List<PartialOrCompleteTimePeriod> completePartialTimeReferenceList(final List<? extends PartialOrCompleteTimePeriod> input,
+    public static List<PartialOrCompleteTimePeriod> completePartialTimeReferenceList(final List<? extends PartialOrCompleteTimePeriod> input,
             final ZonedDateTime referenceTime) {
         Preconditions.checkNotNull(input, "Input list cannot be null");
 
@@ -29,10 +29,10 @@ public interface PartialOrCompleteTimePeriod {
         return revisedList;
     }
 
-    static PartialOrCompleteTimePeriod completePartialTimeReference(final PartialOrCompleteTimePeriod input, ZonedDateTime ref) {
+    public static PartialOrCompleteTimePeriod completePartialTimeReference(final PartialOrCompleteTimePeriod input, ZonedDateTime ref) {
         PartialOrCompleteTimePeriod retval = null;
         if (input != null) {
-            PartialOrCompleteTimeInstance startTime = input.startTime();
+            PartialOrCompleteTimeInstance startTime = input.getStartTime();
             int startHour = startTime.partialTimeHour();
             int startDay = startTime.partialTimeDay();
             int startMinute = startTime.partialTimeMinute();
@@ -53,51 +53,50 @@ public interface PartialOrCompleteTimePeriod {
                 ref = ref.withDayOfMonth(startDay);
             }
             ref = ref.withHour(startHour).withMinute(startMinute);
-            startTime = input.startTime().toBuilder().completeTime(ref).build();
+            startTime = input.getStartTime().toBuilder().setCompleteTime(ref).build();
 
-            if (input.endTime().isPresent()) {
-                //FIXME: the end time is not using the end time here, but start time, check from the original algorithm:
-                ZonedDateTime newEndTime = ZonedDateTime.of(LocalDateTime.from(startTime.completeTime().get()), ref.getZone());
-                PartialOrCompleteTimeInstance endTime = input.startTime();
-                int endHour = endTime.partialTimeHour();
-                int endDay = endTime.partialTimeDay();
-                int endMinute = endTime.partialTimeMinute();
+            if (input.getEndTime().isPresent()) {
+                ZonedDateTime completeEndTime = ZonedDateTime.of(LocalDateTime.from(startTime.getCompleteTime().get()), ref.getZone());
+                PartialOrCompleteTimeInstance partialEndTime = input.getEndTime().get();
+                int endHour = partialEndTime.partialTimeHour();
+                int endDay = partialEndTime.partialTimeDay();
+                int endMinute = partialEndTime.partialTimeMinute();
                 if (endMinute == -1) {
                     endMinute = 0;
                 }
 
                 if (endDay == -1) {
-                    if (endHour <= newEndTime.getHour()) {
-                        newEndTime = newEndTime.plusDays(1);
+                    if (endHour <= completeEndTime.getHour()) {
+                        completeEndTime = completeEndTime.plusDays(1);
                     }
                 } else {
                     //We know the day
                     if (endDay < startDay) {
                         //Roll over to the next month
-                        newEndTime = newEndTime.plusMonths(1);
+                        completeEndTime = completeEndTime.plusMonths(1);
                     }
-                    newEndTime = newEndTime.withDayOfMonth(endDay);
+                    completeEndTime = completeEndTime.withDayOfMonth(endDay);
                 }
-                if (endTime.midnight24h()) {
-                    newEndTime = newEndTime.plusDays(1).withHour(0).withMinute(0);
+                if (partialEndTime.isMidnight24h()) {
+                    completeEndTime = completeEndTime.plusDays(1).withHour(0).withMinute(0);
                 } else {
-                    newEndTime = newEndTime.withHour(endHour).withMinute(endMinute);
+                    completeEndTime = completeEndTime.withHour(endHour).withMinute(endMinute);
                 }
-                endTime = input.endTime().get().toBuilder().completeTime(newEndTime).build();
-                retval = input.toBuilder().startTime(startTime).endTime(endTime).build();
+                partialEndTime = input.getEndTime().get().toBuilder().setCompleteTime(completeEndTime).build();
+                retval = input.toBuilder().setStartTime(startTime).setEndTime(partialEndTime).build();
             } else {
-                retval = input.toBuilder().startTime(startTime).build();
+                retval = input.toBuilder().setStartTime(startTime).build();
             }
         }
         return retval;
     }
 
-    PartialOrCompleteTimeInstance startTime();
+    public abstract PartialOrCompleteTimeInstance getStartTime();
 
-    Optional<PartialOrCompleteTimeInstance> endTime();
+    public abstract Optional<PartialOrCompleteTimeInstance> getEndTime();
 
-    Builder toBuilder();
+    public abstract Builder toBuilder();
 
-    class Builder extends PartialOrCompleteTimePeriod_Builder {
+    public static class Builder extends PartialOrCompleteTimePeriod_Builder {
     }
 }

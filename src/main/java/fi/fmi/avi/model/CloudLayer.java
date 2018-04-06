@@ -10,11 +10,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = CloudLayer.Builder.class)
 public interface CloudLayer extends AviationCodeListUser {
 
-    CloudAmount amount();
+    CloudAmount getAmount();
 
-    Optional<NumericMeasure> base();
+    Optional<NumericMeasure> getBase();
 
-    Optional<CloudType> cloudType();
+    Optional<CloudType> getCloudType();
 
     Builder toBuilder();
 

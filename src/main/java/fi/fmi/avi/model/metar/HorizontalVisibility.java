@@ -13,13 +13,13 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonDeserialize(builder = HorizontalVisibility.Builder.class)
 public interface HorizontalVisibility extends AviationCodeListUser {
 
-    NumericMeasure prevailingVisibility();
+    NumericMeasure getPrevailingVisibility();
 
-    Optional<RelationalOperator> prevailingVisibilityOperator();
+    Optional<RelationalOperator> getPrevailingVisibilityOperator();
 
-    Optional<NumericMeasure> minimumVisibility();
+    Optional<NumericMeasure> getMinimumVisibility();
 
-    Optional<NumericMeasure> minimumVisibilityDirection();
+    Optional<NumericMeasure> getMinimumVisibilityDirection();
 
     Builder toBuilder();
 

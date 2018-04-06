@@ -8,17 +8,17 @@ import org.inferred.freebuilder.FreeBuilder;
 @FreeBuilder
 public interface CloudForecast extends AviationCodeListUser {
 
-    boolean noSignificantCloud();
+    boolean isNoSignificantCloud();
 
-    Optional<NumericMeasure> verticalVisibility();
+    Optional<NumericMeasure> getVerticalVisibility();
 
-    Optional<List<CloudLayer>> layers();
+    Optional<List<CloudLayer>> getLayers();
 
     Builder toBuilder();
 
     class Builder extends CloudForecast_Builder {
         public Builder() {
-            noSignificantCloud(false);
+            setNoSignificantCloud(false);
         }
     }
 }

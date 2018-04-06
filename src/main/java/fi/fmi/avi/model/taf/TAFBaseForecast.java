@@ -19,30 +19,30 @@ import fi.fmi.avi.model.Weather;
 @JsonDeserialize(builder = TAFBaseForecast.Builder.class)
 public interface TAFBaseForecast extends AviationCodeListUser {
 
-    boolean ceilingAndVisibilityOk();
+    boolean isCeilingAndVisibilityOk();
 
-    NumericMeasure prevailingVisibility();
+    NumericMeasure getPrevailingVisibility();
 
-    Optional<RelationalOperator> prevailingVisibilityOperator();
+    Optional<RelationalOperator> getPrevailingVisibilityOperator();
 
-    TAFSurfaceWind surfaceWind();
+    TAFSurfaceWind getSurfaceWind();
 
-    Optional<List<Weather>> forecastWeather();
+    Optional<List<Weather>> getForecastWeather();
 
-    boolean noSignificantWeather();
+    boolean isNoSignificantWeather();
 
-    List<String> forecastWeatherCodes();
+    List<String> getForecastWeatherCodes();
 
-    CloudForecast cloud();
+    CloudForecast getCloud();
 
-    Optional<List<TAFAirTemperatureForecast>> temperatures();
+    Optional<List<TAFAirTemperatureForecast>> getTemperatures();
 
     Builder toBuilder();
 
     class Builder extends TAFBaseForecast_Builder {
         public Builder() {
-            ceilingAndVisibilityOk(false);
-            noSignificantWeather(false);
+            setCeilingAndVisibilityOk(false);
+            setNoSignificantWeather(false);
         }
     }
 }

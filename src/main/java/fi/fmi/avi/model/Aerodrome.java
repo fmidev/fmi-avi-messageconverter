@@ -10,17 +10,17 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = Aerodrome.Builder.class)
 public interface Aerodrome {
 
-    String designator();
+    String getDesignator();
 
-    Optional<String> name();
+    Optional<String> getName();
 
-    Optional<String> locationIndicatorICAO();
+    Optional<String> getLocationIndicatorICAO();
 
-    Optional<String> designatorIATA();
+    Optional<String> getDesignatorIATA();
 
-    Optional<Double> fieldElevationValue();
+    Optional<Double> getFieldElevationValue();
 
-    Optional<GeoPosition> referencePoint();
+    Optional<GeoPosition> getReferencePoint();
 
 
     Builder toBuilder();

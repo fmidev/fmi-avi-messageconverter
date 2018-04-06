@@ -17,25 +17,25 @@ import fi.fmi.avi.model.Weather;
 @JsonDeserialize(builder = TrendForecast.Builder.class)
 public interface TrendForecast extends AviationCodeListUser {
 
-    PartialOrCompleteTimePeriod validityTime();
+    PartialOrCompleteTimePeriod getValidityTime();
 
-    boolean ceilingAndVisibilityOk();
+    boolean isCeilingAndVisibilityOk();
 
-    TrendForecastChangeIndicator changeIndicator();
+    TrendForecastChangeIndicator getChangeIndicator();
 
-    Optional<NumericMeasure> prevailingVisibility();
+    Optional<NumericMeasure> getPrevailingVisibility();
 
-    Optional<RelationalOperator> prevailingVisibilityOperator();
+    Optional<RelationalOperator> getPrevailingVisibilityOperator();
 
-    Optional<TrendForecastSurfaceWind> surfaceWind();
+    Optional<TrendForecastSurfaceWind> getSurfaceWind();
 
-    Optional<List<Weather>> forecastWeather();
+    Optional<List<Weather>> getForecastWeather();
 
-    boolean noSignificantWeather();
+    boolean isNoSignificantWeather();
 
-    Optional<CloudForecast> cloud();
+    Optional<CloudForecast> getCloud();
 
-    Optional<ColorState> colorState();
+    Optional<ColorState> getColorState();
 
     Builder toBuilder();
 

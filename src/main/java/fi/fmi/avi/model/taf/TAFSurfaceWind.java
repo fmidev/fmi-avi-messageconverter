@@ -15,19 +15,19 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonDeserialize(builder = TAFSurfaceWind.Builder.class)
 public interface TAFSurfaceWind {
 
-    NumericMeasure meanWindDirection();
+    NumericMeasure getMeanWindDirection();
 
-    NumericMeasure meanWindSpeed();
+    NumericMeasure getMeanWindSpeed();
 
-    Optional<NumericMeasure> windGust();
+    Optional<NumericMeasure> getWindGust();
 
-    boolean variableDirection();
+    boolean isVariableDirection();
 
     Builder toBuilder();
 
     class Builder extends TAFSurfaceWind_Builder {
         public Builder() {
-            variableDirection(false);
+            setVariableDirection(false);
         }
     }
 }

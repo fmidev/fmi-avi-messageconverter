@@ -25,60 +25,70 @@ public class TAFTimeReferencesTest {
     public void testCompleteValidityTimeReferences() {
 
         List<TAFChangeForecast> changeForecasts = new ArrayList<>();
-        changeForecasts.add(new TAFChangeForecast.Builder().validityTime(new PartialOrCompleteTimePeriod.Builder().startTime(
-                new PartialOrCompleteTimeInstance.Builder().partialTime("3119").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
-                .endTime(new PartialOrCompleteTimeInstance.Builder().partialTime("3124")
-                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+        changeForecasts.add(new TAFChangeForecast.Builder().setValidityTime(new PartialOrCompleteTimePeriod.Builder().setStartTime(
+                new PartialOrCompleteTimeInstance.Builder().setPartialTime("3119")
+                        .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                .setEndTime(new PartialOrCompleteTimeInstance.Builder().setPartialTime("3124")
+                        .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                        .build()).buildPartial());
+        changeForecasts.add(new TAFChangeForecast.Builder().setValidityTime(new PartialOrCompleteTimePeriod.Builder().setStartTime(
+                new PartialOrCompleteTimeInstance.Builder().setPartialTime("0100")
+                        .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                .setEndTime(new PartialOrCompleteTimeInstance.Builder().setPartialTime("0106")
+                        .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
                         .build())
                 .build()).buildPartial());
-        changeForecasts.add(new TAFChangeForecast.Builder().validityTime(new PartialOrCompleteTimePeriod.Builder().startTime(
-                new PartialOrCompleteTimeInstance.Builder().partialTime("0100").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
-                .endTime(new PartialOrCompleteTimeInstance.Builder().partialTime("0106")
-                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+        changeForecasts.add(new TAFChangeForecast.Builder().setValidityTime(new PartialOrCompleteTimePeriod.Builder().setStartTime(
+                new PartialOrCompleteTimeInstance.Builder().setPartialTime("0102")
+                        .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
                         .build())
-                .build()).buildPartial());
-        changeForecasts.add(new TAFChangeForecast.Builder().validityTime(new PartialOrCompleteTimePeriod.Builder().startTime(
-                new PartialOrCompleteTimeInstance.Builder().partialTime("0102").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
-                .endTime(new PartialOrCompleteTimeInstance.Builder().partialTime("0112")
-                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                .setEndTime(new PartialOrCompleteTimeInstance.Builder().setPartialTime("0112")
+                        .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
                         .build())
                 .build()).buildPartial());
 
         List<TAFAirTemperatureForecast> temperatures = new ArrayList<>();
-        temperatures.add(new TAFAirTemperatureForecast.Builder().maxTemperatureTime(
-                new PartialOrCompleteTimeInstance.Builder().partialTime("3118").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
-                .minTemperatureTime(new PartialOrCompleteTimeInstance.Builder().partialTime("0104")
-                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+        temperatures.add(new TAFAirTemperatureForecast.Builder().setMaxTemperatureTime(new PartialOrCompleteTimeInstance.Builder().setPartialTime("3118")
+                .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                .build())
+                .setMinTemperatureTime(
+                        new PartialOrCompleteTimeInstance.Builder().setPartialTime("0104").setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
                         .build())
                 .buildPartial());
 
-        TAF msg = new TAF.Builder().validityTime(new PartialOrCompleteTimePeriod.Builder().startTime(
-                new PartialOrCompleteTimeInstance.Builder().partialTime("3118").partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN).build())
-                .endTime(new PartialOrCompleteTimeInstance.Builder().partialTime("0118")
-                        .partialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+        TAF msg = new TAF.Builder().setValidityTime(new PartialOrCompleteTimePeriod.Builder().setStartTime(
+                new PartialOrCompleteTimeInstance.Builder().setPartialTime("3118")
+                        .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
                         .build())
-                .build()).baseForecast(new TAFBaseForecast.Builder().temperatures(temperatures).buildPartial()).changeForecasts(changeForecasts).buildPartial();
+                .setEndTime(new PartialOrCompleteTimeInstance.Builder().setPartialTime("0118")
+                        .setPartialTimePattern(PartialOrCompleteTimeInstance.DAY_HOUR_PATTERN)
+                        .build())
+                .build()).setBaseForecast(new TAFBaseForecast.Builder().
+                setTemperatures(temperatures).buildPartial()).setChangeForecasts(changeForecasts).buildPartial();
 
         msg = msg.toBuilder().withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z")).buildPartial();
 
         ZonedDateTime toMatch = ZonedDateTime.of(2017, 12, 31, 18, 0, 0, 0, ZoneId.of("Z"));
 
-        assertTrue(msg.validityTime().isPresent());
-        PartialOrCompleteTimePeriod validityTime = msg.validityTime().get();
+        assertTrue(msg.getValidityTime().isPresent());
+        PartialOrCompleteTimePeriod validityTime = msg.getValidityTime().get();
 
-        assertFalse(validityTime.startTime().midnight24h());
-        assertTrue(validityTime.startTime().completeTime().isPresent());
-        assertTrue(validityTime.startTime().completeTime().get().equals(toMatch));
-        assertTrue(validityTime.startTime().completeTimeAsISOString().isPresent());
-        assertTrue(validityTime.startTime().completeTimeAsISOString().get().equals("2017-12-31T18:00:00Z"));
+        assertFalse(validityTime.getStartTime().isMidnight24h());
+        assertTrue(validityTime.getStartTime().getCompleteTime().isPresent());
+        assertTrue(validityTime.getStartTime().getCompleteTime().get().equals(toMatch));
+        assertTrue(validityTime.getStartTime().getCompleteTimeAsISOString().isPresent());
+        assertTrue(validityTime.getStartTime().getCompleteTimeAsISOString().get().equals("2017-12-31T18:00:00Z"));
 
-        toMatch = ZonedDateTime.of(2018, 1, 31, 18, 0, 0, 0, ZoneId.of("Z"));
-        assertTrue(validityTime.endTime().isPresent());
-        assertFalse(validityTime.endTime().get().midnight24h());
-        assertTrue(validityTime.endTime().get().completeTime().isPresent());
-        assertTrue(validityTime.endTime().get().completeTime().get().equals(toMatch));
-        assertTrue(validityTime.endTime().get().completeTimeAsISOString().isPresent());
-        assertTrue(validityTime.endTime().get().completeTimeAsISOString().get().equals("2018-01-01T18:00:00Z"));
+        toMatch = ZonedDateTime.of(2018, 1, 1, 18, 0, 0, 0, ZoneId.of("Z"));
+        assertTrue(validityTime.getEndTime().isPresent());
+        assertFalse(validityTime.getEndTime().get().isMidnight24h());
+        assertTrue(validityTime.getEndTime().get().getCompleteTime().isPresent());
+        assertTrue(validityTime.getEndTime().get().getCompleteTime().get().equals(toMatch));
+        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().isPresent());
+        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T18:00:00Z"));
 
         /*
         msg.setChangeForecasts(changeForecasts);

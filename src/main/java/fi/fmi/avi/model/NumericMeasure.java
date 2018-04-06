@@ -16,9 +16,9 @@ public interface NumericMeasure extends AviationCodeListUser {
      *
      * @return the provided measure value.
      */
-    Double value();
+    Double getValue();
 
-    String uom();
+    String getUom();
 
     Builder toBuilder();
 

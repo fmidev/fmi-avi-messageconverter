@@ -10,13 +10,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = RunwayDirection.Builder.class)
 public interface RunwayDirection {
 
-    String designator();
+    String getDesignator();
 
-    Optional<Double> trueBearing();
+    Optional<Double> getTrueBearing();
 
-    Optional<Double> elevationTDZMeters();
+    Optional<Double> getElevationTDZMeters();
 
-    Optional<Aerodrome> associatedAirportHeliport();
+    Optional<Aerodrome> getAssociatedAirportHeliport();
 
 
     Builder toBuilder();

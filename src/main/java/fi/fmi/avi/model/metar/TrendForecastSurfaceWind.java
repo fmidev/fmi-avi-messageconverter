@@ -13,11 +13,11 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonDeserialize(builder = TrendForecastSurfaceWind.Builder.class)
 public interface TrendForecastSurfaceWind extends AviationCodeListUser {
 
-    NumericMeasure meanWindDirection();
+    NumericMeasure getMeanWindDirection();
 
-    NumericMeasure meanWindSpeed();
+    NumericMeasure getMeanWindSpeed();
 
-    Optional<NumericMeasure> windGust();
+    Optional<NumericMeasure> getWindGust();
 
     Builder toBuilder();
 

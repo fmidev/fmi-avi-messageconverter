@@ -14,33 +14,33 @@ import fi.fmi.avi.model.RunwayDirection;
 @JsonDeserialize(builder = RunwayState.Builder.class)
 public interface RunwayState extends AviationCodeListUser {
 
-    boolean allRunways();
+    boolean isAppliedToAllRunways();
 
-    boolean cleared();
+    boolean isCleared();
 
-    boolean estimatedSurfaceFrictionUnreliable();
+    boolean isEstimatedSurfaceFrictionUnreliable();
 
-    boolean snowClosure();
+    boolean isSnowClosure();
 
-    boolean repetition();
+    boolean isRepetition();
 
-    boolean depthNotMeasurable();
+    boolean isDepthNotMeasurable();
 
-    boolean runwayNotOperational();
+    boolean isRunwayNotOperational();
 
-    Optional<RunwayDirection> runwayDirection();
+    Optional<RunwayDirection> getRunwayDirection();
 
-    Optional<RunwayDeposit> deposit();
+    Optional<RunwayDeposit> getDeposit();
 
-    Optional<RunwayContamination> contamination();
+    Optional<RunwayContamination> getContamination();
 
-    Optional<NumericMeasure> depthOfDeposit();
+    Optional<NumericMeasure> getDepthOfDeposit();
 
-    Optional<RelationalOperator> depthOperator();
+    Optional<RelationalOperator> getDepthOperator();
 
-    Optional<Double> estimatedSurfaceFriction();
+    Optional<Double> getEstimatedSurfaceFriction();
 
-    Optional<BreakingAction> breakingAction();
+    Optional<BreakingAction> getBreakingAction();
 
     Builder toBuilder();
 

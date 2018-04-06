@@ -13,17 +13,17 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonDeserialize(builder = ObservedSurfaceWind.Builder.class)
 public interface ObservedSurfaceWind extends AviationCodeListUser {
 
-    boolean variableDirection();
+    boolean isVariableDirection();
 
-    NumericMeasure meanWindDirection();
+    NumericMeasure getMeanWindDirection();
 
-    NumericMeasure meanWindSpeed();
+    NumericMeasure getMeanWindSpeed();
 
-    Optional<NumericMeasure> windGust();
+    Optional<NumericMeasure> getWindGust();
 
-    Optional<NumericMeasure> extremeClockwiseWindDirection();
+    Optional<NumericMeasure> getExtremeClockwiseWindDirection();
 
-    Optional<NumericMeasure> extremeCounterClockwiseWindDirection();
+    Optional<NumericMeasure> getExtremeCounterClockwiseWindDirection();
 
     Builder toBuilder();
 

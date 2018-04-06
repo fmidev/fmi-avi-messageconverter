@@ -10,13 +10,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = GeoPosition.Builder.class)
 public interface GeoPosition {
 
-    String coordinateReferenceSystemId();
+    String getCoordinateReferenceSystemId();
 
-    Double[] coordinates();
+    Double[] getCoordinates();
 
-    Optional<Double> elevationValue();
+    Optional<Double> getElevationValue();
 
-    Optional<String> elevationUom();
+    Optional<String> getElevationUom();
 
 
     Builder toBuilder();

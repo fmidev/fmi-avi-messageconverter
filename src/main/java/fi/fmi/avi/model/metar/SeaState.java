@@ -13,11 +13,11 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonDeserialize(builder = SeaState.Builder.class)
 public interface SeaState extends AviationCodeListUser {
 
-    NumericMeasure seaSurfaceTemperature();
+    NumericMeasure getSeaSurfaceTemperature();
 
-    Optional<NumericMeasure> significantWaveHeight();
+    Optional<NumericMeasure> getSignificantWaveHeight();
 
-    Optional<SeaSurfaceState> seaSurfaceState();
+    Optional<SeaSurfaceState> getSeaSurfaceState();
 
     Builder toBuilder();
 

@@ -14,9 +14,9 @@ import fi.fmi.avi.model.RunwayDirection;
 @JsonDeserialize(builder = WindShear.Builder.class)
 public interface WindShear extends AviationCodeListUser {
 
-    boolean allRunways();
+    boolean isAppliedToAllRunways();
 
-    Optional<List<RunwayDirection>> runwayDirections();
+    Optional<List<RunwayDirection>> getRunwayDirections();
 
     Builder toBuilder();
 

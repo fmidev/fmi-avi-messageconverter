@@ -15,13 +15,13 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstance;
 @JsonDeserialize(builder = TAFAirTemperatureForecast.Builder.class)
 public interface TAFAirTemperatureForecast extends AviationCodeListUser {
 
-    NumericMeasure maxTemperature();
+    NumericMeasure getMaxTemperature();
 
-    PartialOrCompleteTimeInstance maxTemperatureTime();
+    PartialOrCompleteTimeInstance getMaxTemperatureTime();
 
-    NumericMeasure minTemperature();
+    NumericMeasure getMinTemperature();
 
-    PartialOrCompleteTimeInstance minTemperatureTime();
+    PartialOrCompleteTimeInstance getMinTemperatureTime();
 
     Builder toBuilder();
 
