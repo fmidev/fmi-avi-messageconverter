@@ -22,15 +22,22 @@ public abstract class PartialOrCompleteTimePeriod {
 
         //Assumption: the start times come in chronological order, but the periods may be (partly) overlapping
         List<PartialOrCompleteTimePeriod> revisedList = new ArrayList<>(input.size());
-        ZonedDateTime ref = ZonedDateTime.from(referenceTime);
+        KeyPeriodPair kpp = new KeyPeriodPair();
+        kpp.key = referenceTime;
         for (final PartialOrCompleteTimePeriod period : input) {
-            revisedList.add(completePartialTimeReference(period, ref));
+            kpp = completePartialTimeReferenceInternal(period, kpp.key);
+            revisedList.add(kpp.period);
         }
         return revisedList;
     }
 
-    public static PartialOrCompleteTimePeriod completePartialTimeReference(final PartialOrCompleteTimePeriod input, ZonedDateTime ref) {
-        PartialOrCompleteTimePeriod retval = null;
+    public static PartialOrCompleteTimePeriod completePartialTimeReference(final PartialOrCompleteTimePeriod input, final ZonedDateTime key) {
+        return completePartialTimeReferenceInternal(input, key).period;
+    }
+
+    private static KeyPeriodPair completePartialTimeReferenceInternal(final PartialOrCompleteTimePeriod input, final ZonedDateTime key) {
+        KeyPeriodPair retval = new KeyPeriodPair();
+        ZonedDateTime ref = ZonedDateTime.from(key);
         if (input != null) {
             PartialOrCompleteTimeInstance startTime = input.getStartTime();
             int startHour = startTime.partialTimeHour();
@@ -56,36 +63,38 @@ public abstract class PartialOrCompleteTimePeriod {
             startTime = input.getStartTime().toBuilder().setCompleteTime(ref).build();
 
             if (input.getEndTime().isPresent()) {
-                ZonedDateTime completeEndTime = ZonedDateTime.of(LocalDateTime.from(startTime.getCompleteTime().get()), ref.getZone());
-                PartialOrCompleteTimeInstance partialEndTime = input.getEndTime().get();
-                int endHour = partialEndTime.partialTimeHour();
-                int endDay = partialEndTime.partialTimeDay();
-                int endMinute = partialEndTime.partialTimeMinute();
+                ref = ZonedDateTime.of(LocalDateTime.from(startTime.getCompleteTime().get()), ref.getZone());
+                PartialOrCompleteTimeInstance endTimeToSet = input.getEndTime().get();
+                int endHour = endTimeToSet.partialTimeHour();
+                int endDay = endTimeToSet.partialTimeDay();
+                int endMinute = endTimeToSet.partialTimeMinute();
                 if (endMinute == -1) {
                     endMinute = 0;
                 }
 
                 if (endDay == -1) {
-                    if (endHour <= completeEndTime.getHour()) {
-                        completeEndTime = completeEndTime.plusDays(1);
+                    if (endHour <= ref.getHour()) {
+                        ref = ref.plusDays(1);
                     }
                 } else {
                     //We know the day
                     if (endDay < startDay) {
                         //Roll over to the next month
-                        completeEndTime = completeEndTime.plusMonths(1);
+                        ref = ref.plusMonths(1);
                     }
-                    completeEndTime = completeEndTime.withDayOfMonth(endDay);
+                    ref = ref.withDayOfMonth(endDay);
                 }
-                if (partialEndTime.isMidnight24h()) {
-                    completeEndTime = completeEndTime.plusDays(1).withHour(0).withMinute(0);
+                if (endTimeToSet.isMidnight24h()) {
+                    ref = ref.plusDays(1).withHour(0).withMinute(0);
                 } else {
-                    completeEndTime = completeEndTime.withHour(endHour).withMinute(endMinute);
+                    ref = ref.withHour(endHour).withMinute(endMinute);
                 }
-                partialEndTime = input.getEndTime().get().toBuilder().setCompleteTime(completeEndTime).build();
-                retval = input.toBuilder().setStartTime(startTime).setEndTime(partialEndTime).build();
+                endTimeToSet = input.getEndTime().get().toBuilder().setCompleteTime(ref).build();
+                retval.key = ref;
+                retval.period = input.toBuilder().setStartTime(startTime).setEndTime(endTimeToSet).build();
             } else {
-                retval = input.toBuilder().setStartTime(startTime).build();
+                retval.key = ref;
+                retval.period = input.toBuilder().setStartTime(startTime).build();
             }
         }
         return retval;
@@ -98,5 +107,10 @@ public abstract class PartialOrCompleteTimePeriod {
     public abstract Builder toBuilder();
 
     public static class Builder extends PartialOrCompleteTimePeriod_Builder {
+    }
+
+    private static class KeyPeriodPair {
+        public ZonedDateTime key;
+        public PartialOrCompleteTimePeriod period;
     }
 }

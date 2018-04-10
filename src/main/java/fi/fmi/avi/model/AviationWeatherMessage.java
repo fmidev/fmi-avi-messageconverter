@@ -23,8 +23,7 @@ public interface AviationWeatherMessage {
      *
      * @return the fully resolved issue time
      *
-     * @see PartialOrCompleteTimeInstance.Builder#completedWithYearMonth(YearMonth)
-     * @see PartialOrCompleteTimeInstance.Builder#completedWithYearMonthDay(YearMonth, int)
+     * @see PartialOrCompleteTimeInstance.Builder#completedWithIssueYearMonth(YearMonth)
      *
      */
     PartialOrCompleteTimeInstance getIssueTime();

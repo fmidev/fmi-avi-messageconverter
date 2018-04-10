@@ -56,8 +56,8 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
                 List<TAFAirTemperatureForecast> newTemps = new ArrayList<>();
                 for (final TAFAirTemperatureForecast airTemp : getBaseForecast().get().getTemperatures().get()) {
                     newTemps.add(airTemp.toBuilder()
-                            .mutateMinTemperatureTime(time -> time.completedWithYearMonthDay(issueYearMonth, issueDay).build())
-                            .mutateMaxTemperatureTime(time -> time.completedWithYearMonthDay(issueYearMonth, issueDay).build())
+                            .mutateMinTemperatureTime(time -> time.completedWithIssueYearMonthDay(issueYearMonth, issueDay).build())
+                            .mutateMaxTemperatureTime(time -> time.completedWithIssueYearMonthDay(issueYearMonth, issueDay).build())
                             .build());
                 }
                 retval = retval.mapBaseForecast(fct -> fct.toBuilder().setTemperatures(newTemps).build());
@@ -77,7 +77,7 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
         }
 
         public TAF.Builder withCompleteIssueTime(final YearMonth yearMonth) throws IllegalArgumentException {
-            return mutateIssueTime((input) -> input.completedWithYearMonth(yearMonth));
+            return mutateIssueTime((input) -> input.completedWithIssueYearMonth(yearMonth));
         }
     }
 

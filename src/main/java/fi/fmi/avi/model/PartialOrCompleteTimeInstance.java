@@ -137,7 +137,7 @@ public abstract class PartialOrCompleteTimeInstance {
             return retval;
         }
 
-        public PartialOrCompleteTimeInstance.Builder completedWithYearMonth(final YearMonth yearMonth) throws IllegalArgumentException {
+        public PartialOrCompleteTimeInstance.Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) throws IllegalArgumentException {
             Pattern timePattern = getPartialTimePattern();
             Preconditions.checkState(timePattern.pattern().contains("?<day>"),
                     "The current timePattern " + timePattern + " does not match dayOfMonth, day " + "must be given to complete. Use method "
@@ -146,15 +146,16 @@ public abstract class PartialOrCompleteTimeInstance {
             Preconditions.checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
             Preconditions.checkState(m.group("day") != null,
                     "Partial time does not contain dayOfMonth, use method " + "completeWithYearMonthDay(YearMonth, int)");
-            return completedWithYearMonthDay(yearMonth, Integer.parseInt(m.group("day")));
+            return completedWithIssueYearMonthDay(issueYearMonth, Integer.parseInt(m.group("day")));
         }
 
-        public PartialOrCompleteTimeInstance.Builder completedWithYearMonthDay(final YearMonth yearMonth, int dayOfMonth) throws IllegalArgumentException {
+        public PartialOrCompleteTimeInstance.Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, int issueDayOfMonth)
+                throws IllegalArgumentException {
             PartialOrCompleteTimeInstance.Builder retval = this;
             String partialTime = getPartialTime();
             Pattern timePattern = getPartialTimePattern();
-            Preconditions.checkArgument(yearMonth != null, "yearMonth must not be null");
-            Preconditions.checkArgument(dayOfMonth >= 1 && dayOfMonth <= 31, "dayOfMonth must be between 1 and 31");
+            Preconditions.checkArgument(issueYearMonth != null, "issueYearMonth must not be null");
+            Preconditions.checkArgument(issueDayOfMonth >= 1 && issueDayOfMonth <= 31, "issueDayOfMonth must be between 1 and 31");
             Preconditions.checkState(partialTime != null, "Partial time is null, cannot complete");
             Preconditions.checkState(timePattern.pattern().contains("?<hour>"), "The current timePattern " + timePattern + " does not match hour");
             Matcher m = timePattern.matcher(partialTime);
@@ -163,6 +164,19 @@ public abstract class PartialOrCompleteTimeInstance {
 
             ZoneId tzId;
             int minute;
+            int day;
+
+            if (timePattern.pattern().contains("?<day>")) {
+                String ds = m.group("day");
+                if (ds != null) {
+                    day = Integer.parseInt(ds);
+                } else {
+                    day = issueDayOfMonth;
+                }
+            } else {
+                day = issueDayOfMonth;
+            }
+
             int hour = Integer.parseInt(m.group("hour"));
 
             if (timePattern.pattern().contains("?<minute>") && m.group("minute") != null) {
@@ -179,10 +193,14 @@ public abstract class PartialOrCompleteTimeInstance {
             ZonedDateTime completeTime;
             try {
                 if (isMidnight24h()) {
-                    completeTime = ZonedDateTime.of(LocalDateTime.of(yearMonth.getYear(), yearMonth.getMonth(), dayOfMonth, 0, 0), tzId);
+                    completeTime = ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), day, 0, 0), tzId);
                     completeTime.plusDays(1);
                 } else {
-                    completeTime = ZonedDateTime.of(LocalDateTime.of(yearMonth.getYear(), yearMonth.getMonth(), dayOfMonth, hour, minute), tzId);
+                    completeTime = ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), day, hour, minute), tzId);
+                }
+                if (day < issueDayOfMonth) {
+                    //issue day > my current day, assume next month:
+                    completeTime = completeTime.plusMonths(1);
                 }
                 return retval.setCompleteTime(completeTime);
             } catch (DateTimeException dte) {
