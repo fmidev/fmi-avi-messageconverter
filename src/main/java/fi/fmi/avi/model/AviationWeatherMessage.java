@@ -17,16 +17,16 @@ public interface AviationWeatherMessage {
 
     /**
      * Returns the issue time of the message.
-     * It the returned {@link PartialOrCompleteTimeInstance} may or may not contain
+     * It the returned {@link PartialOrCompleteTimeInstant} may or may not contain
      * a completely resolved date time depending on which information it was
      * created with.
      *
      * @return the fully resolved issue time
      *
-     * @see PartialOrCompleteTimeInstance.Builder#completedWithIssueYearMonth(YearMonth)
+     * @see PartialOrCompleteTimeInstant.Builder#completedWithIssueYearMonth(YearMonth)
      *
      */
-    PartialOrCompleteTimeInstance getIssueTime();
+    PartialOrCompleteTimeInstant getIssueTime();
 
     /**
      * Returns the remarks, if included in the message.

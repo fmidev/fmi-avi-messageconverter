@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstance;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 
 /**
  * Created by rinne on 30/01/15.
@@ -17,11 +17,11 @@ public interface TAFAirTemperatureForecast extends AviationCodeListUser {
 
     NumericMeasure getMaxTemperature();
 
-    PartialOrCompleteTimeInstance getMaxTemperatureTime();
+    PartialOrCompleteTimeInstant getMaxTemperatureTime();
 
     NumericMeasure getMinTemperature();
 
-    PartialOrCompleteTimeInstance getMinTemperatureTime();
+    PartialOrCompleteTimeInstant getMinTemperatureTime();
 
     Builder toBuilder();
 

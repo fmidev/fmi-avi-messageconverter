@@ -5,7 +5,7 @@ import org.inferred.freebuilder.FreeBuilder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstance;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 
 /**
@@ -17,7 +17,7 @@ public interface TAFReference {
 
     Aerodrome getAerodrome();
 
-    PartialOrCompleteTimeInstance getIssueTime();
+    PartialOrCompleteTimeInstant getIssueTime();
 
     PartialOrCompleteTimePeriod getValidityTime();
 

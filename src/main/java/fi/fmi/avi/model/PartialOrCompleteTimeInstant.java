@@ -19,12 +19,29 @@ import com.google.common.base.Preconditions;
  * Created by rinne on 27/10/17.
  */
 @FreeBuilder
-@JsonDeserialize(builder = PartialOrCompleteTimeInstance.Builder.class)
-public abstract class PartialOrCompleteTimeInstance {
+@JsonDeserialize(builder = PartialOrCompleteTimeInstant.Builder.class)
+public abstract class PartialOrCompleteTimeInstant {
 
     public static Pattern DAY_HOUR_MINUTE_TZ_PATTERN = Pattern.compile("^(FM)?(?<day>[0-9]{2})?(?<hour>[0-9]{2})(?<minute>[0-9]{2})(?<timezone>[A-Z]+)?$");
     public static Pattern DAY_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<hour>[0-9]{2})$");
     public static Pattern HOUR_PATTERN = Pattern.compile("^(?<hour>[0-9]{2})$");
+    public static Pattern HOUR_MINUTE_PATTERN = Pattern.compile("^(?<hour>[0-9]{2})(?<minute>[0-9]{2})$");
+
+    public static PartialOrCompleteTimeInstant createIssueTime(final String partialDateTime) {
+        return new Builder().setPartialTimePattern(DAY_HOUR_MINUTE_TZ_PATTERN).setPartialTime(partialDateTime).build();
+    }
+
+    public static PartialOrCompleteTimeInstant createDayHourInstant(final String partialDateTime) {
+        return new Builder().setPartialTimePattern(DAY_HOUR_PATTERN).setPartialTime(partialDateTime).build();
+    }
+
+    public static PartialOrCompleteTimeInstant createHourInstant(final String partialDateTime) {
+        return new Builder().setPartialTimePattern(HOUR_PATTERN).setPartialTime(partialDateTime).build();
+    }
+
+    public static PartialOrCompleteTimeInstant createHourMinuteInstant(final String partialDateTime) {
+        return new Builder().setPartialTimePattern(HOUR_MINUTE_PATTERN).setPartialTime(partialDateTime).build();
+    }
 
     /**
      * Indicates the partial time pattern this time instance was created to handle.
@@ -100,26 +117,19 @@ public abstract class PartialOrCompleteTimeInstance {
         }
     }
 
-    public abstract Builder toBuilder();
+    abstract Builder toBuilder();
 
-    public static class Builder extends PartialOrCompleteTimeInstance_Builder {
+    public static class Builder extends PartialOrCompleteTimeInstant_Builder {
 
         @Override
-        public PartialOrCompleteTimeInstance build() {
+        public PartialOrCompleteTimeInstant build() {
             ensureMidnight24Updated();
             return super.build();
         }
 
         @Override
-        public PartialOrCompleteTimeInstance.Builder setPartialTimePattern(final Pattern pattern) {
-            Preconditions.checkArgument(DAY_HOUR_MINUTE_TZ_PATTERN.equals(pattern) || DAY_HOUR_PATTERN.equals(pattern) || HOUR_PATTERN.equals(pattern),
-                    "Pattern must be equal to " + DAY_HOUR_MINUTE_TZ_PATTERN + ", " + DAY_HOUR_PATTERN + ", or " + HOUR_PATTERN);
-            return super.setPartialTimePattern(pattern);
-        }
-
-        @Override
-        public PartialOrCompleteTimeInstance.Builder setCompleteTime(final ZonedDateTime dateTime) {
-            PartialOrCompleteTimeInstance.Builder retval = super.setCompleteTime(dateTime);
+        public PartialOrCompleteTimeInstant.Builder setCompleteTime(final ZonedDateTime dateTime) {
+            PartialOrCompleteTimeInstant.Builder retval = super.setCompleteTime(dateTime);
             String asISODateTime = dateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             if (!getCompleteTimeAsISOString().isPresent() || !getCompleteTimeAsISOString().get().equals(asISODateTime)) {
                 retval = retval.setCompleteTimeAsISOString(asISODateTime);
@@ -128,16 +138,16 @@ public abstract class PartialOrCompleteTimeInstance {
         }
 
         @Override
-        public PartialOrCompleteTimeInstance.Builder setCompleteTimeAsISOString(final String dateTime) {
+        public PartialOrCompleteTimeInstant.Builder setCompleteTimeAsISOString(final String dateTime) {
             ZonedDateTime parsed = ZonedDateTime.parse(dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            PartialOrCompleteTimeInstance.Builder retval = super.setCompleteTimeAsISOString(dateTime);
+            PartialOrCompleteTimeInstant.Builder retval = super.setCompleteTimeAsISOString(dateTime);
             if (!getCompleteTime().isPresent() || !getCompleteTime().get().equals(parsed)) {
                 retval = setCompleteTime(parsed);
             }
             return retval;
         }
 
-        public PartialOrCompleteTimeInstance.Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) throws IllegalArgumentException {
+        public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) throws IllegalArgumentException {
             Pattern timePattern = getPartialTimePattern();
             Preconditions.checkState(timePattern.pattern().contains("?<day>"),
                     "The current timePattern " + timePattern + " does not match dayOfMonth, day " + "must be given to complete. Use method "
@@ -149,9 +159,9 @@ public abstract class PartialOrCompleteTimeInstance {
             return completedWithIssueYearMonthDay(issueYearMonth, Integer.parseInt(m.group("day")));
         }
 
-        public PartialOrCompleteTimeInstance.Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, int issueDayOfMonth)
+        public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, int issueDayOfMonth)
                 throws IllegalArgumentException {
-            PartialOrCompleteTimeInstance.Builder retval = this;
+            PartialOrCompleteTimeInstant.Builder retval = this;
             String partialTime = getPartialTime();
             Pattern timePattern = getPartialTimePattern();
             Preconditions.checkArgument(issueYearMonth != null, "issueYearMonth must not be null");
