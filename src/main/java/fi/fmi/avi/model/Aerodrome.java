@@ -2,12 +2,7 @@ package fi.fmi.avi.model;
 
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-@FreeBuilder
-@JsonDeserialize(builder = Aerodrome.Builder.class)
 public interface Aerodrome {
 
     String getDesignator();
@@ -23,7 +18,4 @@ public interface Aerodrome {
     Optional<GeoPosition> getReferencePoint();
 
 
-    Builder toBuilder();
-    
-    class Builder extends Aerodrome_Builder {}
 }

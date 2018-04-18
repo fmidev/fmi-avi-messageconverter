@@ -16,7 +16,7 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
 
     boolean isAutomatedStation();
 
-    AviationCodeListUser.MetarStatus getStatus();
+    MetarStatus getStatus();
 
     boolean isCeilingAndVisibilityOk();
 
@@ -46,6 +46,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
 
     Optional<List<TrendForecast>> getTrends();
 
-    Optional<AviationCodeListUser.ColorState> getColorState();
+    Optional<ColorState> getColorState();
 
 }

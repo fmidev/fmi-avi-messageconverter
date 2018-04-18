@@ -12,19 +12,28 @@ import java.util.List;
 
 import org.junit.Test;
 
+import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.immutable.CloudForecastImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
-import fi.fmi.avi.model.taf.TAFBaseForecast;
 import fi.fmi.avi.model.taf.TAFChangeForecast;
+import fi.fmi.avi.model.taf.immutable.TAFAirTemperatureForecastImpl;
+import fi.fmi.avi.model.taf.immutable.TAFBaseForecastImpl;
+import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
+import fi.fmi.avi.model.taf.immutable.TAFImpl;
+import fi.fmi.avi.model.taf.immutable.TAFSurfaceWindImpl;
 
 public class TAFTimeReferencesTest {
 
     @Test
     public void testIssueTimeCompletion() {
-        TAF msg = new TAF.Builder().setIssueTime(PartialOrCompleteTimeInstant.createIssueTime("201004Z"))
-                .withCompleteIssueTime(YearMonth.of(2017, Month.DECEMBER))
+        TAF msg = new TAFImpl.Builder()//
+                .setIssueTime(PartialOrCompleteTimeInstant.createIssueTime("201004Z"))//
+                .withCompleteIssueTime(YearMonth.of(2017, Month.DECEMBER))//
                 .buildPartial();
 
         assertTrue(msg.getIssueTime().getPartialTime().equals("201004Z"));
@@ -41,8 +50,9 @@ public class TAFTimeReferencesTest {
 
     @Test
     public void testCompleteMessageValidTime() {
-        TAF msg = new TAF.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("3118/0118"))
-                .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))
+        TAF msg = new TAFImpl.Builder()//
+                .setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("3118/0118"))//
+                .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))//
                 .buildPartial();
 
         ZonedDateTime toMatch = ZonedDateTime.of(2017, 12, 31, 18, 0, 0, 0, ZoneId.of("Z"));
@@ -70,12 +80,25 @@ public class TAFTimeReferencesTest {
     @Test
     public void testCompleteChangeFctValidTimes() {
         List<TAFChangeForecast> changeForecasts = new ArrayList<>();
-        changeForecasts.add(new TAFChangeForecast.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("3119/3124")).buildPartial());
-        changeForecasts.add(new TAFChangeForecast.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("0100/0106")).buildPartial());
-        changeForecasts.add(new TAFChangeForecast.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("0102/0112")).buildPartial());
+        changeForecasts.add(new TAFChangeForecastImpl.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("3119/3124"))//
+                .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.FROM)//
+                .setCeilingAndVisibilityOk(true)//
+                .setNoSignificantWeather(true)//
+                .build());
+        changeForecasts.add(new TAFChangeForecastImpl.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("0100/0106"))//
+                .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.FROM)//
+                .setCeilingAndVisibilityOk(true)//
+                .setNoSignificantWeather(true)//
+                .build());
+        changeForecasts.add(new TAFChangeForecastImpl.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("0102/0112"))//
+                .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.FROM)//
+                .setCeilingAndVisibilityOk(true)//
+                .setNoSignificantWeather(true)//
+                .build());
 
-        TAF msg = new TAF.Builder().setChangeForecasts(changeForecasts)
-                .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))
+        TAF msg = new TAFImpl.Builder()//
+                .setChangeForecasts(changeForecasts)//
+                .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))//
                 .buildPartial();
 
         assertTrue(msg.getChangeForecasts().isPresent());
@@ -139,12 +162,34 @@ public class TAFTimeReferencesTest {
     @Test
     public void testCompleteTempFctTimes() {
         List<TAFAirTemperatureForecast> temperatures = new ArrayList<>();
-        temperatures.add(new TAFAirTemperatureForecast.Builder().setMaxTemperatureTime(PartialOrCompleteTimeInstant.createDayHourInstant("3118"))
-                .setMinTemperatureTime(PartialOrCompleteTimeInstant.createDayHourInstant("0104"))
-                .buildPartial());
+        temperatures.add(new TAFAirTemperatureForecastImpl.Builder()//
+                .setMaxTemperatureTime(PartialOrCompleteTimeInstant.createDayHourInstant("3118"))//
+                .setMaxTemperature(new NumericMeasureImpl.Builder().setUom("degC").setValue(2.0).build())//
+                .setMinTemperatureTime(PartialOrCompleteTimeInstant.createDayHourInstant("0104"))//
+                .setMinTemperature(new NumericMeasureImpl.Builder().setUom("degC").setValue(-1.0).build())//
+                .build());
 
-        TAF msg = new TAF.Builder().setBaseForecast(new TAFBaseForecast.Builder().setTemperatures(temperatures).buildPartial())
-                .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))
+        TAF msg = new TAFImpl.Builder()//
+                .setAerodrome(new AerodromeImpl.Builder()//
+                        .setDesignator("EKHF")//
+                        .build())//
+                .setTranslated(false)//
+                .setStatus(AviationCodeListUser.TAFStatus.NORMAL)//
+                .setBaseForecast(new TAFBaseForecastImpl.Builder()//
+                        .setTemperatures(temperatures)//
+                        .setCeilingAndVisibilityOk(true)//
+                        .setPrevailingVisibility(new NumericMeasureImpl.Builder().setUom("m").setValue(8000.0).build())//
+                        .setSurfaceWind(new TAFSurfaceWindImpl.Builder()//
+                                .setMeanWindDirection(new NumericMeasureImpl.Builder().setUom("deg").setValue(180.0).build())//
+                                .setMeanWindSpeed(new NumericMeasureImpl.Builder().setUom("kt").setValue(15.0).build())//
+                                .setVariableDirection(false)//
+                                .build())//
+                        .setNoSignificantWeather(true)//
+                        .setCloud(new CloudForecastImpl.Builder()//
+                                .setNoSignificantCloud(true)//
+                                .build())//
+                        .build())//
+                .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))//
                 .buildPartial();
 
         assertTrue(msg.getBaseForecast().isPresent());

@@ -10,12 +10,14 @@ import java.util.regex.Pattern;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 
 /**
  * Created by rinne on 04/04/2018.
  */
 @FreeBuilder
+@JsonDeserialize(builder = PartialOrCompleteTimePeriod.Builder.class)
 public abstract class PartialOrCompleteTimePeriod {
 
     public static Pattern DAY_HOUR_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<startHour>[0-9]{2})(?<endHour>[0-9]{2})$");

@@ -2,16 +2,10 @@ package fi.fmi.avi.model.metar;
 
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.RunwayDirection;
 
-@FreeBuilder
-@JsonDeserialize(builder = RunwayState.Builder.class)
 public interface RunwayState extends AviationCodeListUser {
 
     boolean isAppliedToAllRunways();
@@ -41,10 +35,5 @@ public interface RunwayState extends AviationCodeListUser {
     Optional<Double> getEstimatedSurfaceFriction();
 
     Optional<BreakingAction> getBreakingAction();
-
-    Builder toBuilder();
-
-    class Builder extends RunwayState_Builder {
-    }
 
 }
