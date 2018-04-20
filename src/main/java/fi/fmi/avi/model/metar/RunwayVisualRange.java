@@ -10,7 +10,7 @@ public interface RunwayVisualRange extends AviationCodeListUser {
 
     RunwayDirection getRunwayDirection();
 
-    NumericMeasure getMeanRVR();
+    Optional<NumericMeasure> getMeanRVR();
 
     Optional<NumericMeasure> getVaryingRVRMinimum();
 

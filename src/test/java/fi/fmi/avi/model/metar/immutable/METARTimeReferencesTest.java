@@ -27,7 +27,8 @@ public class METARTimeReferencesTest {
                 .withCompleteIssueTime(YearMonth.of(2017, Month.DECEMBER))//
                 .buildPartial();
 
-        assertTrue(msg.getIssueTime().getPartialTime().equals("311004Z"));
+        assertTrue(msg.getIssueTime().getPartialTime().isPresent());
+        assertTrue(msg.getIssueTime().getPartialTime().get().equals("311004Z"));
         PartialOrCompleteTimeInstant it = msg.getIssueTime();
 
         ZonedDateTime toMatch = ZonedDateTime.of(2017, 12, 31, 10, 4, 0, 0, ZoneId.of("Z"));

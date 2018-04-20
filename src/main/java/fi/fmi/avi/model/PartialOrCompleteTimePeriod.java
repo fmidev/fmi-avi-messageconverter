@@ -84,19 +84,18 @@ public abstract class PartialOrCompleteTimePeriod {
 
     private static KeyPeriodPair completePartialTimeReferenceInternal(final PartialOrCompleteTimePeriod input, final ZonedDateTime key) {
         KeyPeriodPair retval = new KeyPeriodPair();
-        ZonedDateTime ref = ZonedDateTime.from(key);
         if (input != null) {
             if (input.getStartTime().isPresent()) {
                 KeyInstantPair startTimePair = completeSingularTime(input.getStartTime().get(), key);
                 PartialOrCompleteTimeInstant startTime = startTimePair.instant;
-                ref = startTimePair.key;
+                ZonedDateTime ref = startTimePair.key;
 
                 if (input.getEndTime().isPresent()) {
                     ref = ZonedDateTime.of(LocalDateTime.from(startTime.getCompleteTime().get()), ref.getZone());
                     PartialOrCompleteTimeInstant endTimeToSet = input.getEndTime().get();
-                    int endHour = endTimeToSet.partialTimeHour();
-                    int endDay = endTimeToSet.partialTimeDay();
-                    int endMinute = endTimeToSet.partialTimeMinute();
+                    int endHour = endTimeToSet.getHour();
+                    int endDay = endTimeToSet.getDay();
+                    int endMinute = endTimeToSet.getMinute();
                     if (endMinute == -1) {
                         endMinute = 0;
                     }
@@ -139,9 +138,9 @@ public abstract class PartialOrCompleteTimePeriod {
     private static KeyInstantPair completeSingularTime(final PartialOrCompleteTimeInstant input, final ZonedDateTime reference) {
         KeyInstantPair retval = new KeyInstantPair();
         retval.key = ZonedDateTime.from(reference);
-        int hour = input.partialTimeHour();
-        int day = input.partialTimeDay();
-        int minute = input.partialTimeMinute();
+        int hour = input.getHour();
+        int day = input.getDay();
+        int minute = input.getMinute();
         if (minute == -1) {
             minute = 0;
         }

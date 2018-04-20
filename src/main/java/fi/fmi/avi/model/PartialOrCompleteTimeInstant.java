@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -50,7 +52,7 @@ public abstract class PartialOrCompleteTimeInstant {
      *
      * @return the time format pattern
      */
-    public abstract Pattern getPartialTimePattern();
+    public abstract Optional<Pattern> getPartialTimePattern();
 
     /**
      * Returns the partial part of this time instance as String.
@@ -58,7 +60,7 @@ public abstract class PartialOrCompleteTimeInstant {
      *
      * @return the partial time instance as String.
      */
-    public abstract String getPartialTime();
+    public abstract Optional<String> getPartialTime();
 
     /**
      * Returns the fully resolved time of this instance, if available.
@@ -84,37 +86,46 @@ public abstract class PartialOrCompleteTimeInstant {
      */
     public abstract boolean isMidnight24h();
 
-    public int partialTimeMinute() {
-        Pattern timePattern = getPartialTimePattern();
-        if (timePattern.pattern().contains("?<minute>")) {
-            Matcher m = timePattern.matcher(this.getPartialTime());
-            Preconditions.checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
-            return Integer.parseInt(m.group("minute"));
-        } else {
-            return -1;
+    public int getMinute() {
+        if (getCompleteTime().isPresent()) {
+            return getCompleteTime().get().getMinute();
+        } else if (getPartialTime().isPresent() && getPartialTimePattern().isPresent()) {
+            Pattern timePattern = getPartialTimePattern().get();
+            if (timePattern.pattern().contains("?<minute>")) {
+                Matcher m = timePattern.matcher(this.getPartialTime().get());
+                checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
+                return Integer.parseInt(m.group("minute"));
+            }
         }
+        return -1;
     }
 
-    public int partialTimeHour() {
-        Pattern timePattern = getPartialTimePattern();
-        if (timePattern.pattern().contains("?<hour>")) {
-            Matcher m = timePattern.matcher(getPartialTime());
-            Preconditions.checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
-            return Integer.parseInt(m.group("hour"));
-        } else {
-            return -1;
+    public int getHour() {
+        if (getCompleteTime().isPresent()) {
+            return getCompleteTime().get().getHour();
+        } else if (getPartialTime().isPresent() && getPartialTimePattern().isPresent()) {
+            Pattern timePattern = getPartialTimePattern().get();
+            if (timePattern.pattern().contains("?<hour>")) {
+                Matcher m = timePattern.matcher(getPartialTime().get());
+                checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
+                return Integer.parseInt(m.group("hour"));
+            }
         }
+        return -1;
     }
 
-    public int partialTimeDay() {
-        Pattern timePattern = getPartialTimePattern();
-        if (timePattern.pattern().contains("?<day>")) {
-            Matcher m = timePattern.matcher(getPartialTime());
-            Preconditions.checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
-            return Integer.parseInt(m.group("day"));
-        } else {
-            return -1;
+    public int getDay() {
+        if (getCompleteTime().isPresent()) {
+            return getCompleteTime().get().getDayOfMonth();
+        } else if (getPartialTime().isPresent() && getPartialTimePattern().isPresent()) {
+            Pattern timePattern = getPartialTimePattern().get();
+            if (timePattern.pattern().contains("?<day>")) {
+                Matcher m = timePattern.matcher(getPartialTime().get());
+                checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
+                return Integer.parseInt(m.group("day"));
+            }
         }
+        return -1;
     }
 
     abstract Builder toBuilder();
@@ -148,28 +159,30 @@ public abstract class PartialOrCompleteTimeInstant {
         }
 
         public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) throws IllegalArgumentException {
-            Pattern timePattern = getPartialTimePattern();
-            Preconditions.checkState(timePattern.pattern().contains("?<day>"),
+            checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
+            Pattern timePattern = getPartialTimePattern().get();
+            checkState(timePattern.pattern().contains("?<day>"),
                     "The current timePattern " + timePattern + " does not match dayOfMonth, day " + "must be given to complete. Use method "
                             + "completeWithYearMonthDay(YearMonth, int) or fix the timePattern");
-            Matcher m = getPartialTimePattern().matcher(getPartialTime());
-            Preconditions.checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
-            Preconditions.checkState(m.group("day") != null,
+            Matcher m = timePattern.matcher(getPartialTime().get());
+            checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
+            checkState(m.group("day") != null,
                     "Partial time does not contain dayOfMonth, use method " + "completeWithYearMonthDay(YearMonth, int)");
             return completedWithIssueYearMonthDay(issueYearMonth, Integer.parseInt(m.group("day")));
         }
 
         public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, int issueDayOfMonth)
                 throws IllegalArgumentException {
+            checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
             PartialOrCompleteTimeInstant.Builder retval = this;
-            String partialTime = getPartialTime();
-            Pattern timePattern = getPartialTimePattern();
+            String partialTime = getPartialTime().get();
+            Pattern timePattern = getPartialTimePattern().get();
             Preconditions.checkArgument(issueYearMonth != null, "issueYearMonth must not be null");
             Preconditions.checkArgument(issueDayOfMonth >= 1 && issueDayOfMonth <= 31, "issueDayOfMonth must be between 1 and 31");
-            Preconditions.checkState(partialTime != null, "Partial time is null, cannot complete");
-            Preconditions.checkState(timePattern.pattern().contains("?<hour>"), "The current timePattern " + timePattern + " does not match hour");
+            checkState(partialTime != null, "Partial time is null, cannot complete");
+            checkState(timePattern.pattern().contains("?<hour>"), "The current timePattern " + timePattern + " does not match hour");
             Matcher m = timePattern.matcher(partialTime);
-            Preconditions.checkState(m.matches(), "Partial time '" + partialTime + "' does not match timePattern '" + timePattern + "'");
+            checkState(m.matches(), "Partial time '" + partialTime + "' does not match timePattern '" + timePattern + "'");
             ensureMidnight24Updated();
 
             ZoneId tzId;
@@ -219,13 +232,12 @@ public abstract class PartialOrCompleteTimeInstant {
         }
 
         private void ensureMidnight24Updated() {
-            Pattern timePattern = getPartialTimePattern();
-            String partialTime = getPartialTime();
-            Preconditions.checkNotNull(timePattern, "partialTimePattern must be set at this point");
-            Preconditions.checkNotNull(partialTime, "partialTime must be set at this point");
-            Preconditions.checkState(timePattern.pattern().contains("?<hour>"), "The current timePattern " + timePattern + " does not match hour");
+            checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
+            Pattern timePattern = getPartialTimePattern().get();
+            String partialTime = getPartialTime().get();
+            checkState(timePattern.pattern().contains("?<hour>"), "The current timePattern " + timePattern + " does not match hour");
             Matcher m = timePattern.matcher(partialTime);
-            Preconditions.checkState(m.matches(), "Partial time '" + partialTime + "' does not match timePattern '" + timePattern + "'");
+            checkState(m.matches(), "Partial time '" + partialTime + "' does not match timePattern '" + timePattern + "'");
             int hour = Integer.parseInt(m.group("hour"));
             int minute;
             if (timePattern.pattern().contains("?<minute>") && m.group("minute") != null) {
