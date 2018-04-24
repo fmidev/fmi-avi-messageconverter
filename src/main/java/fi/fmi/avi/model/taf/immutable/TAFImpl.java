@@ -17,6 +17,7 @@ import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.taf.TAF;
@@ -101,11 +102,12 @@ public abstract class TAFImpl implements TAF, Serializable {
             }
             if (getChangeForecasts().isPresent() && !getChangeForecasts().get().isEmpty()) {
                 List<TAFChangeForecast> oldFcts = getChangeForecasts().get();
-                List<PartialOrCompleteTimePeriod> list = oldFcts.stream().map(TAFChangeForecast::getValidityTime).collect(Collectors.toList());
+                List<PartialOrCompleteTime> list = oldFcts.stream().map(TAFChangeForecast::getValidityTime).collect(Collectors.toList());
                 list = PartialOrCompleteTimePeriod.completePartialTimeReferenceList(list, approximateIssueTime);
                 List<TAFChangeForecast> newFcts = new ArrayList<>();
                 for (int i = 0; i < list.size(); i++) {
-                    newFcts.add(TAFChangeForecastImpl.Builder.from(oldFcts.get(i)).setValidityTime(list.get(i)).build());
+                    PartialOrCompleteTime time = list.get(i);
+                    newFcts.add(TAFChangeForecastImpl.Builder.from(oldFcts.get(i)).setValidityTime((PartialOrCompleteTimePeriod) time).build());
                 }
                 retval = retval.setChangeForecasts(newFcts);
             }

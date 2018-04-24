@@ -22,7 +22,7 @@ import com.google.common.base.Preconditions;
  */
 @FreeBuilder
 @JsonDeserialize(builder = PartialOrCompleteTimeInstant.Builder.class)
-public abstract class PartialOrCompleteTimeInstant {
+public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime {
 
     public static Pattern DAY_HOUR_MINUTE_TZ_PATTERN = Pattern.compile("^(FM)?(?<day>[0-9]{2})?(?<hour>[0-9]{2})(?<minute>[0-9]{2})(?<timezone>[A-Z]+)?$");
     public static Pattern DAY_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<hour>[0-9]{2})$");
@@ -131,6 +131,17 @@ public abstract class PartialOrCompleteTimeInstant {
     abstract Builder toBuilder();
 
     public static class Builder extends PartialOrCompleteTimeInstant_Builder {
+
+        public static Pattern TREND_TIME_GROUP = Pattern.compile("^(?<kind>AT)(?<hour>[0-9]{2})(?<minute>[0-9]{2})$");
+
+        public Builder withTrendTimeGroupToken(final String token) {
+            Matcher m = TREND_TIME_GROUP.matcher(token);
+            if (m.matches()) {
+                return setPartialTimePattern(HOUR_MINUTE_PATTERN).setPartialTime(m.group("hour") + m.group("minute"));
+            } else {
+                throw new IllegalArgumentException("token does not match pattern " + TREND_TIME_GROUP);
+            }
+        }
 
         @Override
         public PartialOrCompleteTimeInstant build() {

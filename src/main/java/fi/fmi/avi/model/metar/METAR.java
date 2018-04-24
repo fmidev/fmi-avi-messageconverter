@@ -5,5 +5,7 @@ package fi.fmi.avi.model.metar;
  */
 public interface METAR extends MeteorologicalTerminalAirReport {
 
+    boolean isSpecial();
+
     boolean isRoutineDelayed();
 }

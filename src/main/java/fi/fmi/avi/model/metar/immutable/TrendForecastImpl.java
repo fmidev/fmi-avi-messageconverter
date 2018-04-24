@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.metar.immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -39,7 +40,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
     public static class Builder extends TrendForecastImpl_Builder {
 
         public static Builder from(final TrendForecast value) {
-            return new TrendForecastImpl.Builder().setValidityTime(value.getValidityTime())
+            return new TrendForecastImpl.Builder().setPeriodOfChange(value.getPeriodOfChange()).setInstantOfChange(value.getInstantOfChange())
                     .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())
                     .setChangeIndicator(value.getChangeIndicator())
                     .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
@@ -47,6 +48,12 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
                     .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
                     .setSurfaceWind(TrendForecastSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))
                     .setCloud(CloudForecastImpl.immutableCopyOf(value.getCloud()));
+        }
+
+        @Override
+        public TrendForecastImpl build() {
+            checkState(!(getPeriodOfChange().isPresent() && getInstantOfChange().isPresent()), "Both the period and the instant of change cannot be set");
+            return super.build();
         }
 
     }

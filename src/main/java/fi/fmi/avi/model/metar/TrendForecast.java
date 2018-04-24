@@ -6,12 +6,15 @@ import java.util.Optional;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.Weather;
 
 public interface TrendForecast extends AviationCodeListUser {
 
-    PartialOrCompleteTimePeriod getValidityTime();
+    Optional<PartialOrCompleteTimePeriod> getPeriodOfChange();
+
+    Optional<PartialOrCompleteTimeInstant> getInstantOfChange();
 
     boolean isCeilingAndVisibilityOk();
 

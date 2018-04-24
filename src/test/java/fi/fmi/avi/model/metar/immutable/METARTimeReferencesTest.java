@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -43,7 +44,7 @@ public class METARTimeReferencesTest {
     @Test
     public void testTrendValidTimeCompletion() {
         List<TrendForecast> changeForecasts = new ArrayList<>();
-        changeForecasts.add(new TrendForecastImpl.Builder().setValidityTime(new PartialOrCompleteTimePeriod.Builder()//
+        changeForecasts.add(new TrendForecastImpl.Builder().setPeriodOfChange(new PartialOrCompleteTimePeriod.Builder()//
                 .withTrendTimeGroupToken("FM1130")//
                 .withTrendTimeGroupToken("TL1300")//
                 .build())//
@@ -51,12 +52,14 @@ public class METARTimeReferencesTest {
                 .setChangeIndicator(AviationCodeListUser.TrendForecastChangeIndicator.TEMPORARY_FLUCTUATIONS)
                 .setNoSignificantWeather(true)
                 .build());
-        changeForecasts.add(new TrendForecastImpl.Builder().setValidityTime(new PartialOrCompleteTimePeriod.Builder().withTrendTimeGroupToken("TL0900").build())
+        changeForecasts.add(
+                new TrendForecastImpl.Builder().setPeriodOfChange(new PartialOrCompleteTimePeriod.Builder().withTrendTimeGroupToken("TL0900").build())
                 .setCeilingAndVisibilityOk(true)
                 .setChangeIndicator(AviationCodeListUser.TrendForecastChangeIndicator.TEMPORARY_FLUCTUATIONS)
                 .setNoSignificantWeather(true)
                 .build());
-        changeForecasts.add(new TrendForecastImpl.Builder().setValidityTime(new PartialOrCompleteTimePeriod.Builder().withTrendTimeGroupToken("AT1200").build())
+        changeForecasts.add(
+                new TrendForecastImpl.Builder().setInstantOfChange(new PartialOrCompleteTimeInstant.Builder().withTrendTimeGroupToken("AT1200").build())
                 .setCeilingAndVisibilityOk(true)
                 .setChangeIndicator(AviationCodeListUser.TrendForecastChangeIndicator.TEMPORARY_FLUCTUATIONS)
                 .setNoSignificantWeather(true)
@@ -72,47 +75,49 @@ public class METARTimeReferencesTest {
 
         //Validity time of the 1st trend forecast:
         TrendForecast fct = msg.getTrends().get().get(0);
-        PartialOrCompleteTimePeriod validityTime = fct.getValidityTime();
+        Optional<PartialOrCompleteTimePeriod> period = fct.getPeriodOfChange();
+        assertTrue(period.isPresent());
         ZonedDateTime toMatch = ZonedDateTime.of(2017, 12, 31, 11, 30, 0, 0, ZoneId.of("Z"));
-        assertTrue(validityTime.getStartTime().isPresent());
-        assertFalse(validityTime.getStartTime().get().isMidnight24h());
-        assertTrue(validityTime.getStartTime().get().getCompleteTime().isPresent());
-        assertTrue(validityTime.getStartTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().get().equals("2017-12-31T11:30:00Z"));
+        assertTrue(period.get().getStartTime().isPresent());
+        assertFalse(period.get().getStartTime().get().isMidnight24h());
+        assertTrue(period.get().getStartTime().get().getCompleteTime().isPresent());
+        assertTrue(period.get().getStartTime().get().getCompleteTime().get().equals(toMatch));
+        assertTrue(period.get().getStartTime().get().getCompleteTimeAsISOString().isPresent());
+        assertTrue(period.get().getStartTime().get().getCompleteTimeAsISOString().get().equals("2017-12-31T11:30:00Z"));
         toMatch = ZonedDateTime.of(2017, 12, 31, 13, 00, 0, 0, ZoneId.of("Z"));
-        assertTrue(validityTime.getEndTime().isPresent());
-        assertFalse(validityTime.getEndTime().get().isMidnight24h());
-        assertTrue(validityTime.getEndTime().get().getCompleteTime().isPresent());
-        assertTrue(validityTime.getEndTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().get().equals("2017-12-31T13:00:00Z"));
+        assertTrue(period.get().getEndTime().isPresent());
+        assertFalse(period.get().getEndTime().get().isMidnight24h());
+        assertTrue(period.get().getEndTime().get().getCompleteTime().isPresent());
+        assertTrue(period.get().getEndTime().get().getCompleteTime().get().equals(toMatch));
+        assertTrue(period.get().getEndTime().get().getCompleteTimeAsISOString().isPresent());
+        assertTrue(period.get().getEndTime().get().getCompleteTimeAsISOString().get().equals("2017-12-31T13:00:00Z"));
 
         //Validity time of the 2nd trend forecast:
         fct = msg.getTrends().get().get(1);
-        validityTime = fct.getValidityTime();
+        period = fct.getPeriodOfChange();
         toMatch = ZonedDateTime.of(2018, 1, 1, 9, 0, 0, 0, ZoneId.of("Z"));
-        assertFalse(validityTime.getStartTime().isPresent());
+        assertTrue(period.isPresent());
+        assertFalse(period.get().getStartTime().isPresent());
 
-        assertTrue(validityTime.getEndTime().isPresent());
-        assertFalse(validityTime.getEndTime().get().isMidnight24h());
-        assertTrue(validityTime.getEndTime().get().getCompleteTime().isPresent());
-        assertTrue(validityTime.getEndTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T09:00:00Z"));
+        assertTrue(period.get().getEndTime().isPresent());
+        assertFalse(period.get().getEndTime().get().isMidnight24h());
+        assertTrue(period.get().getEndTime().get().getCompleteTime().isPresent());
+        assertTrue(period.get().getEndTime().get().getCompleteTime().get().equals(toMatch));
+        assertTrue(period.get().getEndTime().get().getCompleteTimeAsISOString().isPresent());
+        assertTrue(period.get().getEndTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T09:00:00Z"));
 
         //Validity time of the 3rd trend forecast:
         fct = msg.getTrends().get().get(2);
-        validityTime = fct.getValidityTime();
+        assertFalse(fct.getPeriodOfChange().isPresent());
+        Optional<PartialOrCompleteTimeInstant> instant = fct.getInstantOfChange();
         toMatch = ZonedDateTime.of(2018, 1, 1, 12, 0, 0, 0, ZoneId.of("Z"));
-        assertTrue(validityTime.getStartTime().isPresent());
-        assertFalse(validityTime.getStartTime().get().isMidnight24h());
-        assertTrue(validityTime.getStartTime().get().getCompleteTime().isPresent());
-        assertTrue(validityTime.getStartTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T12:00:00Z"));
+        assertTrue(instant.isPresent());
+        assertFalse(instant.get().isMidnight24h());
+        assertTrue(instant.get().getCompleteTime().isPresent());
+        assertTrue(instant.get().getCompleteTime().get().equals(toMatch));
+        assertTrue(instant.get().getCompleteTimeAsISOString().isPresent());
+        assertTrue(instant.get().getCompleteTimeAsISOString().get().equals("2018-01-01T12:00:00Z"));
 
-        assertFalse(validityTime.getEndTime().isPresent());
 
     }
 
