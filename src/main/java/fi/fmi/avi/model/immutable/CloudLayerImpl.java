@@ -33,7 +33,7 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
         return cloudLayer.map(CloudLayerImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends CloudLayerImpl_Builder {
 

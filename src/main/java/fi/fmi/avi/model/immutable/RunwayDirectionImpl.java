@@ -32,7 +32,7 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
         return runwayDirection.map(RunwayDirectionImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends RunwayDirectionImpl_Builder {
 

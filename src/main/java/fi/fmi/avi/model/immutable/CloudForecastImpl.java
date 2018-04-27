@@ -34,7 +34,7 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
         return cloudForecast.map(CloudForecastImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends CloudForecastImpl_Builder {
 

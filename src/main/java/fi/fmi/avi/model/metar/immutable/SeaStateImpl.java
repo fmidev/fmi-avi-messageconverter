@@ -33,7 +33,7 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
         return seaState.map(SeaStateImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends SeaStateImpl_Builder {
 

@@ -33,7 +33,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
         return horizontalVisibility.map(HorizontalVisibilityImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends HorizontalVisibilityImpl_Builder {
 

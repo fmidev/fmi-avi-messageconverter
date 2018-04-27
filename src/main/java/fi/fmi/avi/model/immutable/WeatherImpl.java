@@ -32,7 +32,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
         return weather.map(WeatherImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends WeatherImpl_Builder {
 

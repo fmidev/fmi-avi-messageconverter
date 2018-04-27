@@ -33,7 +33,7 @@ public abstract class TAFSurfaceWindImpl implements TAFSurfaceWind, Serializable
         return surfaceWind.map(TAFSurfaceWindImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends TAFSurfaceWindImpl_Builder {
 

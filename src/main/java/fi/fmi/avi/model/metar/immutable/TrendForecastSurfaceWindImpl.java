@@ -33,7 +33,7 @@ public abstract class TrendForecastSurfaceWindImpl implements TrendForecastSurfa
         return surfaceWind.map(TrendForecastSurfaceWindImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends TrendForecastSurfaceWindImpl_Builder {
 

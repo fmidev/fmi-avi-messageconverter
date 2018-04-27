@@ -33,7 +33,7 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
         return airTemperatureForecast.map(TAFAirTemperatureForecastImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends TAFAirTemperatureForecastImpl_Builder {
 

@@ -32,7 +32,7 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
         return aerodrome.map(AerodromeImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends AerodromeImpl_Builder {
 

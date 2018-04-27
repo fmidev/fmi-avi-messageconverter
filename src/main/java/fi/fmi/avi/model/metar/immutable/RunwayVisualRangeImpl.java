@@ -43,7 +43,7 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
         return runwayVisualRange.map(RunwayVisualRangeImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends RunwayVisualRangeImpl_Builder {
 

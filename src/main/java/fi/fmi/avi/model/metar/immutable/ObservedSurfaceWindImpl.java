@@ -34,7 +34,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
         return observedSurfaceWind.map(ObservedSurfaceWindImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends ObservedSurfaceWindImpl_Builder {
 

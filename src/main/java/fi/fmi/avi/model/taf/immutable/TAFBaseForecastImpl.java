@@ -37,7 +37,7 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
         return baseForecast.map(TAFBaseForecastImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends TAFBaseForecastImpl_Builder {
 

@@ -37,7 +37,7 @@ public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serial
         return changeForecast.map(TAFChangeForecastImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends TAFChangeForecastImpl_Builder {
 

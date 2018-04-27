@@ -35,7 +35,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
         return trendForecast.map(TrendForecastImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends TrendForecastImpl_Builder {
 

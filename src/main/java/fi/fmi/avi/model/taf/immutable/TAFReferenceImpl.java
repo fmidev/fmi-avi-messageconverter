@@ -33,7 +33,7 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
         return tafReference.map(TAFReferenceImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends TAFReferenceImpl_Builder {
 

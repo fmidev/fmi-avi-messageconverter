@@ -1,8 +1,12 @@
 package fi.fmi.avi.model.metar.immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -13,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import fi.fmi.avi.model.metar.SPECI;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -27,23 +32,40 @@ import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReport;
 import fi.fmi.avi.model.metar.TrendForecast;
 
+import javax.swing.plaf.ButtonUI;
+
 @FreeBuilder
 @JsonDeserialize(builder = METARImpl.Builder.class)
 public abstract class METARImpl implements METAR, Serializable, MeteorologicalTerminalAirReport {
 
-    public static METARImpl immutableCopyOf(final METAR metar) {
-        checkNotNull(metar);
-        if (metar instanceof METARImpl) {
-            return (METARImpl) metar;
+    public static METARImpl immutableCopyOf(final MeteorologicalTerminalAirReport msg) {
+        checkNotNull(msg);
+        if (msg instanceof METAR) {
+            if (msg instanceof METARImpl) {
+                return (METARImpl) msg;
+            } else {
+                return Builder.from((METAR)msg).build();
+            }
+        } else if (msg instanceof SPECI) {
+            try {
+                InvocationHandler handler = Proxy.getInvocationHandler(msg);
+                if (handler instanceof SPECIInvocationHandler) {
+                    //msg is a SPECI proxy, return the internal delegate:
+                    return ((SPECIInvocationHandler) handler).getDelegate();
+                }
+            } catch (IllegalArgumentException iae) {}
+            //msg is not a SPECI proxy instance, fallback to regular copy:
+            return Builder.from((SPECI)msg).build();
         } else {
-            return Builder.from(metar).build();
+            throw new IllegalArgumentException("original is neither a METAR or a SPECI, cannot create a copy");
         }
     }
 
-    public static Optional<METARImpl> immutableCopyOf(final Optional<METAR> metar) {
+    public static Optional<METARImpl> immutableCopyOf(final Optional<MeteorologicalTerminalAirReport> metar) {
         checkNotNull(metar);
         return metar.map(METARImpl::immutableCopyOf);
     }
+
 
     protected static Optional<List<TrendForecast>> getTimeCompletedTrends(final List<TrendForecast> oldTrends, final YearMonth issueYearMonth, int issueDay,
             int issueHour, final ZoneId tz) throws IllegalArgumentException {
@@ -73,11 +95,24 @@ public abstract class METARImpl implements METAR, Serializable, MeteorologicalTe
         return retval;
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends METARImpl_Builder {
+        public Builder() {
+            setRoutineDelayed(false);
+        }
 
-        public static Builder from(final METAR value) {
+        public SPECI buildAsSPECI() {
+            checkState(!isRoutineDelayed(),"Routine delayed (RTD) is true, cannot build as SPECI");
+            return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[]{SPECI.class}, new SPECIInvocationHandler(this.build()));
+        }
+
+        public SPECI buildPartialAsSPECI() {
+            checkState(!isRoutineDelayed(),"Routine delayed (RTD) is true, cannot build as SPECI");
+            return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[]{SPECI.class}, new SPECIInvocationHandler(this.buildPartial()));
+        }
+
+        private static Builder from(final MeteorologicalTerminalAirReport value) {
             //From AviationWeatherMessage:
             METARImpl.Builder retval = new METARImpl.Builder().setIssueTime(value.getIssueTime())
                     .setPermissibleUsage(value.getPermissibleUsage())
@@ -131,10 +166,18 @@ public abstract class METARImpl implements METAR, Serializable, MeteorologicalTe
             value.getTrends()
                     .map(trends -> retval.setTrends(
                             Collections.unmodifiableList(trends.stream().map(TrendForecastImpl::immutableCopyOf).collect(Collectors.toList()))));
+            return retval;
+        }
 
-            //From METAR:
+        public static Builder from(final METAR value) {
+            Builder retval = from(value);
             retval.setRoutineDelayed(value.isRoutineDelayed());
+            return retval;
+        }
 
+        public static Builder from(final SPECI value) {
+            Builder retval = from(value);
+            retval.setRoutineDelayed(false);
             return retval;
         }
 
@@ -149,6 +192,25 @@ public abstract class METARImpl implements METAR, Serializable, MeteorologicalTe
         public Builder withCompleteIssueTime(final YearMonth yearMonth) throws IllegalArgumentException {
             return mutateIssueTime((input) -> input.completedWithIssueYearMonth(yearMonth));
         }
+    }
+
+    static class SPECIInvocationHandler implements InvocationHandler {
+        private METARImpl delegate;
+
+        SPECIInvocationHandler(final METARImpl delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            Method delegateMethod = METARImpl.class.getMethod(method.getName(), method.getParameterTypes());
+            return delegateMethod.invoke(delegate, args);
+        }
+
+        METARImpl getDelegate() {
+            return delegate;
+        }
+
     }
 
 }

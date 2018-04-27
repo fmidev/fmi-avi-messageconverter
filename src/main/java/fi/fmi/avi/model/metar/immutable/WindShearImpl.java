@@ -36,7 +36,7 @@ public abstract class WindShearImpl implements WindShear, Serializable {
         return windShear.map(WindShearImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends WindShearImpl_Builder {
 

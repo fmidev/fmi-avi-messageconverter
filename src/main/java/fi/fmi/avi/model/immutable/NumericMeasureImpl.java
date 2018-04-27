@@ -19,6 +19,14 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonDeserialize(builder = NumericMeasureImpl.Builder.class)
 public abstract class NumericMeasureImpl implements NumericMeasure, Serializable {
 
+    public static NumericMeasureImpl of(final Integer value, final String uom) {
+        return new Builder().setValue(value.doubleValue()).setUom(uom).build();
+    }
+
+    public static NumericMeasureImpl of(final Double value, final String uom) {
+        return new Builder().setValue(value).setUom(uom).build();
+    }
+
     public static NumericMeasureImpl immutableCopyOf(final NumericMeasure numericMeasure) {
         checkNotNull(numericMeasure);
         if (numericMeasure instanceof NumericMeasureImpl) {
@@ -32,7 +40,7 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
         return numericMeasure.map(NumericMeasureImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends NumericMeasureImpl_Builder {
 

@@ -33,7 +33,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
         return runwayState.map(RunwayStateImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends RunwayStateImpl_Builder {
 

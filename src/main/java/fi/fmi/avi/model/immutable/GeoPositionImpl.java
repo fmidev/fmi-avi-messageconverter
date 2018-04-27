@@ -32,7 +32,7 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
         return geoPosition.map(GeoPositionImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends GeoPositionImpl_Builder {
 

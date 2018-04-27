@@ -45,7 +45,7 @@ public abstract class TAFImpl implements TAF, Serializable {
         return taf.map(TAFImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends TAFImpl_Builder {
 

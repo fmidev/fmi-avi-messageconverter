@@ -37,7 +37,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
         return observedClouds.map(ObservedCloudsImpl::immutableCopyOf);
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends ObservedCloudsImpl_Builder {
 
