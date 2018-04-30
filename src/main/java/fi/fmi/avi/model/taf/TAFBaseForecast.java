@@ -16,7 +16,7 @@ public interface TAFBaseForecast extends AviationCodeListUser {
 
     boolean isCeilingAndVisibilityOk();
 
-    NumericMeasure getPrevailingVisibility();
+    Optional<NumericMeasure> getPrevailingVisibility();
 
     Optional<RelationalOperator> getPrevailingVisibilityOperator();
 
@@ -28,7 +28,7 @@ public interface TAFBaseForecast extends AviationCodeListUser {
 
     List<String> getForecastWeatherCodes();
 
-    CloudForecast getCloud();
+    Optional<CloudForecast> getCloud();
 
     Optional<List<TAFAirTemperatureForecast>> getTemperatures();
 
