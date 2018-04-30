@@ -1,6 +1,7 @@
 package fi.fmi.avi.model;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +40,11 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     }
 
     public static PartialOrCompleteTimePeriod completePartialTimeReference(final PartialOrCompleteTimePeriod input, final ZonedDateTime key) {
-        return completePartialTimeReferenceInternal(input, key).time;
+        return (PartialOrCompleteTimePeriod)completePartialTimeReferenceInternal(input, key).time;
     }
 
     public static PartialOrCompleteTimeInstant completePartialTimeReference(final PartialOrCompleteTimeInstant input, final ZonedDateTime key) {
-        return completePartialTimeReferenceInternal(input, key).time;
+        return (PartialOrCompleteTimeInstant)completePartialTimeReferenceInternal(input, key).time;
     }
 
     public static PartialOrCompleteTimePeriod createValidityTimeDHDH(final String partialTimePeriod) throws IllegalArgumentException {
@@ -86,15 +87,20 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         }
     }
 
-    private static <T extends PartialOrCompleteTime> KeyTimePair<T> completePartialTimeReferenceInternal(final T input, final ZonedDateTime key) {
+    private static KeyTimePair<PartialOrCompleteTime> completePartialTimeReferenceInternal(final PartialOrCompleteTime input, final ZonedDateTime key) {
         if (input != null) {
             if (input instanceof PartialOrCompleteTimePeriod) {
                 PartialOrCompleteTimePeriod period = (PartialOrCompleteTimePeriod) input;
-                KeyTimePair<PartialOrCompleteTimePeriod> retval = new KeyTimePair<>();
+                KeyTimePair<PartialOrCompleteTime> retval = new KeyTimePair<>();
                 if (period.getStartTime().isPresent()) {
-                    KeyTimePair<PartialOrCompleteTimeInstant> startTimePair = completeSingularTime(period.getStartTime().get(), key);
-                    PartialOrCompleteTimeInstant startTime = startTimePair.time;
+                    KeyTimePair<PartialOrCompleteTime> startTimePair = completeSingularTime(period.getStartTime().get(), key);
+
+                    PartialOrCompleteTimeInstant startTime = (PartialOrCompleteTimeInstant) startTimePair.time;
                     ZonedDateTime ref = startTimePair.key;
+
+                    if (!startTime.getCompleteTime().isPresent()) {
+                        throw new RuntimeException("Could not complete start time " + period.getStartTime().get() + " with " + key + ", this should not happen");
+                    }
 
                     if (period.getEndTime().isPresent()) {
                         ref = ZonedDateTime.of(LocalDateTime.from(startTime.getCompleteTime().get()), ref.getZone());
@@ -133,21 +139,21 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
                 } else if (period.getEndTime().isPresent()) {
                     //Only the end time is present, this can happen at least in Trends with only the "TL" time given.
                     //Handle as only the start time was given:
-                    KeyTimePair<PartialOrCompleteTimeInstant> endTimePair = completeSingularTime(period.getEndTime().get(), key);
+                    KeyTimePair<PartialOrCompleteTime> endTimePair = completeSingularTime(period.getEndTime().get(), key);
                     retval.key = endTimePair.key;
-                    retval.time = period.toBuilder().setEndTime(endTimePair.time).build();
+                    retval.time = period.toBuilder().setEndTime((PartialOrCompleteTimeInstant)endTimePair.time).build();
                 }
-                return (KeyTimePair<T>) retval;
+                return retval;
             } else if (input instanceof PartialOrCompleteTimeInstant) {
                 PartialOrCompleteTimeInstant instant = (PartialOrCompleteTimeInstant) input;
-                return (KeyTimePair<T>) completeSingularTime(instant, key);
+                return completeSingularTime(instant, key);
             }
         }
         return null;
     }
 
-    private static KeyTimePair<PartialOrCompleteTimeInstant> completeSingularTime(final PartialOrCompleteTimeInstant input, final ZonedDateTime reference) {
-        KeyTimePair<PartialOrCompleteTimeInstant> retval = new KeyTimePair<>();
+    private static KeyTimePair<PartialOrCompleteTime> completeSingularTime(final PartialOrCompleteTimeInstant input, final ZonedDateTime reference) {
+        KeyTimePair<PartialOrCompleteTime> retval = new KeyTimePair<>();
         retval.key = ZonedDateTime.from(reference);
         int hour = input.getHour();
         int day = input.getDay();
@@ -195,6 +201,41 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
             }
             throw new RuntimeException("Unexpected error, check the code");
         }
+
+        public Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) throws IllegalArgumentException {
+            if (getStartTime().isPresent()) {
+                setStartTime(PartialOrCompleteTimeInstant.Builder
+                        .from(getStartTime().get())
+                        .completedWithIssueYearMonth(issueYearMonth)
+                        .build());
+            }
+            if (getEndTime().isPresent()) {
+                setEndTime(PartialOrCompleteTimeInstant.Builder
+                        .from(getEndTime().get())
+                        .completedWithIssueYearMonth(issueYearMonth)
+                        .build());
+            }
+            return this;
+        }
+
+        public Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, int issueDayOfMonth)
+                throws IllegalArgumentException {
+            if (getStartTime().isPresent()) {
+                setStartTime(PartialOrCompleteTimeInstant.Builder
+                        .from(getStartTime().get())
+                        .completedWithIssueYearMonthDay(issueYearMonth, issueDayOfMonth)
+                        .build());
+            }
+            if (getEndTime().isPresent()) {
+                setEndTime(PartialOrCompleteTimeInstant.Builder
+                        .from(getEndTime().get())
+                        .completedWithIssueYearMonthDay(issueYearMonth, issueDayOfMonth)
+                        .build());
+            }
+            return this;
+        }
+
+
     }
 
     private static class KeyTimePair<T extends PartialOrCompleteTime> {
