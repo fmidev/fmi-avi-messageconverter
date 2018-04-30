@@ -36,7 +36,7 @@ import javax.swing.plaf.ButtonUI;
 
 @FreeBuilder
 @JsonDeserialize(builder = METARImpl.Builder.class)
-public abstract class METARImpl implements METAR, Serializable, MeteorologicalTerminalAirReport {
+public abstract class METARImpl implements METAR, SPECI, Serializable {
 
     public static METARImpl immutableCopyOf(final MeteorologicalTerminalAirReport msg) {
         checkNotNull(msg);
