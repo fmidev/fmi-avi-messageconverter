@@ -162,6 +162,21 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_WEATHER_CODES_ALLOW_ANY = "ALLOW ANY";
 
     /**
+     * Controlling of automatically setting the translation time field of the created POJOs
+     */
+    public static final Key KEY_TRANSLATION_TIME;
+
+    /**
+     * The translation time should be set automatically when executing the conversion using the system time.
+     */
+    public static final Object VALUE_TRANSLATION_TIME_AUTO = "AUTO";
+
+    /**
+     * The translation time should be left unset when executing the conversion using the system time.
+     */
+    public static final Object VALUE_TRANSLATION_TIME_SKIP = "SKIP";
+
+    /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
      */
     public static final ConversionHints METAR;
@@ -209,6 +224,9 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
         KEY_WEATHER_CODES = new KeyImpl(7, "Control the checks on the used weather codes", VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678,
                 VALUE_WEATHER_CODES_STRICT_WMO_4678, VALUE_WEATHER_CODES_ALLOW_ANY);
+
+        //Values not fixed: the actual time to use may be given as value
+        KEY_TRANSLATION_TIME = new KeyImpl(8, "Set the translation time when converting. If the value is an instance of ZonedDateTime, the value is used as translation time");
 
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
