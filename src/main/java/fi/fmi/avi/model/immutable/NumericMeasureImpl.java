@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
@@ -17,6 +18,7 @@ import fi.fmi.avi.model.NumericMeasure;
 
 @FreeBuilder
 @JsonDeserialize(builder = NumericMeasureImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class NumericMeasureImpl implements NumericMeasure, Serializable {
 
     public static NumericMeasureImpl of(final Integer value, final String uom) {

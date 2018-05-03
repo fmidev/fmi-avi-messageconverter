@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.GeoPosition;
@@ -16,6 +17,7 @@ import fi.fmi.avi.model.GeoPosition;
  */
 @FreeBuilder
 @JsonDeserialize(builder = GeoPositionImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class GeoPositionImpl implements GeoPosition, Serializable {
 
     public static GeoPositionImpl immutableCopyOf(final GeoPosition geoPosition) {

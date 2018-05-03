@@ -7,8 +7,10 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
 
@@ -17,6 +19,7 @@ import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
  */
 @FreeBuilder
 @JsonDeserialize(builder = TrendForecastSurfaceWindImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind, Serializable {
 
     public static TrendForecastSurfaceWindImpl immutableCopyOf(final TrendForecastSurfaceWind surfaceWind) {
@@ -42,6 +45,24 @@ public abstract class TrendForecastSurfaceWindImpl implements TrendForecastSurfa
                     .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
                     .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()));
 
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMeanWindDirection(final NumericMeasure meanWindDirection) {
+            return super.setMeanWindDirection(meanWindDirection);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMeanWindSpeed(final NumericMeasure meanWindSpeed) {
+            return super.setMeanWindSpeed(meanWindSpeed);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setWindGust(final NumericMeasure windGust) {
+            return super.setWindGust(windGust);
         }
     }
 

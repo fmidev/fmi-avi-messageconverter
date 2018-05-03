@@ -15,20 +15,25 @@ import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
+import fi.fmi.avi.model.taf.TAFBaseForecast;
 import fi.fmi.avi.model.taf.TAFChangeForecast;
+import fi.fmi.avi.model.taf.TAFReference;
 
 /**
  * Created by rinne on 18/04/2018.
  */
 @FreeBuilder
 @JsonDeserialize(builder = TAFImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class TAFImpl implements TAF, Serializable {
 
     public static TAFImpl immutableCopyOf(final TAF taf) {
@@ -116,6 +121,30 @@ public abstract class TAFImpl implements TAF, Serializable {
 
         public Builder withCompleteIssueTime(final YearMonth yearMonth) throws IllegalArgumentException {
             return mutateIssueTime((input) -> input.completedWithIssueYearMonth(yearMonth));
+        }
+
+        @Override
+        @JsonDeserialize(as = AerodromeImpl.class)
+        public Builder setAerodrome(final Aerodrome aerodrome) {
+            return super.setAerodrome(aerodrome);
+        }
+
+        @Override
+        @JsonDeserialize(as = TAFBaseForecastImpl.class)
+        public Builder setBaseForecast(final TAFBaseForecast baseForecast) {
+            return super.setBaseForecast(baseForecast);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = TAFChangeForecastImpl.class)
+        public Builder setChangeForecasts(final List<TAFChangeForecast> changeForecasts) {
+            return super.setChangeForecasts(changeForecasts);
+        }
+
+        @Override
+        @JsonDeserialize(as = TAFReferenceImpl.class)
+        public Builder setReferredReport(final TAFReference referredReport) {
+            return super.setReferredReport(referredReport);
         }
     }
 }

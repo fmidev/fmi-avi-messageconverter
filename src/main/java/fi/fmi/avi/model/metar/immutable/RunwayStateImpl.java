@@ -7,9 +7,13 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.RunwayDirection;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import fi.fmi.avi.model.metar.RunwayState;
 
 /**
@@ -17,6 +21,7 @@ import fi.fmi.avi.model.metar.RunwayState;
  */
 @FreeBuilder
 @JsonDeserialize(builder = RunwayStateImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class RunwayStateImpl implements RunwayState, Serializable {
 
     public static RunwayStateImpl immutableCopyOf(final RunwayState runwayState) {
@@ -49,6 +54,18 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
                     .setEstimatedSurfaceFriction(value.getEstimatedSurfaceFriction())
                     .setRepetition(value.isRepetition())
                     .setSnowClosure(value.isSnowClosure());
+        }
+
+        @Override
+        @JsonDeserialize(as = RunwayDirectionImpl.class)
+        public Builder setRunwayDirection(final RunwayDirection runwayDirection) {
+            return super.setRunwayDirection(runwayDirection);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setDepthOfDeposit(final NumericMeasure depthOfDeposit) {
+            return super.setDepthOfDeposit(depthOfDeposit);
         }
     }
 

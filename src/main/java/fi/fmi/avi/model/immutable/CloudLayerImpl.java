@@ -7,9 +7,11 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CloudLayer;
+import fi.fmi.avi.model.NumericMeasure;
 
 /**
  * Created by rinne on 17/04/2018.
@@ -17,6 +19,7 @@ import fi.fmi.avi.model.CloudLayer;
 
 @FreeBuilder
 @JsonDeserialize(builder = CloudLayerImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class CloudLayerImpl implements CloudLayer, Serializable {
 
     public static CloudLayerImpl immutableCopyOf(final CloudLayer cloudLayer) {
@@ -41,6 +44,12 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
             return new CloudLayerImpl.Builder().setAmount(value.getAmount())
                     .setCloudType(value.getCloudType())
                     .setBase(NumericMeasureImpl.immutableCopyOf(value.getBase()));
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setBase(final NumericMeasure base) {
+            return super.setBase(base);
         }
     }
 }

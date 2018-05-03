@@ -7,8 +7,10 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.ObservedSurfaceWind;
 
@@ -18,6 +20,7 @@ import fi.fmi.avi.model.metar.ObservedSurfaceWind;
 
 @FreeBuilder
 @JsonDeserialize(builder = ObservedSurfaceWindImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Serializable {
 
     public static ObservedSurfaceWindImpl immutableCopyOf(final ObservedSurfaceWind observedSurfaceWind) {
@@ -38,6 +41,9 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
 
     public static class Builder extends ObservedSurfaceWindImpl_Builder {
 
+        public Builder() {
+            setVariableDirection(false);
+        }
         public static Builder from(final ObservedSurfaceWind value) {
             return new ObservedSurfaceWindImpl.Builder().setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
                     .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
@@ -45,6 +51,36 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
                     .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()))
                     .setExtremeClockwiseWindDirection(NumericMeasureImpl.immutableCopyOf(value.getExtremeClockwiseWindDirection()))
                     .setExtremeCounterClockwiseWindDirection(NumericMeasureImpl.immutableCopyOf(value.getExtremeCounterClockwiseWindDirection()));
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMeanWindDirection(final NumericMeasure meanWindDirection) {
+            return super.setMeanWindDirection(meanWindDirection);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMeanWindSpeed(final NumericMeasure meanWindSpeed) {
+            return super.setMeanWindSpeed(meanWindSpeed);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setWindGust(final NumericMeasure windGust) {
+            return super.setWindGust(windGust);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setExtremeClockwiseWindDirection(final NumericMeasure extremeClockwiseWindDirection) {
+            return super.setExtremeClockwiseWindDirection(extremeClockwiseWindDirection);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setExtremeCounterClockwiseWindDirection(final NumericMeasure extremeCounterClockwiseWindDirection) {
+            return super.setExtremeCounterClockwiseWindDirection(extremeCounterClockwiseWindDirection);
         }
     }
 }

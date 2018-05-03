@@ -7,8 +7,10 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 
@@ -17,6 +19,7 @@ import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
  */
 @FreeBuilder
 @JsonDeserialize(builder = TAFAirTemperatureForecastImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast, Serializable {
 
     public static TAFAirTemperatureForecastImpl immutableCopyOf(final TAFAirTemperatureForecast airTemperatureForecast) {
@@ -42,6 +45,18 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
                     .setMinTemperature(NumericMeasureImpl.immutableCopyOf(value.getMinTemperature()))
                     .setMaxTemperatureTime(value.getMaxTemperatureTime())
                     .setMinTemperatureTime(value.getMinTemperatureTime());
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMaxTemperature(final NumericMeasure maxTemperature) {
+            return super.setMaxTemperature(maxTemperature);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMinTemperature(final NumericMeasure minTemperature) {
+            return super.setMinTemperature(minTemperature);
         }
     }
 }

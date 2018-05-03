@@ -7,8 +7,10 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.taf.TAFReference;
 
@@ -17,6 +19,7 @@ import fi.fmi.avi.model.taf.TAFReference;
  */
 @FreeBuilder
 @JsonDeserialize(builder = TAFReferenceImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class TAFReferenceImpl implements TAFReference, Serializable {
 
     public static TAFReferenceImpl immutableCopyOf(final TAFReference tafReference) {
@@ -42,6 +45,12 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
                     .setStatus(value.getStatus())
                     .setIssueTime(value.getIssueTime())
                     .setValidityTime(value.getValidityTime());
+        }
+
+        @Override
+        @JsonDeserialize(as = AerodromeImpl.class)
+        public Builder setAerodrome(final Aerodrome aerodrome) {
+            return super.setAerodrome(aerodrome);
         }
     }
 }

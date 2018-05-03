@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 
@@ -22,12 +24,16 @@ import com.google.common.base.Preconditions;
  */
 @FreeBuilder
 @JsonDeserialize(builder = PartialOrCompleteTimeInstant.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime {
 
-    public static Pattern DAY_HOUR_MINUTE_TZ_PATTERN = Pattern.compile("^(FM)?(?<day>[0-9]{2})?(?<hour>[0-9]{2})(?<minute>[0-9]{2})(?<timezone>[A-Z]+)?$");
+    public static Pattern DAY_HOUR_MINUTE_TZ_PATTERN = Pattern.compile("^(?<day>[0-9]{2})?(?<hour>[0-9]{2})(?<minute>[0-9]{2})(?<timezone>[A-Z]+)$");
+    public static Pattern FROM_DAY_HOUR_MINUTE_PATTERN = Pattern.compile("^(FM)(?<day>[0-9]{2})?(?<hour>[0-9]{2})(?<minute>[0-9]{2})$");
+    public static Pattern FROM_HOUR_MINUTE_PATTERN = Pattern.compile("^(FM)(?<hour>[0-9]{2})(?<minute>[0-9]{2})$");
     public static Pattern DAY_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<hour>[0-9]{2})$");
     public static Pattern HOUR_PATTERN = Pattern.compile("^(?<hour>[0-9]{2})$");
     public static Pattern HOUR_MINUTE_PATTERN = Pattern.compile("^(?<hour>[0-9]{2})(?<minute>[0-9]{2})$");
+
 
     public static PartialOrCompleteTimeInstant createIssueTime(final String partialDateTime) {
         return new Builder().setPartialTimePattern(DAY_HOUR_MINUTE_TZ_PATTERN).setPartialTime(partialDateTime).build();
@@ -52,6 +58,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
      *
      * @return the time format pattern
      */
+    @JsonIgnore
     public abstract Optional<Pattern> getPartialTimePattern();
 
     /**
@@ -84,8 +91,10 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
      *
      * @return
      */
+    @JsonIgnore
     public abstract boolean isMidnight24h();
 
+    @JsonIgnore
     public int getMinute() {
         if (getCompleteTime().isPresent()) {
             return getCompleteTime().get().getMinute();
@@ -100,6 +109,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         return -1;
     }
 
+    @JsonIgnore
     public int getHour() {
         if (getCompleteTime().isPresent()) {
             return getCompleteTime().get().getHour();
@@ -114,6 +124,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         return -1;
     }
 
+    @JsonIgnore
     public int getDay() {
         if (getCompleteTime().isPresent()) {
             return getCompleteTime().get().getDayOfMonth();
@@ -145,6 +156,9 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
         @Override
         public PartialOrCompleteTimeInstant build() {
+            if (getPartialTime().isPresent() && !getPartialTimePattern().isPresent()) {
+                setPartialTimePattern(tryDeterminePatternFor(getPartialTime().get()));
+            }
             ensureMidnight24Updated();
             return super.build();
         }
@@ -243,6 +257,9 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         }
 
         private void ensureMidnight24Updated() {
+            if (!getPartialTime().isPresent()) {
+                return;
+            }
             checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
             Pattern timePattern = getPartialTimePattern().get();
             String partialTime = getPartialTime().get();
@@ -259,5 +276,28 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             setMidnight24h(hour == 24 && minute == 0);
         }
 
+        private Optional<Pattern> tryDeterminePatternFor(final String value) {
+            Matcher m = FROM_DAY_HOUR_MINUTE_PATTERN.matcher(value);
+            if (m.matches()) {
+                return Optional.of(FROM_DAY_HOUR_MINUTE_PATTERN);
+            }
+
+            m = FROM_HOUR_MINUTE_PATTERN.matcher(value);
+            if (m.matches()) {
+                return Optional.of(FROM_HOUR_MINUTE_PATTERN);
+            }
+
+            m = DAY_HOUR_MINUTE_TZ_PATTERN.matcher(value);
+            if (m.matches()) {
+                return Optional.of(DAY_HOUR_MINUTE_TZ_PATTERN);
+            }
+
+            m = HOUR_PATTERN.matcher(value);
+            if (m.matches()) {
+                return Optional.of(HOUR_PATTERN);
+            }
+
+            return Optional.empty();
+        }
     }
 }

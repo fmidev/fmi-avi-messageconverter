@@ -17,26 +17,36 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import fi.fmi.avi.model.metar.SPECI;
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
+import fi.fmi.avi.model.metar.HorizontalVisibility;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReport;
+import fi.fmi.avi.model.metar.ObservedClouds;
+import fi.fmi.avi.model.metar.ObservedSurfaceWind;
+import fi.fmi.avi.model.metar.RunwayState;
+import fi.fmi.avi.model.metar.RunwayVisualRange;
+import fi.fmi.avi.model.metar.SPECI;
+import fi.fmi.avi.model.metar.SeaState;
 import fi.fmi.avi.model.metar.TrendForecast;
-
-import javax.swing.plaf.ButtonUI;
+import fi.fmi.avi.model.metar.WindShear;
 
 @FreeBuilder
 @JsonDeserialize(builder = METARImpl.Builder.class)
-public abstract class METARImpl implements METAR, SPECI, Serializable {
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+public abstract class METARImpl implements METAR, Serializable {
 
     public static METARImpl immutableCopyOf(final MeteorologicalTerminalAirReport msg) {
         checkNotNull(msg);
@@ -95,10 +105,14 @@ public abstract class METARImpl implements METAR, SPECI, Serializable {
         return retval;
     }
 
+
     public abstract Builder toBuilder();
 
     public static class Builder extends METARImpl_Builder {
         public Builder() {
+            setTranslated(false);
+            setAutomatedStation(false);
+            setCeilingAndVisibilityOk(false);
             setRoutineDelayed(false);
         }
 
@@ -170,13 +184,13 @@ public abstract class METARImpl implements METAR, SPECI, Serializable {
         }
 
         public static Builder from(final METAR value) {
-            Builder retval = from(value);
+            Builder retval = from((MeteorologicalTerminalAirReport) value);
             retval.setRoutineDelayed(value.isRoutineDelayed());
             return retval;
         }
 
         public static Builder from(final SPECI value) {
-            Builder retval = from(value);
+            Builder retval = from((MeteorologicalTerminalAirReport) value);
             retval.setRoutineDelayed(false);
             return retval;
         }
@@ -192,6 +206,90 @@ public abstract class METARImpl implements METAR, SPECI, Serializable {
         public Builder withCompleteIssueTime(final YearMonth yearMonth) throws IllegalArgumentException {
             return mutateIssueTime((input) -> input.completedWithIssueYearMonth(yearMonth));
         }
+
+        @Override
+        @JsonDeserialize(as = AerodromeImpl.class)
+        public Builder setAerodrome(final Aerodrome aerodrome) {
+            return super.setAerodrome(aerodrome);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setAirTemperature(final NumericMeasure airTemperature) {
+            return super.setAirTemperature(airTemperature);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setDewpointTemperature(final NumericMeasure dewpointTemperature) {
+            return super.setDewpointTemperature(dewpointTemperature);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setAltimeterSettingQNH(final NumericMeasure altimeterSettingQNH) {
+            return super.setAltimeterSettingQNH(altimeterSettingQNH);
+        }
+
+        @Override
+        @JsonDeserialize(as = ObservedSurfaceWindImpl.class)
+        public Builder setSurfaceWind(final ObservedSurfaceWind surfaceWind) {
+            return super.setSurfaceWind(surfaceWind);
+        }
+
+        @Override
+        @JsonDeserialize(as = HorizontalVisibilityImpl.class)
+        public Builder setVisibility(final HorizontalVisibility visibility) {
+            return super.setVisibility(visibility);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = RunwayVisualRangeImpl.class)
+        public Builder setRunwayVisualRanges(final List<RunwayVisualRange> runwayVisualRanges) {
+            return super.setRunwayVisualRanges(runwayVisualRanges);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = WeatherImpl.class)
+        public Builder setPresentWeather(final List<Weather> weather) {
+            return super.setPresentWeather(weather);
+        }
+
+        @Override
+        @JsonDeserialize(as = ObservedCloudsImpl.class)
+        public Builder setClouds(final ObservedClouds clouds) {
+            return super.setClouds(clouds);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = WeatherImpl.class)
+        public Builder setRecentWeather(final List<Weather> weather) {
+            return super.setRecentWeather(weather);
+        }
+
+        @Override
+        @JsonDeserialize(as = WindShearImpl.class)
+        public Builder setWindShear(final WindShear windShear) {
+            return super.setWindShear(windShear);
+        }
+
+        @Override
+        @JsonDeserialize(as = SeaStateImpl.class)
+        public Builder setSeaState(final SeaState seaState) {
+            return super.setSeaState(seaState);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = RunwayStateImpl.class)
+        public Builder setRunwayStates(final List<RunwayState> runwayStates) {
+            return super.setRunwayStates(runwayStates);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = TrendForecastImpl.class)
+        public Builder setTrends(final List<TrendForecast> trends) {
+            return super.setTrends(trends);
+        }
     }
 
     static class SPECIInvocationHandler implements InvocationHandler {
@@ -203,8 +301,14 @@ public abstract class METARImpl implements METAR, SPECI, Serializable {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Method delegateMethod = METARImpl.class.getMethod(method.getName(), method.getParameterTypes());
-            return delegateMethod.invoke(delegate, args);
+            try {
+                Method delegateMethod = METARImpl.class.getMethod(method.getName(), method.getParameterTypes());
+                return delegateMethod.invoke(delegate, args);
+            } catch (NoSuchMethodException nsme) {
+                throw new RuntimeException(
+                        "SPECI method " + method.getName() + "(" + method.getParameterTypes() + ") not implemented by " + METARImpl.class.getSimpleName()
+                                + ", cannot delegate. Make sure that " + METARImpl.class.getCanonicalName() + " implements all SPECI methods");
+            }
         }
 
         METARImpl getDelegate() {

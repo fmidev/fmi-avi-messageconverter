@@ -7,9 +7,11 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.GeoPosition;
 
 /**
  * Created by rinne on 13/04/2018.
@@ -17,6 +19,7 @@ import fi.fmi.avi.model.Aerodrome;
 
 @FreeBuilder
 @JsonDeserialize(builder = AerodromeImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
     public static AerodromeImpl immutableCopyOf(final Aerodrome aerodrome) {
@@ -45,6 +48,12 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
                     .setReferencePoint(GeoPositionImpl.immutableCopyOf(value.getReferencePoint()));
 
             return retval;
+        }
+
+        @Override
+        @JsonDeserialize(as = GeoPositionImpl.class)
+        public Builder setReferencePoint(final GeoPosition referencePoint) {
+            return super.setReferencePoint(referencePoint);
         }
     }
 }

@@ -7,8 +7,10 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.RunwayDirection;
 
 /**
@@ -16,6 +18,7 @@ import fi.fmi.avi.model.RunwayDirection;
  */
 @FreeBuilder
 @JsonDeserialize(builder = RunwayDirectionImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class RunwayDirectionImpl implements RunwayDirection, Serializable {
 
     public static RunwayDirectionImpl immutableCopyOf(final RunwayDirection runwayDirection) {
@@ -42,6 +45,12 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
                     .setTrueBearing(value.getTrueBearing())
                     .setAssociatedAirportHeliport(AerodromeImpl.immutableCopyOf(value.getAssociatedAirportHeliport()));
 
+        }
+
+        @Override
+        @JsonDeserialize(as = AerodromeImpl.class)
+        public Builder setAssociatedAirportHeliport(final Aerodrome associatedAirportHeliport) {
+            return super.setAssociatedAirportHeliport(associatedAirportHeliport);
         }
     }
 }

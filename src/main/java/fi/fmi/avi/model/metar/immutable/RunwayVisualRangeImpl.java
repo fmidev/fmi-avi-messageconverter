@@ -8,8 +8,11 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.RunwayDirection;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import fi.fmi.avi.model.metar.RunwayVisualRange;
@@ -19,6 +22,7 @@ import fi.fmi.avi.model.metar.RunwayVisualRange;
  */
 @FreeBuilder
 @JsonDeserialize(builder = RunwayVisualRangeImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serializable {
 
     public static List<RunwayVisualRange> copyOfList(final List<RunwayVisualRange> runwayVisualRanges) {
@@ -57,6 +61,30 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
                     .setVaryingRVRMaximumOperator(value.getVaryingRVRMaximumOperator())
                     .setVaryingRVRMinimumOperator(value.getVaryingRVRMinimumOperator());
 
+        }
+
+        @Override
+        @JsonDeserialize(as = RunwayDirectionImpl.class)
+        public Builder setRunwayDirection(final RunwayDirection runwayDirection) {
+            return super.setRunwayDirection(runwayDirection);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMeanRVR(final NumericMeasure meanRVR) {
+            return super.setMeanRVR(meanRVR);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setVaryingRVRMinimum(final NumericMeasure varyingRVRMinimum) {
+            return super.setVaryingRVRMinimum(varyingRVRMinimum);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setVaryingRVRMaximum(final NumericMeasure varyingRVRMaximum) {
+            return super.setVaryingRVRMaximum(varyingRVRMaximum);
         }
     }
 }

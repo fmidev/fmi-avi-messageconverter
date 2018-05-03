@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 
@@ -19,6 +20,7 @@ import com.google.common.base.Preconditions;
  */
 @FreeBuilder
 @JsonDeserialize(builder = PartialOrCompleteTimePeriod.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime {
 
     public static Pattern DAY_HOUR_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<startHour>[0-9]{2})(?<endHour>[0-9]{2})$");

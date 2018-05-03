@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Weather;
@@ -16,6 +17,7 @@ import fi.fmi.avi.model.Weather;
  */
 @FreeBuilder
 @JsonDeserialize(builder = WeatherImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class WeatherImpl implements Weather, Serializable {
 
     public static WeatherImpl immutableCopyOf(final Weather weather) {

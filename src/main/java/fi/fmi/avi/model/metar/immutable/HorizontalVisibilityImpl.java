@@ -7,8 +7,10 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.HorizontalVisibility;
 
@@ -17,6 +19,7 @@ import fi.fmi.avi.model.metar.HorizontalVisibility;
  */
 @FreeBuilder
 @JsonDeserialize(builder = HorizontalVisibilityImpl.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, Serializable {
 
     public static HorizontalVisibilityImpl immutableCopyOf(final HorizontalVisibility horizontalVisibility) {
@@ -42,6 +45,24 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
                     .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
                     .setMinimumVisibility(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibility()))
                     .setMinimumVisibilityDirection(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibilityDirection()));
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setPrevailingVisibility(final NumericMeasure prevailingVisibility) {
+            return super.setPrevailingVisibility(prevailingVisibility);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMinimumVisibility(final NumericMeasure minimumVisibility) {
+            return super.setMinimumVisibility(minimumVisibility);
+        }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMinimumVisibilityDirection(final NumericMeasure minimumVisibilityDirection) {
+            return super.setMinimumVisibilityDirection(minimumVisibilityDirection);
         }
     }
 }
