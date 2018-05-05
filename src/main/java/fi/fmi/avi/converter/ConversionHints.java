@@ -211,6 +211,8 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
      */
     public static final ConversionHints ALLOW_ERRORS;
 
+    public static final ConversionHints EMPTY;
+
     static {
         KEY_MESSAGE_TYPE = new KeyImpl(1, "Aviation message type hint", VALUE_MESSAGE_TYPE_METAR, VALUE_MESSAGE_TYPE_SPECI, VALUE_MESSAGE_TYPE_TAF,
                 VALUE_MESSAGE_TYPE_SIGMET, VALUE_MESSAGE_TYPE_AIRMET, VALUE_MESSAGE_TYPE_ARS);
@@ -236,6 +238,8 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
         STRICT_PARSING = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
         ALLOW_ERRORS = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
+
+        EMPTY = new ConversionHints(false);
     }
 
     /**
@@ -313,12 +317,21 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         }
     }
 
-    private HashMap<Object, Object> hintMap = new HashMap<Object, Object>();
+    private HashMap<Object, Object> hintMap = new HashMap<>();
+    private boolean modifiable;
 
     /**
      * The default constructor, creates an empty ParsingHints.
      */
     public ConversionHints() {
+        this(null, true);
+    }
+
+    /**
+     * Creates ParsingHints with controlled modifiability.
+     */
+    public ConversionHints(final boolean modifiable) {
+        this(null, modifiable);
     }
 
     /**
@@ -327,18 +340,36 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
      * @param init the map of key-values
      */
     public ConversionHints(final Map<Key, ?> init) {
-        if (init != null) {
-            putAll(init);
-        }
+        this(init, true);
     }
 
     /**
+     * Creates ParsingHints with the given key-value pairs and controlled modifiability..
+     *
+     * @param init the map of key-values
+     * @param modifiable true if hints can be modified, false if not
+     */
+    public ConversionHints(final Map<Key, ?> init, final boolean modifiable) {
+        if (init != null) {
+            putAll(init);
+        }
+        this.modifiable = modifiable;
+    }
+
+
+
+
+    /**
      * Creates a ParsingHints with only a single key-value pair.
+     * The result is unmodifiable.
+     *
      * @param key the key
      * @param value the value for the key
      */
     public ConversionHints(final Key key, final Object value) {
+        this(null, true);
         put(key, value);
+        modifiable = false;
     }
 
 
@@ -390,6 +421,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
     @Override
     public Object put(final Object key, final Object value) {
+        checkModifiable();
         if (key == null) {
             throw new NullPointerException("Key must not be null");
         }
@@ -401,6 +433,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     }
 
     public Object put(final Key key, final Object value) {
+        checkModifiable();
         if (key == null) {
             throw new NullPointerException("Key must not be null");
         }
@@ -412,11 +445,13 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
     @Override
     public Object remove(final Object key) {
+        checkModifiable();
         return hintMap.remove((Key) key);
     }
 
     @Override
     public void putAll(final Map<?, ?> m) {
+        checkModifiable();
         final Iterator<?> iterator = m.keySet().iterator();
         while (iterator.hasNext()) {
             final Key key = (Key) iterator.next();
@@ -429,6 +464,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
     @Override
     public void clear() {
+        checkModifiable();
         this.hintMap.clear();
     }
 
@@ -461,6 +497,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         try {
             final ConversionHints copy = (ConversionHints) super.clone();
             copy.hintMap = new HashMap<Object, Object>(hintMap);
+            copy.modifiable = this.modifiable;
             return copy;
         } catch (final CloneNotSupportedException e) {
             throw (Error) new InternalError().initCause(e);
@@ -469,6 +506,12 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
     public String toString() {
         return this.hintMap.toString();
+    }
+
+    private void checkModifiable() throws UnsupportedOperationException {
+        if (!this.modifiable) {
+            throw new UnsupportedOperationException("This ConversionHints instance is unmodifiable");
+        }
     }
 
 }
