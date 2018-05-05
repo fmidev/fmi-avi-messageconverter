@@ -54,10 +54,10 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         if (m.matches()) {
             return new PartialOrCompleteTimePeriod.Builder().setStartTime(
                     new PartialOrCompleteTimeInstant.Builder().setPartialTime(m.group("startDay") + m.group("startHour"))
-                            .setPartialTimePattern(PartialOrCompleteTimeInstant.DAY_HOUR_PATTERN)
+                            .setPartialTimePattern(PartialOrCompleteTimeInstant.TimePattern.DayHour)
                             .build())
                     .setEndTime(new PartialOrCompleteTimeInstant.Builder().setPartialTime(m.group("endDay") + m.group("endHour"))
-                            .setPartialTimePattern(PartialOrCompleteTimeInstant.DAY_HOUR_PATTERN)
+                            .setPartialTimePattern(PartialOrCompleteTimeInstant.TimePattern.DayHour)
                             .build())
                     .build();
         } else {
@@ -70,10 +70,10 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         if (m.matches()) {
             return new PartialOrCompleteTimePeriod.Builder().setStartTime(
                     new PartialOrCompleteTimeInstant.Builder().setPartialTime(m.group("day") + m.group("startHour"))
-                            .setPartialTimePattern(PartialOrCompleteTimeInstant.DAY_HOUR_PATTERN)
+                            .setPartialTimePattern(PartialOrCompleteTimeInstant.TimePattern.DayHour)
                             .build())
                     .setEndTime(new PartialOrCompleteTimeInstant.Builder().setPartialTime(m.group("day") + m.group("endHour"))
-                            .setPartialTimePattern(PartialOrCompleteTimeInstant.DAY_HOUR_PATTERN)
+                            .setPartialTimePattern(PartialOrCompleteTimeInstant.TimePattern.DayHour)
                             .build())
                     .build();
         } else {
@@ -203,41 +203,6 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
             }
             throw new RuntimeException("Unexpected error, check the code");
         }
-
-        public Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) throws IllegalArgumentException {
-            if (getStartTime().isPresent()) {
-                setStartTime(PartialOrCompleteTimeInstant.Builder
-                        .from(getStartTime().get())
-                        .completedWithIssueYearMonth(issueYearMonth)
-                        .build());
-            }
-            if (getEndTime().isPresent()) {
-                setEndTime(PartialOrCompleteTimeInstant.Builder
-                        .from(getEndTime().get())
-                        .completedWithIssueYearMonth(issueYearMonth)
-                        .build());
-            }
-            return this;
-        }
-
-        public Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, int issueDayOfMonth)
-                throws IllegalArgumentException {
-            if (getStartTime().isPresent()) {
-                setStartTime(PartialOrCompleteTimeInstant.Builder
-                        .from(getStartTime().get())
-                        .completedWithIssueYearMonthDay(issueYearMonth, issueDayOfMonth)
-                        .build());
-            }
-            if (getEndTime().isPresent()) {
-                setEndTime(PartialOrCompleteTimeInstant.Builder
-                        .from(getEndTime().get())
-                        .completedWithIssueYearMonthDay(issueYearMonth, issueDayOfMonth)
-                        .build());
-            }
-            return this;
-        }
-
-
     }
 
     private static class KeyTimePair<T extends PartialOrCompleteTime> {
