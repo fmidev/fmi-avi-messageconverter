@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.metar.immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -44,8 +45,16 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
         public Builder() {
             setVariableDirection(false);
         }
+
+        @Override
+        public ObservedSurfaceWindImpl build() {
+           checkState(isVariableDirection() || getMeanWindDirection().isPresent(), "MeanWindDirection must be present if variableDirection is false");
+            return super.build();
+        }
+
         public static Builder from(final ObservedSurfaceWind value) {
-            return new ObservedSurfaceWindImpl.Builder().setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
+            return new ObservedSurfaceWindImpl.Builder()//
+                    .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
                     .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
                     .setVariableDirection(value.isVariableDirection())
                     .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()))
@@ -53,11 +62,13 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
                     .setExtremeCounterClockwiseWindDirection(NumericMeasureImpl.immutableCopyOf(value.getExtremeCounterClockwiseWindDirection()));
         }
 
+
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setMeanWindDirection(final NumericMeasure meanWindDirection) {
             return super.setMeanWindDirection(meanWindDirection);
         }
+
 
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
