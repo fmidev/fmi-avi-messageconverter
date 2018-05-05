@@ -9,7 +9,7 @@ public interface ObservedSurfaceWind extends AviationCodeListUser {
 
     boolean isVariableDirection();
 
-    NumericMeasure getMeanWindDirection();
+    Optional<NumericMeasure> getMeanWindDirection();
 
     NumericMeasure getMeanWindSpeed();
 
