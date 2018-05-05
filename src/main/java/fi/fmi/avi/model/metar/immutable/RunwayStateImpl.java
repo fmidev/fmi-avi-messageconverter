@@ -56,6 +56,15 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
                     .setSnowClosure(value.isSnowClosure());
         }
 
+        public Builder() {
+            setAppliedToAllRunways(false);
+            setEstimatedSurfaceFrictionUnreliable(false);
+            setSnowClosure(false);
+            setRepetition(false);
+            setDepthNotMeasurable(false);
+            setRunwayNotOperational(false);
+            setCleared(false);
+        }
         @Override
         @JsonDeserialize(as = RunwayDirectionImpl.class)
         public Builder setRunwayDirection(final RunwayDirection runwayDirection) {
