@@ -36,8 +36,6 @@ public class METARTimeReferencesTest {
         assertFalse(it.isMidnight24h());
         assertTrue(it.getCompleteTime().isPresent());
         assertTrue(it.getCompleteTime().get().equals(toMatch));
-        assertTrue(it.getCompleteTimeAsISOString().isPresent());
-        assertTrue(it.getCompleteTimeAsISOString().get().equals("2017-12-31T10:04:00Z"));
 
     }
 
@@ -82,15 +80,11 @@ public class METARTimeReferencesTest {
         assertFalse(period.get().getStartTime().get().isMidnight24h());
         assertTrue(period.get().getStartTime().get().getCompleteTime().isPresent());
         assertTrue(period.get().getStartTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(period.get().getStartTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(period.get().getStartTime().get().getCompleteTimeAsISOString().get().equals("2017-12-31T11:30:00Z"));
         toMatch = ZonedDateTime.of(2017, 12, 31, 13, 00, 0, 0, ZoneId.of("Z"));
         assertTrue(period.get().getEndTime().isPresent());
         assertFalse(period.get().getEndTime().get().isMidnight24h());
         assertTrue(period.get().getEndTime().get().getCompleteTime().isPresent());
         assertTrue(period.get().getEndTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(period.get().getEndTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(period.get().getEndTime().get().getCompleteTimeAsISOString().get().equals("2017-12-31T13:00:00Z"));
 
         //Validity time of the 2nd trend forecast:
         fct = msg.getTrends().get().get(1);
@@ -103,8 +97,6 @@ public class METARTimeReferencesTest {
         assertFalse(period.get().getEndTime().get().isMidnight24h());
         assertTrue(period.get().getEndTime().get().getCompleteTime().isPresent());
         assertTrue(period.get().getEndTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(period.get().getEndTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(period.get().getEndTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T09:00:00Z"));
 
         //Validity time of the 3rd trend forecast:
         fct = msg.getTrends().get().get(2);
@@ -115,8 +107,6 @@ public class METARTimeReferencesTest {
         assertFalse(instant.get().isMidnight24h());
         assertTrue(instant.get().getCompleteTime().isPresent());
         assertTrue(instant.get().getCompleteTime().get().equals(toMatch));
-        assertTrue(instant.get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(instant.get().getCompleteTimeAsISOString().get().equals("2018-01-01T12:00:00Z"));
 
 
     }

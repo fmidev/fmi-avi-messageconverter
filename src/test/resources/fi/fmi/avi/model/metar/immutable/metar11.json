@@ -1,0 +1,147 @@
+{
+  "status": "NORMAL",
+  "issueTime": {
+    "completeTime" : "2017-07-11T11:11:00Z"
+  },
+  "aerodrome": {
+    "designator": "EFHK"
+  },
+  "surfaceWind": {
+    "meanWindDirection": {
+      "value": 150.0,
+      "uom": "deg"
+    },
+    "meanWindSpeed": {
+      "value": 8.0,
+      "uom": "[kn_i]"
+    }
+  },
+  "visibility": {
+    "prevailingVisibility": {
+      "value": 700.0,
+      "uom": "m"
+    }
+  },
+  "runwayVisualRanges": [
+    {
+      "runwayDirection": {
+        "associatedAirportHeliport": {
+          "designator": "EFHK"
+        },
+        "designator": "04R"
+      },
+      "pastTendency": "NO_CHANGE",
+      "meanRVR": {
+        "value": 1500.0,
+        "uom": "m"
+      }
+    },
+    {
+    "runwayDirection": {
+        "associatedAirportHeliport": {
+          "designator": "EFHK"
+        },
+        "designator": "15"
+      },
+      "pastTendency": "UPWARD",
+      "meanRVR": {
+        "value": 1000.0,
+        "uom": "m"
+      }
+    },
+    {
+    "runwayDirection": {
+        "associatedAirportHeliport": {
+          "designator": "EFHK"
+        },
+        "designator": "22L"
+      },
+      "pastTendency": "NO_CHANGE",
+      "meanRVR": {
+        "value": 1200.0,
+        "uom": "m"
+      }
+    },
+    {
+     "runwayDirection": {
+        "associatedAirportHeliport": {
+          "designator": "EFHK"
+        },
+        "designator": "04L"
+      },
+      "pastTendency": "UPWARD",
+      "varyingRVRMaximumOperator": "ABOVE",
+      "varyingRVRMinimum": {
+        "value": 1000.0,
+        "uom": "m"
+      },
+      "varyingRVRMaximum": {
+        "value": 1500.0,
+        "uom": "m"
+      }
+    }
+  ],
+  "presentWeather": [
+    {
+      "code": "SN",
+      "description": "Precipitation of snow"
+    }
+  ],
+  "clouds": {
+    "verticalVisibility": {
+      "value": 600.0,
+      "uom": "[ft_i]"
+    }
+  },
+  "altimeterSettingQNH": {
+    "value": 1023.0,
+    "uom": "hPa"
+  },
+  "airTemperature": {
+    "value": -8.0,
+    "uom": "degC"
+  },
+  "dewpointTemperature": {
+    "value": -10.0,
+    "uom": "degC"
+  },
+  "seaState": {
+    "seaSurfaceTemperature": {
+      "value": -1,
+      "uom": "degC"
+    },
+    "seaSurfaceState": "CALM_RIPPLED"
+  },
+  "trends": [
+    {
+      "periodOfChange": {
+        "endTime": {
+          "partialTime": "1530",
+          "partialTimePattern": "HourMinute"
+        }
+      },
+      "changeIndicator": "TEMPORARY_FLUCTUATIONS",
+      "forecastWeather": [
+        {
+          "code": "+SHRA",
+          "description": "Heavy showery precipitation of rain"
+        }
+      ],
+      "cloud": {
+        "layers": [
+          {
+            "amount": "BKN",
+            "base": {
+              "value": 1200.0,
+              "uom": "[ft_i]"
+            },
+            "cloudType": "CB"
+          }
+        ]
+      }
+
+    }
+  ],
+  "translatedTAC": "METAR EFHK 111111Z 15008KT 0700 R04R/1500N R15/1000U R22L/1200N R04L/1000VP1500U SN VV006 M08/M10 Q1023 WM01/S1 TEMPO TL1530 +SHRA BKN012CB=",
+  "translated": true
+}

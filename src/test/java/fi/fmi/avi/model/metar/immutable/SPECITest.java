@@ -29,8 +29,6 @@ public class SPECITest {
         assertFalse(it.isMidnight24h());
         assertTrue(it.getCompleteTime().isPresent());
         assertTrue(it.getCompleteTime().get().equals(toMatch));
-        assertTrue(it.getCompleteTimeAsISOString().isPresent());
-        assertTrue(it.getCompleteTimeAsISOString().get().equals("2017-12-31T10:04:00Z"));
 
 
     }

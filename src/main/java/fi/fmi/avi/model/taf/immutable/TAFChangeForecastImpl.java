@@ -56,13 +56,18 @@ public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serial
                     .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
                     .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
                     .setSurfaceWind(TAFSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))
-                    .setValidityTime(value.getValidityTime());
+                    .setPeriodOfChange(value.getPeriodOfChange());
 
             value.getForecastWeather()
                     .map(weather -> retval.setForecastWeather(
                             Collections.unmodifiableList(weather.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))));
 
             return retval;
+        }
+
+        public Builder() {
+            setCeilingAndVisibilityOk(false);
+            setNoSignificantWeather(false);
         }
 
         @Override

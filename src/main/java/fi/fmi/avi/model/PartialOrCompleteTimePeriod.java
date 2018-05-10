@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,8 +24,8 @@ import com.google.common.base.Preconditions;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime {
 
-    public static Pattern DAY_HOUR_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<startHour>[0-9]{2})(?<endHour>[0-9]{2})$");
-    public static Pattern DAY_HOUR_DAY_HOUR_PATTERN = Pattern.compile("^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
+    private static Pattern DAY_HOUR_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<startHour>[0-9]{2})(?<endHour>[0-9]{2})$");
+    private static Pattern DAY_HOUR_DAY_HOUR_PATTERN = Pattern.compile("^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
 
     public static List<PartialOrCompleteTime> completePartialTimeReferenceList(final List<? extends PartialOrCompleteTime> input,
             final ZonedDateTime referenceTime) {
@@ -43,6 +44,10 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
 
     public static PartialOrCompleteTimePeriod completePartialTimeReference(final PartialOrCompleteTimePeriod input, final ZonedDateTime key) {
         return (PartialOrCompleteTimePeriod)completePartialTimeReferenceInternal(input, key).time;
+    }
+
+    public static PartialOrCompleteTimePeriod completePartialTimeReferenceBackwards(final PartialOrCompleteTimePeriod input, final ZonedDateTime key) {
+        return (PartialOrCompleteTimePeriod)completePartialTimeReferenceInternalBackwards(input, key).time;
     }
 
     public static PartialOrCompleteTimeInstant completePartialTimeReference(final PartialOrCompleteTimeInstant input, final ZonedDateTime key) {
@@ -154,6 +159,66 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         return null;
     }
 
+    private static KeyTimePair<PartialOrCompleteTime> completePartialTimeReferenceInternalBackwards(final PartialOrCompleteTime input, final ZonedDateTime key) {
+        if (input != null) {
+            if (input instanceof PartialOrCompleteTimePeriod) {
+                PartialOrCompleteTimePeriod period = (PartialOrCompleteTimePeriod) input;
+                KeyTimePair<PartialOrCompleteTime> retval = new KeyTimePair<>();
+                if (period.getEndTime().isPresent()) {
+                    KeyTimePair<PartialOrCompleteTime> endTimePair = completeSingularTimeBackwards(period.getEndTime().get(), key);
+
+                    PartialOrCompleteTimeInstant endTime = (PartialOrCompleteTimeInstant) endTimePair.time;
+                    ZonedDateTime ref = endTimePair.key;
+
+                    if (!endTime.getCompleteTime().isPresent()) {
+                        throw new RuntimeException("Could not complete end time " + period.getEndTime().get() + " with " + key + ", this should not happen");
+                    }
+
+                    if (period.getStartTime().isPresent()) {
+                        ref = ZonedDateTime.of(LocalDateTime.from(endTime.getCompleteTime().get()), ref.getZone());
+                        PartialOrCompleteTimeInstant startTimeToSet = period.getStartTime().get();
+                        int startHour = startTimeToSet.getHour();
+                        int startDay = startTimeToSet.getDay();
+                        int startMinute = startTimeToSet.getMinute();
+                        if (startMinute == -1) {
+                            startMinute = 0;
+                        }
+
+                        if (startDay == -1) {
+                            if (startHour >= ref.getHour()) {
+                                ref = ref.minusDays(1);
+                            }
+                        } else {
+                            //We know the day
+                            if (startDay > ref.getDayOfMonth()) {
+                                //Roll back to the prev month
+                                ref = ref.minusMonths(1);
+                            }
+                            ref = ref.withDayOfMonth(startDay);
+                        }
+                        ref = ref.withHour(startHour).withMinute(startMinute);
+                        startTimeToSet = period.getStartTime().get().toBuilder().setCompleteTime(ref).build();
+                        retval.key = ref;
+                        retval.time = period.toBuilder().setStartTime(startTimeToSet).setEndTime(endTime).build();
+                    } else {
+                        retval.key = ref;
+                        retval.time = period.toBuilder().setEndTime(endTime).build();
+                    }
+                } else if (period.getStartTime().isPresent()) {
+                    //Only the start time is present.
+                    KeyTimePair<PartialOrCompleteTime> startTimePair = completeSingularTime(period.getStartTime().get(), key);
+                    retval.key = startTimePair.key;
+                    retval.time = period.toBuilder().setStartTime((PartialOrCompleteTimeInstant)startTimePair.time).build();
+                }
+                return retval;
+            } else if (input instanceof PartialOrCompleteTimeInstant) {
+                PartialOrCompleteTimeInstant instant = (PartialOrCompleteTimeInstant) input;
+                return completeSingularTimeBackwards(instant, key);
+            }
+        }
+        return null;
+    }
+
     private static KeyTimePair<PartialOrCompleteTime> completeSingularTime(final PartialOrCompleteTimeInstant input, final ZonedDateTime reference) {
         KeyTimePair<PartialOrCompleteTime> retval = new KeyTimePair<>();
         retval.key = ZonedDateTime.from(reference);
@@ -180,11 +245,59 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         return retval;
     }
 
+    private static KeyTimePair<PartialOrCompleteTime> completeSingularTimeBackwards(final PartialOrCompleteTimeInstant input, final ZonedDateTime reference) {
+        KeyTimePair<PartialOrCompleteTime> retval = new KeyTimePair<>();
+        retval.key = ZonedDateTime.from(reference);
+        int hour = input.getHour();
+        int day = input.getDay();
+        int minute = input.getMinute();
+        if (minute == -1) {
+            minute = 0;
+        }
+        if (hour == 24 && minute == 0) {
+            day = day + 1;
+            hour = 0;
+            minute = 0;
+        }
+        if (day == -1) {
+            if (hour > reference.getHour()) {
+                //Roll back to the prev day
+                retval.key = retval.key.minusDays(1);
+            }
+        } else {
+            if (day > retval.key.getDayOfMonth()) {
+                //Roll bck to the prev month
+                retval.key = retval.key.minusMonths(1);
+            }
+            retval.key = retval.key.withDayOfMonth(day);
+        }
+        retval.key = retval.key.withHour(hour).withMinute(minute);
+        retval.time = input.toBuilder().setCompleteTime(retval.key).build();
+        return retval;
+    }
+
     public abstract Optional<PartialOrCompleteTimeInstant> getStartTime();
 
     public abstract Optional<PartialOrCompleteTimeInstant> getEndTime();
 
     public abstract Builder toBuilder();
+
+    @JsonIgnore
+    public boolean isComplete() {
+        Optional<PartialOrCompleteTimeInstant> start = getStartTime();
+        Optional<PartialOrCompleteTimeInstant> end = getEndTime();
+        if (start.isPresent()) {
+            if (!start.get().getCompleteTime().isPresent()) {
+                return false;
+            }
+        }
+        if (end.isPresent()) {
+            if (!end.get().getCompleteTime().isPresent()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static class Builder extends PartialOrCompleteTimePeriod_Builder {
         public static Pattern TREND_TIME_GROUP = Pattern.compile("^(?<kind>FM|TL)(?<hour>[0-9]{2})(?<minute>[0-9]{2})$");

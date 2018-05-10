@@ -10,6 +10,6 @@ public interface TAFChangeForecast extends TAFForecast {
 
     TAFChangeIndicator getChangeIndicator();
 
-    PartialOrCompleteTimePeriod getValidityTime();
+    PartialOrCompleteTimePeriod getPeriodOfChange();
 
 }

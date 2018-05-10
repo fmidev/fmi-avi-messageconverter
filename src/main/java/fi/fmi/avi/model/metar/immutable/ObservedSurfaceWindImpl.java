@@ -48,7 +48,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
 
         @Override
         public ObservedSurfaceWindImpl build() {
-           checkState(isVariableDirection() || getMeanWindDirection().isPresent(), "MeanWindDirection must be present if variableDirection is false");
+            checkState(isVariableDirection() || getMeanWindDirection().isPresent(), "MeanWindDirection must be present if variableDirection is false");
             return super.build();
         }
 

@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.immutable;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -17,17 +18,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import fi.fmi.avi.model.*;
+import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.Aerodrome;
-import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.PartialOrCompleteTime;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
@@ -107,6 +105,70 @@ public abstract class METARImpl implements METAR, Serializable {
 
 
     public abstract Builder toBuilder();
+
+    /**
+     * Returns true if issue time, valid time and all other time references contained in this
+     * message are full ZonedDateTime instances.
+     *
+     * @return true if all time references are complete, false otherwise
+     */
+    @Override
+    @JsonIgnore
+    public boolean areAllTimeReferencesComplete() {
+        if (!this.getIssueTime().getCompleteTime().isPresent()) {
+            return false;
+        }
+        if (this.getTrends().isPresent()) {
+            for(TrendForecast trend:this.getTrends().get()) {
+                if (trend.getPeriodOfChange().isPresent()) {
+                    if (!trend.getPeriodOfChange().get().isComplete()) {
+                        return false;
+                    }
+                } else if (trend.getInstantOfChange().isPresent()) {
+                    if (!trend.getInstantOfChange().get().getCompleteTime().isPresent()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean allAerodromeReferencesContainPositionAndElevation() {
+        Aerodrome ad = this.getAerodrome();
+        if (!ad.getFieldElevationValue().isPresent()
+                || !ad.getReferencePoint().isPresent()) {
+            return false;
+        }
+        if (this.getRunwayStates().isPresent()) {
+            for(RunwayState state:this.getRunwayStates().get()) {
+                if (state.getRunwayDirection().isPresent()) {
+                    if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
+                        ad = state.getRunwayDirection().get().getAssociatedAirportHeliport().get();
+                        if (!ad.getFieldElevationValue().isPresent()
+                                || !ad.getReferencePoint().isPresent()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.getRunwayVisualRanges().isPresent()) {
+            for (RunwayVisualRange range:this.getRunwayVisualRanges().get()) {
+                if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
+                    ad = range.getRunwayDirection().getAssociatedAirportHeliport().get();
+                    if (!ad.getFieldElevationValue().isPresent()
+                            || !ad.getReferencePoint().isPresent()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
     public static class Builder extends METARImpl_Builder {
         public Builder() {
@@ -210,7 +272,39 @@ public abstract class METARImpl implements METAR, Serializable {
         @Override
         @JsonDeserialize(as = AerodromeImpl.class)
         public Builder setAerodrome(final Aerodrome aerodrome) {
-            return super.setAerodrome(aerodrome);
+            Builder retval = super.setAerodrome(aerodrome);
+            if (getRunwayStates().isPresent()) {
+                List<RunwayState> oldStates = getRunwayStates().get();
+                List<RunwayState> newStates = new ArrayList<>(oldStates.size());
+                for (RunwayState state:oldStates) {
+                    if (state.getRunwayDirection().isPresent()) {
+                        if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
+                            RunwayStateImpl.Builder builder = RunwayStateImpl.immutableCopyOf(state).toBuilder();
+                            builder.setRunwayDirection(
+                                    RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection().get()).toBuilder()
+                                            .setAssociatedAirportHeliport(aerodrome).build());
+
+                            newStates.add(builder.build());
+                        }
+                    }
+                }
+                setRunwayStates(newStates);
+            }
+            if (getRunwayVisualRanges().isPresent()) {
+                List<RunwayVisualRange> oldRanges = getRunwayVisualRanges().get();
+                List<RunwayVisualRange> newRanges = new ArrayList<>(oldRanges.size());
+                for (RunwayVisualRange range:oldRanges) {
+                    if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
+                        RunwayVisualRangeImpl.Builder builder = RunwayVisualRangeImpl.immutableCopyOf(range).toBuilder();
+                        builder.setRunwayDirection(
+                                RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection()).toBuilder()
+                                        .setAssociatedAirportHeliport(aerodrome).build());
+                        newRanges.add(builder.build());
+                    }
+                }
+                setRunwayVisualRanges(newRanges);
+            }
+            return retval;
         }
 
         @Override

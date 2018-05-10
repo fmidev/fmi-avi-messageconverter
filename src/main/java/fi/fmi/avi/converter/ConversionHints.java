@@ -1,5 +1,7 @@
 package fi.fmi.avi.converter;
 
+import org.inferred.freebuilder.shaded.org.apache.commons.lang3.Conversion;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -321,39 +323,39 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     private boolean modifiable;
 
     /**
-     * The default constructor, creates an empty ParsingHints.
+     * The default constructor, creates an empty ConversionHints.
      */
     public ConversionHints() {
         this(null, true);
     }
 
     /**
-     * Creates ParsingHints with controlled modifiability.
+     * Creates ConversionHints with controlled modifiability.
      */
     public ConversionHints(final boolean modifiable) {
         this(null, modifiable);
     }
 
     /**
-     * Creates ParsingHints with the given key-value pairs.
+     * Creates ConversionHints with the given key-value pairs.
      *
      * @param init the map of key-values
      */
-    public ConversionHints(final Map<Key, ?> init) {
+    public ConversionHints(final Map<Object, ?> init) {
         this(init, true);
     }
 
     /**
-     * Creates ParsingHints with the given key-value pairs and controlled modifiability..
+     * Creates ParsingHints with the given key-value pairs and controlled modifiability.
      *
      * @param init the map of key-values
      * @param modifiable true if hints can be modified, false if not
      */
-    public ConversionHints(final Map<Key, ?> init, final boolean modifiable) {
+    public ConversionHints(final Map<Object, ?> init, final boolean modifiable) {
+        this.modifiable = modifiable;
         if (init != null) {
             putAll(init);
         }
-        this.modifiable = modifiable;
     }
 
 
@@ -446,7 +448,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     @Override
     public Object remove(final Object key) {
         checkModifiable();
-        return hintMap.remove((Key) key);
+        return hintMap.remove(key);
     }
 
     @Override
@@ -500,7 +502,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
             copy.modifiable = this.modifiable;
             return copy;
         } catch (final CloneNotSupportedException e) {
-            throw (Error) new InternalError().initCause(e);
+            throw new InternalError(e);
         }
     }
 

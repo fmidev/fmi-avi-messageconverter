@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.taf.immutable;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -52,6 +55,53 @@ public abstract class TAFImpl implements TAF, Serializable {
 
     public abstract Builder toBuilder();
 
+    /**
+     * Returns true if issue time, valid time and all other time references contained in this
+     * message are full ZonedDateTime instances.
+     *
+     * @return true if all time references are complete, false otherwise
+     */
+    @Override
+    @JsonIgnore
+    public boolean areAllTimeReferencesComplete() {
+        if (!this.getIssueTime().getCompleteTime().isPresent()) {
+            return false;
+        }
+        if (this.getValidityTime().isPresent()) {
+            if (!this.getValidityTime().get().isComplete()) {
+                return false;
+            }
+        }
+        if (this.getBaseForecast().isPresent()) {
+            if (!this.getBaseForecast().get().getTemperatures().isPresent()) {
+                List<TAFAirTemperatureForecast> airTemps = this.getBaseForecast().get().getTemperatures().get();
+                for (TAFAirTemperatureForecast airTemp:airTemps) {
+                    PartialOrCompleteTimeInstant minTime = airTemp.getMinTemperatureTime();
+                    PartialOrCompleteTimeInstant maxTime = airTemp.getMaxTemperatureTime();
+                    if (!minTime.getCompleteTime().isPresent() || !maxTime.getCompleteTime().isPresent()) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if (this.getChangeForecasts().isPresent()) {
+            for (TAFChangeForecast changeForecast:this.getChangeForecasts().get()) {
+                if (!changeForecast.getPeriodOfChange().isComplete()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean allAerodromeReferencesContainPositionAndElevation() {
+        return this.getAerodrome().getFieldElevationValue().isPresent()
+                && this.getAerodrome().getReferencePoint().isPresent();
+    }
+
     public static class Builder extends TAFImpl_Builder {
 
         public static Builder from(final TAF value) {
@@ -85,6 +135,10 @@ public abstract class TAFImpl implements TAF, Serializable {
             return retval;
         }
 
+        public Builder() {
+            setStatus(TAFStatus.NORMAL);
+            setTranslated(false);
+        }
         public Builder withCompleteForecastTimes(final YearMonth issueYearMonth, int issueDay, int issueHour, final ZoneId tz) throws IllegalArgumentException {
             final ZonedDateTime approximateIssueTime = ZonedDateTime.of(
                     LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz);
@@ -107,14 +161,21 @@ public abstract class TAFImpl implements TAF, Serializable {
             }
             if (getChangeForecasts().isPresent() && !getChangeForecasts().get().isEmpty()) {
                 List<TAFChangeForecast> oldFcts = getChangeForecasts().get();
-                List<PartialOrCompleteTime> list = oldFcts.stream().map(TAFChangeForecast::getValidityTime).collect(Collectors.toList());
+                List<PartialOrCompleteTime> list = oldFcts.stream().map(TAFChangeForecast::getPeriodOfChange).collect(Collectors.toList());
                 list = PartialOrCompleteTimePeriod.completePartialTimeReferenceList(list, approximateIssueTime);
                 List<TAFChangeForecast> newFcts = new ArrayList<>();
                 for (int i = 0; i < list.size(); i++) {
                     PartialOrCompleteTime time = list.get(i);
-                    newFcts.add(TAFChangeForecastImpl.Builder.from(oldFcts.get(i)).setValidityTime((PartialOrCompleteTimePeriod) time).build());
+                    newFcts.add(TAFChangeForecastImpl.Builder.from(oldFcts.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
                 }
                 retval = retval.setChangeForecasts(newFcts);
+            }
+
+            if (getReferredReport().isPresent()) {
+                TAFReferenceImpl.Builder builder = TAFReferenceImpl.immutableCopyOf(getReferredReport().get()).toBuilder();
+                PartialOrCompleteTimePeriod referredValidity = getReferredReport().get().getValidityTime();
+                builder.setValidityTime(PartialOrCompleteTimePeriod.completePartialTimeReferenceBackwards(referredValidity,approximateIssueTime));
+                setReferredReport(builder.build());
             }
             return retval;
         }

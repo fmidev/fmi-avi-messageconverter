@@ -107,4 +107,12 @@ public interface AviationWeatherMessage {
      */
     Optional<String> getTranslatedTAC();
 
+    /**
+     * Returns true if issue time, valid time and all other time references contained in this
+     * message are full ZonedDateTime instances.
+     *
+     * @return true if all time references are complete, false otherwise
+     */
+    boolean areAllTimeReferencesComplete();
+
 }

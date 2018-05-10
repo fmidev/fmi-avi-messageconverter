@@ -10,7 +10,7 @@ import fi.fmi.avi.model.NumericMeasure;
 
 public interface TAFSurfaceWind {
 
-    NumericMeasure getMeanWindDirection();
+    Optional<NumericMeasure> getMeanWindDirection();
 
     NumericMeasure getMeanWindSpeed();
 

@@ -44,8 +44,6 @@ public class TAFTimeReferencesTest {
         assertFalse(it.isMidnight24h());
         assertTrue(it.getCompleteTime().isPresent());
         assertTrue(it.getCompleteTime().get().equals(toMatch));
-        assertTrue(it.getCompleteTimeAsISOString().isPresent());
-        assertTrue(it.getCompleteTimeAsISOString().get().equals("2017-12-20T10:04:00Z"));
 
     }
 
@@ -66,32 +64,28 @@ public class TAFTimeReferencesTest {
         assertFalse(validityTime.getStartTime().get().isMidnight24h());
         assertTrue(validityTime.getStartTime().get().getCompleteTime().isPresent());
         assertTrue(validityTime.getStartTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().get().equals("2017-12-31T18:00:00Z"));
 
         toMatch = ZonedDateTime.of(2018, 1, 1, 18, 0, 0, 0, ZoneId.of("Z"));
         assertTrue(validityTime.getEndTime().isPresent());
         assertFalse(validityTime.getEndTime().get().isMidnight24h());
         assertTrue(validityTime.getEndTime().get().getCompleteTime().isPresent());
         assertTrue(validityTime.getEndTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T18:00:00Z"));
     }
 
     @Test
     public void testCompleteChangeFctValidTimes() {
         List<TAFChangeForecast> changeForecasts = new ArrayList<>();
-        changeForecasts.add(new TAFChangeForecastImpl.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("3119/3124"))//
+        changeForecasts.add(new TAFChangeForecastImpl.Builder().setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("3119/3124"))//
                 .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.FROM)//
                 .setCeilingAndVisibilityOk(true)//
                 .setNoSignificantWeather(true)//
                 .build());
-        changeForecasts.add(new TAFChangeForecastImpl.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("0100/0106"))//
+        changeForecasts.add(new TAFChangeForecastImpl.Builder().setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("0100/0106"))//
                 .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.FROM)//
                 .setCeilingAndVisibilityOk(true)//
                 .setNoSignificantWeather(true)//
                 .build());
-        changeForecasts.add(new TAFChangeForecastImpl.Builder().setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("0102/0112"))//
+        changeForecasts.add(new TAFChangeForecastImpl.Builder().setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("0102/0112"))//
                 .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.FROM)//
                 .setCeilingAndVisibilityOk(true)//
                 .setNoSignificantWeather(true)//
@@ -107,57 +101,48 @@ public class TAFTimeReferencesTest {
 
         //Validity time of the 1st change forecast:
         TAFChangeForecast fct = msg.getChangeForecasts().get().get(0);
-        PartialOrCompleteTimePeriod validityTime = fct.getValidityTime();
+        PartialOrCompleteTimePeriod validityTime = fct.getPeriodOfChange();
         ZonedDateTime toMatch = ZonedDateTime.of(2017, 12, 31, 19, 0, 0, 0, ZoneId.of("Z"));
         assertTrue(validityTime.getStartTime().isPresent());
         assertFalse(validityTime.getStartTime().get().isMidnight24h());
         assertTrue(validityTime.getStartTime().get().getCompleteTime().isPresent());
         assertTrue(validityTime.getStartTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().get().equals("2017-12-31T19:00:00Z"));
+
         toMatch = ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("Z"));
         assertTrue(validityTime.getEndTime().isPresent());
         assertTrue(validityTime.getEndTime().get().isMidnight24h());
         assertTrue(validityTime.getEndTime().get().getCompleteTime().isPresent());
         assertTrue(validityTime.getEndTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T00:00:00Z"));
 
         //Validity time of the 2nd change forecast:
         fct = msg.getChangeForecasts().get().get(1);
-        validityTime = fct.getValidityTime();
+        validityTime = fct.getPeriodOfChange();
         toMatch = ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("Z"));
         assertTrue(validityTime.getStartTime().isPresent());
         assertFalse(validityTime.getStartTime().get().isMidnight24h());
         assertTrue(validityTime.getStartTime().get().getCompleteTime().isPresent());
         assertTrue(validityTime.getStartTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T00:00:00Z"));
+
         toMatch = ZonedDateTime.of(2018, 1, 1, 6, 0, 0, 0, ZoneId.of("Z"));
         assertTrue(validityTime.getEndTime().isPresent());
         assertFalse(validityTime.getEndTime().get().isMidnight24h());
         assertTrue(validityTime.getEndTime().get().getCompleteTime().isPresent());
         assertTrue(validityTime.getEndTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T06:00:00Z"));
 
         //Validity time of the 3rd change forecast:
         fct = msg.getChangeForecasts().get().get(2);
-        validityTime = fct.getValidityTime();
+        validityTime = fct.getPeriodOfChange();
         toMatch = ZonedDateTime.of(2018, 1, 1, 2, 0, 0, 0, ZoneId.of("Z"));
         assertTrue(validityTime.getStartTime().isPresent());
         assertFalse(validityTime.getStartTime().get().isMidnight24h());
         assertTrue(validityTime.getStartTime().get().getCompleteTime().isPresent());
         assertTrue(validityTime.getStartTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getStartTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T02:00:00Z"));
+
         toMatch = ZonedDateTime.of(2018, 1, 1, 12, 0, 0, 0, ZoneId.of("Z"));
         assertTrue(validityTime.getEndTime().isPresent());
         assertFalse(validityTime.getEndTime().get().isMidnight24h());
         assertTrue(validityTime.getEndTime().get().getCompleteTime().isPresent());
         assertTrue(validityTime.getEndTime().get().getCompleteTime().get().equals(toMatch));
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().isPresent());
-        assertTrue(validityTime.getEndTime().get().getCompleteTimeAsISOString().get().equals("2018-01-01T12:00:00Z"));
     }
 
     @Test
@@ -182,7 +167,7 @@ public class TAFTimeReferencesTest {
                         .setPrevailingVisibility(new NumericMeasureImpl.Builder().setUom("m").setValue(8000.0).build())//
                         .setSurfaceWind(new TAFSurfaceWindImpl.Builder()//
                                 .setMeanWindDirection(new NumericMeasureImpl.Builder().setUom("deg").setValue(180.0).build())//
-                                .setMeanWindSpeed(new NumericMeasureImpl.Builder().setUom("kt").setValue(15.0).build())//
+                                .setMeanWindSpeed(new NumericMeasureImpl.Builder().setUom("[kn_i]").setValue(15.0).build())//
                                 .setVariableDirection(false)//
                                 .build())//
                         .setNoSignificantWeather(true)//
@@ -204,16 +189,12 @@ public class TAFTimeReferencesTest {
         assertFalse(t.isMidnight24h());
         assertTrue(t.getCompleteTime().isPresent());
         assertTrue(t.getCompleteTime().get().equals(toMatch));
-        assertTrue(t.getCompleteTimeAsISOString().isPresent());
-        assertTrue(t.getCompleteTimeAsISOString().get().equals("2017-12-31T18:00:00Z"));
 
         t = fct.getMinTemperatureTime();
         toMatch = ZonedDateTime.of(2018, 1, 1, 4, 0, 0, 0, ZoneId.of("Z"));
         assertFalse(t.isMidnight24h());
         assertTrue(t.getCompleteTime().isPresent());
         assertTrue(t.getCompleteTime().get().equals(toMatch));
-        assertTrue(t.getCompleteTimeAsISOString().isPresent());
-        assertTrue(t.getCompleteTimeAsISOString().get().equals("2018-01-01T04:00:00Z"));
 
     }
 

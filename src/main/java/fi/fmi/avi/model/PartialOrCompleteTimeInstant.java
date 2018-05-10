@@ -3,17 +3,12 @@ package fi.fmi.avi.model;
 import static com.google.common.base.Preconditions.checkState;
 import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.*;
 
-import java.sql.Time;
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.*;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,10 +26,9 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
     public enum TimePattern {
         DayHourMinuteZone("^(?<day>[0-9]{2})?(?<hour>[0-9]{2})(?<minute>[0-9]{2})(?<timezone>[A-Z]+)$"),
-        FromDayHourMinute("^(FM)(?<day>[0-9]{2})?(?<hour>[0-9]{2})(?<minute>[0-9]{2})$"),
-        FromHourMinute("^(FM)(?<hour>[0-9]{2})(?<minute>[0-9]{2})$"),
-        DayHour("^(?<day>[0-9]{2})(?<hour>[0-9]{2})$"),
+        DayHourMinute("^(?<day>[0-9]{2})?(?<hour>[0-9]{2})(?<minute>[0-9]{2})$"),
         HourMinute("^(?<hour>[0-9]{2})(?<minute>[0-9]{2})$"),
+        DayHour("^(?<day>[0-9]{2})(?<hour>[0-9]{2})$"),
         Hour("^(?<hour>[0-9]{2})$");
 
         private Pattern p;
@@ -77,7 +71,6 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
      *
      * @return the time format pattern
      */
-    @JsonIgnore
     public abstract Optional<TimePattern> getPartialTimePattern();
 
     /**
@@ -93,22 +86,15 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
      *
      * @return the full date time of this time instance
      */
+    @JsonFormat( pattern="yyyy-MM-dd'T'HH:mm:ssXXX", shape=JsonFormat.Shape.STRING)
     public abstract Optional<ZonedDateTime> getCompleteTime();
-
-    /**
-     * Returns the fully resolved date time of this time instance in format
-     * {@link DateTimeFormatter#ISO_OFFSET_DATE_TIME}, if available.
-     *
-     * @return the full date time of this time instance in ISO offset data time format
-     */
-    public abstract Optional<String> getCompleteTimeAsISOString();
 
     /**
      * Indicates if this time instance was initialized as time '2400' indicating midnight
      * (the last instance of time of the day). As a time instance this is equal to '00:00' of the
      * next day, but it may have implications on how the time is serialized in TAC format.
      *
-     * @return
+     * @return true if initiated as partial time "2400"
      */
     @JsonIgnore
     public abstract boolean isMidnight24h();
@@ -120,7 +106,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         } else if (getPartialTime().isPresent() && getPartialTimePattern().isPresent()) {
             TimePattern timePattern = getPartialTimePattern().get();
             if (timePattern.contains("?<minute>")) {
-                Matcher m = timePattern.matcher(this.getPartialTime().get());
+                Matcher m = timePattern.matcher(getPartialTime().get());
                 checkState(m.matches(), "Partial time '" + getPartialTime().get() + "' does not match timePattern '" + timePattern + "'");
                 return Integer.parseInt(m.group("minute"));
             }
@@ -183,101 +169,92 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             return super.build();
         }
 
-        @Override
-        public PartialOrCompleteTimeInstant.Builder setCompleteTime(final ZonedDateTime dateTime) {
-            PartialOrCompleteTimeInstant.Builder retval = super.setCompleteTime(dateTime);
-            String asISODateTime = dateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            if (!getCompleteTimeAsISOString().isPresent() || !getCompleteTimeAsISOString().get().equals(asISODateTime)) {
-                retval = retval.setCompleteTimeAsISOString(asISODateTime);
-            }
-            return retval;
-        }
-
-        @Override
-        public PartialOrCompleteTimeInstant.Builder setCompleteTimeAsISOString(final String dateTime) {
-            ZonedDateTime parsed = ZonedDateTime.parse(dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            PartialOrCompleteTimeInstant.Builder retval = super.setCompleteTimeAsISOString(dateTime);
-            if (!getCompleteTime().isPresent() || !getCompleteTime().get().equals(parsed)) {
-                retval = setCompleteTime(parsed);
-            }
-            return retval;
-        }
-
         public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) throws IllegalArgumentException {
-            checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
-            TimePattern timePattern = getPartialTimePattern().get();
-            checkState(timePattern.contains("?<day>"),
-                    "The current timePattern " + timePattern + " does not match dayOfMonth, day " + "must be given to complete. Use method "
-                            + "completeWithYearMonthDay(YearMonth, int) or fix the timePattern");
-            Matcher m = timePattern.matcher(getPartialTime().get());
-            checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
-            checkState(m.group("day") != null,
-                    "Partial time does not contain dayOfMonth, use method " + "completeWithYearMonthDay(YearMonth, int)");
-            return completedWithIssueYearMonthDay(issueYearMonth, Integer.parseInt(m.group("day")));
+            if (getCompleteTime().isPresent()) {
+                return completedWithIssueYearMonthDay(issueYearMonth, getCompleteTime().get().getDayOfMonth());
+            } else {
+                checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
+                TimePattern timePattern = getPartialTimePattern().get();
+                checkState(timePattern.contains("?<day>"),
+                        "The current timePattern " + timePattern + " does not match dayOfMonth, day " + "must be given to complete. Use method "
+                                + "completeWithYearMonthDay(YearMonth, int) or fix the timePattern");
+                Matcher m = timePattern.matcher(getPartialTime().get());
+                checkState(m.matches(), "Partial time does not '" + getPartialTime() + "' does not match timePattern '" + timePattern + "'");
+                checkState(m.group("day") != null,
+                        "Partial time does not contain dayOfMonth, use method " + "completeWithYearMonthDay(YearMonth, int)");
+                return completedWithIssueYearMonthDay(issueYearMonth, Integer.parseInt(m.group("day")));
+            }
         }
 
         public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, int issueDayOfMonth)
                 throws IllegalArgumentException {
-            checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
-            PartialOrCompleteTimeInstant.Builder retval = this;
-            String partialTime = getPartialTime().get();
-            TimePattern timePattern = getPartialTimePattern().get();
-            Preconditions.checkArgument(issueYearMonth != null, "issueYearMonth must not be null");
-            Preconditions.checkArgument(issueDayOfMonth >= 1 && issueDayOfMonth <= 31, "issueDayOfMonth must be between 1 and 31");
-            checkState(partialTime != null, "Partial time is null, cannot complete");
-            checkState(timePattern.contains("?<hour>"), "The current timePattern " + timePattern + " does not match hour");
-            Matcher m = timePattern.matcher(partialTime);
-            checkState(m.matches(), "Partial time '" + partialTime + "' does not match timePattern '" + timePattern + "'");
-            ensureMidnight24Updated();
+            if (getCompleteTime().isPresent()) {
+                return this.setCompleteTime(ZonedDateTime.from(getCompleteTime().get())
+                        .withYear(issueYearMonth.getYear())
+                        .withMonth(issueYearMonth.getMonthValue())
+                        .withDayOfMonth(issueDayOfMonth));
+            } else {
+                checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
+                PartialOrCompleteTimeInstant.Builder retval = this;
+                String partialTime = getPartialTime().get();
+                TimePattern timePattern = getPartialTimePattern().get();
+                Preconditions.checkArgument(issueYearMonth != null, "issueYearMonth must not be null");
+                Preconditions.checkArgument(issueDayOfMonth >= 1 && issueDayOfMonth <= 31, "issueDayOfMonth must be between 1 and 31");
+                checkState(timePattern.contains("?<hour>"), "The current timePattern " + timePattern + " does not match hour");
+                Matcher m = timePattern.matcher(partialTime);
+                checkState(m.matches(), "Partial time '" + partialTime + "' does not match timePattern '" + timePattern + "'");
+                ensureMidnight24Updated();
 
-            ZoneId tzId;
-            int minute;
-            int day;
+                ZoneId tzId;
+                int minute;
+                int day;
 
-            if (timePattern.contains("?<day>")) {
-                String ds = m.group("day");
-                if (ds != null) {
-                    day = Integer.parseInt(ds);
+                if (timePattern.contains("?<day>")) {
+                    String ds = m.group("day");
+                    if (ds != null) {
+                        day = Integer.parseInt(ds);
+                    } else {
+                        day = issueDayOfMonth;
+                    }
                 } else {
                     day = issueDayOfMonth;
                 }
-            } else {
-                day = issueDayOfMonth;
-            }
 
-            int hour = Integer.parseInt(m.group("hour"));
+                int hour = Integer.parseInt(m.group("hour"));
 
-            if (timePattern.contains("?<minute>") && m.group("minute") != null) {
-                minute = Integer.parseInt(m.group("minute"));
-            } else {
-                minute = 0;
-            }
-
-            if (timePattern.contains("?<timezone>") && m.group("timezone") != null) {
-                tzId = ZoneId.of(m.group("timezone"));
-            } else {
-                tzId = ZoneId.of("Z");
-            }
-            ZonedDateTime completeTime;
-            try {
-                if (isMidnight24h()) {
-                    completeTime = ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), day, 0, 0), tzId);
-                    completeTime.plusDays(1);
+                if (timePattern.contains("?<minute>") && m.group("minute") != null) {
+                    minute = Integer.parseInt(m.group("minute"));
                 } else {
-                    completeTime = ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), day, hour, minute), tzId);
+                    minute = 0;
                 }
-                if (day < issueDayOfMonth) {
-                    //issue day > my current day, assume next month:
-                    completeTime = completeTime.plusMonths(1);
+
+                if (timePattern.contains("?<timezone>") && m.group("timezone") != null) {
+                    tzId = ZoneId.of(m.group("timezone"));
+                } else {
+                    tzId = ZoneId.of("Z");
                 }
-                return retval.setCompleteTime(completeTime);
-            } catch (DateTimeException dte) {
-                throw new IllegalArgumentException("Unable to complete date with given arguments", dte);
+                ZonedDateTime completeTime;
+                try {
+                    if (isMidnight24h()) {
+                        completeTime = ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), day, 0, 0), tzId);
+                        completeTime.plusDays(1);
+                    } else {
+                        completeTime = ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), day, hour, minute), tzId);
+                    }
+                    if (day < issueDayOfMonth) {
+                        //issue day > my current day, assume next month:
+                        completeTime = completeTime.plusMonths(1);
+                    }
+                    return retval.setCompleteTime(completeTime);
+                } catch (DateTimeException dte) {
+                    throw new IllegalArgumentException("Unable to complete date with given arguments", dte);
+                }
             }
         }
 
         private void ensureMidnight24Updated() {
             if (!getPartialTime().isPresent()) {
+                setMidnight24h(false);
                 return;
             }
             checkState(getPartialTime().isPresent() && getPartialTimePattern().isPresent(), "partialTime and partialTimePattern must be present");
@@ -297,16 +274,16 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         }
 
         private Optional<TimePattern> tryDeterminePatternFor(final String value) {
-            if (FromDayHourMinute.matches(value)) {
-                return Optional.of(FromDayHourMinute);
-            }
-
-            if (FromHourMinute.matches(value)) {
-                return Optional.of(FromHourMinute);
-            }
-
             if (DayHourMinuteZone.matches(value)) {
                 return Optional.of(DayHourMinuteZone);
+            }
+
+            if (DayHourMinute.matches(value)) {
+                return Optional.of(DayHourMinute);
+            }
+
+            if (HourMinute.matches(value)) {
+                return Optional.of(HourMinute);
             }
 
             if (Hour.matches(value)) {

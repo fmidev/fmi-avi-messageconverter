@@ -67,6 +67,10 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
             return retval;
         }
 
+        public Builder() {
+            setCeilingAndVisibilityOk(false);
+            setNoSignificantWeather(false);
+        }
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setPrevailingVisibility(final NumericMeasure prevailingVisibility) {
