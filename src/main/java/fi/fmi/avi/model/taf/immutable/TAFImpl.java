@@ -73,7 +73,7 @@ public abstract class TAFImpl implements TAF, Serializable {
             }
         }
         if (this.getBaseForecast().isPresent()) {
-            if (!this.getBaseForecast().get().getTemperatures().isPresent()) {
+            if (this.getBaseForecast().get().getTemperatures().isPresent()) {
                 List<TAFAirTemperatureForecast> airTemps = this.getBaseForecast().get().getTemperatures().get();
                 for (TAFAirTemperatureForecast airTemp:airTemps) {
                     PartialOrCompleteTimeInstant minTime = airTemp.getMinTemperatureTime();
