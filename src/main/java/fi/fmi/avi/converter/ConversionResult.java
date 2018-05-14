@@ -3,6 +3,7 @@ package fi.fmi.avi.converter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -18,6 +19,12 @@ public class ConversionResult<T> {
 
     public ConversionResult() {
         issues = new ArrayList<>();
+    }
+
+    public ConversionResult(final ConversionResult<? extends T> source) {
+        source.getConvertedMessage().ifPresent(this::setConvertedMessage);
+        this.issues = new ArrayList<>(source.getConversionIssues());
+        this.explicitStatus = source.getStatus();
     }
 
     public Status getStatus() {
@@ -38,8 +45,8 @@ public class ConversionResult<T> {
       this.explicitStatus = status;
     }
 
-    public T getConvertedMessage() {
-        return this.convertedMessage;
+    public Optional<T> getConvertedMessage() {
+        return Optional.ofNullable(this.convertedMessage);
     }
 
     public List<ConversionIssue> getConversionIssues() {
