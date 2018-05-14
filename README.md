@@ -83,6 +83,20 @@ if (ConversionResult.Status.SUCCESS == result1.getStatus()) {
 Currently, this project contains Java model classes for aviation weather message types METAR and TAF. It's anticipated 
 that more message types such as SIGMET, AIRMET, SPECI will be added once the project gets more mature.
 
+## Immutables and Builders
+
+All the POJO messages have been implemented as immutable Java classes using [FreeBuilder](https://github.com/inferred/FreeBuilder) 
+for generating most of the builder code. As the classes are immutable, there is no need to prepare for the
+runtime changes of the instances of these objects (with change listeners etc.). The builder classes and methods
+have been provided to help with creating modified versions of message instances in cases where it is
+necessary to modify them.
+
+The public read-only APIs of the message classes are described by the Java interfaces in packages
+```fi.fmi.avi.model```, ```fi.fmi.avi.model.metar``` and ```fi.fmi.avi.model.taf```. The 
+FreeBuilder-powered immutable implementations are located in "immutable" sub-packages of these packages as 
+abstract classes with postfix "Impl". FreeBuilder annotation processor generates the actual 
+implementation classes in the same packages (with "_Builder" postfix).
+
 ## Configuring the AviMessageConverter
 The AviMessageConverter class in taught to handle new conversions by calling the method 
 
