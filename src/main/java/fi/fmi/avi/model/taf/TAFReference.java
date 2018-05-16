@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.taf;
 
+import java.util.Optional;
+
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
@@ -12,10 +14,10 @@ public interface TAFReference {
 
     Aerodrome getAerodrome();
 
-    PartialOrCompleteTimeInstant getIssueTime();
+    Optional<PartialOrCompleteTimeInstant> getIssueTime();
 
     PartialOrCompleteTimePeriod getValidityTime();
 
-    TAF.TAFStatus getStatus();
+    Optional<TAF.TAFStatus> getStatus();
 
 }
