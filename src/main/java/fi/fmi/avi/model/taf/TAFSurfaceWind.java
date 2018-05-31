@@ -2,6 +2,7 @@ package fi.fmi.avi.model.taf;
 
 import java.util.Optional;
 
+import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 
 /**
@@ -14,7 +15,11 @@ public interface TAFSurfaceWind {
 
     NumericMeasure getMeanWindSpeed();
 
+    Optional<AviationCodeListUser.RelationalOperator> getMeanWindSpeedOperator();
+
     Optional<NumericMeasure> getWindGust();
+
+    Optional<AviationCodeListUser.RelationalOperator> getWindGustOperator();
 
     boolean isVariableDirection();
 

@@ -43,8 +43,10 @@ public abstract class TAFSurfaceWindImpl implements TAFSurfaceWind, Serializable
 
         public static Builder from(final TAFSurfaceWind value) {
             return new TAFSurfaceWindImpl.Builder().setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
+                    .setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())
                     .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
                     .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()))
+                    .setWindGustOperator(value.getWindGustOperator())
                     .setVariableDirection(value.isVariableDirection());
         }
 

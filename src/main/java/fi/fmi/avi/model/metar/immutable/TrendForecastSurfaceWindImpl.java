@@ -42,8 +42,10 @@ public abstract class TrendForecastSurfaceWindImpl implements TrendForecastSurfa
 
         public static Builder from(final TrendForecastSurfaceWind value) {
             return new TrendForecastSurfaceWindImpl.Builder().setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
+                    .setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())
                     .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
-                    .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()));
+                    .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()))
+                    .setWindGustOperator(value.getWindGustOperator());
 
         }
 

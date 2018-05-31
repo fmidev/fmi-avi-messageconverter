@@ -13,7 +13,11 @@ public interface ObservedSurfaceWind extends AviationCodeListUser {
 
     NumericMeasure getMeanWindSpeed();
 
+    Optional<RelationalOperator> getMeanWindSpeedOperator();
+
     Optional<NumericMeasure> getWindGust();
+
+    Optional<RelationalOperator> getWindGustOperator();
 
     Optional<NumericMeasure> getExtremeClockwiseWindDirection();
 

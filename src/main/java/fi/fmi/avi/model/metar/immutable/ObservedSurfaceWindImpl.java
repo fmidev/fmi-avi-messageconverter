@@ -55,9 +55,9 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
         public static Builder from(final ObservedSurfaceWind value) {
             return new ObservedSurfaceWindImpl.Builder()//
                     .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
-                    .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
+                    .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed())).setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())
                     .setVariableDirection(value.isVariableDirection())
-                    .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()))
+                    .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust())).setWindGustOperator(value.getWindGustOperator())
                     .setExtremeClockwiseWindDirection(NumericMeasureImpl.immutableCopyOf(value.getExtremeClockwiseWindDirection()))
                     .setExtremeCounterClockwiseWindDirection(NumericMeasureImpl.immutableCopyOf(value.getExtremeCounterClockwiseWindDirection()));
         }

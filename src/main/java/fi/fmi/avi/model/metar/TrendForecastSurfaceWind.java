@@ -11,5 +11,9 @@ public interface TrendForecastSurfaceWind extends AviationCodeListUser {
 
     NumericMeasure getMeanWindSpeed();
 
+    Optional<RelationalOperator> getMeanWindSpeedOperator();
+
     Optional<NumericMeasure> getWindGust();
+
+    Optional<RelationalOperator> getWindGustOperator();
 }
