@@ -6,10 +6,13 @@ import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
 
+/**
+ * A simple wrapper to specialize {@link AbstractJSONParser} for TAF.
+ */
 public class TAFJSONParser extends AbstractJSONParser implements AviMessageSpecificConverter<String, TAF> {
 
     /**
-     * Converts a single message.
+     * Converts a JSON TAF message into TAF Object.
      *
      * @param input input message
      * @param hints parsing hints

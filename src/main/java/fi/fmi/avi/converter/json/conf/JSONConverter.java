@@ -1,17 +1,19 @@
 package fi.fmi.avi.converter.json.conf;
 
-
-import fi.fmi.avi.converter.AviMessageSpecificConverter;
-import fi.fmi.avi.converter.ConversionSpecification;
-
-import fi.fmi.avi.converter.json.*;
-import fi.fmi.avi.model.metar.METAR;
-import fi.fmi.avi.model.taf.TAF;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import fi.fmi.avi.converter.AviMessageSpecificConverter;
+import fi.fmi.avi.converter.ConversionSpecification;
+import fi.fmi.avi.converter.json.METARJSONParser;
+import fi.fmi.avi.converter.json.METARJSONSerializer;
+import fi.fmi.avi.converter.json.TAFJSONParser;
+import fi.fmi.avi.converter.json.TAFJSONSerializer;
+import fi.fmi.avi.model.metar.METAR;
+import fi.fmi.avi.model.taf.TAF;
+
 /**
- * Created by rinne on 10/02/17.
+ * Spring configuration for Java POJO and JSON conversion.
  */
 @Configuration
 public class JSONConverter {

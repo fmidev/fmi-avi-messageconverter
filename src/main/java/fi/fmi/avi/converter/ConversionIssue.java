@@ -105,6 +105,15 @@ public class ConversionIssue {
     }
 
     /**
+     * Access the issue severity.
+     *
+     * @return the severity
+     */
+    public Severity getSeverity() {
+        return this.severity;
+    }
+
+    /**
      * Access to the issue type.
      *
      * @return issue type
