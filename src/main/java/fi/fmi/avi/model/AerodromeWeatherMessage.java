@@ -4,5 +4,5 @@ public interface AerodromeWeatherMessage extends AviationWeatherMessage {
 
     Aerodrome getAerodrome();
 
-    boolean allAerodromeReferencesContainPositionAndElevation();
+    boolean allAerodromeReferencesContainPosition();
 }

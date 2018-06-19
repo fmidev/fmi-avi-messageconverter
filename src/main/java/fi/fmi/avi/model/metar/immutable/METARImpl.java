@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -18,17 +17,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import fi.fmi.avi.model.*;
-import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PartialOrCompleteTime;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.HorizontalVisibility;
 import fi.fmi.avi.model.metar.METAR;
@@ -143,10 +147,9 @@ public abstract class METARImpl implements METAR, Serializable {
 
     @Override
     @JsonIgnore
-    public boolean allAerodromeReferencesContainPositionAndElevation() {
+    public boolean allAerodromeReferencesContainPosition() {
         Aerodrome ad = this.getAerodrome();
-        if (!ad.getFieldElevationValue().isPresent()
-                || !ad.getReferencePoint().isPresent()) {
+        if (!ad.getFieldElevationValue().isPresent()) {
             return false;
         }
         if (this.getRunwayStates().isPresent()) {
@@ -154,8 +157,7 @@ public abstract class METARImpl implements METAR, Serializable {
                 if (state.getRunwayDirection().isPresent()) {
                     if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
                         ad = state.getRunwayDirection().get().getAssociatedAirportHeliport().get();
-                        if (!ad.getFieldElevationValue().isPresent()
-                                || !ad.getReferencePoint().isPresent()) {
+                        if (!ad.getReferencePoint().isPresent()) {
                             return false;
                         }
                     }
@@ -167,8 +169,7 @@ public abstract class METARImpl implements METAR, Serializable {
             for (RunwayVisualRange range:this.getRunwayVisualRanges().get()) {
                 if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
                     ad = range.getRunwayDirection().getAssociatedAirportHeliport().get();
-                    if (!ad.getFieldElevationValue().isPresent()
-                            || !ad.getReferencePoint().isPresent()) {
+                    if (!ad.getReferencePoint().isPresent()) {
                         return false;
                     }
                 }

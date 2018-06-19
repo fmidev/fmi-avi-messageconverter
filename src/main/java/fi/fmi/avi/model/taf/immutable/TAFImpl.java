@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
@@ -14,16 +13,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.PartialOrCompleteTime;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.taf.TAF;
@@ -102,9 +101,8 @@ public abstract class TAFImpl implements TAF, Serializable {
 
     @Override
     @JsonIgnore
-    public boolean allAerodromeReferencesContainPositionAndElevation() {
-        return this.getAerodrome().getFieldElevationValue().isPresent()
-                && this.getAerodrome().getReferencePoint().isPresent();
+    public boolean allAerodromeReferencesContainPosition() {
+        return this.getAerodrome().getReferencePoint().isPresent();
     }
 
     public static class Builder extends TAFImpl_Builder {
