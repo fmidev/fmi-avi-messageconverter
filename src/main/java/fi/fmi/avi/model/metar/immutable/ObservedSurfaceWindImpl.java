@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.Serializable;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,6 +23,8 @@ import fi.fmi.avi.model.metar.ObservedSurfaceWind;
 @FreeBuilder
 @JsonDeserialize(builder = ObservedSurfaceWindImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"meanWindDirection", "variableDirection", "meanWindSpeed", "meanWindSpeedOperator", "widnGust",
+        "windGustOperator", "extremeClockwiseWindDirection", "extremeCounterClockwiseWindDirection"})
 public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Serializable {
 
     public static ObservedSurfaceWindImpl immutableCopyOf(final ObservedSurfaceWind observedSurfaceWind) {

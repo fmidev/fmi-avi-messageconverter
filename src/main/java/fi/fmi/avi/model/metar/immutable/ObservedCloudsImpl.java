@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,6 +27,7 @@ import fi.fmi.avi.model.metar.ObservedClouds;
 @FreeBuilder
 @JsonDeserialize(builder = ObservedCloudsImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"layers", "verticalVisibility", "noSignificantCloud", "amountAndHeightUnobservableByAutoSystem"})
 public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable {
 
     public static ObservedCloudsImpl immutableCopyOf(final ObservedClouds observedClouds) {

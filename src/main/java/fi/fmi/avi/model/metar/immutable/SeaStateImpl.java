@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.Serializable;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,6 +21,7 @@ import fi.fmi.avi.model.metar.SeaState;
 @FreeBuilder
 @JsonDeserialize(builder = SeaStateImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"seaSurfaceTemperature", "seaSurfaceState", "significantWaveHeight"})
 public abstract class SeaStateImpl implements SeaState, Serializable {
 
     public static SeaStateImpl immutableCopyOf(final SeaState seaState) {

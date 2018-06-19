@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,6 +24,8 @@ import fi.fmi.avi.model.metar.RunwayVisualRange;
 @FreeBuilder
 @JsonDeserialize(builder = RunwayVisualRangeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"runwayDirection", "meanRVR", "meanRVROperator", "varyingRVRMinimum", "varyingRVRMinimumOperator",
+        "varyingRVRMaximum", "varyingRVRMaximumOperator", "pastTendency"})
 public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serializable {
 
     public static List<RunwayVisualRange> copyOfList(final List<RunwayVisualRange> runwayVisualRanges) {

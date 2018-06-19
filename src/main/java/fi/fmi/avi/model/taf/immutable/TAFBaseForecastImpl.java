@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,6 +30,8 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
 @FreeBuilder
 @JsonDeserialize(builder = TAFBaseForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"surfaceWind", "ceilingAndVisibilityOk", "prevailingVisibility", "prevailingVisibilityOperator",
+        "forecastWeather", "noSignificantWeather", "cloud", "temperatures"})
 public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializable {
 
     public static TAFBaseForecastImpl immutableCopyOf(final TAFBaseForecast baseForecast) {

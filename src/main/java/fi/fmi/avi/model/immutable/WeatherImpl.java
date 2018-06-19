@@ -3,11 +3,9 @@ package fi.fmi.avi.model.immutable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -21,6 +19,7 @@ import fi.fmi.avi.model.Weather;
 @FreeBuilder
 @JsonDeserialize(builder = WeatherImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"code", "description"})
 public abstract class WeatherImpl implements Weather, Serializable {
 
     public final static Map<String, String> WEATHER_CODES;
@@ -443,6 +442,20 @@ public abstract class WeatherImpl implements Weather, Serializable {
     public static Optional<WeatherImpl> immutableCopyOf(final Optional<Weather> weather) {
         checkNotNull(weather);
         return weather.map(WeatherImpl::immutableCopyOf);
+    }
+
+    public static List<Weather> fromCodes(String...codes) {
+        List<Weather> retval = new ArrayList<>();
+        if (codes != null) {
+            for (String code:codes) {
+                WeatherImpl.Builder wb = new Builder().setCode(code);
+                if (WEATHER_CODES.containsKey(code)) {
+                    wb.setDescription(WEATHER_CODES.get(code));
+                }
+                retval.add(wb.build());
+            }
+        }
+        return retval;
     }
 
     public abstract Builder toBuilder();

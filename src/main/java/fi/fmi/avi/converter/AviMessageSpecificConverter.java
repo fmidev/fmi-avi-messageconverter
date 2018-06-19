@@ -8,21 +8,21 @@ package fi.fmi.avi.converter;
  * @param <S>
  *           input message type
  * @param <T>
- *          parsed output message type
+ *           output message type
  *
  * @author Ilkka Rinne / Spatineo Oy 2017
  */
 public interface AviMessageSpecificConverter<S, T> {
 
     /**
-     * Parses a single message.
+     * Converts a single message.
      *
      * @param input
      *         input message
      * @param hints
      *         parsing hints
      *
-     * @return the {@link ConversionResult} with the POJO and the possible parsing issues
+     * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     ConversionResult<T> convertMessage(S input, ConversionHints hints);
 }

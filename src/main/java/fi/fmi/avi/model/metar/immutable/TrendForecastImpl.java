@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,6 +30,9 @@ import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
 @FreeBuilder
 @JsonDeserialize(builder = TrendForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"changeIndicator", "periodOfChange", "instantOfChange", "surfaceWind", "ceilingAndVisibilityOk",
+        "prevailingVisibility", "prevailingVisibilityOperator", "noSignificantWeather", "forecastWeather",
+        "cloud", "colorState"})
 public abstract class TrendForecastImpl implements TrendForecast, Serializable {
 
     public static TrendForecastImpl immutableCopyOf(final TrendForecast trendForecast) {

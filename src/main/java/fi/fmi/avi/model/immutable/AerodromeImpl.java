@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.Serializable;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,6 +21,7 @@ import fi.fmi.avi.model.GeoPosition;
 @FreeBuilder
 @JsonDeserialize(builder = AerodromeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"designator", "name", "locationIndicatorICAO", "fieldElevation", "referencePoint"})
 public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
     public static AerodromeImpl immutableCopyOf(final Aerodrome aerodrome) {

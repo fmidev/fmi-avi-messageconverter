@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import fi.fmi.avi.model.*;
 import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import org.inferred.freebuilder.FreeBuilder;
@@ -44,6 +45,12 @@ import fi.fmi.avi.model.metar.WindShear;
 @FreeBuilder
 @JsonDeserialize(builder = METARImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"status", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility",
+        "runwayVisualRanges", "presentWeather", "cloud", "airTemperature", "dewpointTemperature", "altimeterSettingQNH",
+        "recentWeather", "windShear", "seaState", "runwayStates", "trend", "remarks", "permissibleUsage",
+        "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID",
+        "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime",
+        "translatedTAC"})
 public abstract class METARImpl implements METAR, Serializable {
 
     public static METARImpl immutableCopyOf(final MeteorologicalTerminalAirReport msg) {

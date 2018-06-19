@@ -6,6 +6,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.Serializable;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -21,6 +22,8 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
 @FreeBuilder
 @JsonDeserialize(builder = TAFSurfaceWindImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"meanWindDirection", "variableDirection", "meanWindSpeed", "meanWindSpeedOperator",
+        "windGust", "windGustOperator"})
 public abstract class TAFSurfaceWindImpl implements TAFSurfaceWind, Serializable {
 
     public static TAFSurfaceWindImpl immutableCopyOf(final TAFSurfaceWind surfaceWind) {

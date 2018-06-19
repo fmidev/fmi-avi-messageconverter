@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -37,6 +38,10 @@ import fi.fmi.avi.model.taf.TAFReference;
 @FreeBuilder
 @JsonDeserialize(builder = TAFImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"status", "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts",
+        "referredReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary",
+        "translated", "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
+        "translationCentreName", "translationTime", "translatedTAC"})
 public abstract class TAFImpl implements TAF, Serializable {
 
     public static TAFImpl immutableCopyOf(final TAF taf) {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,6 +25,7 @@ import fi.fmi.avi.model.metar.WindShear;
 @FreeBuilder
 @JsonDeserialize(builder = WindShearImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"runwayDirections", "appliedToAllRunways"})
 public abstract class WindShearImpl implements WindShear, Serializable {
 
     public static WindShearImpl immutableCopyOf(final WindShear windShear) {

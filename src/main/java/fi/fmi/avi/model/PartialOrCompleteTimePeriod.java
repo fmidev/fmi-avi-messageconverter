@@ -1,17 +1,18 @@
 package fi.fmi.avi.model;
 
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
@@ -22,6 +23,7 @@ import com.google.common.base.Preconditions;
 @FreeBuilder
 @JsonDeserialize(builder = PartialOrCompleteTimePeriod.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"startTime", "endTime"})
 public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime {
 
     private static Pattern DAY_HOUR_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<startHour>[0-9]{2})(?<endHour>[0-9]{2})$");
@@ -297,6 +299,19 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
             }
         }
         return true;
+    }
+
+    public boolean equals(Object o) {
+        if (o instanceof PartialOrCompleteTimePeriod) {
+            PartialOrCompleteTimePeriod toMatch = (PartialOrCompleteTimePeriod) o;
+            return this.getStartTime().equals(toMatch.getStartTime()) && this.getEndTime().equals(toMatch.getEndTime());
+        } else {
+            return false;
+        }
+    }
+
+    public int hashCode() {
+        return Objects.hash(this.getStartTime(), this.getEndTime());
     }
 
     public static class Builder extends PartialOrCompleteTimePeriod_Builder {

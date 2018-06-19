@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.Serializable;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,6 +21,7 @@ import fi.fmi.avi.model.metar.HorizontalVisibility;
 @FreeBuilder
 @JsonDeserialize(builder = HorizontalVisibilityImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"prevailingVisibility", "prevailingVisibilityOperator", "minimumVisibility", "minimumVisibilityDirection"})
 public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, Serializable {
 
     public static HorizontalVisibilityImpl immutableCopyOf(final HorizontalVisibility horizontalVisibility) {

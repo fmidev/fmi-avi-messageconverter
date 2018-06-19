@@ -1,16 +1,26 @@
 package fi.fmi.avi.model;
 
 import static com.google.common.base.Preconditions.checkState;
-import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.*;
+import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.DayHour;
+import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.DayHourMinute;
+import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.DayHourMinuteZone;
+import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.Hour;
+import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.HourMinute;
 
-import java.time.*;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -22,6 +32,7 @@ import com.google.common.base.Preconditions;
 @FreeBuilder
 @JsonDeserialize(builder = PartialOrCompleteTimeInstant.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"completeTime", "partialTime", "partialTimePattern"})
 public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime {
 
     public enum TimePattern {
@@ -32,6 +43,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         Hour("^(?<hour>[0-9]{2})$");
 
         private Pattern p;
+
         TimePattern(final String pattern) {
             p = Pattern.compile(pattern);
         }
@@ -142,6 +154,32 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             }
         }
         return -1;
+    }
+
+    public boolean equals(Object o) {
+        if (o instanceof PartialOrCompleteTimeInstant) {
+            PartialOrCompleteTimeInstant toMatch = (PartialOrCompleteTimeInstant) o;
+            if (this.getCompleteTime().isPresent() && toMatch.getCompleteTime().isPresent()) {
+                return this.getCompleteTime().equals(toMatch.getCompleteTime());
+            } else if (this.getPartialTime().isPresent() && this.getPartialTimePattern().isPresent() && toMatch.getPartialTime().isPresent()
+                    && toMatch.getPartialTimePattern().isPresent()) {
+                return this.getPartialTime().equals(toMatch.getPartialTime()) && this.getPartialTimePattern().equals(toMatch.getPartialTimePattern());
+            } else {
+                return super.equals(o);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public int hashCode() {
+        if (this.getCompleteTime().isPresent()) {
+            return this.getCompleteTime().hashCode();
+        } else if (this.getPartialTime().isPresent() && this.getPartialTimePattern().isPresent()) {
+            return Objects.hash(this.getPartialTime().get(), this.getPartialTimePattern().get());
+        } else {
+            return super.hashCode();
+        }
     }
 
     abstract Builder toBuilder();

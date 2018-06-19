@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,6 +24,7 @@ import fi.fmi.avi.model.NumericMeasure;
 @FreeBuilder
 @JsonDeserialize(builder = CloudForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"verticalVisibility", "layers", "noSignificantCloud"})
 public abstract class CloudForecastImpl implements CloudForecast, Serializable {
 
     public static CloudForecastImpl immutableCopyOf(final CloudForecast cloudForecast) {

@@ -1,0 +1,176 @@
+{
+  "status" : "NORMAL",
+  "aerodrome" : {
+    "designator" : "EFVA"
+  },
+  "issueTime" : {
+    "partialTime" : "271137Z",
+    "partialTimePattern" : "DayHourMinuteZone"
+  },
+  "validityTime" : {
+    "startTime" : {
+      "partialTime" : "2712",
+      "partialTimePattern" : "DayHour"
+    },
+    "endTime" : {
+      "partialTime" : "2812",
+      "partialTimePattern" : "DayHour"
+    }
+  },
+  "baseForecast" : {
+    "surfaceWind" : {
+      "meanWindDirection" : {
+        "value" : 140.0,
+        "uom" : "deg"
+      },
+      "meanWindSpeed" : {
+        "value" : 15.0,
+        "uom" : "[kn_i]"
+      },
+      "windGust" : {
+        "value" : 25.0,
+        "uom" : "[kn_i]"
+      }
+    },
+    "prevailingVisibility" : {
+      "value" : 8000.0,
+      "uom" : "m"
+    },
+    "forecastWeather" : [ {
+      "code" : "-RA",
+      "description" : "Light precipitation of rain"
+    } ],
+    "cloud" : {
+      "layers" : [ {
+        "amount" : "SCT",
+        "base" : {
+          "value" : 2000.0,
+          "uom" : "[ft_i]"
+        }
+      }, {
+        "amount" : "OVC",
+        "base" : {
+          "value" : 5000.0,
+          "uom" : "[ft_i]"
+        }
+      } ]
+    }
+  },
+  "changeForecasts" : [ {
+    "changeIndicator" : "BECOMING",
+    "periodOfChange" : {
+      "startTime" : {
+        "partialTime" : "2715",
+        "partialTimePattern" : "DayHour"
+      },
+      "endTime" : {
+        "partialTime" : "2717",
+        "partialTimePattern" : "DayHour"
+      }
+    },
+    "prevailingVisibility" : {
+      "value" : 5000.0,
+      "uom" : "m"
+    },
+    "forecastWeather" : [ {
+      "code" : "-RA",
+      "description" : "Light precipitation of rain"
+    } ],
+    "cloud" : {
+      "layers" : [ {
+        "amount" : "BKN",
+        "base" : {
+          "value" : 700.0,
+          "uom" : "[ft_i]"
+        }
+      } ]
+    }
+  }, {
+    "changeIndicator" : "PROBABILITY_40",
+    "periodOfChange" : {
+      "startTime" : {
+        "partialTime" : "2715",
+        "partialTimePattern" : "DayHour"
+      },
+      "endTime" : {
+        "partialTime" : "2720",
+        "partialTimePattern" : "DayHour"
+      }
+    },
+    "prevailingVisibility" : {
+      "value" : 4000.0,
+      "uom" : "m"
+    },
+    "forecastWeather" : [ {
+      "code" : "RASN",
+      "description" : "Precipitation of rain and snow"
+    } ]
+  }, {
+    "changeIndicator" : "BECOMING",
+    "periodOfChange" : {
+      "startTime" : {
+        "partialTime" : "2720",
+        "partialTimePattern" : "DayHour"
+      },
+      "endTime" : {
+        "partialTime" : "2722",
+        "partialTimePattern" : "DayHour"
+      }
+    },
+    "surfaceWind" : {
+      "meanWindDirection" : {
+        "value" : 160.0,
+        "uom" : "deg"
+      },
+      "meanWindSpeed" : {
+        "value" : 12.0,
+        "uom" : "[kn_i]"
+      }
+    }
+  }, {
+    "changeIndicator" : "TEMPORARY_FLUCTUATIONS",
+    "periodOfChange" : {
+      "startTime" : {
+        "partialTime" : "2720",
+        "partialTimePattern" : "DayHour"
+      },
+      "endTime" : {
+        "partialTime" : "2724",
+        "partialTimePattern" : "DayHour"
+      }
+    },
+    "prevailingVisibility" : {
+      "value" : 8000.0,
+      "uom" : "m"
+    }
+  }, {
+    "changeIndicator" : "PROBABILITY_40",
+    "periodOfChange" : {
+      "startTime" : {
+        "partialTime" : "2802",
+        "partialTimePattern" : "DayHour"
+      },
+      "endTime" : {
+        "partialTime" : "2806",
+        "partialTimePattern" : "DayHour"
+      }
+    },
+    "prevailingVisibility" : {
+      "value" : 3000.0,
+      "uom" : "m"
+    },
+    "forecastWeather" : [ {
+      "code" : "RASN",
+      "description" : "Precipitation of rain and snow"
+    } ],
+    "cloud" : {
+      "layers" : [ {
+        "amount" : "BKN",
+        "base" : {
+          "value" : 400.0,
+          "uom" : "[ft_i]"
+        }
+      } ]
+    }
+  } ]
+}
