@@ -1,12 +1,16 @@
 # fmi-avi-messageconverter
 The main module for aviation weather message conversions between different formats.
 
-This project does nothing by itself, it needs one or more conversion modules providing parsing 
+This project only includes conversions between the internal JSON serialisation and the 
+Java POJO files. For other formats like the TAC code and IWXXM it needs one or more conversion modules providing parsing 
 and serializing implementations between the aviation weather message model objects 
-(in the sub packages of fi.fmi.avi.model) and the specific message formats, such as TAC or IWXXM.
+(in the sub packages of fi.fmi.avi.model) and the specific message formats.
 
 ## Get started
-For parsing/serialization functionality for a one format, use the specific Maven project, such as
+If you only need to convert between the JSON format and Java POJOs, you are ready to go
+without additional dependencies.
+
+For parsing/serialization functionality for addditional formats, use the specific Maven project, such as
 [fmi-avi-messageconverter-tac](https://github.com/fmidev/fmi-avi-messageconverter-tac) and 
 [fmi-avi-messageconverter-iwxxm](https://github.com/fmidev/fmi-avi-messageconverter-iwxxm). For 
 conversions between two formats, such as TAC to IWXXM, include both, and configure the 
@@ -124,10 +128,27 @@ import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.metar.METAR;
 
 @Configuration
-@Import(fi.fmi.avi.converter.tac.TACConverter.class)
-@Import(fi.fmi.avi.converter.iwxxm.IWXXMConverter.class)
+@Import(fi.fmi.avi.converter.json.conf.JSONConverter.class)
+@Import(fi.fmi.avi.converter.tac.conf.TACConverter.class)
+@Import(fi.fmi.avi.converter.iwxxm.conf.IWXXMConverter.class)
 public class MyMessageConverterConfig {
     
+    @Autowired
+    @Qualifier("metarJSONSerializer")
+    private AviMessageSpecificConverter<METAR, String> metarJSONSerializer;
+    
+    @Autowired
+    @Qualifier("tafJSONSerializer")
+    private AviMessageSpecificConverter<TAF, String> tafJSONSerializer();
+
+    @Autowired
+    @Qualifier("tafJSONParser")
+    private AviMessageSpecificConverter<String, TAF> tafJSONParser;
+    
+    @Autowired
+    @Qualifier("metarJSONParser")
+    private AviMessageSpecificConverter<String, METAR> metarJSONParser;
+
     @Autowired
     @Qualifier("metarTACParser")
     private AviMessageSpecificConverter<String, METAR> metarTACParser;
@@ -152,15 +173,31 @@ public class MyMessageConverterConfig {
     @Qualifier("tafIWXXMStringSerializer")
     private AviMessageSpecificConverter<TAF, String> tafIWXXMStringSerializer;
     
+    @Autowired
+    @Qualifier("tafIWXXMStringParser")
+    private AviMessageSpecificConverter<String, TAF> tafIWXXMStringParser;
+    
+    @Autowired
+    @Qualifier("tafIWXXMDOMParser")
+    private AviMessageSpecificConverter<Document, TAF> tafIWXXMDOMParser;
+    
     @Bean
     public AviMessageConverter aviMessageConverter() {
         AviMessageConverter p = new AviMessageConverter();
+        p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_METAR_POJO,metarJSONParser);
+        p.setMessageSpecificConverter(JSONConverter.METAR_POJO_TO_JSON_STRING, metarJSONSerializer);
+        p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_TAF_POJO, tafJSONParser);
+        p.setMessageSpecificConverter(JSONConverter.TAF_POJO_TO_JSON_STRING, tafJSONSerializer);
+        
         p.setMessageSpecificConverter(TACConverter.TAC_TO_METAR_POJO, metarTACParser);
         p.setMessageSpecificConverter(TACConverter.TAC_TO_TAF_POJO, tafTACParser);
         p.setMessageSpecificConverter(TACConverter.METAR_POJO_TO_TAC, metarTACSerializer);
         p.setMessageSpecificConverter(TACConverter.TAF_POJO_TO_TAC, tafTACSerializer);
+        
         p.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_DOM, tafIWXXMDOMSerializer);
         p.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_STRING, tafIWXXMStringSerializer);
+        p.setMessageSpecificConverter(IWXXMConverter.IWXXM21_STRING_TO_TAF_POJO, tafIWXXMStringParser);
+        p.setMessageSpecificConverter(IWXXMConverter.IWXXM21_DOM_TO_TAF_POJO, tafIWXXMDOMParser);
         return p;
     }
 
