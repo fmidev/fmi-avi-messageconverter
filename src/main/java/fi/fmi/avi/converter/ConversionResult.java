@@ -29,7 +29,7 @@ public class ConversionResult<T> {
      * Constructs a result from the given result. Does a shallow copy
      * of the issue list, the status and the result.
      *
-     * @param source
+     * @param source the result to copy
      */
     public ConversionResult(final ConversionResult<? extends T> source) {
         source.getConvertedMessage().ifPresent(this::setConvertedMessage);

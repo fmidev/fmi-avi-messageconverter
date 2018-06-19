@@ -1,7 +1,5 @@
 package fi.fmi.avi.converter;
 
-import org.inferred.freebuilder.shaded.org.apache.commons.lang3.Conversion;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -331,6 +329,8 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
     /**
      * Creates ConversionHints with controlled modifiability.
+     *
+     * @param modifiable set true to create a modifiable hints instance
      */
     public ConversionHints(final boolean modifiable) {
         this(null, modifiable);
