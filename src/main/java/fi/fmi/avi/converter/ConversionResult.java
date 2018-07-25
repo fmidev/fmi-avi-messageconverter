@@ -40,7 +40,8 @@ public class ConversionResult<T> {
     /**
      * Conversion success status. In the case that the explicit status is not given, returns
      * {@link Status#FAIL} if the result is null, {@link Status#SUCCESS} if there
-     * are no issues reported, and {@link Status#WITH_ERRORS} otherwise.
+     * are no issues with {@link ConversionIssue.Severity#ERROR} reported,
+     * and {@link Status#WITH_ERRORS} otherwise.
      *
      * @return the status of the finished conversion operation
      * @see #setStatus(Status)
@@ -51,10 +52,13 @@ public class ConversionResult<T> {
         } else {
             if (convertedMessage == null) {
                 return Status.FAIL;
-            } else if (this.issues.size() == 0) {
-                return Status.SUCCESS;
             } else {
-                return Status.WITH_ERRORS;
+                for (ConversionIssue issue : this.issues) {
+                    if (ConversionIssue.Severity.ERROR == issue.getSeverity()) {
+                        return Status.WITH_ERRORS;
+                    }
+                }
+                return Status.SUCCESS;
             }
         }
     }
