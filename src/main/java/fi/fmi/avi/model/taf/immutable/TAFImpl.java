@@ -208,7 +208,24 @@ public abstract class TAFImpl implements TAF, Serializable {
         @Override
         @JsonDeserialize(as = TAFReferenceImpl.class)
         public Builder setReferredReport(final TAFReference referredReport) {
-            return super.setReferredReport(referredReport);
+            Builder retval = super.setReferredReport(referredReport);
+            Aerodrome ref = referredReport.getAerodrome();
+            try {
+                Aerodrome base = this.getAerodrome();
+                if (ref != null) {
+                    if (base != null) {
+                        if (!base.equals(ref)) {
+                            throw new IllegalStateException("Aerodrome " + base + " already set for TAF, cannot set referred report with aerodrome " + ref);
+                        }
+                    }
+                    this.setAerodrome(AerodromeImpl.immutableCopyOf(ref));
+                }
+            } catch (IllegalStateException ise) {
+                //No aerodrome set, do not ask
+                this.setAerodrome(AerodromeImpl.immutableCopyOf(ref));
+            }
+            return retval;
         }
+
     }
 }
