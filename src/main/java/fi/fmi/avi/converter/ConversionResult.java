@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public class ConversionResult<T> {
 
-    public enum Status { SUCCESS, FAIL, WITH_ERRORS }
+    public enum Status {SUCCESS, FAIL, WITH_ERRORS, WITH_WARNINGS}
 
     private T convertedMessage;
     private IssueList issues;
@@ -39,9 +39,12 @@ public class ConversionResult<T> {
 
     /**
      * Conversion success status. In the case that the explicit status is not given, returns
-     * {@link Status#FAIL} if the result is null, {@link Status#SUCCESS} if there
-     * are no issues with {@link ConversionIssue.Severity#ERROR} reported,
-     * and {@link Status#WITH_ERRORS} otherwise.
+     * {@link Status#FAIL} if the result is null, {@link Status#WITH_WARNINGS} if there
+     * are issues with {@link ConversionIssue.Severity#WARNING} but none with
+     * {@link ConversionIssue.Severity#ERROR} reported,
+     * {@link Status#WITH_ERRORS} if there
+     * are issues with {@link ConversionIssue.Severity#ERROR} reported,
+     * and {@link Status#SUCCESS} otherwise.
      *
      * @return the status of the finished conversion operation
      * @see #setStatus(Status)
@@ -53,12 +56,19 @@ public class ConversionResult<T> {
             if (convertedMessage == null) {
                 return Status.FAIL;
             } else {
+                boolean warningsFound = false;
                 for (ConversionIssue issue : this.issues) {
                     if (ConversionIssue.Severity.ERROR == issue.getSeverity()) {
                         return Status.WITH_ERRORS;
+                    } else if (ConversionIssue.Severity.WARNING == issue.getSeverity()) {
+                        warningsFound = true;
                     }
                 }
-                return Status.SUCCESS;
+                if (warningsFound) {
+                    return Status.WITH_WARNINGS;
+                } else {
+                    return Status.SUCCESS;
+                }
             }
         }
     }
