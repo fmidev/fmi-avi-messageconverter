@@ -1,8 +1,7 @@
 package fi.fmi.avi.model.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -25,7 +24,7 @@ import fi.fmi.avi.model.NumericMeasure;
 public abstract class CloudLayerImpl implements CloudLayer, Serializable {
 
     public static CloudLayerImpl immutableCopyOf(final CloudLayer cloudLayer) {
-        checkNotNull(cloudLayer);
+        Objects.nonNull(cloudLayer);
         if (cloudLayer instanceof CloudLayerImpl) {
             return (CloudLayerImpl) cloudLayer;
         } else {
@@ -34,7 +33,7 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
     }
 
     public static Optional<CloudLayerImpl> immutableCopyOf(final Optional<CloudLayer> cloudLayer) {
-        checkNotNull(cloudLayer);
+        Objects.nonNull(cloudLayer);
         return cloudLayer.map(CloudLayerImpl::immutableCopyOf);
     }
 

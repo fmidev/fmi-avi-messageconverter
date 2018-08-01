@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -10,6 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,7 +44,7 @@ import fi.fmi.avi.model.taf.TAFReference;
 public abstract class TAFImpl implements TAF, Serializable {
 
     public static TAFImpl immutableCopyOf(final TAF taf) {
-        checkNotNull(taf);
+        Objects.nonNull(taf);
         if (taf instanceof TAFImpl) {
             return (TAFImpl) taf;
         } else {
@@ -53,7 +53,7 @@ public abstract class TAFImpl implements TAF, Serializable {
     }
 
     public static Optional<TAFImpl> immutableCopyOf(final Optional<TAF> taf) {
-        checkNotNull(taf);
+        Objects.nonNull(taf);
         return taf.map(TAFImpl::immutableCopyOf);
     }
 

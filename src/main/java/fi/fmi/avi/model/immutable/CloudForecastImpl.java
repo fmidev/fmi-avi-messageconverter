@@ -1,10 +1,9 @@
 package fi.fmi.avi.model.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ import fi.fmi.avi.model.NumericMeasure;
 public abstract class CloudForecastImpl implements CloudForecast, Serializable {
 
     public static CloudForecastImpl immutableCopyOf(final CloudForecast cloudForecast) {
-        checkNotNull(cloudForecast);
+        Objects.nonNull(cloudForecast);
         if (cloudForecast instanceof CloudForecastImpl) {
             return (CloudForecastImpl) cloudForecast;
         } else {
@@ -37,7 +36,7 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
     }
 
     public static Optional<CloudForecastImpl> immutableCopyOf(final Optional<CloudForecast> cloudForecast) {
-        checkNotNull(cloudForecast);
+        Objects.nonNull(cloudForecast);
         return cloudForecast.map(CloudForecastImpl::immutableCopyOf);
     }
 

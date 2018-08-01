@@ -1,9 +1,7 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkState;
-
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -28,7 +26,7 @@ import fi.fmi.avi.model.metar.ObservedSurfaceWind;
 public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Serializable {
 
     public static ObservedSurfaceWindImpl immutableCopyOf(final ObservedSurfaceWind observedSurfaceWind) {
-        checkNotNull(observedSurfaceWind);
+        Objects.nonNull(observedSurfaceWind);
         if (observedSurfaceWind instanceof ObservedSurfaceWindImpl) {
             return (ObservedSurfaceWindImpl) observedSurfaceWind;
         } else {
@@ -37,7 +35,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
     }
 
     public static Optional<ObservedSurfaceWindImpl> immutableCopyOf(final Optional<ObservedSurfaceWind> observedSurfaceWind) {
-        checkNotNull(observedSurfaceWind);
+        Objects.nonNull(observedSurfaceWind);
         return observedSurfaceWind.map(ObservedSurfaceWindImpl::immutableCopyOf);
     }
 
@@ -51,7 +49,9 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
 
         @Override
         public ObservedSurfaceWindImpl build() {
-            checkState(isVariableDirection() || getMeanWindDirection().isPresent(), "MeanWindDirection must be present if variableDirection is false");
+            if (!isVariableDirection() && !getMeanWindDirection().isPresent()) {
+                throw new IllegalStateException("MeanWindDirection must be present if variableDirection is false");
+            }
             return super.build();
         }
 

@@ -1,6 +1,5 @@
 package fi.fmi.avi.model;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -32,7 +31,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
 
     public static List<PartialOrCompleteTime> completePartialTimeReferenceList(final List<? extends PartialOrCompleteTime> input,
             final ZonedDateTime referenceTime) {
-        checkNotNull(input, "Input list cannot be null");
+        Objects.requireNonNull(input, "Input list cannot be null");
 
         //Assumption: the start times come in chronological order, but the periods may be (partly) overlapping
         List<PartialOrCompleteTime> revisedList = new ArrayList<>(input.size());

@@ -1,11 +1,10 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,7 +35,7 @@ import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
 public abstract class TrendForecastImpl implements TrendForecast, Serializable {
 
     public static TrendForecastImpl immutableCopyOf(final TrendForecast trendForecast) {
-        checkNotNull(trendForecast);
+        Objects.nonNull(trendForecast);
         if (trendForecast instanceof TrendForecastImpl) {
             return (TrendForecastImpl) trendForecast;
         } else {
@@ -45,7 +44,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
     }
 
     public static Optional<TrendForecastImpl> immutableCopyOf(final Optional<TrendForecast> trendForecast) {
-        checkNotNull(trendForecast);
+        Objects.nonNull(trendForecast);
         return trendForecast.map(TrendForecastImpl::immutableCopyOf);
     }
 
@@ -102,7 +101,9 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
 
         @Override
         public TrendForecastImpl build() {
-            checkState(!(getPeriodOfChange().isPresent() && getInstantOfChange().isPresent()), "Both the period and the instant of change cannot be set");
+            if (getPeriodOfChange().isPresent() && getInstantOfChange().isPresent()) {
+                throw new IllegalStateException("Both the period and the instant of change cannot be set");
+            }
             return super.build();
         }
 

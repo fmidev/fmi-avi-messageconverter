@@ -1,8 +1,8 @@
 package fi.fmi.avi.model.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -24,7 +24,7 @@ import fi.fmi.avi.model.RunwayDirection;
 public abstract class RunwayDirectionImpl implements RunwayDirection, Serializable {
 
     public static RunwayDirectionImpl immutableCopyOf(final RunwayDirection runwayDirection) {
-        checkNotNull(runwayDirection);
+        Objects.nonNull(runwayDirection);
         if (runwayDirection instanceof RunwayDirectionImpl) {
             return (RunwayDirectionImpl) runwayDirection;
         } else {
@@ -33,7 +33,7 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
     }
 
     public static Optional<RunwayDirectionImpl> immutableCopyOf(final Optional<RunwayDirection> runwayDirection) {
-        checkNotNull(runwayDirection);
+        Objects.nonNull(runwayDirection);
         return runwayDirection.map(RunwayDirectionImpl::immutableCopyOf);
     }
 

@@ -1,8 +1,7 @@
 package fi.fmi.avi.model.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -25,7 +24,7 @@ import fi.fmi.avi.model.GeoPosition;
 public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
     public static AerodromeImpl immutableCopyOf(final Aerodrome aerodrome) {
-        checkNotNull(aerodrome);
+        Objects.nonNull(aerodrome);
         if (aerodrome instanceof AerodromeImpl) {
             return (AerodromeImpl) aerodrome;
         } else {

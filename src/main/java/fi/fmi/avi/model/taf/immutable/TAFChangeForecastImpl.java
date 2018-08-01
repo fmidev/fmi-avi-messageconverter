@@ -1,10 +1,10 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,7 +34,7 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
 public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serializable {
 
     public static TAFChangeForecastImpl immutableCopyOf(final TAFChangeForecast changeForecast) {
-        checkNotNull(changeForecast);
+        Objects.nonNull(changeForecast);
         if (changeForecast instanceof TAFChangeForecastImpl) {
             return (TAFChangeForecastImpl) changeForecast;
         } else {
@@ -43,7 +43,7 @@ public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serial
     }
 
     public static Optional<TAFChangeForecastImpl> immutableCopyOf(final Optional<TAFChangeForecast> changeForecast) {
-        checkNotNull(changeForecast);
+        Objects.nonNull(changeForecast);
         return changeForecast.map(TAFChangeForecastImpl::immutableCopyOf);
     }
 

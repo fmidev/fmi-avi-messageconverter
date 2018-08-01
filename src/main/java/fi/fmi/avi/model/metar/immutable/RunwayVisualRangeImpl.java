@@ -1,9 +1,9 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -37,7 +37,7 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
     }
 
     public static RunwayVisualRangeImpl immutableCopyOf(final RunwayVisualRange runwayVisualRange) {
-        checkNotNull(runwayVisualRange);
+        Objects.nonNull(runwayVisualRange);
         if (runwayVisualRange instanceof RunwayVisualRangeImpl) {
             return (RunwayVisualRangeImpl) runwayVisualRange;
         } else {
@@ -46,7 +46,7 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
     }
 
     public static Optional<RunwayVisualRangeImpl> immutableCopyOf(final Optional<RunwayVisualRange> runwayVisualRange) {
-        checkNotNull(runwayVisualRange);
+        Objects.nonNull(runwayVisualRange);
         return runwayVisualRange.map(RunwayVisualRangeImpl::immutableCopyOf);
     }
 

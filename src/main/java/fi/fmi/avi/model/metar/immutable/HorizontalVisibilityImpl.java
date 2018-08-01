@@ -1,8 +1,8 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -25,7 +25,7 @@ import fi.fmi.avi.model.metar.HorizontalVisibility;
 public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, Serializable {
 
     public static HorizontalVisibilityImpl immutableCopyOf(final HorizontalVisibility horizontalVisibility) {
-        checkNotNull(horizontalVisibility);
+        Objects.nonNull(horizontalVisibility);
         if (horizontalVisibility instanceof HorizontalVisibilityImpl) {
             return (HorizontalVisibilityImpl) horizontalVisibility;
         } else {
@@ -34,7 +34,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
     }
 
     public static Optional<HorizontalVisibilityImpl> immutableCopyOf(final Optional<HorizontalVisibility> horizontalVisibility) {
-        checkNotNull(horizontalVisibility);
+        Objects.nonNull(horizontalVisibility);
         return horizontalVisibility.map(HorizontalVisibilityImpl::immutableCopyOf);
     }
 

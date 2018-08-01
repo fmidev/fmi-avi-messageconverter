@@ -1,8 +1,7 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -25,7 +24,7 @@ import fi.fmi.avi.model.metar.SeaState;
 public abstract class SeaStateImpl implements SeaState, Serializable {
 
     public static SeaStateImpl immutableCopyOf(final SeaState seaState) {
-        checkNotNull(seaState);
+        Objects.nonNull(seaState);
         if (seaState instanceof SeaStateImpl) {
             return (SeaStateImpl) seaState;
         } else {
@@ -34,7 +33,7 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
     }
 
     public static Optional<SeaStateImpl> immutableCopyOf(final Optional<SeaState> seaState) {
-        checkNotNull(seaState);
+        Objects.nonNull(seaState);
         return seaState.map(SeaStateImpl::immutableCopyOf);
     }
 

@@ -1,8 +1,8 @@
 package fi.fmi.avi.model.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -23,7 +23,7 @@ import fi.fmi.avi.model.GeoPosition;
 public abstract class GeoPositionImpl implements GeoPosition, Serializable {
 
     public static GeoPositionImpl immutableCopyOf(final GeoPosition geoPosition) {
-        checkNotNull(geoPosition);
+        Objects.nonNull(geoPosition);
         if (geoPosition instanceof GeoPositionImpl) {
             return (GeoPositionImpl) geoPosition;
         } else {
@@ -32,7 +32,7 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
     }
 
     public static Optional<GeoPositionImpl> immutableCopyOf(final Optional<GeoPosition> geoPosition) {
-        checkNotNull(geoPosition);
+        Objects.nonNull(geoPosition);
         return geoPosition.map(GeoPositionImpl::immutableCopyOf);
     }
 

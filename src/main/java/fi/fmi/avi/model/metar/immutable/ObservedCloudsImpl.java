@@ -1,10 +1,10 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,7 +31,7 @@ import fi.fmi.avi.model.metar.ObservedClouds;
 public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable {
 
     public static ObservedCloudsImpl immutableCopyOf(final ObservedClouds observedClouds) {
-        checkNotNull(observedClouds);
+        Objects.nonNull(observedClouds);
         if (observedClouds instanceof ObservedCloudsImpl) {
             return (ObservedCloudsImpl) observedClouds;
         } else {
@@ -40,7 +40,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
     }
 
     public static Optional<ObservedCloudsImpl> immutableCopyOf(final Optional<ObservedClouds> observedClouds) {
-        checkNotNull(observedClouds);
+        Objects.nonNull(observedClouds);
         return observedClouds.map(ObservedCloudsImpl::immutableCopyOf);
     }
 

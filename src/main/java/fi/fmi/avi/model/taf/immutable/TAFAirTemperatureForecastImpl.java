@@ -1,8 +1,8 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -25,7 +25,7 @@ import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast, Serializable {
 
     public static TAFAirTemperatureForecastImpl immutableCopyOf(final TAFAirTemperatureForecast airTemperatureForecast) {
-        checkNotNull(airTemperatureForecast);
+        Objects.nonNull(airTemperatureForecast);
         if (airTemperatureForecast instanceof TAFAirTemperatureForecastImpl) {
             return (TAFAirTemperatureForecastImpl) airTemperatureForecast;
         } else {
@@ -34,7 +34,7 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
     }
 
     public static Optional<TAFAirTemperatureForecastImpl> immutableCopyOf(final Optional<TAFAirTemperatureForecast> airTemperatureForecast) {
-        checkNotNull(airTemperatureForecast);
+        Objects.nonNull(airTemperatureForecast);
         return airTemperatureForecast.map(TAFAirTemperatureForecastImpl::immutableCopyOf);
     }
 

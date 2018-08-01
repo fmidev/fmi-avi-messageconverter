@@ -1,10 +1,10 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,7 +29,7 @@ import fi.fmi.avi.model.metar.WindShear;
 public abstract class WindShearImpl implements WindShear, Serializable {
 
     public static WindShearImpl immutableCopyOf(final WindShear windShear) {
-        checkNotNull(windShear);
+        Objects.nonNull(windShear);
         if (windShear instanceof WindShearImpl) {
             return (WindShearImpl) windShear;
         } else {
@@ -38,7 +38,7 @@ public abstract class WindShearImpl implements WindShear, Serializable {
     }
 
     public static Optional<WindShearImpl> immutableCopyOf(final Optional<WindShear> windShear) {
-        checkNotNull(windShear);
+        Objects.nonNull(windShear);
         return windShear.map(WindShearImpl::immutableCopyOf);
     }
 

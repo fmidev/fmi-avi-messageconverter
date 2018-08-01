@@ -1,7 +1,5 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
@@ -14,6 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -58,7 +57,7 @@ import fi.fmi.avi.model.metar.WindShear;
 public abstract class METARImpl implements METAR, Serializable {
 
     public static METARImpl immutableCopyOf(final MeteorologicalTerminalAirReport msg) {
-        checkNotNull(msg);
+        Objects.requireNonNull(msg);
         if (msg instanceof METAR) {
             if (msg instanceof METARImpl) {
                 return (METARImpl) msg;
@@ -81,7 +80,7 @@ public abstract class METARImpl implements METAR, Serializable {
     }
 
     public static Optional<METARImpl> immutableCopyOf(final Optional<MeteorologicalTerminalAirReport> metar) {
-        checkNotNull(metar);
+        Objects.requireNonNull(metar);
         return metar.map(METARImpl::immutableCopyOf);
     }
 
@@ -187,12 +186,16 @@ public abstract class METARImpl implements METAR, Serializable {
         }
 
         public SPECI buildAsSPECI() {
-            checkState(!isRoutineDelayed(),"Routine delayed (RTD) is true, cannot build as SPECI");
+            if (isRoutineDelayed()) {
+                throw new IllegalStateException("Routine delayed (RTD) is true, cannot build as SPECI");
+            }
             return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[]{SPECI.class}, new SPECIInvocationHandler(this.build()));
         }
 
         public SPECI buildPartialAsSPECI() {
-            checkState(!isRoutineDelayed(),"Routine delayed (RTD) is true, cannot build as SPECI");
+            if (isRoutineDelayed()) {
+                throw new IllegalStateException("Routine delayed (RTD) is true, cannot build as SPECI");
+            }
             return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[]{SPECI.class}, new SPECIInvocationHandler(this.buildPartial()));
         }
 

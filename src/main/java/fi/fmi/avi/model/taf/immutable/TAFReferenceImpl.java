@@ -1,8 +1,7 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -25,7 +24,7 @@ import fi.fmi.avi.model.taf.TAFReference;
 public abstract class TAFReferenceImpl implements TAFReference, Serializable {
 
     public static TAFReferenceImpl immutableCopyOf(final TAFReference tafReference) {
-        checkNotNull(tafReference);
+        Objects.nonNull(tafReference);
         if (tafReference instanceof TAFReferenceImpl) {
             return (TAFReferenceImpl) tafReference;
         } else {
@@ -34,7 +33,7 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
     }
 
     public static Optional<TAFReferenceImpl> immutableCopyOf(final Optional<TAFReference> tafReference) {
-        checkNotNull(tafReference);
+        Objects.nonNull(tafReference);
         return tafReference.map(TAFReferenceImpl::immutableCopyOf);
     }
 

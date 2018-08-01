@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -436,7 +436,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
     }
 
     public static WeatherImpl immutableCopyOf(final Weather weather) {
-        checkNotNull(weather);
+        Objects.nonNull(weather);
         if (weather instanceof WeatherImpl) {
             return (WeatherImpl) weather;
         } else {
@@ -445,7 +445,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
     }
 
     public static Optional<WeatherImpl> immutableCopyOf(final Optional<Weather> weather) {
-        checkNotNull(weather);
+        Objects.nonNull(weather);
         return weather.map(WeatherImpl::immutableCopyOf);
     }
 

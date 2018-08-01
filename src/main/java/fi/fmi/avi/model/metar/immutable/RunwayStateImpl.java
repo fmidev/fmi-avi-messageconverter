@@ -1,8 +1,8 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -29,7 +29,7 @@ import fi.fmi.avi.model.metar.RunwayState;
 public abstract class RunwayStateImpl implements RunwayState, Serializable {
 
     public static RunwayStateImpl immutableCopyOf(final RunwayState runwayState) {
-        checkNotNull(runwayState);
+        Objects.nonNull(runwayState);
         if (runwayState instanceof RunwayStateImpl) {
             return (RunwayStateImpl) runwayState;
         } else {
@@ -38,7 +38,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
     }
 
     public static Optional<RunwayStateImpl> immutableCopyOf(final Optional<RunwayState> runwayState) {
-        checkNotNull(runwayState);
+        Objects.nonNull(runwayState);
         return runwayState.map(RunwayStateImpl::immutableCopyOf);
     }
 

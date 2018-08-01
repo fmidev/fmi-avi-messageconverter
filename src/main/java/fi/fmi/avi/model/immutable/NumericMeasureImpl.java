@@ -1,8 +1,7 @@
 package fi.fmi.avi.model.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -32,7 +31,7 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
     }
 
     public static NumericMeasureImpl immutableCopyOf(final NumericMeasure numericMeasure) {
-        checkNotNull(numericMeasure);
+        Objects.nonNull(numericMeasure);
         if (numericMeasure instanceof NumericMeasureImpl) {
             return (NumericMeasureImpl) numericMeasure;
         } else {

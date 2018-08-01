@@ -1,8 +1,8 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -25,7 +25,7 @@ import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
 public abstract class TrendForecastSurfaceWindImpl implements TrendForecastSurfaceWind, Serializable {
 
     public static TrendForecastSurfaceWindImpl immutableCopyOf(final TrendForecastSurfaceWind surfaceWind) {
-        checkNotNull(surfaceWind);
+        Objects.nonNull(surfaceWind);
         if (surfaceWind instanceof TrendForecastSurfaceWindImpl) {
             return (TrendForecastSurfaceWindImpl) surfaceWind;
         } else {
@@ -34,7 +34,7 @@ public abstract class TrendForecastSurfaceWindImpl implements TrendForecastSurfa
     }
 
     public static Optional<TrendForecastSurfaceWindImpl> immutableCopyOf(final Optional<TrendForecastSurfaceWind> surfaceWind) {
-        checkNotNull(surfaceWind);
+        Objects.nonNull(surfaceWind);
         return surfaceWind.map(TrendForecastSurfaceWindImpl::immutableCopyOf);
     }
 
