@@ -1,6 +1,6 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

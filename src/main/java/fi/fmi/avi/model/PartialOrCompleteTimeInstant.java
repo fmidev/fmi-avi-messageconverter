@@ -1,11 +1,12 @@
 package fi.fmi.avi.model;
 
-import static com.google.common.base.Preconditions.checkState;
 import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.DayHour;
 import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.DayHourMinute;
 import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.DayHourMinuteZone;
 import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.Hour;
 import static fi.fmi.avi.model.PartialOrCompleteTimeInstant.TimePattern.HourMinute;
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkArgument;
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkState;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -17,14 +18,13 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Preconditions;
 
 /**
  * Created by rinne on 27/10/17.
@@ -236,8 +236,8 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
                 PartialOrCompleteTimeInstant.Builder retval = this;
                 String partialTime = getPartialTime().get();
                 TimePattern timePattern = getPartialTimePattern().get();
-                Preconditions.checkArgument(issueYearMonth != null, "issueYearMonth must not be null");
-                Preconditions.checkArgument(issueDayOfMonth >= 1 && issueDayOfMonth <= 31, "issueDayOfMonth must be between 1 and 31");
+                checkArgument(issueYearMonth != null, "issueYearMonth must not be null");
+                checkArgument(issueDayOfMonth >= 1 && issueDayOfMonth <= 31, "issueDayOfMonth must be between 1 and 31");
                 checkState(timePattern.contains("?<hour>"), "The current timePattern " + timePattern + " does not match hour");
                 Matcher m = timePattern.matcher(partialTime);
                 checkState(m.matches(), "Partial time '" + partialTime + "' does not match timePattern '" + timePattern + "'");

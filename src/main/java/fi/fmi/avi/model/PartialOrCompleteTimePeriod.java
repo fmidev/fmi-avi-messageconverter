@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
+
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -9,13 +11,12 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Preconditions;
 
 /**
  * Created by rinne on 04/04/2018.
@@ -31,7 +32,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
 
     public static List<PartialOrCompleteTime> completePartialTimeReferenceList(final List<? extends PartialOrCompleteTime> input,
             final ZonedDateTime referenceTime) {
-        Preconditions.checkNotNull(input, "Input list cannot be null");
+        checkNotNull(input, "Input list cannot be null");
 
         //Assumption: the start times come in chronological order, but the periods may be (partly) overlapping
         List<PartialOrCompleteTime> revisedList = new ArrayList<>(input.size());

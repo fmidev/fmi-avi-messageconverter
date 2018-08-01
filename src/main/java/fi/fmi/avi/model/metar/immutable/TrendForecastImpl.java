@@ -1,7 +1,7 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CloudForecast;

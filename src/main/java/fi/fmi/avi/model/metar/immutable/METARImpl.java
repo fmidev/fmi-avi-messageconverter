@@ -1,7 +1,7 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkState;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
