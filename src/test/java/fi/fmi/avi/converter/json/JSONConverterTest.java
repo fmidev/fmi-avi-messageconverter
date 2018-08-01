@@ -1,19 +1,14 @@
 package fi.fmi.avi.converter.json;
 
-import com.google.common.base.Preconditions;
-import fi.fmi.avi.converter.AviMessageConverter;
-import fi.fmi.avi.converter.ConversionHints;
-import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.converter.json.conf.JSONConverter;
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.immutable.*;
-import fi.fmi.avi.model.taf.TAF;
-import fi.fmi.avi.model.taf.immutable.TAFBaseForecastImpl;
-import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
-import fi.fmi.avi.model.taf.immutable.TAFImpl;
-import fi.fmi.avi.model.taf.immutable.TAFSurfaceWindImpl;
+import static org.inferred.freebuilder.shaded.com.google.common.base.Preconditions.checkNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +17,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import fi.fmi.avi.converter.AviMessageConverter;
+import fi.fmi.avi.converter.ConversionHints;
+import fi.fmi.avi.converter.ConversionResult;
+import fi.fmi.avi.converter.json.conf.JSONConverter;
+import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.immutable.CloudForecastImpl;
+import fi.fmi.avi.model.immutable.CloudLayerImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.WeatherImpl;
+import fi.fmi.avi.model.taf.TAF;
+import fi.fmi.avi.model.taf.immutable.TAFBaseForecastImpl;
+import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
+import fi.fmi.avi.model.taf.immutable.TAFImpl;
+import fi.fmi.avi.model.taf.immutable.TAFSurfaceWindImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -41,7 +45,7 @@ public class JSONConverterTest {
     @Test
     public void testTAFParsing() throws Exception {
         InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
-        Preconditions.checkNotNull(is);
+        checkNotNull(is);
         String input = IOUtils.toString(is,"UTF-8");
         is.close();
         ConversionResult<TAF> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_TAF_POJO, ConversionHints.EMPTY);
@@ -51,7 +55,7 @@ public class JSONConverterTest {
     @Test
     public void testTAFSerialization() throws Exception {
         InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
-        Preconditions.checkNotNull(is);
+        checkNotNull(is);
         String reference = IOUtils.toString(is,"UTF-8");
         is.close();
 
