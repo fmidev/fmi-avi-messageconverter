@@ -48,7 +48,13 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
     public static class Builder extends NumericMeasureImpl_Builder {
 
         public static Builder from(final NumericMeasure value) {
-            return new NumericMeasureImpl.Builder().setUom(value.getUom()).setValue(value.getValue());
+            if (value instanceof NumericMeasureImpl) {
+                return ((NumericMeasureImpl) value).toBuilder();
+            } else {
+                return new NumericMeasureImpl.Builder()//
+                        .setUom(value.getUom())//
+                        .setValue(value.getValue());
+            }
         }
     }
 }

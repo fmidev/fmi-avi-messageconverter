@@ -42,11 +42,15 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
     public static class Builder extends RunwayDirectionImpl_Builder {
 
         public static Builder from(final RunwayDirection value) {
-            return new RunwayDirectionImpl.Builder().setDesignator(value.getDesignator())
-                    .setElevationTDZMeters(value.getElevationTDZMeters())
-                    .setTrueBearing(value.getTrueBearing())
-                    .setAssociatedAirportHeliport(AerodromeImpl.immutableCopyOf(value.getAssociatedAirportHeliport()));
-
+            if (value instanceof RunwayDirectionImpl) {
+                return ((RunwayDirectionImpl) value).toBuilder();
+            } else {
+                return new RunwayDirectionImpl.Builder()//
+                        .setDesignator(value.getDesignator())//
+                        .setElevationTDZMeters(value.getElevationTDZMeters())//
+                        .setTrueBearing(value.getTrueBearing())//
+                        .setAssociatedAirportHeliport(AerodromeImpl.immutableCopyOf(value.getAssociatedAirportHeliport()));
+            }
         }
 
         @Override

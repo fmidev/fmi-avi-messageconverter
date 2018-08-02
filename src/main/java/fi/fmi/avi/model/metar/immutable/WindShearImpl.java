@@ -49,13 +49,19 @@ public abstract class WindShearImpl implements WindShear, Serializable {
         public Builder() {
             setAppliedToAllRunways(false);
         }
-        public static Builder from(final WindShear value) {
-            Builder retval = new WindShearImpl.Builder().setAppliedToAllRunways(value.isAppliedToAllRunways());
 
-            value.getRunwayDirections()
-                    .map(directions -> retval.setRunwayDirections(
-                            Collections.unmodifiableList(directions.stream().map(RunwayDirectionImpl::immutableCopyOf).collect(Collectors.toList()))));
-            return retval;
+        public static Builder from(final WindShear value) {
+            if (value instanceof WindShearImpl) {
+                return ((WindShearImpl) value).toBuilder();
+            } else {
+                Builder retval = new WindShearImpl.Builder()//
+                        .setAppliedToAllRunways(value.isAppliedToAllRunways());
+
+                value.getRunwayDirections()
+                        .map(directions -> retval.setRunwayDirections(
+                                Collections.unmodifiableList(directions.stream().map(RunwayDirectionImpl::immutableCopyOf).collect(Collectors.toList()))));
+                return retval;
+            }
         }
 
         @Override

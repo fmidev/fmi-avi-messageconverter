@@ -42,10 +42,15 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
     public static class Builder extends TAFReferenceImpl_Builder {
 
         public static Builder from(final TAFReference value) {
-            return new Builder().setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))
-                    .setStatus(value.getStatus())
-                    .setIssueTime(value.getIssueTime())
-                    .setValidityTime(value.getValidityTime());
+            if (value instanceof TAFReferenceImpl) {
+                return ((TAFReferenceImpl) value).toBuilder();
+            } else {
+                return new Builder()//
+                        .setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))
+                        .setStatus(value.getStatus())
+                        .setIssueTime(value.getIssueTime())
+                        .setValidityTime(value.getValidityTime());
+            }
         }
 
         @Override

@@ -42,9 +42,13 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
     public static class Builder extends SeaStateImpl_Builder {
 
         public static Builder from(final SeaState value) {
-            return new SeaStateImpl.Builder().setSeaSurfaceState(value.getSeaSurfaceState())
-                    .setSeaSurfaceTemperature(NumericMeasureImpl.immutableCopyOf(value.getSeaSurfaceTemperature()))
-                    .setSignificantWaveHeight(NumericMeasureImpl.immutableCopyOf(value.getSignificantWaveHeight()));
+            if (value instanceof SeaStateImpl) {
+                return ((SeaStateImpl) value).toBuilder();
+            } else {
+                return new SeaStateImpl.Builder().setSeaSurfaceState(value.getSeaSurfaceState())
+                        .setSeaSurfaceTemperature(NumericMeasureImpl.immutableCopyOf(value.getSeaSurfaceTemperature()))
+                        .setSignificantWaveHeight(NumericMeasureImpl.immutableCopyOf(value.getSignificantWaveHeight()));
+            }
 
         }
 

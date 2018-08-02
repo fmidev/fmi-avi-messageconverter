@@ -10,6 +10,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -71,8 +72,9 @@ public abstract class METARImpl implements METAR, Serializable {
                     //msg is a SPECI proxy, return the internal delegate:
                     return ((SPECIInvocationHandler) handler).getDelegate();
                 }
-            } catch (IllegalArgumentException iae) {}
-            //msg is not a SPECI proxy instance, fallback to regular copy:
+            } catch (IllegalArgumentException iae) {
+                //NOOP: msg is not a SPECI proxy instance, fallback to regular copy
+            }
             return Builder.from((SPECI)msg).build();
         } else {
             throw new IllegalArgumentException("original is neither a METAR or a SPECI, cannot create a copy");
@@ -200,8 +202,22 @@ public abstract class METARImpl implements METAR, Serializable {
         }
 
         private static Builder from(final MeteorologicalTerminalAirReport value) {
+            if (value instanceof METARImpl) {
+                return ((METARImpl) value).toBuilder();
+            } else if (value instanceof SPECI) {
+                try {
+                    InvocationHandler handler = Proxy.getInvocationHandler(value);
+                    if (handler instanceof SPECIInvocationHandler) {
+                        //value is a SPECI proxy, return a Builder of the internal delegate:
+                        return ((SPECIInvocationHandler) handler).getDelegate().toBuilder();
+                    }
+                } catch (IllegalArgumentException iae) {
+                    //NOOP, non-proxy SPECIs fallback to using the full METARImpl.Builder
+                }
+            }
             //From AviationWeatherMessage:
-            METARImpl.Builder retval = new METARImpl.Builder().setIssueTime(value.getIssueTime())
+            METARImpl.Builder retval = new METARImpl.Builder()//
+                    .setIssueTime(value.getIssueTime())
                     .setPermissibleUsage(value.getPermissibleUsage())
                     .setPermissibleUsageReason(value.getPermissibleUsageReason())
                     .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
@@ -410,8 +426,8 @@ public abstract class METARImpl implements METAR, Serializable {
                 Method delegateMethod = METARImpl.class.getMethod(method.getName(), method.getParameterTypes());
                 return delegateMethod.invoke(delegate, args);
             } catch (NoSuchMethodException nsme) {
-                throw new RuntimeException(
-                        "SPECI method " + method.getName() + "(" + method.getParameterTypes() + ") not implemented by " + METARImpl.class.getSimpleName()
+                throw new RuntimeException("SPECI method " + method.getName() + "(" + Arrays.toString(method.getParameterTypes()) + ") not implemented by "
+                        + METARImpl.class.getSimpleName()
                                 + ", cannot delegate. Make sure that " + METARImpl.class.getCanonicalName() + " implements all SPECI methods");
             }
         }

@@ -47,17 +47,21 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
     public static class Builder extends RunwayStateImpl_Builder {
 
         public static Builder from(final RunwayState value) {
-            return new RunwayStateImpl.Builder().setAppliedToAllRunways(value.isAppliedToAllRunways())
-                    .setBreakingAction(value.getBreakingAction())
-                    .setCleared(value.isCleared())
-                    .setContamination(value.getContamination())
-                    .setDeposit(value.getDeposit())
-                    .setDepthNotMeasurable(value.isDepthNotMeasurable())
-                    .setDepthOfDeposit(NumericMeasureImpl.immutableCopyOf(value.getDepthOfDeposit()))
-                    .setDepthOperator(value.getDepthOperator())
-                    .setEstimatedSurfaceFriction(value.getEstimatedSurfaceFriction())
-                    .setRepetition(value.isRepetition())
-                    .setSnowClosure(value.isSnowClosure());
+            if (value instanceof RunwayStateImpl) {
+                return ((RunwayStateImpl) value).toBuilder();
+            } else {
+                return new RunwayStateImpl.Builder().setAppliedToAllRunways(value.isAppliedToAllRunways())
+                        .setBreakingAction(value.getBreakingAction())
+                        .setCleared(value.isCleared())
+                        .setContamination(value.getContamination())
+                        .setDeposit(value.getDeposit())
+                        .setDepthNotMeasurable(value.isDepthNotMeasurable())
+                        .setDepthOfDeposit(NumericMeasureImpl.immutableCopyOf(value.getDepthOfDeposit()))
+                        .setDepthOperator(value.getDepthOperator())
+                        .setEstimatedSurfaceFriction(value.getEstimatedSurfaceFriction())
+                        .setRepetition(value.isRepetition())
+                        .setSnowClosure(value.isSnowClosure());
+            }
         }
 
         public Builder() {

@@ -55,15 +55,19 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
     public static class Builder extends RunwayVisualRangeImpl_Builder {
 
         public static Builder from(final RunwayVisualRange value) {
-            return new RunwayVisualRangeImpl.Builder().setMeanRVR(NumericMeasureImpl.immutableCopyOf(value.getMeanRVR()))
-                    .setMeanRVROperator(value.getMeanRVROperator())
-                    .setPastTendency(value.getPastTendency())
-                    .setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(value.getRunwayDirection()))
-                    .setVaryingRVRMaximum(NumericMeasureImpl.immutableCopyOf(value.getVaryingRVRMaximum()))
-                    .setVaryingRVRMinimum(NumericMeasureImpl.immutableCopyOf(value.getVaryingRVRMinimum()))
-                    .setVaryingRVRMaximumOperator(value.getVaryingRVRMaximumOperator())
-                    .setVaryingRVRMinimumOperator(value.getVaryingRVRMinimumOperator());
-
+            if (value instanceof RunwayVisualRangeImpl) {
+                return ((RunwayVisualRangeImpl) value).toBuilder();
+            } else {
+                return new RunwayVisualRangeImpl.Builder()//
+                        .setMeanRVR(NumericMeasureImpl.immutableCopyOf(value.getMeanRVR()))
+                        .setMeanRVROperator(value.getMeanRVROperator())
+                        .setPastTendency(value.getPastTendency())
+                        .setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(value.getRunwayDirection()))
+                        .setVaryingRVRMaximum(NumericMeasureImpl.immutableCopyOf(value.getVaryingRVRMaximum()))
+                        .setVaryingRVRMinimum(NumericMeasureImpl.immutableCopyOf(value.getVaryingRVRMinimum()))
+                        .setVaryingRVRMaximumOperator(value.getVaryingRVRMaximumOperator())
+                        .setVaryingRVRMinimumOperator(value.getVaryingRVRMinimumOperator());
+            }
         }
 
         @Override

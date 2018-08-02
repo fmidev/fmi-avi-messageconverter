@@ -108,34 +108,39 @@ public abstract class TAFImpl implements TAF, Serializable {
     public static class Builder extends TAFImpl_Builder {
 
         public static Builder from(final TAF value) {
-            //From AviationWeatherMessage:
-            Builder retval = new Builder().setIssueTime(value.getIssueTime())
-                    .setPermissibleUsage(value.getPermissibleUsage())
-                    .setPermissibleUsageReason(value.getPermissibleUsageReason())
-                    .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
-                    .setTranslated(value.isTranslated())
-                    .setTranslatedBulletinID(value.getTranslatedBulletinID())
-                    .setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime())
-                    .setTranslationCentreDesignator(value.getTranslationCentreDesignator())
-                    .setTranslationCentreName(value.getTranslationCentreName())
-                    .setTranslationTime(value.getTranslationTime())
-                    .setTranslatedTAC(value.getTranslatedTAC());
+            if (value instanceof TAFImpl) {
+                return ((TAFImpl) value).toBuilder();
+            } else {
+                //From AviationWeatherMessage:
+                Builder retval = new Builder()//
+                        .setIssueTime(value.getIssueTime())
+                        .setPermissibleUsage(value.getPermissibleUsage())
+                        .setPermissibleUsageReason(value.getPermissibleUsageReason())
+                        .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
+                        .setTranslated(value.isTranslated())
+                        .setTranslatedBulletinID(value.getTranslatedBulletinID())
+                        .setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime())
+                        .setTranslationCentreDesignator(value.getTranslationCentreDesignator())
+                        .setTranslationCentreName(value.getTranslationCentreName())
+                        .setTranslationTime(value.getTranslationTime())
+                        .setTranslatedTAC(value.getTranslatedTAC());
 
-            value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
+                value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
 
-            //From AerodromeWeatherMessage:
-            retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()));
+                //From AerodromeWeatherMessage:
+                retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()));
 
-            //From TAF:
-            retval.setStatus(value.getStatus())
-                    .setValidityTime(value.getValidityTime())
-                    .setBaseForecast(TAFBaseForecastImpl.immutableCopyOf(value.getBaseForecast()))
-                    .setReferredReport(TAFReferenceImpl.immutableCopyOf(value.getReferredReport()));
+                //From TAF:
+                retval.setStatus(value.getStatus())
+                        .setValidityTime(value.getValidityTime())
+                        .setBaseForecast(TAFBaseForecastImpl.immutableCopyOf(value.getBaseForecast()))
+                        .setReferredReport(TAFReferenceImpl.immutableCopyOf(value.getReferredReport()));
 
-            value.getChangeForecasts()
-                    .map(forecasts -> retval.setChangeForecasts(
-                            Collections.unmodifiableList(forecasts.stream().map(TAFChangeForecastImpl::immutableCopyOf).collect(Collectors.toList()))));
-            return retval;
+                value.getChangeForecasts()
+                        .map(forecasts -> retval.setChangeForecasts(
+                                Collections.unmodifiableList(forecasts.stream().map(TAFChangeForecastImpl::immutableCopyOf).collect(Collectors.toList()))));
+                return retval;
+            }
         }
 
         public Builder() {

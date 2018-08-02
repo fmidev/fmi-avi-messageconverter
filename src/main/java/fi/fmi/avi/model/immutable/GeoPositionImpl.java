@@ -41,10 +41,15 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
     public static class Builder extends GeoPositionImpl_Builder {
 
         public static Builder from(final GeoPosition value) {
-            return new GeoPositionImpl.Builder().setCoordinateReferenceSystemId(value.getCoordinateReferenceSystemId())
-                    .setCoordinates(value.getCoordinates())
-                    .setElevationUom(value.getElevationUom())
-                    .setElevationValue(value.getElevationValue());
+            if (value instanceof GeoPositionImpl) {
+                return ((GeoPositionImpl) value).toBuilder();
+            } else {
+                return new GeoPositionImpl.Builder()//
+                        .setCoordinateReferenceSystemId(value.getCoordinateReferenceSystemId())
+                        .setCoordinates(value.getCoordinates())
+                        .setElevationUom(value.getElevationUom())
+                        .setElevationValue(value.getElevationValue());
+            }
         }
     }
 

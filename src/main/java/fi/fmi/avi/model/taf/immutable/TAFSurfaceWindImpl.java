@@ -43,12 +43,17 @@ public abstract class TAFSurfaceWindImpl implements TAFSurfaceWind, Serializable
     public static class Builder extends TAFSurfaceWindImpl_Builder {
 
         public static Builder from(final TAFSurfaceWind value) {
-            return new TAFSurfaceWindImpl.Builder().setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
-                    .setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())
-                    .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
-                    .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()))
-                    .setWindGustOperator(value.getWindGustOperator())
-                    .setVariableDirection(value.isVariableDirection());
+            if (value instanceof TAFSurfaceWindImpl) {
+                return ((TAFSurfaceWindImpl) value).toBuilder();
+            } else {
+                return new TAFSurfaceWindImpl.Builder()//
+                        .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
+                        .setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())
+                        .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
+                        .setWindGust(NumericMeasureImpl.immutableCopyOf(value.getWindGust()))
+                        .setWindGustOperator(value.getWindGustOperator())
+                        .setVariableDirection(value.isVariableDirection());
+            }
         }
 
         public Builder() {

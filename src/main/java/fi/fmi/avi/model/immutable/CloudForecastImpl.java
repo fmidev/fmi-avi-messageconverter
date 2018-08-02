@@ -48,13 +48,18 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
             setNoSignificantCloud(false);
         }
         public static Builder from(final CloudForecast value) {
-            CloudForecastImpl.Builder retval = new CloudForecastImpl.Builder().setNoSignificantCloud(value.isNoSignificantCloud())
-                    .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));
+            if (value instanceof CloudForecastImpl) {
+                return ((CloudForecastImpl) value).toBuilder();
+            } else {
+                CloudForecastImpl.Builder retval = new CloudForecastImpl.Builder()//
+                        .setNoSignificantCloud(value.isNoSignificantCloud())//
+                        .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));
 
-            value.getLayers()
-                    .map(layers -> retval.setLayers(
-                            Collections.unmodifiableList(layers.stream().map(CloudLayerImpl::immutableCopyOf).collect(Collectors.toList()))));
-            return retval;
+                value.getLayers()
+                        .map(layers -> retval.setLayers(
+                                Collections.unmodifiableList(layers.stream().map(CloudLayerImpl::immutableCopyOf).collect(Collectors.toList()))));
+                return retval;
+            }
         }
 
         @Override

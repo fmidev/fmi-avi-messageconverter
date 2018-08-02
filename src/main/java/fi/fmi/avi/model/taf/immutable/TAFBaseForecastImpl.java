@@ -53,21 +53,26 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
     public static class Builder extends TAFBaseForecastImpl_Builder {
 
         public static Builder from(final TAFBaseForecast value) {
-            Builder retval = new Builder().setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())
-                    .setCloud(CloudForecastImpl.immutableCopyOf(value.getCloud()))
-                    .setNoSignificantWeather(value.isNoSignificantWeather())
-                    .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
-                    .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
-                    .setSurfaceWind(TAFSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()));
+            if (value instanceof TAFBaseForecastImpl) {
+                return ((TAFBaseForecastImpl) value).toBuilder();
+            } else {
+                Builder retval = new Builder()//
+                        .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())
+                        .setCloud(CloudForecastImpl.immutableCopyOf(value.getCloud()))
+                        .setNoSignificantWeather(value.isNoSignificantWeather())
+                        .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
+                        .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
+                        .setSurfaceWind(TAFSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()));
 
-            value.getForecastWeather()
-                    .map(weather -> retval.setForecastWeather(
-                            Collections.unmodifiableList(weather.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))));
+                value.getForecastWeather()
+                        .map(weather -> retval.setForecastWeather(
+                                Collections.unmodifiableList(weather.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))));
 
-            value.getTemperatures()
-                    .map(temps -> retval.setTemperatures(
-                            Collections.unmodifiableList(temps.stream().map(TAFAirTemperatureForecastImpl::immutableCopyOf).collect(Collectors.toList()))));
-            return retval;
+                value.getTemperatures()
+                        .map(temps -> retval.setTemperatures(
+                                Collections.unmodifiableList(temps.stream().map(TAFAirTemperatureForecastImpl::immutableCopyOf).collect(Collectors.toList()))));
+                return retval;
+            }
         }
 
         public Builder() {

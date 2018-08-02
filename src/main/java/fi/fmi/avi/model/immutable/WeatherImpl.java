@@ -466,9 +466,14 @@ public abstract class WeatherImpl implements Weather, Serializable {
     public abstract Builder toBuilder();
 
     public static class Builder extends WeatherImpl_Builder {
-
         public static Builder from(final Weather value) {
-            return new WeatherImpl.Builder().setCode(value.getCode()).setDescription(value.getDescription());
+            if (value instanceof WeatherImpl) {
+                return ((WeatherImpl) value).toBuilder();
+            } else {
+                return new WeatherImpl.Builder()//
+                        .setCode(value.getCode())//
+                        .setDescription(value.getDescription());
+            }
         }
 
     }

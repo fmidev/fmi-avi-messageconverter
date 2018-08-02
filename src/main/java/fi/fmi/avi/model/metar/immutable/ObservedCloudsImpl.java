@@ -54,15 +54,19 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
         }
 
         public static Builder from(final ObservedClouds value) {
-            ObservedCloudsImpl.Builder retval = new ObservedCloudsImpl.Builder().setAmountAndHeightUnobservableByAutoSystem(
-                    value.isAmountAndHeightUnobservableByAutoSystem())
-                    .setNoSignificantCloud(value.isNoSignificantCloud())
-                    .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));
+            if (value instanceof ObservedCloudsImpl) {
+                return ((ObservedCloudsImpl) value).toBuilder();
+            } else {
+                ObservedCloudsImpl.Builder retval = new ObservedCloudsImpl.Builder()//
+                        .setAmountAndHeightUnobservableByAutoSystem(value.isAmountAndHeightUnobservableByAutoSystem())
+                        .setNoSignificantCloud(value.isNoSignificantCloud())
+                        .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));
 
-            retval.getLayers()
-                    .map(layers -> retval.setLayers(
-                            Collections.unmodifiableList(layers.stream().map(CloudLayerImpl::immutableCopyOf).collect(Collectors.toList()))));
-            return retval;
+                retval.getLayers()
+                        .map(layers -> retval.setLayers(
+                                Collections.unmodifiableList(layers.stream().map(CloudLayerImpl::immutableCopyOf).collect(Collectors.toList()))));
+                return retval;
+            }
         }
 
         @Override

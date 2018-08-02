@@ -43,10 +43,14 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
     public static class Builder extends HorizontalVisibilityImpl_Builder {
 
         public static Builder from(final HorizontalVisibility value) {
-            return new HorizontalVisibilityImpl.Builder().setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
-                    .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
-                    .setMinimumVisibility(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibility()))
-                    .setMinimumVisibilityDirection(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibilityDirection()));
+            if (value instanceof HorizontalVisibilityImpl) {
+                return ((HorizontalVisibilityImpl) value).toBuilder();
+            } else {
+                return new HorizontalVisibilityImpl.Builder().setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
+                        .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
+                        .setMinimumVisibility(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibility()))
+                        .setMinimumVisibilityDirection(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibilityDirection()));
+            }
         }
 
         @Override

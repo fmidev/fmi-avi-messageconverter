@@ -41,14 +41,17 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
     public static class Builder extends AerodromeImpl_Builder {
 
         public static Builder from(final Aerodrome value) {
-            AerodromeImpl.Builder retval = new AerodromeImpl.Builder().setDesignator(value.getDesignator())
-                    .setDesignatorIATA(value.getDesignatorIATA())
-                    .setFieldElevationValue(value.getFieldElevationValue())
-                    .setLocationIndicatorICAO(value.getLocationIndicatorICAO())
-                    .setName(value.getName())
-                    .setReferencePoint(GeoPositionImpl.immutableCopyOf(value.getReferencePoint()));
-
-            return retval;
+            if (value instanceof AerodromeImpl) {
+                return ((AerodromeImpl) value).toBuilder();
+            } else {
+                return new AerodromeImpl.Builder()//
+                        .setDesignator(value.getDesignator())
+                        .setDesignatorIATA(value.getDesignatorIATA())
+                        .setFieldElevationValue(value.getFieldElevationValue())
+                        .setLocationIndicatorICAO(value.getLocationIndicatorICAO())
+                        .setName(value.getName())
+                        .setReferencePoint(GeoPositionImpl.immutableCopyOf(value.getReferencePoint()));
+            }
         }
 
         @Override

@@ -42,9 +42,14 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
     public static class Builder extends CloudLayerImpl_Builder {
 
         public static Builder from(final CloudLayer value) {
-            return new CloudLayerImpl.Builder().setAmount(value.getAmount())
-                    .setCloudType(value.getCloudType())
-                    .setBase(NumericMeasureImpl.immutableCopyOf(value.getBase()));
+            if (value instanceof CloudLayerImpl) {
+                return ((CloudLayerImpl) value).toBuilder();
+            } else {
+                return new CloudLayerImpl.Builder()//
+                        .setAmount(value.getAmount())//
+                        .setCloudType(value.getCloudType())//
+                        .setBase(NumericMeasureImpl.immutableCopyOf(value.getBase()));
+            }
         }
 
         @Override

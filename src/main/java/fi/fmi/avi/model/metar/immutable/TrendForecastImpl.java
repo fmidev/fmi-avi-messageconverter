@@ -58,21 +58,25 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
         }
 
         public static Builder from(final TrendForecast value) {
+            if (value instanceof TrendForecastImpl) {
+                return ((TrendForecastImpl) value).toBuilder();
+            } else {
+                Builder retval = new TrendForecastImpl.Builder()//
+                        .setPeriodOfChange(value.getPeriodOfChange())
+                        .setInstantOfChange(value.getInstantOfChange())
+                        .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())
+                        .setChangeIndicator(value.getChangeIndicator())
+                        .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
+                        .setNoSignificantWeather(value.isNoSignificantWeather())
+                        .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
+                        .setSurfaceWind(TrendForecastSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))
+                        .setCloud(CloudForecastImpl.immutableCopyOf(value.getCloud()));
 
-            Builder retval = new TrendForecastImpl.Builder().setPeriodOfChange(value.getPeriodOfChange())
-                    .setInstantOfChange(value.getInstantOfChange())
-                    .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())
-                    .setChangeIndicator(value.getChangeIndicator())
-                    .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
-                    .setNoSignificantWeather(value.isNoSignificantWeather())
-                    .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
-                    .setSurfaceWind(TrendForecastSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))
-                    .setCloud(CloudForecastImpl.immutableCopyOf(value.getCloud()));
-
-            value.getForecastWeather()
-                    .map(layers -> retval.setForecastWeather(
-                            Collections.unmodifiableList(layers.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))));
-            return retval;
+                value.getForecastWeather()
+                        .map(layers -> retval.setForecastWeather(
+                                Collections.unmodifiableList(layers.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))));
+                return retval;
+            }
         }
 
         @Override

@@ -43,10 +43,15 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
     public static class Builder extends TAFAirTemperatureForecastImpl_Builder {
 
         public static Builder from(final TAFAirTemperatureForecast value) {
-            return new Builder().setMaxTemperature(NumericMeasureImpl.immutableCopyOf(value.getMaxTemperature()))
-                    .setMinTemperature(NumericMeasureImpl.immutableCopyOf(value.getMinTemperature()))
-                    .setMaxTemperatureTime(value.getMaxTemperatureTime())
-                    .setMinTemperatureTime(value.getMinTemperatureTime());
+            if (value instanceof TAFAirTemperatureForecastImpl) {
+                return ((TAFAirTemperatureForecastImpl) value).toBuilder();
+            } else {
+                return new Builder()//
+                        .setMaxTemperature(NumericMeasureImpl.immutableCopyOf(value.getMaxTemperature()))
+                        .setMinTemperature(NumericMeasureImpl.immutableCopyOf(value.getMinTemperature()))
+                        .setMaxTemperatureTime(value.getMaxTemperatureTime())
+                        .setMinTemperatureTime(value.getMinTemperatureTime());
+            }
         }
 
         @Override
