@@ -31,7 +31,7 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
     }
 
     public static NumericMeasureImpl immutableCopyOf(final NumericMeasure numericMeasure) {
-        Objects.nonNull(numericMeasure);
+        Objects.requireNonNull(numericMeasure);
         if (numericMeasure instanceof NumericMeasureImpl) {
             return (NumericMeasureImpl) numericMeasure;
         } else {

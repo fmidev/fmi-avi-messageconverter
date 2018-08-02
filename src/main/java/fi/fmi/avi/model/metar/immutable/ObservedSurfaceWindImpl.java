@@ -26,7 +26,7 @@ import fi.fmi.avi.model.metar.ObservedSurfaceWind;
 public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Serializable {
 
     public static ObservedSurfaceWindImpl immutableCopyOf(final ObservedSurfaceWind observedSurfaceWind) {
-        Objects.nonNull(observedSurfaceWind);
+        Objects.requireNonNull(observedSurfaceWind);
         if (observedSurfaceWind instanceof ObservedSurfaceWindImpl) {
             return (ObservedSurfaceWindImpl) observedSurfaceWind;
         } else {
@@ -35,7 +35,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
     }
 
     public static Optional<ObservedSurfaceWindImpl> immutableCopyOf(final Optional<ObservedSurfaceWind> observedSurfaceWind) {
-        Objects.nonNull(observedSurfaceWind);
+        Objects.requireNonNull(observedSurfaceWind);
         return observedSurfaceWind.map(ObservedSurfaceWindImpl::immutableCopyOf);
     }
 

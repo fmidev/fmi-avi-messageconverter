@@ -45,7 +45,7 @@ public class JSONConverterTest {
     @Test
     public void testTAFParsing() throws Exception {
         InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
-        Objects.nonNull(is);
+        Objects.requireNonNull(is);
         String input = IOUtils.toString(is,"UTF-8");
         is.close();
         ConversionResult<TAF> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_TAF_POJO, ConversionHints.EMPTY);
@@ -55,7 +55,7 @@ public class JSONConverterTest {
     @Test
     public void testTAFSerialization() throws Exception {
         InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
-        Objects.nonNull(is);
+        Objects.requireNonNull(is);
         String reference = IOUtils.toString(is,"UTF-8");
         is.close();
 

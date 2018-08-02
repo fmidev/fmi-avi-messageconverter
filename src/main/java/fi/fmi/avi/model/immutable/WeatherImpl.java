@@ -436,7 +436,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
     }
 
     public static WeatherImpl immutableCopyOf(final Weather weather) {
-        Objects.nonNull(weather);
+        Objects.requireNonNull(weather);
         if (weather instanceof WeatherImpl) {
             return (WeatherImpl) weather;
         } else {
@@ -445,7 +445,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
     }
 
     public static Optional<WeatherImpl> immutableCopyOf(final Optional<Weather> weather) {
-        Objects.nonNull(weather);
+        Objects.requireNonNull(weather);
         return weather.map(WeatherImpl::immutableCopyOf);
     }
 

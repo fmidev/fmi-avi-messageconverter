@@ -29,7 +29,7 @@ import fi.fmi.avi.model.metar.RunwayState;
 public abstract class RunwayStateImpl implements RunwayState, Serializable {
 
     public static RunwayStateImpl immutableCopyOf(final RunwayState runwayState) {
-        Objects.nonNull(runwayState);
+        Objects.requireNonNull(runwayState);
         if (runwayState instanceof RunwayStateImpl) {
             return (RunwayStateImpl) runwayState;
         } else {
@@ -38,7 +38,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
     }
 
     public static Optional<RunwayStateImpl> immutableCopyOf(final Optional<RunwayState> runwayState) {
-        Objects.nonNull(runwayState);
+        Objects.requireNonNull(runwayState);
         return runwayState.map(RunwayStateImpl::immutableCopyOf);
     }
 

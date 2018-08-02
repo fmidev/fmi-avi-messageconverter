@@ -37,7 +37,7 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
     }
 
     public static RunwayVisualRangeImpl immutableCopyOf(final RunwayVisualRange runwayVisualRange) {
-        Objects.nonNull(runwayVisualRange);
+        Objects.requireNonNull(runwayVisualRange);
         if (runwayVisualRange instanceof RunwayVisualRangeImpl) {
             return (RunwayVisualRangeImpl) runwayVisualRange;
         } else {
@@ -46,7 +46,7 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
     }
 
     public static Optional<RunwayVisualRangeImpl> immutableCopyOf(final Optional<RunwayVisualRange> runwayVisualRange) {
-        Objects.nonNull(runwayVisualRange);
+        Objects.requireNonNull(runwayVisualRange);
         return runwayVisualRange.map(RunwayVisualRangeImpl::immutableCopyOf);
     }
 

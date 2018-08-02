@@ -31,7 +31,7 @@ import fi.fmi.avi.model.metar.ObservedClouds;
 public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable {
 
     public static ObservedCloudsImpl immutableCopyOf(final ObservedClouds observedClouds) {
-        Objects.nonNull(observedClouds);
+        Objects.requireNonNull(observedClouds);
         if (observedClouds instanceof ObservedCloudsImpl) {
             return (ObservedCloudsImpl) observedClouds;
         } else {
@@ -40,7 +40,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
     }
 
     public static Optional<ObservedCloudsImpl> immutableCopyOf(final Optional<ObservedClouds> observedClouds) {
-        Objects.nonNull(observedClouds);
+        Objects.requireNonNull(observedClouds);
         return observedClouds.map(ObservedCloudsImpl::immutableCopyOf);
     }
 

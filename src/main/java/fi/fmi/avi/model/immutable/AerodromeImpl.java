@@ -24,7 +24,7 @@ import fi.fmi.avi.model.GeoPosition;
 public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
     public static AerodromeImpl immutableCopyOf(final Aerodrome aerodrome) {
-        Objects.nonNull(aerodrome);
+        Objects.requireNonNull(aerodrome);
         if (aerodrome instanceof AerodromeImpl) {
             return (AerodromeImpl) aerodrome;
         } else {

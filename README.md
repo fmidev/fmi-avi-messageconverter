@@ -84,8 +84,8 @@ if (ConversionResult.Status.SUCCESS == result1.getStatus()) {
 ```
 
 ## Supported message types
-Currently, this project contains Java model classes for aviation weather message types METAR and TAF. It's anticipated 
-that more message types such as SIGMET, AIRMET, SPECI will be added once the project gets more mature.
+Currently, this project contains Java model classes for aviation weather message types METAR, SPECI and TAF. It's anticipated 
+that more message types such as SIGMET and AIRMET will be added once the project gets more mature.
 
 ## Immutables and Builders
 

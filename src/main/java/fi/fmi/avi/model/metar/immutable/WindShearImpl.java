@@ -29,7 +29,7 @@ import fi.fmi.avi.model.metar.WindShear;
 public abstract class WindShearImpl implements WindShear, Serializable {
 
     public static WindShearImpl immutableCopyOf(final WindShear windShear) {
-        Objects.nonNull(windShear);
+        Objects.requireNonNull(windShear);
         if (windShear instanceof WindShearImpl) {
             return (WindShearImpl) windShear;
         } else {
@@ -38,7 +38,7 @@ public abstract class WindShearImpl implements WindShear, Serializable {
     }
 
     public static Optional<WindShearImpl> immutableCopyOf(final Optional<WindShear> windShear) {
-        Objects.nonNull(windShear);
+        Objects.requireNonNull(windShear);
         return windShear.map(WindShearImpl::immutableCopyOf);
     }
 

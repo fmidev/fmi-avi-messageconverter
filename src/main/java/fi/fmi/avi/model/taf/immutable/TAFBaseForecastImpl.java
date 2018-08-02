@@ -35,7 +35,7 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
 public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializable {
 
     public static TAFBaseForecastImpl immutableCopyOf(final TAFBaseForecast baseForecast) {
-        Objects.nonNull(baseForecast);
+        Objects.requireNonNull(baseForecast);
         if (baseForecast instanceof TAFBaseForecastImpl) {
             return (TAFBaseForecastImpl) baseForecast;
         } else {
@@ -44,7 +44,7 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
     }
 
     public static Optional<TAFBaseForecastImpl> immutableCopyOf(final Optional<TAFBaseForecast> baseForecast) {
-        Objects.nonNull(baseForecast);
+        Objects.requireNonNull(baseForecast);
         return baseForecast.map(TAFBaseForecastImpl::immutableCopyOf);
     }
 

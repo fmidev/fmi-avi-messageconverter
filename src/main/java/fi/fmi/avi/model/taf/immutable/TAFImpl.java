@@ -44,7 +44,7 @@ import fi.fmi.avi.model.taf.TAFReference;
 public abstract class TAFImpl implements TAF, Serializable {
 
     public static TAFImpl immutableCopyOf(final TAF taf) {
-        Objects.nonNull(taf);
+        Objects.requireNonNull(taf);
         if (taf instanceof TAFImpl) {
             return (TAFImpl) taf;
         } else {
@@ -53,7 +53,7 @@ public abstract class TAFImpl implements TAF, Serializable {
     }
 
     public static Optional<TAFImpl> immutableCopyOf(final Optional<TAF> taf) {
-        Objects.nonNull(taf);
+        Objects.requireNonNull(taf);
         return taf.map(TAFImpl::immutableCopyOf);
     }
 

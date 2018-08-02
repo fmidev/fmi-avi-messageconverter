@@ -24,7 +24,7 @@ import fi.fmi.avi.model.metar.SeaState;
 public abstract class SeaStateImpl implements SeaState, Serializable {
 
     public static SeaStateImpl immutableCopyOf(final SeaState seaState) {
-        Objects.nonNull(seaState);
+        Objects.requireNonNull(seaState);
         if (seaState instanceof SeaStateImpl) {
             return (SeaStateImpl) seaState;
         } else {
@@ -33,7 +33,7 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
     }
 
     public static Optional<SeaStateImpl> immutableCopyOf(final Optional<SeaState> seaState) {
-        Objects.nonNull(seaState);
+        Objects.requireNonNull(seaState);
         return seaState.map(SeaStateImpl::immutableCopyOf);
     }
 

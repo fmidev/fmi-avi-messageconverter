@@ -27,7 +27,7 @@ import fi.fmi.avi.model.NumericMeasure;
 public abstract class CloudForecastImpl implements CloudForecast, Serializable {
 
     public static CloudForecastImpl immutableCopyOf(final CloudForecast cloudForecast) {
-        Objects.nonNull(cloudForecast);
+        Objects.requireNonNull(cloudForecast);
         if (cloudForecast instanceof CloudForecastImpl) {
             return (CloudForecastImpl) cloudForecast;
         } else {
@@ -36,7 +36,7 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
     }
 
     public static Optional<CloudForecastImpl> immutableCopyOf(final Optional<CloudForecast> cloudForecast) {
-        Objects.nonNull(cloudForecast);
+        Objects.requireNonNull(cloudForecast);
         return cloudForecast.map(CloudForecastImpl::immutableCopyOf);
     }
 

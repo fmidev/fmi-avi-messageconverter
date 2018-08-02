@@ -25,7 +25,7 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
 public abstract class TAFSurfaceWindImpl implements TAFSurfaceWind, Serializable {
 
     public static TAFSurfaceWindImpl immutableCopyOf(final TAFSurfaceWind surfaceWind) {
-        Objects.nonNull(surfaceWind);
+        Objects.requireNonNull(surfaceWind);
         if (surfaceWind instanceof TAFSurfaceWindImpl) {
             return (TAFSurfaceWindImpl) surfaceWind;
         } else {

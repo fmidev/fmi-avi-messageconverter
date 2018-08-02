@@ -25,7 +25,7 @@ import fi.fmi.avi.model.metar.HorizontalVisibility;
 public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, Serializable {
 
     public static HorizontalVisibilityImpl immutableCopyOf(final HorizontalVisibility horizontalVisibility) {
-        Objects.nonNull(horizontalVisibility);
+        Objects.requireNonNull(horizontalVisibility);
         if (horizontalVisibility instanceof HorizontalVisibilityImpl) {
             return (HorizontalVisibilityImpl) horizontalVisibility;
         } else {
@@ -34,7 +34,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
     }
 
     public static Optional<HorizontalVisibilityImpl> immutableCopyOf(final Optional<HorizontalVisibility> horizontalVisibility) {
-        Objects.nonNull(horizontalVisibility);
+        Objects.requireNonNull(horizontalVisibility);
         return horizontalVisibility.map(HorizontalVisibilityImpl::immutableCopyOf);
     }
 

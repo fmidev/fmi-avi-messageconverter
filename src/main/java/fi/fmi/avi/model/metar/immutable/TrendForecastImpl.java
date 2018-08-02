@@ -35,7 +35,7 @@ import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
 public abstract class TrendForecastImpl implements TrendForecast, Serializable {
 
     public static TrendForecastImpl immutableCopyOf(final TrendForecast trendForecast) {
-        Objects.nonNull(trendForecast);
+        Objects.requireNonNull(trendForecast);
         if (trendForecast instanceof TrendForecastImpl) {
             return (TrendForecastImpl) trendForecast;
         } else {
@@ -44,7 +44,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
     }
 
     public static Optional<TrendForecastImpl> immutableCopyOf(final Optional<TrendForecast> trendForecast) {
-        Objects.nonNull(trendForecast);
+        Objects.requireNonNull(trendForecast);
         return trendForecast.map(TrendForecastImpl::immutableCopyOf);
     }
 

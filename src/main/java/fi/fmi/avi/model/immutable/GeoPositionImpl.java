@@ -23,7 +23,7 @@ import fi.fmi.avi.model.GeoPosition;
 public abstract class GeoPositionImpl implements GeoPosition, Serializable {
 
     public static GeoPositionImpl immutableCopyOf(final GeoPosition geoPosition) {
-        Objects.nonNull(geoPosition);
+        Objects.requireNonNull(geoPosition);
         if (geoPosition instanceof GeoPositionImpl) {
             return (GeoPositionImpl) geoPosition;
         } else {
@@ -32,7 +32,7 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
     }
 
     public static Optional<GeoPositionImpl> immutableCopyOf(final Optional<GeoPosition> geoPosition) {
-        Objects.nonNull(geoPosition);
+        Objects.requireNonNull(geoPosition);
         return geoPosition.map(GeoPositionImpl::immutableCopyOf);
     }
 

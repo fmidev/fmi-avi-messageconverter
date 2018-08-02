@@ -24,7 +24,7 @@ import fi.fmi.avi.model.NumericMeasure;
 public abstract class CloudLayerImpl implements CloudLayer, Serializable {
 
     public static CloudLayerImpl immutableCopyOf(final CloudLayer cloudLayer) {
-        Objects.nonNull(cloudLayer);
+        Objects.requireNonNull(cloudLayer);
         if (cloudLayer instanceof CloudLayerImpl) {
             return (CloudLayerImpl) cloudLayer;
         } else {
@@ -33,7 +33,7 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
     }
 
     public static Optional<CloudLayerImpl> immutableCopyOf(final Optional<CloudLayer> cloudLayer) {
-        Objects.nonNull(cloudLayer);
+        Objects.requireNonNull(cloudLayer);
         return cloudLayer.map(CloudLayerImpl::immutableCopyOf);
     }
 

@@ -25,7 +25,7 @@ import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast, Serializable {
 
     public static TAFAirTemperatureForecastImpl immutableCopyOf(final TAFAirTemperatureForecast airTemperatureForecast) {
-        Objects.nonNull(airTemperatureForecast);
+        Objects.requireNonNull(airTemperatureForecast);
         if (airTemperatureForecast instanceof TAFAirTemperatureForecastImpl) {
             return (TAFAirTemperatureForecastImpl) airTemperatureForecast;
         } else {
@@ -34,7 +34,7 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
     }
 
     public static Optional<TAFAirTemperatureForecastImpl> immutableCopyOf(final Optional<TAFAirTemperatureForecast> airTemperatureForecast) {
-        Objects.nonNull(airTemperatureForecast);
+        Objects.requireNonNull(airTemperatureForecast);
         return airTemperatureForecast.map(TAFAirTemperatureForecastImpl::immutableCopyOf);
     }
 

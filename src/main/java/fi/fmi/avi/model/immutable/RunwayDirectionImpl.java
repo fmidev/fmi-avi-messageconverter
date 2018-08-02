@@ -24,7 +24,7 @@ import fi.fmi.avi.model.RunwayDirection;
 public abstract class RunwayDirectionImpl implements RunwayDirection, Serializable {
 
     public static RunwayDirectionImpl immutableCopyOf(final RunwayDirection runwayDirection) {
-        Objects.nonNull(runwayDirection);
+        Objects.requireNonNull(runwayDirection);
         if (runwayDirection instanceof RunwayDirectionImpl) {
             return (RunwayDirectionImpl) runwayDirection;
         } else {
@@ -33,7 +33,7 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
     }
 
     public static Optional<RunwayDirectionImpl> immutableCopyOf(final Optional<RunwayDirection> runwayDirection) {
-        Objects.nonNull(runwayDirection);
+        Objects.requireNonNull(runwayDirection);
         return runwayDirection.map(RunwayDirectionImpl::immutableCopyOf);
     }
 
