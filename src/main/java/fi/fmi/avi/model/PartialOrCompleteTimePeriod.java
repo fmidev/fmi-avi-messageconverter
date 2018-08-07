@@ -331,6 +331,15 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
             }
             throw new RuntimeException("Unexpected error, check the code");
         }
+
+        @Override
+        public Builder setEndTime(final PartialOrCompleteTimeInstant time) {
+            if (time.getCompleteTime().isPresent() && time.getCompleteTime().get().getHour() == 0 && time.getCompleteTime().get().getMinute() == 0) {
+                return super.setEndTime(time.toBuilder().setMidnight24h(true).build());
+            } else {
+                return super.setEndTime(time);
+            }
+        }
     }
 
     private static class KeyTimePair<T extends PartialOrCompleteTime> {
