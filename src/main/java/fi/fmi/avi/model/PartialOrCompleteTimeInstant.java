@@ -109,6 +109,11 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
     @JsonIgnore
     public abstract boolean isMidnight24h();
 
+    /**
+     * Returns the minute-of-hour of this PartialOrCompleteTimeInstant.
+     *
+     * @return the minute-of-hour
+     */
     @JsonIgnore
     public int getMinute() {
         if (getCompleteTime().isPresent()) {
@@ -126,10 +131,21 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         return -1;
     }
 
+    /**
+     * Returns the hour-of-day of this PartialOrCompleteTimeInstant. Note that
+     * if the {@link #isMidnight24h()} is true, and the complete time is present,
+     * the returned value is always 24.
+     *
+     * @return the hour-of-day
+     */
     @JsonIgnore
     public int getHour() {
         if (getCompleteTime().isPresent()) {
-            return getCompleteTime().get().getHour();
+            if (isMidnight24h()) {
+                return 24;
+            } else {
+                return getCompleteTime().get().getHour();
+            }
         } else if (getPartialTime().isPresent() && getPartialTimePattern().isPresent()) {
             TimePattern timePattern = getPartialTimePattern().get();
             if (timePattern.contains("?<hour>")) {
@@ -143,10 +159,22 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         return -1;
     }
 
+    /**
+     * Returns the day-of-month of this PartialOrCompleteTimeInstant. Note that
+     * if the {@link #isMidnight24h()} is true, and the complete date-time is present
+     * the returned value is the previous day-of-month of the complete date-time.
+     *
+     * @return the day-of-month
+     */
     @JsonIgnore
     public int getDay() {
         if (getCompleteTime().isPresent()) {
-            return getCompleteTime().get().getDayOfMonth();
+            if (isMidnight24h()) {
+                ZonedDateTime lastDay = getCompleteTime().get().minusDays(1);
+                return lastDay.getDayOfMonth();
+            } else {
+                return getCompleteTime().get().getDayOfMonth();
+            }
         } else if (getPartialTime().isPresent() && getPartialTimePattern().isPresent()) {
             TimePattern timePattern = getPartialTimePattern().get();
             if (timePattern.contains("?<day>")) {
@@ -201,6 +229,10 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             }
         }
 
+        public Builder() {
+            this.setMidnight24h(false);
+        }
+
         @Override
         public PartialOrCompleteTimeInstant build() {
             if (getPartialTime().isPresent() && !getPartialTimePattern().isPresent()) {
@@ -209,7 +241,9 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
                     throw new IllegalStateException("Could not automatically determine date time pattern for '" + getPartialTime().get() + "'");
                 }
             }
-            ensureMidnight24Updated();
+            if (!getCompleteTime().isPresent()) {
+                ensureMidnight24Updated();
+            }
             return super.build();
         }
 
@@ -314,12 +348,8 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         }
 
         private void ensureMidnight24Updated() {
-            if (!getPartialTime().isPresent()) {
-                setMidnight24h(false);
-                return;
-            }
             if (!getPartialTime().isPresent() || !getPartialTimePattern().isPresent()) {
-                throw new IllegalStateException("partialTime and partialTimePattern must be present");
+                return;
             }
             TimePattern timePattern = getPartialTimePattern().get();
             String partialTime = getPartialTime().get();
