@@ -1,5 +1,13 @@
 package fi.fmi.avi.model.immutable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.CloudForecast;
+import fi.fmi.avi.model.CloudLayer;
+import fi.fmi.avi.model.NumericMeasure;
+import org.inferred.freebuilder.FreeBuilder;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -7,23 +15,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.inferred.freebuilder.FreeBuilder;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fi.fmi.avi.model.CloudForecast;
-import fi.fmi.avi.model.CloudLayer;
-import fi.fmi.avi.model.NumericMeasure;
-
 /**
  * Created by rinne on 13/04/2018.
  */
 @FreeBuilder
 @JsonDeserialize(builder = CloudForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"verticalVisibility", "layers", "noSignificantCloud"})
+@JsonPropertyOrder({"verticalVisibility", "layers", "noSignificantCloud", "verticalVisibilityMissing"})
 public abstract class CloudForecastImpl implements CloudForecast, Serializable {
 
     public static CloudForecastImpl immutableCopyOf(final CloudForecast cloudForecast) {
@@ -53,6 +51,7 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
             } else {
                 CloudForecastImpl.Builder retval = new CloudForecastImpl.Builder()//
                         .setNoSignificantCloud(value.isNoSignificantCloud())//
+                        .setVerticalVisibilityMissing(value.isVerticalVisibilityMissing())//
                         .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));
 
                 value.getLayers()

@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public interface CloudLayer extends AviationCodeListUser {
 
-    CloudAmount getAmount();
+    Optional<CloudAmount> getAmount();
 
     Optional<NumericMeasure> getBase();
 

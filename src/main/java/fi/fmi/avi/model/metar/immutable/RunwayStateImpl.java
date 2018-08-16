@@ -23,9 +23,9 @@ import fi.fmi.avi.model.metar.RunwayState;
 @FreeBuilder
 @JsonDeserialize(builder = RunwayStateImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"runwayDirection", "appliedToAllRunways", "deposit", "contamination", "depthOfDeposit",
-        "depthOperator",  "depthNotMeasurable", "estimatedSurfaceFriction", "estimatedSurfaceFrictionUnreliable",
-        "breakingAction", "showClosure","repetition", "runwayNotOperational", "cleared"})
+@JsonPropertyOrder({ "runwayDirection", "appliedToAllRunways", "deposit", "contamination", "depthOfDeposit", "depthOperator", "depthNotMeasurable",
+        "depthInsignificant", "estimatedSurfaceFriction", "estimatedSurfaceFrictionUnreliable", "brakingAction", "repetition", "runwayNotOperational",
+        "cleared" })
 public abstract class RunwayStateImpl implements RunwayState, Serializable {
 
     public static RunwayStateImpl immutableCopyOf(final RunwayState runwayState) {
@@ -51,25 +51,25 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
                 return ((RunwayStateImpl) value).toBuilder();
             } else {
                 return new RunwayStateImpl.Builder().setAppliedToAllRunways(value.isAppliedToAllRunways())
-                        .setBreakingAction(value.getBreakingAction())
+                        .setBrakingAction(value.getBrakingAction())
                         .setCleared(value.isCleared())
                         .setContamination(value.getContamination())
                         .setDeposit(value.getDeposit())
                         .setDepthNotMeasurable(value.isDepthNotMeasurable())
+                        .setDepthInsignificant(value.isDepthInsignificant())
                         .setDepthOfDeposit(NumericMeasureImpl.immutableCopyOf(value.getDepthOfDeposit()))
                         .setDepthOperator(value.getDepthOperator())
                         .setEstimatedSurfaceFriction(value.getEstimatedSurfaceFriction())
-                        .setRepetition(value.isRepetition())
-                        .setSnowClosure(value.isSnowClosure());
+                        .setRepetition(value.isRepetition());
             }
         }
 
         public Builder() {
             setAppliedToAllRunways(false);
             setEstimatedSurfaceFrictionUnreliable(false);
-            setSnowClosure(false);
             setRepetition(false);
             setDepthNotMeasurable(false);
+            setDepthInsignificant(false);
             setRunwayNotOperational(false);
             setCleared(false);
         }

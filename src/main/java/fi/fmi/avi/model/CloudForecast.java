@@ -8,6 +8,8 @@ public interface CloudForecast extends AviationCodeListUser {
 
     boolean isNoSignificantCloud();
 
+    boolean isVerticalVisibilityMissing();
+
     Optional<NumericMeasure> getVerticalVisibility();
 
     Optional<List<CloudLayer>> getLayers();
