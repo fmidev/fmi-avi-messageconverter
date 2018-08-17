@@ -49,9 +49,9 @@ import fi.fmi.avi.model.metar.WindShear;
 @FreeBuilder
 @JsonDeserialize(builder = METARImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"status", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility",
-        "runwayVisualRanges", "presentWeather", "cloud", "airTemperature", "dewpointTemperature", "altimeterSettingQNH",
-        "recentWeather", "windShear", "seaState", "runwayStates", "trend", "remarks", "permissibleUsage",
+@JsonPropertyOrder({"status", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility", "runwayVisualRanges", "presentWeather", "cloud",
+        "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates", "snowClosure", "trend",
+        "remarks", "permissibleUsage",
         "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID",
         "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime",
         "translatedTAC"})
@@ -185,6 +185,7 @@ public abstract class METARImpl implements METAR, Serializable {
             setAutomatedStation(false);
             setCeilingAndVisibilityOk(false);
             setRoutineDelayed(false);
+            setSnowClosure(false);
         }
 
         public SPECI buildAsSPECI() {
@@ -236,8 +237,9 @@ public abstract class METARImpl implements METAR, Serializable {
 
             //From MeteorologicalTerminalAirReport:
             retval.setAutomatedStation(value.isAutomatedStation())
-                    .setStatus(value.getStatus())
-                    .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())
+                    .setStatus(value.getStatus())//
+                    .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())//
+                    .setSnowClosure(value.isSnowClosure())///
                     .setAirTemperature(NumericMeasureImpl.immutableCopyOf(value.getAirTemperature()))
                     .setDewpointTemperature(NumericMeasureImpl.immutableCopyOf(value.getDewpointTemperature()))
                     .setAltimeterSettingQNH(NumericMeasureImpl.immutableCopyOf(value.getAltimeterSettingQNH()))

@@ -49,8 +49,14 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
     public static class Builder extends ObservedCloudsImpl_Builder {
 
         public Builder() {
-            setAmountAndHeightUnobservableByAutoSystem(false);
+            setAmountUnobservableByAutoSystem(false);
+            setAmountNotDetectedCloudsDetectedByAutoSystem(false);
+            setHeightUnobservableByAutoSystem(false);
+            setHeightNotDetectedCloudsDetectedByAutoSystem(false);
+            setCloudTypeUnobservableByAutoSystem(false);
+            setNoCloudsDetectedByAutoSystem(false);
             setNoSignificantCloud(false);
+            setVerticalVisibilityUnobservableByAutoSystem(false);
         }
 
         public static Builder from(final ObservedClouds value) {
@@ -58,7 +64,12 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
                 return ((ObservedCloudsImpl) value).toBuilder();
             } else {
                 ObservedCloudsImpl.Builder retval = new ObservedCloudsImpl.Builder()//
-                        .setAmountAndHeightUnobservableByAutoSystem(value.isAmountAndHeightUnobservableByAutoSystem())
+                        .setAmountUnobservableByAutoSystem(value.isAmountUnobservableByAutoSystem())
+                        .setAmountNotDetectedCloudsDetectedByAutoSystem(value.isAmountNotDetectedCloudsDetectedByAutoSystem())
+                        .setHeightUnobservableByAutoSystem(value.isHeightUnobservableByAutoSystem())
+                        .setHeightNotDetectedCloudsDetectedByAutoSystem(value.isHeightNotDetectedCloudsDetectedByAutoSystem())
+                        .setCloudTypeUnobservableByAutoSystem(value.isCloudTypeUnobservableByAutoSystem())
+                        .setNoCloudsDetectedByAutoSystem(value.isNoCloudsDetectedByAutoSystem())
                         .setNoSignificantCloud(value.isNoSignificantCloud())
                         .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));
 

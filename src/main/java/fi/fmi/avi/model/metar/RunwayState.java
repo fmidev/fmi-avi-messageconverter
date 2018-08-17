@@ -14,11 +14,11 @@ public interface RunwayState extends AviationCodeListUser {
 
     boolean isEstimatedSurfaceFrictionUnreliable();
 
-    boolean isSnowClosure();
-
     boolean isRepetition();
 
     boolean isDepthNotMeasurable();
+
+    boolean isDepthInsignificant();
 
     boolean isRunwayNotOperational();
 
@@ -32,8 +32,13 @@ public interface RunwayState extends AviationCodeListUser {
 
     Optional<RelationalOperator> getDepthOperator();
 
+    /**
+     * The estimated surface friction, if known. The value shall be between 0.00 and 0.98.
+     *
+     * @return
+     */
     Optional<Double> getEstimatedSurfaceFriction();
 
-    Optional<BreakingAction> getBreakingAction();
+    Optional<BrakingAction> getBrakingAction();
 
 }

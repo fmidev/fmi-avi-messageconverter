@@ -7,13 +7,8 @@ import static fi.fmi.avi.model.AviationCodeListUser.RelationalOperator.BELOW;
  */
 public interface AviationCodeListUser {
 
-    String CODELIST_AERODROME_PRESENT_OR_FORECAST_WEATHER = "http://codes.wmo.int/49-2/AerodromePresentOrForecastWeather";
-    String CODELIST_AERODROME_RECENT_WEATHER = "http://codes.wmo.int/49-2/AerodromeRecentWeather";
     String CODELIST_CLOUD_AMOUNT_REPORTED_AT_AERODROME = "http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome";
     String CODELIST_SIGNIFICANT_CONVECTIVE_CLOUD_TYPE = "http://codes.wmo.int/49-2/SigConvectiveCloudType";
-    String CODELIST_SEA_SURFACE_STATE = "http://codes.wmo.int/bufr4/codeflag/0-22-061";
-    String CODELIST_RUNWAY_DEPOSITS = "http://codes.wmo.int/bufr4/codeflag/0-20-086";
-    String CODELIST_RUNWAY_CONTAMINATION = "http://codes.wmo.int/bufr4/codeflag/0-20-087";
 
     String CODELIST_VALUE_PREFIX_SIG_WEATHER = "http://codes.wmo.int/306/4678/";
     String CODELIST_VALUE_PREFIX_CLOUD_AMOUNT_REPORTED_AT_AERODROME = "http://codes.wmo.int/bufr4/codeflag/0-20-008/";
@@ -21,8 +16,11 @@ public interface AviationCodeListUser {
     String CODELIST_VALUE_PREFIX_SEA_SURFACE_STATE = "http://codes.wmo.int/bufr4/codeflag/0-22-061/";
     String CODELIST_VALUE_PREFIX_RUNWAY_DEPOSITS = "http://codes.wmo.int/bufr4/codeflag/0-20-086/";
     String CODELIST_VALUE_PREFIX_RUNWAY_CONTAMINATION = "http://codes.wmo.int/bufr4/codeflag/0-20-087/";
+    String CODELIST_VALUE_PREFIX_RUNWAY_SURFACE_FRICTION_OR_BRAKING_ACTION = "http://codes.wmo.int/bufr4/codeflag/0-20-089/";
 
     String CODELIST_VALUE_NIL_REASON_NOTHING_OF_OPERATIONAL_SIGNIFICANCE = "http://codes.wmo.int/common/nil/nothingOfOperationalSignificance";
+    String CODELIST_VALUE_NIL_REASON_NOT_OBSERVABLE = "http://codes.wmo.int/common/nil/notObservable";
+    String CODELIST_VALUE_NIL_REASON_NOT_DETECTED_BY_AUTO_SYSTEM = "http://codes.wmo.int/common/nil/notDetectedByAutoSystem";
 
     String MET_AERODROME_FORECAST_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeForecast";
     String MET_AERODROME_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeForecast";
@@ -267,23 +265,23 @@ public interface AviationCodeListUser {
         }
     }
 
-    enum BreakingAction {
+    enum BrakingAction {
         POOR(91), MEDIUM_POOR(92), MEDIUM(93), MEDIUM_GOOD(94), GOOD(95);
 
         private final int code;
 
-        public static BreakingAction fromInt(final int code) {
+        public static BrakingAction fromInt(final int code) {
             switch(code) {
                 case 91: return POOR;
                 case 92: return MEDIUM_POOR;
-                case 93: return BreakingAction.MEDIUM;
+                case 93: return MEDIUM;
                 case 94: return MEDIUM_GOOD;
                 case 95: return GOOD;
                 default: return null;
             }
         }
 
-        BreakingAction(final int code) {
+        BrakingAction(final int code) {
             this.code = code;
         }
 
