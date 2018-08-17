@@ -10,33 +10,37 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-//@FreeBuilder
-//@JsonDeserialize()
-//@JsonInclude(JsonInclude.Include.NON_DEFAULT)
-//@JsonPropertyOrder({ "tacString", "timePattern" })
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.util.StdConverter;
+
+@JsonSerialize(converter = PartialDateTime.ToJsonConverter.class)
+@JsonDeserialize(converter = PartialDateTime.FromJsonConverter.class)
 public final class PartialDateTime implements Serializable {
+    public static final int MIDNIGHT_24_HOUR = 24;
+    public static final int MIDNIGHT_0_HOUR = 0;
+    static final int MIDNIGHT_MINUTE = 0;
+
     private static final long serialVersionUID = -1367240702836282527L;
 
     private static final int FIELD_SIZE_IN_BITS = 7;
     private static final int FIELD_MASK = ~(-1 << FIELD_SIZE_IN_BITS);
-    /**
-     * Minimum value of a field (inclusive).
-     */
-    private static final int MIN_FIELD_VALUE = 0;
-    /**
-     * Maximum value of a field (inclusive).
-     */
-    private static final int MAX_FIELD_VALUE = 99;
     private static final int EMPTY_FIELD_VALUE = FIELD_MASK;
     private static final Pattern PARTIAL_TIME_STRING_PATTERN = Pattern.compile(
             "^--(?<DAY>[0-9]{1,2})?T(?<HOUR>[0-9]{1,2})?:(?<MINUTE>[0-9]{1,2})?:?(?<ZONE>.*)?$");
@@ -44,6 +48,7 @@ public final class PartialDateTime implements Serializable {
      * All fields are initially {@link #EMPTY_FIELD_VALUE}.
      */
     private static final int INITIAL_FIELD_VALUES = ~(-1 << PartialField.VALUES.length * FIELD_SIZE_IN_BITS);
+
     @Nullable
     private final ZoneId zone;
     private final int fieldValues;
@@ -56,14 +61,129 @@ public final class PartialDateTime implements Serializable {
     public static PartialDateTime of(final int day, final int hour, final int minute, @Nullable final ZoneId zone) {
         int fieldValues = INITIAL_FIELD_VALUES;
         if (day >= 0) {
-            fieldValues = PartialField.DAY.withRawFieldValue(fieldValues, checkValueWithinValidRange(day));
+            fieldValues = PartialField.DAY.withRawFieldValue(fieldValues, PartialField.DAY.checkValueWithinValidRange(day));
         }
         if (hour >= 0) {
-            fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, checkValueWithinValidRange(hour));
+            fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, PartialField.HOUR.checkValueWithinValidRange(hour));
         }
         if (minute >= 0) {
-            fieldValues = PartialField.MINUTE.withRawFieldValue(fieldValues, checkValueWithinValidRange(minute));
+            fieldValues = PartialField.MINUTE.withRawFieldValue(fieldValues, PartialField.MINUTE.checkValueWithinValidRange(minute));
         }
+        return new PartialDateTime(fieldValues, zone);
+    }
+
+    public static PartialDateTime ofDayHourMinuteZone(final int day, final int hour, final int minute, final ZoneId zone) {
+        requireNonNull(zone, "zone");
+        int fieldValues = INITIAL_FIELD_VALUES;
+        fieldValues = PartialField.DAY.withRawFieldValue(fieldValues, PartialField.DAY.checkValueWithinValidRange(day));
+        fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, PartialField.HOUR.checkValueWithinValidRange(hour));
+        fieldValues = PartialField.MINUTE.withRawFieldValue(fieldValues, PartialField.MINUTE.checkValueWithinValidRange(minute));
+        return new PartialDateTime(fieldValues, zone);
+    }
+
+    public static PartialDateTime ofDayHourMinuteZone(final ZonedDateTime dateTime, final boolean midnight24h) {
+        requireNonNull(dateTime, "dateTime");
+        return ofDayHourMinuteZone(dateTime, midnight24h, dateTime.getZone());
+    }
+
+    public static PartialDateTime ofDayHourMinuteZone(final Temporal temporal, final boolean midnight24h, final ZoneId zone) {
+        requireNonNull(temporal, "temporal");
+        final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
+        return ofDayHourMinuteZone(PartialField.DAY.get(temporal, applyMidnight24h), PartialField.HOUR.get(temporal, applyMidnight24h),
+                PartialField.MINUTE.get(temporal, applyMidnight24h), zone);
+    }
+
+    public static PartialDateTime ofDayHourMinute(final int day, final int hour, final int minute) {
+        int fieldValues = INITIAL_FIELD_VALUES;
+        fieldValues = PartialField.DAY.withRawFieldValue(fieldValues, PartialField.DAY.checkValueWithinValidRange(day));
+        fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, PartialField.HOUR.checkValueWithinValidRange(hour));
+        fieldValues = PartialField.MINUTE.withRawFieldValue(fieldValues, PartialField.MINUTE.checkValueWithinValidRange(minute));
+        return new PartialDateTime(fieldValues, null);
+    }
+
+    public static PartialDateTime ofDayHourMinute(final Temporal temporal, final boolean midnight24h) {
+        requireNonNull(temporal, "temporal");
+        final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
+        return ofDayHourMinute(PartialField.DAY.get(temporal, applyMidnight24h), PartialField.HOUR.get(temporal, applyMidnight24h),
+                PartialField.MINUTE.get(temporal, applyMidnight24h));
+    }
+
+    public static PartialDateTime ofDayHour(final int day, final int hour) {
+        int fieldValues = INITIAL_FIELD_VALUES;
+        fieldValues = PartialField.DAY.withRawFieldValue(fieldValues, PartialField.DAY.checkValueWithinValidRange(day));
+        fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, PartialField.HOUR.checkValueWithinValidRange(hour));
+        return new PartialDateTime(fieldValues, null);
+    }
+
+    public static PartialDateTime ofDayHour(final Temporal temporal, final boolean midnight24h) {
+        requireNonNull(temporal, "temporal");
+        final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
+        return ofDayHour(PartialField.DAY.get(temporal, applyMidnight24h), PartialField.HOUR.get(temporal, applyMidnight24h));
+    }
+
+    public static PartialDateTime ofHourMinute(final int hour, final int minute) {
+        int fieldValues = INITIAL_FIELD_VALUES;
+        fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, PartialField.HOUR.checkValueWithinValidRange(hour));
+        fieldValues = PartialField.MINUTE.withRawFieldValue(fieldValues, PartialField.MINUTE.checkValueWithinValidRange(minute));
+        return new PartialDateTime(fieldValues, null);
+    }
+
+    public static PartialDateTime ofHourMinute(final Temporal temporal, final boolean midnight24h) {
+        requireNonNull(temporal, "temporal");
+        final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
+        return ofHourMinute(PartialField.HOUR.get(temporal, applyMidnight24h), PartialField.MINUTE.get(temporal, applyMidnight24h));
+    }
+
+    public static PartialDateTime ofHour(final int hour) {
+        int fieldValues = INITIAL_FIELD_VALUES;
+        fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, PartialField.HOUR.checkValueWithinValidRange(hour));
+        return new PartialDateTime(fieldValues, null);
+    }
+
+    public static PartialDateTime ofHour(final Temporal temporal, final boolean midnight24h) {
+        requireNonNull(temporal, "temporal");
+        final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
+        return ofHour(PartialField.HOUR.get(temporal, applyMidnight24h));
+    }
+
+    public static PartialDateTime of(final PartialField field, final int value) {
+        requireNonNull(field, "field");
+        field.checkValueWithinValidRange(value);
+        return new PartialDateTime(field.withRawFieldValue(INITIAL_FIELD_VALUES, value), null);
+    }
+
+    public static PartialDateTime of(final Set<PartialField> fields, final int... values) {
+        requireNonNull(fields, "fields");
+        requireNonNull(values, "values");
+        int fieldValues = INITIAL_FIELD_VALUES;
+        final Iterator<PartialField> fieldIterator = fields.iterator();
+        int i = 0;
+        while (fieldIterator.hasNext()) {
+            final PartialField field = requireNonNull(fieldIterator.next(), "null field in fields");
+            final int value = values[i];
+            fieldValues = field.withRawFieldValue(fieldValues, field.checkValueWithinValidRange(value));
+            i += 1;
+        }
+        if (values.length > i) {
+            throw new IllegalArgumentException(String.format("Too many values: %d; expected %d", values.length, i));
+        }
+        return new PartialDateTime(fieldValues, null);
+    }
+
+    public static PartialDateTime of(final ZonedDateTime dateTime, final Set<PartialField> fields, final boolean useZone, final int midnightHour) {
+        requireNonNull(dateTime, "dateTime");
+        requireNonNull(fields, "fields");
+        if (midnightHour != MIDNIGHT_0_HOUR && midnightHour != MIDNIGHT_24_HOUR) {
+            throw new IllegalArgumentException(String.format("midnightHour must be either %s or %s; was: %s", MIDNIGHT_0_HOUR, MIDNIGHT_24_HOUR, midnightHour));
+        }
+
+        final boolean applyMidnight24h = midnightHour == MIDNIGHT_24_HOUR && isMidnight(dateTime);
+        int fieldValues = INITIAL_FIELD_VALUES;
+        for (final PartialField field : fields) {
+            fieldValues = field.withRawFieldValue(fieldValues, field.get(dateTime, applyMidnight24h));
+        }
+        @Nullable
+        final ZoneId zone = useZone ? dateTime.getZone() : null;
         return new PartialDateTime(fieldValues, zone);
     }
 
@@ -83,7 +203,7 @@ public final class PartialDateTime implements Serializable {
                 @Nullable
                 final String fieldValueString = matcher.group(field.name());
                 if (fieldValueString != null) {
-                    fieldValues = field.withRawFieldValue(fieldValues, checkValueWithinValidRange(Integer.parseInt(fieldValueString)));
+                    fieldValues = field.withRawFieldValue(fieldValues, field.checkValueWithinValidRange(Integer.parseInt(fieldValueString)));
                 }
             }
             zone = Optional.ofNullable(matcher.group("ZONE"))//
@@ -125,7 +245,8 @@ public final class PartialDateTime implements Serializable {
                 final PartialField lastField = PartialField.VALUES[Math.max(precision.ordinal(), parsedFieldsSize - 1)];
                 final PartialField[] fields = EnumSet.range(firstField, lastField).toArray(new PartialField[0]);
                 for (int i = 0; i < fields.length; i++) {
-                    fieldValues = fields[i].withRawFieldValue(fieldValues, checkValueWithinValidRange(parsedFieldValues[i]));
+                    final PartialField field = fields[i];
+                    fieldValues = field.withRawFieldValue(fieldValues, field.checkValueWithinValidRange(parsedFieldValues[i]));
                 }
             }
 
@@ -151,7 +272,8 @@ public final class PartialDateTime implements Serializable {
             int index = 0;
             for (final PartialField field : PartialField.VALUES) {
                 if (hasFields.contains(field)) {
-                    fieldValues = field.withRawFieldValue(fieldValues, checkValueWithinValidRange(Integer.parseInt(tacString.substring(index, index + 2))));
+                    fieldValues = field.withRawFieldValue(fieldValues,
+                            field.checkValueWithinValidRange(Integer.parseInt(tacString.substring(index, index + 2))));
                     index += 2;
                 } else {
                     fieldValues = field.withRawFieldValue(fieldValues, EMPTY_FIELD_VALUE);
@@ -201,17 +323,6 @@ public final class PartialDateTime implements Serializable {
         return fieldValues;
     }
 
-    private static boolean isValueWithinValidRange(final int value) {
-        return value >= MIN_FIELD_VALUE && value <= MAX_FIELD_VALUE;
-    }
-
-    private static int checkValueWithinValidRange(final int value) {
-        if (!isValueWithinValidRange(value)) {
-            throw new IllegalArgumentException("value " + value + " is not within range [" + MIN_FIELD_VALUE + "," + MAX_FIELD_VALUE + "]");
-        }
-        return value;
-    }
-
     private static Set<PartialField> getPresentFields(final int fieldValues) {
         final EnumSet<PartialField> fields = EnumSet.allOf(PartialField.class);
         fields.removeIf(field -> !hasField(fieldValues, field));
@@ -219,7 +330,12 @@ public final class PartialDateTime implements Serializable {
     }
 
     private static boolean hasField(final int fieldValues, final PartialField field) {
-        return isValueWithinValidRange(field.getRawFieldValue(fieldValues));
+        return field.isValueWithinValidRange(field.getRawFieldValue(fieldValues));
+    }
+
+    private static boolean isMidnight(final Temporal temporal) {
+        return Stream.of(ChronoField.MILLI_OF_SECOND, ChronoField.SECOND_OF_MINUTE, ChronoField.MINUTE_OF_HOUR, ChronoField.HOUR_OF_DAY)//
+                .allMatch(field -> !temporal.isSupported(field) || temporal.get(field) == 0);
     }
 
     public Set<PartialField> getPresentFields() {
@@ -229,7 +345,7 @@ public final class PartialDateTime implements Serializable {
     public OptionalInt get(final PartialField field) {
         requireNonNull(field, "field");
         final int value = field.getRawFieldValue(fieldValues);
-        return isValueWithinValidRange(value) ? OptionalInt.of(value) : OptionalInt.empty();
+        return field.isValueWithinValidRange(value) ? OptionalInt.of(value) : OptionalInt.empty();
     }
 
     private boolean has(final PartialField field) {
@@ -238,7 +354,7 @@ public final class PartialDateTime implements Serializable {
 
     public PartialDateTime with(final PartialField field, final int value) {
         requireNonNull(field, "field");
-        final int newFieldValues = field.withRawFieldValue(this.fieldValues, checkValueWithinValidRange(value));
+        final int newFieldValues = field.withRawFieldValue(this.fieldValues, field.checkValueWithinValidRange(value));
         return newFieldValues == fieldValues ? this : new PartialDateTime(newFieldValues, zone);
     }
 
@@ -296,6 +412,13 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, null);
     }
 
+    public boolean isMidnight() {
+        final int rawHour = PartialField.HOUR.getRawFieldValue(fieldValues);
+        final int rawMinute = PartialField.MINUTE.getRawFieldValue(fieldValues);
+        return (rawHour == MIDNIGHT_0_HOUR || rawHour == MIDNIGHT_24_HOUR) //
+                && (rawMinute == MIDNIGHT_MINUTE || !PartialField.MINUTE.isValueWithinValidRange(rawMinute));
+    }
+
     /**
      * Indicates if this time instance was initialized as time '2400' indicating midnight
      * (the last instance of time of the day). As a time instance this is equal to '00:00' of the
@@ -304,7 +427,40 @@ public final class PartialDateTime implements Serializable {
      * @return true if initiated as partial time "2400"
      */
     public boolean isMidnight24h() {
-        return getHour().orElse(-1) == 24 && getMinute().orElse(0) == 0;
+        final int rawHour = PartialField.HOUR.getRawFieldValue(fieldValues);
+        final int rawMinute = PartialField.MINUTE.getRawFieldValue(fieldValues);
+        return rawHour == MIDNIGHT_24_HOUR //
+                && (rawMinute == MIDNIGHT_MINUTE || !PartialField.MINUTE.isValueWithinValidRange(rawMinute));
+    }
+
+    public PartialDateTime withMidnight00h(final YearMonth reference) {
+        requireNonNull(reference, "reference");
+        if (!isMidnight24h()) {
+            return this;
+        }
+        return withMidnightHour(MIDNIGHT_0_HOUR, reference);
+    }
+
+    public PartialDateTime withMidnight24h(final YearMonth reference) {
+        requireNonNull(reference, "reference");
+        if (!isMidnight() || isMidnight24h()) {
+            return this;
+        }
+        return withMidnightHour(MIDNIGHT_24_HOUR, reference);
+    }
+
+    private PartialDateTime withMidnightHour(final int midnightHour, final YearMonth reference) {
+        int newFieldValues = fieldValues;
+        newFieldValues = PartialField.HOUR.withRawFieldValue(newFieldValues, midnightHour);
+
+        final int rawDay = PartialField.DAY.getRawFieldValue(fieldValues);
+        if (PartialField.DAY.isValueWithinValidRange(rawDay)) {
+            final int dayShift = midnightHour == MIDNIGHT_24_HOUR ? -1 : 1;
+            final int shiftedDay = reference.atDay(rawDay).plusDays(dayShift).getDayOfMonth();
+            newFieldValues = PartialField.DAY.withRawFieldValue(newFieldValues, shiftedDay);
+        }
+
+        return new PartialDateTime(newFieldValues, zone);
     }
 
     public ZonedDateTime toZonedDateTime(final YearMonth issueYearMonth) {
@@ -446,22 +602,16 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
-    public boolean represents(final ZonedDateTime candidate) {
-        final int rawDay = PartialField.DAY.getRawFieldValue(fieldValues);
-        final int rawHour = PartialField.HOUR.getRawFieldValue(fieldValues);
-        final int rawMinute = PartialField.MINUTE.getRawFieldValue(fieldValues);
-
-        if (isMidnight24h()) {
-            return (rawDay == EMPTY_FIELD_VALUE || rawDay == candidate.minusDays(1).getDayOfMonth()) //
-                    && candidate.getHour() == 0 //
-                    && (rawMinute == EMPTY_FIELD_VALUE || rawMinute == candidate.getMinute()) //
-                    && (zone == null || candidate.getZone().equals(zone));
-        } else {
-            return (rawDay == EMPTY_FIELD_VALUE || rawDay == candidate.getDayOfMonth()) //
-                    && (rawHour == EMPTY_FIELD_VALUE || rawHour == candidate.getHour()) //
-                    && (rawMinute == EMPTY_FIELD_VALUE || rawMinute == candidate.getMinute()) //
-                    && (zone == null || candidate.getZone().equals(zone));
+    public boolean represents(final Temporal temporal) {
+        final boolean midnight24h = isMidnight24h();
+        for (final PartialField field : PartialField.VALUES) {
+            final int rawValue = field.getRawFieldValue(fieldValues);
+            if (field.isValueWithinValidRange(rawValue) //
+                    && !(temporal.isSupported(field.chronoField) && rawValue == field.get(temporal, midnight24h))) {
+                return false;
+            }
         }
+        return zone == null || temporal instanceof ChronoZonedDateTime && zone.equals(((ChronoZonedDateTime<?>) temporal).getZone());
     }
 
     public String toTACString() {
@@ -492,7 +642,7 @@ public final class PartialDateTime implements Serializable {
 
     private void tryAppendFieldValue(final StringBuilder builder, final PartialField field) {
         final int fieldValue = field.getRawFieldValue(fieldValues);
-        if (!isValueWithinValidRange(fieldValue)) {
+        if (!field.isValueWithinValidRange(fieldValue)) {
             return;
         }
         if (fieldValue < 10) {
@@ -520,14 +670,53 @@ public final class PartialDateTime implements Serializable {
     }
 
     public enum PartialField {
-        DAY, HOUR, MINUTE;
+        DAY(ChronoField.DAY_OF_MONTH) {
+            @Override
+            int get(final Temporal temporal, final boolean midnight24h) {
+                return (midnight24h ? temporal.minus(1, ChronoUnit.DAYS) : temporal).get(getTemporalField());
+            }
+        }, //
+        HOUR(ChronoField.HOUR_OF_DAY) {
+            @Override
+            int get(final Temporal temporal, final boolean midnight24h) {
+                return midnight24h ? MIDNIGHT_24_HOUR : temporal.get(getTemporalField());
+            }
+        }, //
+        MINUTE(ChronoField.MINUTE_OF_HOUR) {
+            @Override
+            int get(final Temporal temporal, final boolean midnight24h) {
+                return temporal.get(getTemporalField());
+            }
+        };
 
         static final PartialField[] VALUES = values();
+        /**
+         * Minimum value of a field (inclusive).
+         */
+        private static final int MIN_FIELD_VALUE = 0;
+        /**
+         * Maximum value of a field (inclusive).
+         */
+        private static final int MAX_FIELD_VALUE = 99;
 
         private final int bitIndex;
+        private final ChronoField chronoField;
 
-        PartialField() {
+        PartialField(final ChronoField chronoField) {
+            this.chronoField = chronoField;
             this.bitIndex = FIELD_SIZE_IN_BITS * ordinal();
+        }
+
+        int checkValueWithinValidRange(final int value) {
+            if (!isValueWithinValidRange(value)) {
+                throw new IllegalArgumentException(
+                        String.format("Field %s value %d is not within range [%d,%d]", this, value, MIN_FIELD_VALUE, MAX_FIELD_VALUE));
+            }
+            return value;
+        }
+
+        boolean isValueWithinValidRange(final int value) {
+            return value >= MIN_FIELD_VALUE && value <= MAX_FIELD_VALUE;
         }
 
         int getRawFieldValue(final int fieldValues) {
@@ -539,6 +728,26 @@ public final class PartialDateTime implements Serializable {
                 throw new IllegalArgumentException("Value out of bounds: " + value);
             }
             return fieldValues & ~(FIELD_MASK << bitIndex) | value << bitIndex;
+        }
+
+        public ChronoField getTemporalField() {
+            return chronoField;
+        }
+
+        abstract int get(Temporal temporal, boolean midnight24h);
+    }
+
+    static final class FromJsonConverter extends StdConverter<String, PartialDateTime> {
+        @Override
+        public PartialDateTime convert(final String value) {
+            return PartialDateTime.parse(value);
+        }
+    }
+
+    static final class ToJsonConverter extends StdConverter<PartialDateTime, String> {
+        @Override
+        public String convert(final PartialDateTime value) {
+            return value.toString();
         }
     }
 }
