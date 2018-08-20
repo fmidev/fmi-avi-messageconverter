@@ -21,6 +21,7 @@ public interface AviationCodeListUser {
     String CODELIST_VALUE_NIL_REASON_NOTHING_OF_OPERATIONAL_SIGNIFICANCE = "http://codes.wmo.int/common/nil/nothingOfOperationalSignificance";
     String CODELIST_VALUE_NIL_REASON_NOT_OBSERVABLE = "http://codes.wmo.int/common/nil/notObservable";
     String CODELIST_VALUE_NIL_REASON_NOT_DETECTED_BY_AUTO_SYSTEM = "http://codes.wmo.int/common/nil/notDetectedByAutoSystem";
+    String CODELIST_VALUE_NIL_REASON_NO_SIGNIFICANT_CHANGE = "http://codes.wmo.int/common/nil/noSignificantChange";
 
     String MET_AERODROME_FORECAST_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeForecast";
     String MET_AERODROME_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeForecast";
@@ -100,13 +101,15 @@ public interface AviationCodeListUser {
     }
 
     enum VisualRangeTendency {
-        UPWARD(0), NO_CHANGE(1), DOWNWARD(2);
+        UPWARD(0), NO_CHANGE(1), DOWNWARD(2), MISSING_VALUE(3);
 
         public static VisualRangeTendency fromInt(final int code) {
             switch(code) {
                 case 0: return UPWARD;
                 case 1: return NO_CHANGE;
                 case 2: return DOWNWARD;
+                case 3:
+                    return MISSING_VALUE;
                 default: throw new IllegalArgumentException("No value for code " + code);
             }
         }
