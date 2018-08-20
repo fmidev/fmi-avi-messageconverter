@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -188,13 +189,13 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         return -1;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o instanceof PartialOrCompleteTimeInstant) {
             PartialOrCompleteTimeInstant toMatch = (PartialOrCompleteTimeInstant) o;
             if (this.getCompleteTime().isPresent() && toMatch.getCompleteTime().isPresent()) {
                 return this.getCompleteTime().equals(toMatch.getCompleteTime());
-            } else if (this.getPartialTime().isPresent() && this.getPartialTimePattern().isPresent() && toMatch.getPartialTime().isPresent()
-                    && toMatch.getPartialTimePattern().isPresent()) {
+            } else if (this.getPartialTime().isPresent() && this.getPartialTimePattern().isPresent() && toMatch.getPartialTime().isPresent() && toMatch.getPartialTimePattern().isPresent()) {
                 return this.getPartialTime().equals(toMatch.getPartialTime()) && this.getPartialTimePattern().equals(toMatch.getPartialTimePattern());
             } else {
                 return super.equals(o);
@@ -204,6 +205,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         }
     }
 
+    @Override
     public int hashCode() {
         if (this.getCompleteTime().isPresent()) {
             return this.getCompleteTime().hashCode();
@@ -211,6 +213,18 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             return Objects.hash(this.getPartialTime().get(), this.getPartialTimePattern().get());
         } else {
             return super.hashCode();
+        }
+    }
+
+    @Override
+    public String toString() {
+        if (this.getCompleteTime().isPresent()) {
+            return this.getCompleteTime().get().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) + (this.isMidnight24h() ? " (last instant of the previous day)"
+                    + "" : "");
+        } else if (this.getPartialTime().isPresent() && this.getPartialTimePattern().isPresent()) {
+            return "partial time: " + this.getPartialTime().get() + ", pattern: " + this.getPartialTimePattern().get();
+        } else {
+            return super.toString();
         }
     }
 

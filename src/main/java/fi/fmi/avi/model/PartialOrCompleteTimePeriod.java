@@ -301,6 +301,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         return true;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o instanceof PartialOrCompleteTimePeriod) {
             PartialOrCompleteTimePeriod toMatch = (PartialOrCompleteTimePeriod) o;
@@ -310,8 +311,21 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         }
     }
 
+    @Override
     public int hashCode() {
         return Objects.hash(this.getStartTime(), this.getEndTime());
+    }
+
+    public String toString() {
+        Optional<PartialOrCompleteTimeInstant> start = getStartTime();
+        Optional<PartialOrCompleteTimeInstant> end = getEndTime();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Start:");
+        start.ifPresent(sb::append);
+        sb.append(", ");
+        sb.append("End: ");
+        end.ifPresent(sb::append);
+        return sb.toString();
     }
 
     public static class Builder extends PartialOrCompleteTimePeriod_Builder {
