@@ -27,6 +27,13 @@ public interface AviationCodeListUser {
     String MET_AERODROME_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeForecast";
     String TAF_PROCEDURE_DESCRIPTION = "WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 5 TECHNICAL SPECIFICATIONS RELATED TO FORECASTS";
 
+    String MET_AERODROME_OBSERVATION_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeObservation";
+    String MET_AERODROME_OBSERVATION_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeObservation";
+    String METAR_PROCDURE_DESCRIPTION = "WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 3 TECHNICAL SPECIFICATIONS RELATED TO METEOROLOGICAL OBSERVATIONS AND REPORTS";
+
+    String TREND_FORECAST_OBSERVATION_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeTrendForecast";
+    String TREND_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeTrendForecast";
+
     enum MetarStatus {
         NORMAL(0), CORRECTION(1), MISSING(2);
 
