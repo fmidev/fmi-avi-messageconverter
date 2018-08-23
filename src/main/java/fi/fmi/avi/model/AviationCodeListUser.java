@@ -301,11 +301,10 @@ public interface AviationCodeListUser {
     }
 
     enum TrendForecastChangeIndicator {
-        NO_SIGNIFICANT_CHANGES(0), BECOMING(1), TEMPORARY_FLUCTUATIONS(2);
+        BECOMING(1), TEMPORARY_FLUCTUATIONS(2);
 
         public static TrendForecastChangeIndicator fromInt(final int code) {
             switch (code) {
-                case 0: return NO_SIGNIFICANT_CHANGES;
                 case 1: return BECOMING;
                 case 2: return TEMPORARY_FLUCTUATIONS;
                 default: throw new IllegalArgumentException("No value for code " + code);

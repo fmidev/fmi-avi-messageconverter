@@ -50,8 +50,8 @@ import fi.fmi.avi.model.metar.WindShear;
 @JsonDeserialize(builder = METARImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"status", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility", "runwayVisualRanges", "presentWeather", "cloud",
-        "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates", "snowClosure", "trend",
-        "remarks", "permissibleUsage",
+        "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates", "snowClosure",
+        "noSignificantChanges", "trend", "remarks", "permissibleUsage",
         "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID",
         "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime",
         "translatedTAC"})
@@ -186,6 +186,7 @@ public abstract class METARImpl implements METAR, Serializable {
             setCeilingAndVisibilityOk(false);
             setRoutineDelayed(false);
             setSnowClosure(false);
+            setNoSignificantChanges(false);
         }
 
         public SPECI buildAsSPECI() {
@@ -248,7 +249,8 @@ public abstract class METARImpl implements METAR, Serializable {
                     .setClouds(ObservedCloudsImpl.immutableCopyOf(value.getClouds()))
                     .setWindShear(WindShearImpl.immutableCopyOf(value.getWindShear()))
                     .setSeaState(SeaStateImpl.immutableCopyOf(value.getSeaState()))
-                    .setColorState(value.getColorState());
+                    .setColorState(value.getColorState())
+                    .setNoSignificantChanges(value.isNoSignificantChanges());
 
             value.getRunwayVisualRanges()
                     .map(ranges -> retval.setRunwayVisualRanges(
