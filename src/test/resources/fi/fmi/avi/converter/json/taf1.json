@@ -4,14 +4,14 @@
     "designator" : "EFVA"
   },
   "issueTime" : {
-    "partialTime": "--27T11:37Z"
+    "partialTime" : "--27T11:37Z"
   },
   "validityTime" : {
     "startTime" : {
-      "partialTime": "--27T12:"
+      "partialTime" : "--27T12:"
     },
     "endTime" : {
-      "partialTime": "--28T12:"
+      "partialTime" : "--28T12:"
     }
   },
   "baseForecast" : {
@@ -57,10 +57,10 @@
     "changeIndicator" : "BECOMING",
     "periodOfChange" : {
       "startTime" : {
-        "partialTime": "--27T15:"
+        "partialTime" : "--27T15:"
       },
       "endTime" : {
-        "partialTime": "--27T17:"
+        "partialTime" : "--27T17:"
       }
     },
     "prevailingVisibility" : {
@@ -84,10 +84,10 @@
     "changeIndicator" : "PROBABILITY_40",
     "periodOfChange" : {
       "startTime" : {
-        "partialTime": "--27T15:"
+        "partialTime" : "--27T15:"
       },
       "endTime" : {
-        "partialTime": "--27T20:"
+        "partialTime" : "--27T20:"
       }
     },
     "prevailingVisibility" : {
@@ -102,10 +102,10 @@
     "changeIndicator" : "BECOMING",
     "periodOfChange" : {
       "startTime" : {
-        "partialTime": "--27T20:"
+        "partialTime" : "--27T20:"
       },
       "endTime" : {
-        "partialTime": "--27T22:"
+        "partialTime" : "--27T22:"
       }
     },
     "surfaceWind" : {
@@ -122,10 +122,10 @@
     "changeIndicator" : "TEMPORARY_FLUCTUATIONS",
     "periodOfChange" : {
       "startTime" : {
-        "partialTime": "--27T20:"
+        "partialTime" : "--27T20:"
       },
       "endTime" : {
-        "partialTime": "--27T24:"
+        "partialTime" : "--27T24:"
       }
     },
     "prevailingVisibility" : {
@@ -136,10 +136,10 @@
     "changeIndicator" : "PROBABILITY_40",
     "periodOfChange" : {
       "startTime" : {
-        "partialTime": "--28T02:"
+        "partialTime" : "--28T02:"
       },
       "endTime" : {
-        "partialTime": "--28T06:"
+        "partialTime" : "--28T06:"
       }
     },
     "prevailingVisibility" : {
