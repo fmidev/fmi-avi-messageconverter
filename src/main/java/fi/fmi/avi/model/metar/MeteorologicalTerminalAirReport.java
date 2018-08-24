@@ -46,6 +46,8 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
 
     boolean isSnowClosure();
 
+    boolean isNoSignificantChanges();
+
     Optional<List<TrendForecast>> getTrends();
 
     Optional<ColorState> getColorState();

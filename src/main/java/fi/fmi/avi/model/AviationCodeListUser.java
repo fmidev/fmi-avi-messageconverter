@@ -21,10 +21,18 @@ public interface AviationCodeListUser {
     String CODELIST_VALUE_NIL_REASON_NOTHING_OF_OPERATIONAL_SIGNIFICANCE = "http://codes.wmo.int/common/nil/nothingOfOperationalSignificance";
     String CODELIST_VALUE_NIL_REASON_NOT_OBSERVABLE = "http://codes.wmo.int/common/nil/notObservable";
     String CODELIST_VALUE_NIL_REASON_NOT_DETECTED_BY_AUTO_SYSTEM = "http://codes.wmo.int/common/nil/notDetectedByAutoSystem";
+    String CODELIST_VALUE_NIL_REASON_NO_SIGNIFICANT_CHANGE = "http://codes.wmo.int/common/nil/noSignificantChange";
 
     String MET_AERODROME_FORECAST_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeForecast";
     String MET_AERODROME_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeForecast";
     String TAF_PROCEDURE_DESCRIPTION = "WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 5 TECHNICAL SPECIFICATIONS RELATED TO FORECASTS";
+
+    String MET_AERODROME_OBSERVATION_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeObservation";
+    String MET_AERODROME_OBSERVATION_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeObservation";
+    String METAR_PROCDURE_DESCRIPTION = "WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 3 TECHNICAL SPECIFICATIONS RELATED TO METEOROLOGICAL OBSERVATIONS AND REPORTS";
+
+    String TREND_FORECAST_OBSERVATION_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeTrendForecast";
+    String TREND_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeTrendForecast";
 
     enum MetarStatus {
         NORMAL(0), CORRECTION(1), MISSING(2);
@@ -100,13 +108,15 @@ public interface AviationCodeListUser {
     }
 
     enum VisualRangeTendency {
-        UPWARD(0), NO_CHANGE(1), DOWNWARD(2);
+        UPWARD(0), NO_CHANGE(1), DOWNWARD(2), MISSING_VALUE(3);
 
         public static VisualRangeTendency fromInt(final int code) {
             switch(code) {
                 case 0: return UPWARD;
                 case 1: return NO_CHANGE;
                 case 2: return DOWNWARD;
+                case 3:
+                    return MISSING_VALUE;
                 default: throw new IllegalArgumentException("No value for code " + code);
             }
         }
@@ -291,11 +301,10 @@ public interface AviationCodeListUser {
     }
 
     enum TrendForecastChangeIndicator {
-        NO_SIGNIFICANT_CHANGES(0), BECOMING(1), TEMPORARY_FLUCTUATIONS(2);
+        BECOMING(1), TEMPORARY_FLUCTUATIONS(2);
 
         public static TrendForecastChangeIndicator fromInt(final int code) {
             switch (code) {
-                case 0: return NO_SIGNIFICANT_CHANGES;
                 case 1: return BECOMING;
                 case 2: return TEMPORARY_FLUCTUATIONS;
                 default: throw new IllegalArgumentException("No value for code " + code);
