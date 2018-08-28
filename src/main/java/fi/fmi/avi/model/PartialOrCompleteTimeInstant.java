@@ -161,25 +161,23 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         }
 
         public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) {
-            if (getCompleteTime().isPresent()) {
-                return completedWithIssueYearMonthDay(issueYearMonth, getCompleteTime().get().getDayOfMonth());
+            if (getPartialTime().isPresent()) {
+                return setCompleteTime(getPartialTime().get().toZonedDateTime(issueYearMonth));
+            } else if (getCompleteTime().isPresent()) {
+                return mapCompleteTime(completeTime -> PartialDateTime.ofDayHourMinuteZone(completeTime, false).toZonedDateTime(issueYearMonth));
             } else {
-                return setCompleteTime(getPartialTime()//
-                        .orElseThrow(() -> new IllegalStateException("partialTime must be present"))//
-                        .toZonedDateTime(issueYearMonth));
+                throw new IllegalStateException("Neither of partialTime or completeTime is present");
             }
         }
 
         public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, final int issueDayOfMonth) {
-            if (getCompleteTime().isPresent()) {
-                return this.setCompleteTime(ZonedDateTime.from(getCompleteTime().get())
-                        .withYear(issueYearMonth.getYear())
-                        .withMonth(issueYearMonth.getMonthValue())
-                        .withDayOfMonth(issueDayOfMonth));
+            if (getPartialTime().isPresent()) {
+                return setCompleteTime(getPartialTime().get().toZonedDateTime(issueYearMonth.atDay(issueDayOfMonth)));
+            } else if (getCompleteTime().isPresent()) {
+                return mapCompleteTime(
+                        completeTime -> PartialDateTime.ofDayHourMinuteZone(completeTime, false).toZonedDateTime(issueYearMonth.atDay(issueDayOfMonth)));
             } else {
-                return setCompleteTime(getPartialTime()//
-                        .orElseThrow(() -> new IllegalStateException("partialTime must be present"))//
-                        .toZonedDateTime(issueYearMonth.atDay(issueDayOfMonth)));
+                throw new IllegalStateException("Neither of partialTime or completeTime is present");
             }
         }
     }
