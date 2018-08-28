@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -533,20 +534,71 @@ public final class PartialDateTime implements Serializable {
         return PartialField.VALUES.length;
     }
 
-    public ZonedDateTime toZonedDateTimeNear(final ZonedDateTime referenceTime) {
+    public ZonedDateTime toZonedDateTimeAfter(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
-        final ZonedDateTime candidate;
+        return toZonedDateTimeOnSideOf(referenceTime, ChronoZonedDateTime::isAfter, 1);
+    }
+
+    public ZonedDateTime toZonedDateTimeNotBefore(final ZonedDateTime referenceTime) {
+        requireNonNull(referenceTime, "referenceTime");
+        return toZonedDateTimeOnSideOf(referenceTime, (candidate, reference) -> !candidate.isBefore(reference), 1);
+    }
+
+    public ZonedDateTime toZonedDateTimeBefore(final ZonedDateTime referenceTime) {
+        requireNonNull(referenceTime, "referenceTime");
+        return toZonedDateTimeOnSideOf(referenceTime, ChronoZonedDateTime::isBefore, -1);
+    }
+
+    public ZonedDateTime toZonedDateTimeNotAfter(final ZonedDateTime referenceTime) {
+        requireNonNull(referenceTime, "referenceTime");
+        return toZonedDateTimeOnSideOf(referenceTime, (candidate, reference) -> !candidate.isAfter(reference), -1);
+    }
+
+    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition,
+            final int fallbackDirection) {
         try {
-            candidate = getNearestCandidate(referenceTime, -1);
+            @Nullable
+            final ZonedDateTime zonedDateTime = toZonedDateTimeOnSideOf(referenceTime, condition, fallbackDirection, referenceTime,
+                    fallbackDirection < 0 ? 2 : 1);
+            if (zonedDateTime == null) {
+                throw new DateTimeException(String.format("Cannot resolve valid instant represented by %s.", this));
+            } else {
+                return zonedDateTime;
+            }
         } catch (final DateTimeException exception) {
             throw new DateTimeException(String.format("Unable to complete %s with %s", this, referenceTime), exception);
         }
-        if (candidate.isBefore(referenceTime)) {
-            return representedNearestToReference(candidate, referenceTime, getNearestCandidate(shiftReference(referenceTime, 1), 1));
-        } else if (candidate.isAfter(referenceTime)) {
-            return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime, candidate);
+    }
+
+    @Nullable
+    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition,
+            final int fallbackDirection, final ZonedDateTime candidateReference, final int retries) {
+        final ZonedDateTime candidate = getNearestCandidate(candidateReference, fallbackDirection);
+        if (represents(candidate) && condition.test(candidate, referenceTime)) {
+            return candidate;
+        } else if (retries > 0) {
+            return toZonedDateTimeOnSideOf(referenceTime, condition, fallbackDirection, shiftReference(candidateReference, fallbackDirection), retries - 1);
         } else {
-            return referenceTime;
+            return null;
+        }
+    }
+
+    public ZonedDateTime toZonedDateTimeNear(final ZonedDateTime referenceTime) {
+        requireNonNull(referenceTime, "referenceTime");
+        try {
+            final ZonedDateTime candidate = getNearestCandidate(referenceTime, -1);
+            if (candidate.isBefore(referenceTime)) {
+                return representedNearestToReference(candidate, referenceTime, getNearestCandidate(shiftReference(referenceTime, 1), 1));
+            } else if (candidate.isAfter(referenceTime)) {
+                return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime, candidate);
+            } else if (!represents(candidate)) {
+                return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime,
+                        getNearestCandidate(shiftReference(referenceTime, 1), 1));
+            } else {
+                return referenceTime;
+            }
+        } catch (final DateTimeException exception) {
+            throw new DateTimeException(String.format("Unable to complete %s with %s", this, referenceTime), exception);
         }
     }
 
@@ -587,7 +639,7 @@ public final class PartialDateTime implements Serializable {
             return candidateAfter;
         } else {
             throw new DateTimeException(
-                    String.format("Cannot find an instant represented by %s. Both candidates fail (%s, %s).", this, candidateBefore, candidateAfter));
+                    String.format("Cannot resolve valid instant represented by %s. Both candidates fail (%s, %s).", this, candidateBefore, candidateAfter));
         }
     }
 

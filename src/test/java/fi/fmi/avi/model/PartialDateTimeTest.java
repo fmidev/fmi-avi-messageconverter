@@ -580,6 +580,274 @@ public final class PartialDateTimeTest {
 
     @Parameters({ //
             // Partial with all fields
+            "2000-02-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z", //
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z", //
+
+            // Partial with day only
+            "2000-02-02T00:00Z, --02T:, 2000-01-02T00:00Z", //
+            "2000-01-02T00:00Z, --02T:, 2000-01-01T23:59:59.999Z", //
+            "2000-01-01T00:00Z, --01T:, 1999-12-31T23:59:59.999Z", //
+
+            // Partial with hour, minute and zone
+            "2000-01-03T03:04Z, --T03:04Z, 2000-01-02T03:04Z", //
+            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:03:59.999Z", //
+            "2000-01-01T00:00Z, --T00:00Z, 1999-12-31T23:59:59.999Z", //
+
+            // Partial with hour only
+            "2000-01-02T03:00Z, --T03:, 2000-01-01T03:00Z", //
+            "2000-01-01T03:00Z, --T03:, 2000-01-01T02:59:59.999Z", //
+            "2000-01-01T00:00Z, --T00:, 1999-12-31T23:59:59.999Z", //
+
+            // Partial with minute and zone only
+            "2000-01-01T01:04Z, --T:04Z, 2000-01-01T00:04Z", //
+            "2000-01-01T00:04Z, --T:04Z, 2000-01-01T00:03:59.999Z", //
+            "2000-01-01T00:00Z, --T:00Z, 1999-12-31T23:59:59.999Z", //
+
+            // Empty partial
+            "2000-01-01T00:01Z, --T:, 2000-01-01T00:00Z", //
+            "2000-01-01T00:00Z, --T:, 1999-12-31T23:59:59.999Z", //
+
+            // Midnight 00:00 on 28th of February on leap year and non-leap year
+            "2000-03-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-28T23:59:59.999Z", // leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-02-28T23:59:59.999Z", // non-leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-01-29T00:00Z", // non-leap year
+
+            // Midnight 24:00 on 28th of February on leap year and non-leap year
+            "2000-03-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-28T23:59:59.999Z", // leap year
+            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-01-29T00:00Z", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z", // (non-leap year)
+
+            // Reference with non-UTC zone offset
+            "2000-01-02T03:00Z, --T03:Z, 2000-01-01T04:00+01:00", //
+            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T03:59:59.999+01:00", //
+            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T00:59:59.999+01:00", //
+            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T22:59:59.999-01:00", //
+
+            // Partial with non-UTC zone offset
+            "2000-01-02T00:00+01:00, --T00:+01:00, 2000-01-01T00:00Z", //
+            "2000-01-02T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z", //
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z", //
+    })
+    @Test
+    public void testToZonedDateTimeAfter(final String expected, final String partialDateTime, final String referenceTime) {
+        testToZonedDateTimeAfter(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
+    }
+
+    private void testToZonedDateTimeAfter(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
+        assertEquals(String.format("%s.toZonedDateTimeAfter(%s)", partialDateTime, referenceTime), expected,
+                partialDateTime.toZonedDateTimeAfter(referenceTime));
+    }
+
+    @Parameters({ //
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", //
+            "2000-02-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z", //
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z", //
+
+            // Partial with day only
+            "2000-01-02T00:00Z, --02T:, 2000-01-02T00:00Z", //
+            "2000-02-02T00:00Z, --02T:, 2000-01-02T00:00:00.001Z", //
+            "2000-01-02T00:00Z, --02T:, 2000-01-01T23:59:59.999Z", //
+            "2000-01-01T00:00Z, --01T:, 1999-12-31T23:59:59.999Z", //
+
+            // Partial with hour, minute and zone
+            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:04Z", //
+            "2000-01-03T03:04Z, --T03:04Z, 2000-01-02T03:04:00.001Z", //
+            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:03:59.999Z", //
+            "2000-01-01T00:00Z, --T00:00Z, 1999-12-31T23:59:59.999Z", //
+
+            // Partial with hour only
+            "2000-01-01T03:00Z, --T03:, 2000-01-01T03:00Z", //
+            "2000-01-02T03:00Z, --T03:, 2000-01-01T03:00:00.001Z", //
+            "2000-01-01T03:00Z, --T03:, 2000-01-01T02:59:59.999Z", //
+            "2000-01-01T00:00Z, --T00:, 1999-12-31T23:59:59.999Z", //
+
+            // Partial with minute and zone only
+            "2000-01-01T00:04Z, --T:04Z, 2000-01-01T00:04Z", //
+            "2000-01-01T01:04Z, --T:04Z, 2000-01-01T00:04:00.001Z", //
+            "2000-01-01T00:04Z, --T:04Z, 2000-01-01T00:03:59.999Z", //
+            "2000-01-01T00:00Z, --T:00Z, 1999-12-31T23:59:59.999Z", //
+
+            // Empty partial
+            "2000-01-01T00:00Z, --T:, 2000-01-01T00:00Z", //
+            "2000-01-01T00:01Z, --T:, 2000-01-01T00:00:00.001Z", //
+            "2000-01-01T00:00Z, --T:, 1999-12-31T23:59:59.999Z", //
+
+            // Midnight 00:00 on 28th of February on leap year and non-leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z", // leap year
+            "2000-03-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-28T23:59:59.999Z", // leap year
+            "2001-01-29T00:00Z, --29T00:00Z, 2001-01-29T00:00Z", // non-leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-01-29T00:00:00.001Z", // non-leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-02-28T23:59:59.999Z", // non-leap year
+
+            // Midnight 24:00 on 28th of February on leap year and non-leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z", // leap year
+            "2000-03-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-28T23:59:59.999Z", // leap year
+            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z", // (non-leap year)
+            "2001-01-29T00:00Z, --28T24:00Z, 2001-01-29T00:00Z", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-01-29T00:00:00.001Z", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z", // (non-leap year)
+
+            // Reference with non-UTC zone offset
+            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00+01:00", //
+            "2000-01-02T03:00Z, --T03:Z, 2000-01-01T04:00:00.001+01:00", //
+            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T03:59:59.999+01:00", //
+            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T01:00+01:00", //
+            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T22:59:59.999-01:00", //
+
+            // Partial with non-UTC zone offset
+            "2000-01-02T00:00+01:00, --T00:+01:00, 2000-01-01T00:00Z", //
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z", //
+            "2000-01-02T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z", //
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z", //
+    })
+    @Test
+    public void testToZonedDateTimeNotBefore(final String expected, final String partialDateTime, final String referenceTime) {
+        testToZonedDateTimeNotBefore(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
+    }
+
+    private void testToZonedDateTimeNotBefore(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
+        assertEquals(String.format("%s.toZonedDateTimeNotBefore(%s)", partialDateTime, referenceTime), expected,
+                partialDateTime.toZonedDateTimeNotBefore(referenceTime));
+    }
+
+    @Parameters({ //
+            // Partial with all fields
+            "1999-12-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z", //
+
+            // Partial with day only
+            "1999-12-02T00:00Z, --02T:, 2000-01-02T00:00Z", //
+            "2000-01-02T00:00Z, --02T:, 2000-01-02T00:00:00.001Z", //
+
+            // Partial with hour, minute and zone
+            "2000-01-01T03:04Z, --T03:04Z, 2000-01-02T03:04Z", //
+            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:04:00.001Z", //
+            "1999-12-31T00:00Z, --T00:00Z, 2000-01-01T00:00Z", //
+
+            // Partial with hour only
+            "2000-01-01T03:00Z, --T03:, 2000-01-02T03:00Z", //
+            "2000-01-01T03:00Z, --T03:, 2000-01-01T03:00:00.001Z", //
+            "1999-12-31T00:00Z, --T00:, 2000-01-01T00:00Z", //
+
+            // Partial with minute and zone only
+            "2000-01-01T02:04Z, --T:04Z, 2000-01-01T03:04Z", //
+            "2000-01-01T03:04Z, --T:04Z, 2000-01-01T03:04:00.001Z", //
+            "1999-12-31T23:00Z, --T:00Z, 2000-01-01T00:00Z", //
+
+            // Empty partial
+            "1999-12-31T23:59Z, --T:, 2000-01-01T00:00Z", //
+            "2000-01-01T00:00Z, --T:, 2000-01-01T00:00:00.001Z", //
+
+            // Midnight 00:00 on 28th of February on leap year and non-leap year
+            "2000-01-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z", // leap year
+            "2001-01-29T00:00Z, --29T00:00Z, 2001-03-29T00:00Z", // non-leap year
+
+            // Midnight 24:00 on 28th of February on leap year and non-leap year
+            "2000-01-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z", // leap year
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-03-29T00:00Z", // (non-leap year)
+            "2001-01-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z", // (non-leap year)
+            "2001-01-29T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z", // (non-leap year)
+
+            // Reference with non-UTC zone offset
+            "1999-12-31T03:00Z, --T03:Z, 2000-01-01T04:00+01:00", //
+            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00:00.001+01:00", //
+            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T01:00:00.001+01:00", //
+            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T23:00:00.001-01:00", //
+
+            // Partial with non-UTC zone offset
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z", //
+            "1999-12-31T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z", //
+    })
+    @Test
+    public void testToZonedDateTimeBefore(final String expected, final String partialDateTime, final String referenceTime) {
+        testToZonedDateTimeBefore(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
+    }
+
+    private void testToZonedDateTimeBefore(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
+        assertEquals(String.format("%s.toZonedDateTimeBefore(%s)", partialDateTime, referenceTime), expected,
+                partialDateTime.toZonedDateTimeBefore(referenceTime));
+    }
+
+    @Parameters({ //
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z", //
+            "1999-12-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z", //
+
+            // Partial with day only
+            "2000-01-02T00:00Z, --02T:, 2000-01-02T00:00Z", //
+            "2000-01-02T00:00Z, --02T:, 2000-01-02T00:00:00.001Z", //
+            "1999-12-02T00:00Z, --02T:, 2000-01-01T23:59:59.999Z", //
+
+            // Partial with hour, minute and zone
+            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:04Z", //
+            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:04:00.001Z", //
+            "1999-12-31T03:04Z, --T03:04Z, 2000-01-01T03:03:59.999Z", //
+
+            // Partial with hour only
+            "2000-01-02T03:00Z, --T03:, 2000-01-02T03:00Z", //
+            "2000-01-01T03:00Z, --T03:, 2000-01-01T03:00:00.001Z", //
+            "1999-12-31T03:00Z, --T03:, 2000-01-01T02:59:59.999Z", //
+
+            // Partial with minute and zone only
+            "2000-01-01T03:04Z, --T:04Z, 2000-01-01T03:04Z", //
+            "2000-01-01T03:04Z, --T:04Z, 2000-01-01T03:04:00.001Z", //
+            "1999-12-31T23:04Z, --T:04Z, 2000-01-01T00:03:59.999Z", //
+
+            // Empty partial
+            "2000-01-01T00:00Z, --T:, 2000-01-01T00:00Z", //
+            "2000-01-01T00:00Z, --T:, 2000-01-01T00:00:00.001Z", //
+            "1999-12-31T23:59Z, --T:, 1999-12-31T23:59:59.999Z", //
+
+            // Midnight 00:00 on 28th of February on leap year and non-leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-03-28T23:59:59.999Z", // leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-03-29T00:00Z", // non-leap year
+            "2001-01-29T00:00Z, --29T00:00Z, 2001-03-28T23:59:59.999Z", // non-leap year
+
+            // Midnight 24:00 on 28th of February on leap year and non-leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-03-28T23:59:59.999Z", // leap year
+            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-29T00:00Z", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-03-01T00:00Z", // (non-leap year)
+            "2001-01-29T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z", // (non-leap year)
+
+            // Reference with non-UTC zone offset
+            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00+01:00", //
+            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00:00.001+01:00", //
+            "1999-12-31T03:00Z, --T03:Z, 2000-01-01T03:59:59.999+01:00", //
+            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T01:00+01:00", //
+            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T23:00-01:00", //
+
+            // Partial with non-UTC zone offset
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z", //
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z", //
+            "1999-12-31T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z", //
+    })
+    @Test
+    public void testToZonedDateTimeNotAfter(final String expected, final String partialDateTime, final String referenceTime) {
+        testToZonedDateTimeNotAfter(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
+    }
+
+    private void testToZonedDateTimeNotAfter(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
+        assertEquals(String.format("%s.toZonedDateTimeNotAfter(%s)", partialDateTime, referenceTime), expected,
+                partialDateTime.toZonedDateTimeNotAfter(referenceTime));
+    }
+
+    @Parameters({ //
+            // Partial with all fields
             "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", // exactly expected
             "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z", // just after expected
             "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z", // just before expected
