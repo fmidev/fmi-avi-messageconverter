@@ -68,12 +68,6 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         return of(PartialDateTime.of(completeTime, partialFields, partialHasZone, midnightHour), completeTime);
     }
 
-    @Deprecated
-    @JsonIgnore
-    public Optional<String> getPartialTimeString() {
-        return getPartialTime().map(PartialDateTime::toTACString);
-    }
-
     public abstract Optional<PartialDateTime> getPartialTime();
 
     /**
