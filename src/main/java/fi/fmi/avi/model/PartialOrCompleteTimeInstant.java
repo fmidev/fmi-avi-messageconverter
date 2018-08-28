@@ -102,13 +102,12 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
      * @return the minute-of-hour
      */
     @JsonIgnore
-    public int getMinute() {
+    public OptionalInt getMinute() {
         return getPartialTime()//
                 .map(PartialDateTime::getMinute)//
-                .orElse(OptionalInt.empty())//
                 .orElseGet(() -> getCompleteTime()//
-                        .map(ZonedDateTime::getMinute)//
-                        .orElse(-1));
+                        .map(completeTime -> OptionalInt.of(completeTime.getMinute()))//
+                        .orElse(OptionalInt.empty()));
     }
 
     /**
@@ -119,13 +118,12 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
      * @return the hour-of-day
      */
     @JsonIgnore
-    public int getHour() {
+    public OptionalInt getHour() {
         return getPartialTime()//
                 .map(PartialDateTime::getHour)//
-                .orElse(OptionalInt.empty())//
                 .orElseGet(() -> getCompleteTime()//
-                        .map(ZonedDateTime::getHour)//
-                        .orElse(-1));
+                        .map(completeTime -> OptionalInt.of(completeTime.getHour()))//
+                        .orElse(OptionalInt.empty()));
     }
 
     /**
@@ -136,13 +134,12 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
      * @return the day-of-month
      */
     @JsonIgnore
-    public int getDay() {
+    public OptionalInt getDay() {
         return getPartialTime()//
                 .map(PartialDateTime::getDay)//
-                .orElse(OptionalInt.empty())//
                 .orElseGet(() -> getCompleteTime()//
-                        .map(ZonedDateTime::getDayOfMonth)//
-                        .orElse(-1));
+                        .map(completeTime -> OptionalInt.of(completeTime.getDayOfMonth()))//
+                        .orElse(OptionalInt.empty()));
     }
 
     abstract Builder toBuilder();

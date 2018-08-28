@@ -11,8 +11,11 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nullable;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -99,6 +102,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         }
     }
 
+    @Nullable
     private static KeyTimePair<PartialOrCompleteTime> completePartialTimeReferenceInternal(final PartialOrCompleteTime input, final ZonedDateTime key) {
         if (input != null) {
             if (input instanceof PartialOrCompleteTimePeriod) {
@@ -111,31 +115,25 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
                     ZonedDateTime ref = startTimePair.key;
 
                     if (!startTime.getCompleteTime().isPresent()) {
-                        throw new RuntimeException(
-                                "Could not complete start time " + period.getStartTime().get() + " with " + key + ", this should not happen");
+                        throw new RuntimeException("Could not complete start time " + period.getStartTime().get() + " with " + key + ", this should not happen");
                     }
 
                     if (period.getEndTime().isPresent()) {
                         ref = ZonedDateTime.of(LocalDateTime.from(startTime.getCompleteTime().get()), ref.getZone());
                         PartialOrCompleteTimeInstant endTimeToSet = period.getEndTime().get();
-                        final int endHour = endTimeToSet.getHour();
-                        final int endDay = endTimeToSet.getDay();
-                        int endMinute = endTimeToSet.getMinute();
-                        if (endMinute == -1) {
-                            endMinute = 0;
-                        }
+                        final int endHour = endTimeToSet.getHour().orElse(-1);
+                        final OptionalInt endDayOptional = endTimeToSet.getDay();
+                        final int endMinute = endTimeToSet.getMinute().orElse(0);
 
-                        if (endDay == -1) {
-                            if (endHour <= ref.getHour()) {
-                                ref = ref.plusDays(1);
-                            }
-                        } else {
-                            //We know the day
+                        if (endDayOptional.isPresent()) {
+                            final int endDay = endDayOptional.getAsInt();
                             if (endDay < ref.getDayOfMonth()) {
                                 //Roll over to the next month
                                 ref = ref.plusMonths(1);
                             }
                             ref = ref.withDayOfMonth(endDay);
+                        } else if (endHour <= ref.getHour()) {
+                            ref = ref.plusDays(1);
                         }
                         if (endTimeToSet.isMidnight24h()) {
                             ref = ref.plusDays(1).withHour(0).withMinute(0);
@@ -165,8 +163,8 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         return null;
     }
 
-    private static KeyTimePair<PartialOrCompleteTime> completePartialTimeReferenceInternalBackwards(final PartialOrCompleteTime input,
-            final ZonedDateTime key) {
+    @Nullable
+    private static KeyTimePair<PartialOrCompleteTime> completePartialTimeReferenceInternalBackwards(final PartialOrCompleteTime input, final ZonedDateTime key) {
         if (input != null) {
             if (input instanceof PartialOrCompleteTimePeriod) {
                 final PartialOrCompleteTimePeriod period = (PartialOrCompleteTimePeriod) input;
@@ -184,24 +182,19 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
                     if (period.getStartTime().isPresent()) {
                         ref = ZonedDateTime.of(LocalDateTime.from(endTime.getCompleteTime().get()), ref.getZone());
                         PartialOrCompleteTimeInstant startTimeToSet = period.getStartTime().get();
-                        final int startHour = startTimeToSet.getHour();
-                        final int startDay = startTimeToSet.getDay();
-                        int startMinute = startTimeToSet.getMinute();
-                        if (startMinute == -1) {
-                            startMinute = 0;
-                        }
+                        final int startHour = startTimeToSet.getHour().orElse(-1);
+                        final OptionalInt startDayOptional = startTimeToSet.getDay();
+                        final int startMinute = startTimeToSet.getMinute().orElse(0);
 
-                        if (startDay == -1) {
-                            if (startHour >= ref.getHour()) {
-                                ref = ref.minusDays(1);
-                            }
-                        } else {
-                            //We know the day
+                        if (startDayOptional.isPresent()) {
+                            final int startDay = startDayOptional.getAsInt();
                             if (startDay > ref.getDayOfMonth()) {
                                 //Roll back to the prev month
                                 ref = ref.minusMonths(1);
                             }
                             ref = ref.withDayOfMonth(startDay);
+                        } else if (startHour >= ref.getHour()) {
+                            ref = ref.minusDays(1);
                         }
                         ref = ref.withHour(startHour).withMinute(startMinute);
                         startTimeToSet = period.getStartTime().get().toBuilder().setCompleteTime(ref).build();
@@ -229,23 +222,18 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     private static KeyTimePair<PartialOrCompleteTime> completeSingularTime(final PartialOrCompleteTimeInstant input, final ZonedDateTime reference) {
         final KeyTimePair<PartialOrCompleteTime> retval = new KeyTimePair<>();
         retval.key = ZonedDateTime.from(reference);
-        final int hour = input.getHour();
-        final int day = input.getDay();
-        int minute = input.getMinute();
-        if (minute == -1) {
-            minute = 0;
-        }
-        if (day == -1) {
-            if (hour < reference.getHour()) {
-                //Roll over to the next day
-                retval.key = retval.key.plusDays(1);
-            }
-        } else {
-            if (day < retval.key.getDayOfMonth()) {
+        final int hour = input.getHour().orElse(-1);
+        final OptionalInt dayOptional = input.getDay();
+        final int minute = input.getMinute().orElse(0);
+        if (dayOptional.isPresent()) {
+            if (dayOptional.getAsInt() < retval.key.getDayOfMonth()) {
                 //Roll over to the next month
                 retval.key = retval.key.plusMonths(1);
             }
-            retval.key = retval.key.withDayOfMonth(day);
+            retval.key = retval.key.withDayOfMonth(dayOptional.getAsInt());
+        } else if (hour < reference.getHour()) {
+            //Roll over to the next day
+            retval.key = retval.key.plusDays(1);
         }
         retval.key = retval.key.withHour(hour).withMinute(minute);
         retval.time = input.toBuilder().setCompleteTime(retval.key).build();
@@ -255,28 +243,26 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     private static KeyTimePair<PartialOrCompleteTime> completeSingularTimeBackwards(final PartialOrCompleteTimeInstant input, final ZonedDateTime reference) {
         final KeyTimePair<PartialOrCompleteTime> retval = new KeyTimePair<>();
         retval.key = ZonedDateTime.from(reference);
-        int hour = input.getHour();
-        int day = input.getDay();
-        int minute = input.getMinute();
-        if (minute == -1) {
-            minute = 0;
-        }
-        if (hour == 24 && minute == 0) {
-            day = day + 1;
-            hour = 0;
-            minute = 0;
-        }
-        if (day == -1) {
-            if (hour > reference.getHour()) {
-                //Roll back to the prev day
-                retval.key = retval.key.minusDays(1);
+        int hour = input.getHour().orElse(-1);
+        final OptionalInt dayOptional = input.getDay();
+        int minute = input.getMinute().orElse(0);
+        if (dayOptional.isPresent()) {
+            int day = dayOptional.getAsInt();
+            if (hour == 24 && minute == 0) {
+                day = day + 1;
+                hour = 0;
+                minute = 0;
             }
-        } else {
             if (day > retval.key.getDayOfMonth()) {
                 //Roll bck to the prev month
                 retval.key = retval.key.minusMonths(1);
             }
             retval.key = retval.key.withDayOfMonth(day);
+        } else {
+            if (hour > reference.getHour()) {
+                //Roll back to the prev day
+                retval.key = retval.key.minusDays(1);
+            }
         }
         retval.key = retval.key.withHour(hour).withMinute(minute);
         retval.time = input.toBuilder().setCompleteTime(retval.key).build();
