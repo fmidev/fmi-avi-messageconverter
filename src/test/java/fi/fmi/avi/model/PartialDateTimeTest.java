@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -13,6 +15,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,9 +26,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.hamcrest.FeatureMatcher;
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -126,6 +132,15 @@ public final class PartialDateTimeTest {
         }
     }
 
+    private static <T, U> Matcher<T> feature(final String featureName, Function<T, U> getFeature, Matcher<U> subMatcher) {
+        return new FeatureMatcher<T, U>(subMatcher, featureName, featureName) {
+            @Override
+            protected U featureValueOf(final T actual) {
+                return getFeature.apply(actual);
+            }
+        };
+    }
+
     @Test
     public void testNulls() {
         final NullPointerTester tester = new NullPointerTester()//
@@ -184,7 +199,7 @@ public final class PartialDateTimeTest {
     @Parameters
     @Test
     public void testBuildFailOnNonContinuousFields(final Map<PartialField, Integer> testFieldValues) {
-        thrown.expect(IllegalStateException.class);
+        thrown.expect(DateTimeException.class);
         thrown.expectMessage(testFieldValues.keySet().toString());
         createPartialDateTime(testFieldValues);
     }
@@ -510,24 +525,24 @@ public final class PartialDateTimeTest {
     }
 
     @Parameters({ //
-            "--T00:, 2000-01, java.lang.IllegalStateException", //
-            "--T:00, 2000-01, java.lang.IllegalStateException", //
-            "--32T00:, 2000-01, java.time.DateTimeException", //
-            "--01T25:, 2000-01, java.time.DateTimeException", //
-            "--01T00:61, 2000-01, java.time.DateTimeException", //
-            "--29T00:00Z, 2001-02, java.time.DateTimeException", // non-leap year
-            "--29T24:00Z, 2001-02, java.time.DateTimeException", // non-leap year
+            "--T00:, 2000-01", //
+            "--T:00, 2000-01", //
+            "--32T00:, 2000-01", //
+            "--01T25:, 2000-01", //
+            "--01T00:61, 2000-01", //
+            "--29T00:00Z, 2001-02", // non-leap year
+            "--29T24:00Z, 2001-02", // non-leap year
     })
     @Test
-    public void testToZonedDateTimeYearMonthInvalid(final String partialDateTime, final String issueDate, final Class<? extends Throwable> expectedException) {
-        testToZonedDateTimeYearMonthInvalid(PartialDateTime.parse(partialDateTime), YearMonth.parse(issueDate), expectedException);
+    public void testToZonedDateTimeYearMonthInvalid(final String partialDateTime, final String issueDate) {
+        testToZonedDateTimeYearMonthInvalid(PartialDateTime.parse(partialDateTime), YearMonth.parse(issueDate));
     }
 
-    private void testToZonedDateTimeYearMonthInvalid(final PartialDateTime partialDateTime, final YearMonth issueDate,
-            final Class<? extends Throwable> expectedException) {
+    private void testToZonedDateTimeYearMonthInvalid(final PartialDateTime partialDateTime, final YearMonth issueDate) {
+        final Class<? extends Throwable> expectedException = DateTimeException.class;
         thrown.expect(expectedException);
         thrown.expectMessage(partialDateTime.toString());
-        if (DateTimeException.class.equals(expectedException)) {
+        if (partialDateTime.getDay().isPresent()) {
             thrown.expectMessage(issueDate.toString());
         }
         final ZonedDateTime result = partialDateTime.toZonedDateTime(issueDate);
@@ -555,23 +570,23 @@ public final class PartialDateTimeTest {
     }
 
     @Parameters({ //
-            "--T:00, 2000-01-01, java.lang.IllegalStateException", //
-            "--32T00:, 2000-01-01, java.time.DateTimeException", //
-            "--T25:, 2000-01-01, java.time.DateTimeException", //
-            "--T00:61, 2000-01-01, java.time.DateTimeException", //
-            "--29T00:00Z, 2001-02-28, java.time.DateTimeException", // non-leap year
-            "--29T24:00Z, 2001-02-28, java.time.DateTimeException", // non-leap year
+            "--T:00, 2000-01-01", //
+            "--32T00:, 2000-01-01", //
+            "--T25:, 2000-01-01", //
+            "--T00:61, 2000-01-01", //
+            "--29T00:00Z, 2001-02-28", // non-leap year
+            "--29T24:00Z, 2001-02-28", // non-leap year
     })
     @Test
-    public void testToZonedDateTimeLocalDateInvalid(final String partialDateTime, final String issueDate, final Class<? extends Throwable> expectedException) {
-        testToZonedDateTimeLocalDateInvalid(PartialDateTime.parse(partialDateTime), LocalDate.parse(issueDate), expectedException);
+    public void testToZonedDateTimeLocalDateInvalid(final String partialDateTime, final String issueDate) {
+        testToZonedDateTimeLocalDateInvalid(PartialDateTime.parse(partialDateTime), LocalDate.parse(issueDate));
     }
 
-    private void testToZonedDateTimeLocalDateInvalid(final PartialDateTime partialDateTime, final LocalDate issueDate,
-            final Class<? extends Throwable> expectedException) {
+    private void testToZonedDateTimeLocalDateInvalid(final PartialDateTime partialDateTime, final LocalDate issueDate) {
+        final Class<? extends Throwable> expectedException = DateTimeException.class;
         thrown.expect(expectedException);
         thrown.expectMessage(partialDateTime.toString());
-        if (DateTimeException.class.equals(expectedException)) {
+        if (partialDateTime.getHour().isPresent()) {
             thrown.expectMessage(issueDate.toString());
         }
         final ZonedDateTime result = partialDateTime.toZonedDateTime(issueDate);
@@ -953,17 +968,17 @@ public final class PartialDateTimeTest {
     }
 
     @Parameters({ //
-            "--32T00:, 2000-01-01T00:00Z, java.time.DateTimeException", //
-            "--T25:, 2000-01-01T00:00Z, java.time.DateTimeException", //
-            "--T00:61, 2000-01-01T00:00Z, java.time.DateTimeException", //
+            "--32T00:, 2000-01-01T00:00Z", //
+            "--T25:, 2000-01-01T00:00Z", //
+            "--T00:61, 2000-01-01T00:00Z", //
     })
     @Test
-    public void testToZonedDateTimeNearInvalid(final String partialDateTime, final String referenceTime, final Class<? extends Throwable> expectedException) {
-        testToZonedDateTimeNearInvalid(PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime), expectedException);
+    public void testToZonedDateTimeNearInvalid(final String partialDateTime, final String referenceTime) {
+        testToZonedDateTimeNearInvalid(PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
     }
 
-    private void testToZonedDateTimeNearInvalid(final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
-            final Class<? extends Throwable> expectedException) {
+    private void testToZonedDateTimeNearInvalid(final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
+        final Class<? extends Throwable> expectedException = DateTimeException.class;
         thrown.expect(expectedException);
         thrown.expectMessage(partialDateTime.toString());
         if (DateTimeException.class.equals(expectedException)) {
@@ -1173,7 +1188,7 @@ public final class PartialDateTimeTest {
     })
     @Test
     public void testParseInvalid(final String partialDateTimeString) {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(DateTimeParseException.class);
         thrown.expectMessage(partialDateTimeString);
         PartialDateTime.parse(partialDateTimeString);
     }
@@ -1216,12 +1231,14 @@ public final class PartialDateTimeTest {
         assertEquals(expected, partialDateTime);
     }
 
-    @Parameters({ "0", "0Z", "2", "2Z", "000", "000Z", "023", "023Z", "00000", "00000Z", "02034", "02034Z", "02030405", "02030405Z", "0b", "b2", "020b",
-            "02b3" })
+    @Parameters({ "0, 0", "0, 0Z", "0, 2", "0, 2Z", "2, 000", "2, 000Z", "2, 023", "2, 023Z", "4, 00000", "4, 00000Z", "4, 02034", "4, 02034Z", "6, 02030405",
+            "6, 02030405Z", "0, 0b", "0, b2", "2, 020b", "2, 02b3" })
     @Test
-    public void testParseTACStringInvalid(final String tacString) {
-        thrown.expect(IllegalArgumentException.class);
+    public void testParseTACStringInvalid(final int errorIndex, final String tacString) {
+        thrown.expect(DateTimeParseException.class);
         thrown.expectMessage(tacString);
+        thrown.expect(feature("parsedString", DateTimeParseException::getParsedString, is(equalTo(tacString))));
+        thrown.expect(feature("errorIndex", DateTimeParseException::getErrorIndex, is(equalTo(errorIndex))));
         PartialDateTime.parseTACString(tacString, PartialField.MINUTE);
     }
 
@@ -1237,33 +1254,35 @@ public final class PartialDateTimeTest {
     }
 
     @Parameters({ //
-            ", DAY, false", //
-            "02, DAY:HOUR, false", //
-            "0203, DAY:HOUR:MINUTE, false", //
-            "0203, DAY:MINUTE, false", // Uncontinuous fields
-            ", , true", //
-            "02, DAY, true", //
-            "0203, DAY:HOUR, true", //
-            "020304, DAY:HOUR:MINUTE, true", //
-            "Z, , false", //
-            "02Z, DAY, false", //
-            "0203Z, DAY:HOUR, false", //
-            "020304Z, DAY:HOUR:MINUTE, false", //
-            "b20304Z, DAY:HOUR:MINUTE, true", //
-            "0b0304Z, DAY:HOUR:MINUTE, true", //
-            "02030405, DAY:HOUR:MINUTE, false", //
-            "02030405, DAY:HOUR:MINUTE, true", //
-            "02030405Z, DAY:HOUR:MINUTE, false", //
-            "02030405Z, DAY:HOUR:MINUTE, true", //
+            "0, , DAY, false", //
+            "2, 02, DAY:HOUR, false", //
+            "4, 0203, DAY:HOUR:MINUTE, false", //
+            "0, 0203, DAY:MINUTE, false", // Uncontinuous fields
+            "0, , , true", //
+            "2, 02, DAY, true", //
+            "4, 0203, DAY:HOUR, true", //
+            "6, 020304, DAY:HOUR:MINUTE, true", //
+            "0, Z, , false", //
+            "2, 02Z, DAY, false", //
+            "4, 0203Z, DAY:HOUR, false", //
+            "6, 020304Z, DAY:HOUR:MINUTE, false", //
+            "0, b20304Z, DAY:HOUR:MINUTE, true", //
+            "0, 0b0304Z, DAY:HOUR:MINUTE, true", //
+            "6, 02030405, DAY:HOUR:MINUTE, false", //
+            "6, 02030405, DAY:HOUR:MINUTE, true", //
+            "6, 02030405Z, DAY:HOUR:MINUTE, false", //
+            "6, 02030405Z, DAY:HOUR:MINUTE, true", //
     })
     @Test
-    public void testParseTACStringStrictInvalid(final String tacString, final String hasFieldsString, final boolean hasZone) {
+    public void testParseTACStringStrictInvalid(final int errorIndex, final String tacString, final String hasFieldsString, final boolean hasZone) {
         final EnumSet<PartialField> hasFields = Stream.of(hasFieldsString.split(":"))//
                 .filter(fieldName -> !fieldName.isEmpty())//
                 .map(PartialField::valueOf)//
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartialField.class)));
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(DateTimeParseException.class);
         thrown.expectMessage(tacString);
+        thrown.expect(feature("parsedString", DateTimeParseException::getParsedString, is(equalTo(tacString))));
+        thrown.expect(feature("errorIndex", DateTimeParseException::getErrorIndex, is(equalTo(errorIndex))));
         PartialDateTime.parseTACStringStrict(tacString, hasFields, hasZone);
     }
 

@@ -11,6 +11,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -166,7 +167,7 @@ public final class PartialDateTime implements Serializable {
             i += 1;
         }
         if (values.length > i) {
-            throw new IllegalArgumentException(String.format("Too many values: %d; expected %d", values.length, i));
+            throw new DateTimeException(String.format("Too many values: %d; expected %d", values.length, i));
         }
         return new PartialDateTime(fieldValues, null);
     }
@@ -175,7 +176,7 @@ public final class PartialDateTime implements Serializable {
         requireNonNull(dateTime, "dateTime");
         requireNonNull(fields, "fields");
         if (midnightHour != MIDNIGHT_0_HOUR && midnightHour != MIDNIGHT_24_HOUR) {
-            throw new IllegalArgumentException(String.format("midnightHour must be either %s or %s; was: %s", MIDNIGHT_0_HOUR, MIDNIGHT_24_HOUR, midnightHour));
+            throw new DateTimeException(String.format("midnightHour must be either %s or %s; was: %s", MIDNIGHT_0_HOUR, MIDNIGHT_24_HOUR, midnightHour));
         }
 
         final boolean applyMidnight24h = midnightHour == MIDNIGHT_24_HOUR && isMidnight(dateTime);
@@ -192,7 +193,7 @@ public final class PartialDateTime implements Serializable {
         requireNonNull(partialDateTimeString, "partialDateTimeString");
         final Matcher matcher = PARTIAL_TIME_STRING_PATTERN.matcher(partialDateTimeString);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Invalid partialDateTimeString '" + partialDateTimeString + "'");
+            throw new DateTimeParseException("Invalid partialDateTimeString '" + partialDateTimeString + "'", partialDateTimeString, 0);
         }
 
         int fieldValues = INITIAL_FIELD_VALUES;
@@ -212,7 +213,7 @@ public final class PartialDateTime implements Serializable {
                     .map(PartialDateTime::parseZone)//
                     .orElse(null);
         } catch (final RuntimeException exception) {
-            throw new IllegalArgumentException("Invalid partialDateTimeString: '" + partialDateTimeString + "'", exception);
+            throw new DateTimeParseException("Invalid partialDateTimeString '" + partialDateTimeString + "'", partialDateTimeString, 0, exception);
         }
         return new PartialDateTime(fieldValues, zone);
     }
@@ -225,14 +226,18 @@ public final class PartialDateTime implements Serializable {
         @Nullable
         final ZoneId zone;
 
+        int tacStringIndex = 0;
         try {
             final int[] parsedFieldValues = new int[PartialField.VALUES.length];
-            int tacStringIndex = 0;
             int parsedFieldValuesIndex = 0;
             while (tacStringIndex < tacString.length() //
                     && Character.isDigit(tacString.charAt(tacStringIndex)) //
                     && Character.isDigit(tacString.charAt(tacStringIndex + 1))) {
-                parsedFieldValues[parsedFieldValuesIndex] = Integer.parseInt(tacString.substring(tacStringIndex, tacStringIndex + 2));
+                try {
+                    parsedFieldValues[parsedFieldValuesIndex] = Integer.parseInt(tacString.substring(tacStringIndex, tacStringIndex + 2));
+                } catch (final IndexOutOfBoundsException exception) {
+                    throw new DateTimeParseException("Too many fields", tacString, tacStringIndex, exception);
+                }
                 tacStringIndex += 2;
                 parsedFieldValuesIndex += 1;
             }
@@ -246,6 +251,7 @@ public final class PartialDateTime implements Serializable {
                 final PartialField lastField = PartialField.VALUES[Math.max(precision.ordinal(), parsedFieldsSize - 1)];
                 final PartialField[] fields = EnumSet.range(firstField, lastField).toArray(new PartialField[0]);
                 for (int i = 0; i < fields.length; i++) {
+                    tacStringIndex = i * 2;
                     final PartialField field = fields[i];
                     fieldValues = field.withRawFieldValue(fieldValues, field.checkValueWithinValidRange(parsedFieldValues[i]));
                 }
@@ -253,7 +259,7 @@ public final class PartialDateTime implements Serializable {
 
             return new PartialDateTime(fieldValues, zone);
         } catch (final RuntimeException exception) {
-            throw new IllegalArgumentException("Invalid tacString: '" + tacString + "'", exception);
+            throw new DateTimeParseException("Invalid tacString: '" + tacString + "'", tacString, tacStringIndex, exception);
         }
     }
 
@@ -265,16 +271,15 @@ public final class PartialDateTime implements Serializable {
         @Nullable
         final ZoneId zone;
 
+        int index = 0;
         try {
             if (!hasContinuousEnums(hasFields)) {
-                throw new IllegalArgumentException("Uncontinuous fields: " + hasFields);
+                throw new DateTimeException("Uncontinuous fields: " + hasFields);
             }
 
-            int index = 0;
             for (final PartialField field : PartialField.VALUES) {
                 if (hasFields.contains(field)) {
-                    fieldValues = field.withRawFieldValue(fieldValues,
-                            field.checkValueWithinValidRange(Integer.parseInt(tacString.substring(index, index + 2))));
+                    fieldValues = field.withRawFieldValue(fieldValues, field.checkValueWithinValidRange(Integer.parseInt(tacString.substring(index, index + 2))));
                     index += 2;
                 } else {
                     fieldValues = field.withRawFieldValue(fieldValues, EMPTY_FIELD_VALUE);
@@ -284,14 +289,16 @@ public final class PartialDateTime implements Serializable {
             if (hasZone && !zoneId.isEmpty()) {
                 zone = parseZone(zoneId);
             } else if (hasZone) {
-                throw new IllegalArgumentException("Missing zone");
+                throw new DateTimeParseException(tacString + " is missing zone", tacString, index);
             } else if (!zoneId.isEmpty()) {
-                throw new IllegalArgumentException("Unexpected zone: " + zoneId);
+                throw new DateTimeParseException(tacString + " has unexpected zone: " + zoneId, tacString, index);
             } else {
                 zone = null;
             }
+        } catch (final DateTimeParseException exception) {
+            throw exception;
         } catch (final RuntimeException exception) {
-            throw new IllegalArgumentException("Invalid tacString: '" + tacString + "'", exception);
+            throw new DateTimeParseException("Invalid tacString: '" + tacString + "'", tacString, index, exception);
         }
         return new PartialDateTime(fieldValues, zone);
     }
@@ -319,7 +326,7 @@ public final class PartialDateTime implements Serializable {
     private static int checkHasContinuousFieldRange(final int fieldValues) {
         final Set<PartialField> fields = getPresentFields(fieldValues);
         if (!hasContinuousEnums(fields)) {
-            throw new IllegalStateException("Uncontinuous fields: " + fields);
+            throw new DateTimeException("Uncontinuous fields: " + fields);
         }
         return fieldValues;
     }
@@ -420,37 +427,56 @@ public final class PartialDateTime implements Serializable {
                 && (rawMinute == MIDNIGHT_MINUTE || !PartialField.MINUTE.isValueWithinValidRange(rawMinute));
     }
 
-    /**
-     * Indicates if this time instance was initialized as time '2400' indicating midnight
-     * (the last instance of time of the day). As a time instance this is equal to '00:00' of the
-     * next day, but it may have implications on how the time is serialized in TAC format.
-     *
-     * @return true if initiated as partial time "2400"
-     */
-    public boolean isMidnight24h() {
+    private boolean isMidnight(final int midnightHour) {
+        assert midnightHour == MIDNIGHT_0_HOUR || midnightHour == MIDNIGHT_24_HOUR : "Unexpected midnight hour: " + midnightHour;
         final int rawHour = PartialField.HOUR.getRawFieldValue(fieldValues);
         final int rawMinute = PartialField.MINUTE.getRawFieldValue(fieldValues);
-        return rawHour == MIDNIGHT_24_HOUR //
+        return rawHour == midnightHour //
                 && (rawMinute == MIDNIGHT_MINUTE || !PartialField.MINUTE.isValueWithinValidRange(rawMinute));
     }
 
-    public PartialDateTime withMidnight00h(final YearMonth reference) {
-        requireNonNull(reference, "reference");
-        if (!isMidnight24h()) {
-            return this;
-        }
-        return withMidnightHour(MIDNIGHT_0_HOUR, reference);
+    /**
+     * Indicates whether this partial date-time represents midnight with hour as {@value #MIDNIGHT_24_HOUR} (the last instant of the time of day).
+     * When such instance is completed into a {@link ZonedDateTime}, the day of month will be next day and hour 0 in the resulting {@code ZonedDateTime}..
+     *
+     * @return {@code true} if this partial date-time represents midnight with hour as {@value #MIDNIGHT_24_HOUR}, {@code false} otherwise
+     */
+    public boolean isMidnight24h() {
+        return isMidnight(MIDNIGHT_24_HOUR);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with hour set to {@value #MIDNIGHT_0_HOUR} if this object represents midnight.
+     * The day field, if exists, is adjusted accordingly in context of {@code reference}.
+     * If this object does not represent midnight or already represents midnight with hour {@value #MIDNIGHT_0_HOUR}, same instance is returned.
+     *
+     * @param reference
+     *         context for day adjust
+     *
+     * @return a {@code PartialDateTime} based on this partial date-time with hour {@value #MIDNIGHT_0_HOUR} if representing midnight
+     */
+    public PartialDateTime withMidnight00h(final YearMonth reference) {
+        return withMidnightHour(MIDNIGHT_0_HOUR, requireNonNull(reference, "reference"));
+    }
+
+    /**
+     * Returns a copy of this {@code PartialDateTime} with hour set to {@value #MIDNIGHT_24_HOUR} if this object represents midnight.
+     * The day field, if exists, is adjusted accordingly in context of {@code reference}.
+     * If this object does not represent midnight or already represents midnight with hour {@value #MIDNIGHT_24_HOUR}, same instance is returned.
+     *
+     * @param reference
+     *         context for day adjust
+     *
+     * @return a {@code PartialDateTime} based on this partial date-time with hour {@value #MIDNIGHT_24_HOUR} if representing midnight
+     */
     public PartialDateTime withMidnight24h(final YearMonth reference) {
-        requireNonNull(reference, "reference");
-        if (!isMidnight() || isMidnight24h()) {
-            return this;
-        }
-        return withMidnightHour(MIDNIGHT_24_HOUR, reference);
+        return withMidnightHour(MIDNIGHT_24_HOUR, requireNonNull(reference, "reference"));
     }
 
     private PartialDateTime withMidnightHour(final int midnightHour, final YearMonth reference) {
+        if (!isMidnight() || isMidnight(midnightHour)) {
+            return this;
+        }
         int newFieldValues = fieldValues;
         newFieldValues = PartialField.HOUR.withRawFieldValue(newFieldValues, midnightHour);
 
@@ -466,7 +492,7 @@ public final class PartialDateTime implements Serializable {
 
     public ZonedDateTime toZonedDateTime(final YearMonth issueYearMonth) {
         requireNonNull(issueYearMonth, "issueYearMonth");
-        final int day = getDay().orElseThrow(() -> new IllegalStateException(String.format("%s missing field %s", this, PartialField.DAY)));
+        final int day = getDay().orElseThrow(() -> new DateTimeException(String.format("%s missing field %s", this, PartialField.DAY)));
         final LocalDate issueDate;
         try {
             issueDate = issueYearMonth.atDay(day);
@@ -480,7 +506,7 @@ public final class PartialDateTime implements Serializable {
         requireNonNull(issueDate, "issueDate");
 
         final int day = getDay().orElse(issueDate.getDayOfMonth());
-        final int hour = getHour().orElseThrow(() -> new IllegalStateException(String.format("%s missing field %s", this, PartialField.HOUR)));
+        final int hour = getHour().orElseThrow(() -> new DateTimeException(String.format("%s missing field %s", this, PartialField.HOUR)));
         final int minute = getMinute().orElse(0);
         final ZoneId resultingZone = getZone().orElse(ZoneId.of("Z"));
         final int plusMonths = day < issueDate.getDayOfMonth() ? 1 : 0; // issue day > day of partial, assume next month
@@ -554,8 +580,7 @@ public final class PartialDateTime implements Serializable {
         return toZonedDateTimeOnSideOf(referenceTime, (candidate, reference) -> !candidate.isAfter(reference), -1);
     }
 
-    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition,
-            final int fallbackDirection) {
+    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition, final int fallbackDirection) {
         try {
             @Nullable
             final ZonedDateTime zonedDateTime = toZonedDateTimeOnSideOf(referenceTime, condition, fallbackDirection, referenceTime,
@@ -571,8 +596,7 @@ public final class PartialDateTime implements Serializable {
     }
 
     @Nullable
-    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition,
-            final int fallbackDirection, final ZonedDateTime candidateReference, final int retries) {
+    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition, final int fallbackDirection, final ZonedDateTime candidateReference, final int retries) {
         final ZonedDateTime candidate = getNearestCandidate(candidateReference, fallbackDirection);
         if (represents(candidate) && condition.test(candidate, referenceTime)) {
             return candidate;
@@ -592,8 +616,7 @@ public final class PartialDateTime implements Serializable {
             } else if (candidate.isAfter(referenceTime)) {
                 return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime, candidate);
             } else if (!represents(candidate)) {
-                return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime,
-                        getNearestCandidate(shiftReference(referenceTime, 1), 1));
+                return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime, getNearestCandidate(shiftReference(referenceTime, 1), 1));
             } else {
                 return referenceTime;
             }
@@ -627,8 +650,7 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
-    private ZonedDateTime representedNearestToReference(final ZonedDateTime candidateBefore, final ZonedDateTime referenceTime,
-            final ZonedDateTime candidateAfter) {
+    private ZonedDateTime representedNearestToReference(final ZonedDateTime candidateBefore, final ZonedDateTime referenceTime, final ZonedDateTime candidateAfter) {
         final boolean representsCandidateBefore = represents(candidateBefore);
         final boolean representsCandidateAfter = represents(candidateAfter);
         if (representsCandidateBefore && representsCandidateAfter) {
@@ -638,8 +660,7 @@ public final class PartialDateTime implements Serializable {
         } else if (representsCandidateAfter) {
             return candidateAfter;
         } else {
-            throw new DateTimeException(
-                    String.format("Cannot resolve valid instant represented by %s. Both candidates fail (%s, %s).", this, candidateBefore, candidateAfter));
+            throw new DateTimeException(String.format("Cannot resolve valid instant represented by %s. Both candidates fail (%s, %s).", this, candidateBefore, candidateAfter));
         }
     }
 
@@ -761,8 +782,7 @@ public final class PartialDateTime implements Serializable {
 
         int checkValueWithinValidRange(final int value) {
             if (!isValueWithinValidRange(value)) {
-                throw new IllegalArgumentException(
-                        String.format("Field %s value %d is not within range [%d,%d]", this, value, MIN_FIELD_VALUE, MAX_FIELD_VALUE));
+                throw new DateTimeException(String.format("Field %s value %d is not within range [%d,%d]", this, value, MIN_FIELD_VALUE, MAX_FIELD_VALUE));
             }
             return value;
         }
@@ -777,7 +797,7 @@ public final class PartialDateTime implements Serializable {
 
         int withRawFieldValue(final int fieldValues, final int value) {
             if (value >> FIELD_SIZE_IN_BITS != 0) {
-                throw new IllegalArgumentException("Value out of bounds: " + value);
+                throw new DateTimeException("Value out of bounds: " + value);
             }
             return fieldValues & ~(FIELD_MASK << bitIndex) | value << bitIndex;
         }
