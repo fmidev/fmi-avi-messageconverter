@@ -32,10 +32,36 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.util.StdConverter;
 
+/**
+ * Representation of a partial date-time.
+ *
+ * <p id="continuous-fields">
+ * A PartialDateTime may consists of any <em>continuous</em> combination of {@link PartialField#DAY day}, {@link PartialField#HOUR hour} and
+ * {@link PartialField#MINUTE} with and without time zone. A continuous combination is a combination containing all fields between most and least significant
+ * field. E.g. combinations of just day, day and hour or all day, hour and minute. But combination of day and minute is not allowed as it is missing hour in
+ * between.
+ * </p>
+ *
+ * <p>
+ * Field values are not validated against valid calendar values, but may be anything between 0-99. Validation shall be done outside this class, e.g. when
+ * completing a PartialDateTime into a {@link ZonedDateTime}.
+ * </p>
+ *
+ * <p>
+ * This class provides JSON serialization and deserialization support with <a href="https://github.com/FasterXML/jackson">Jackson</a>.
+ * The serialized representation of an instance is the {@link #toString()} format.
+ * </p>
+ */
 @JsonSerialize(converter = PartialDateTime.ToJsonConverter.class)
 @JsonDeserialize(converter = PartialDateTime.FromJsonConverter.class)
 public final class PartialDateTime implements Serializable {
+    /**
+     * Midnight hour 24.
+     */
     public static final int MIDNIGHT_24_HOUR = 24;
+    /**
+     * Midnight hour 0.
+     */
     public static final int MIDNIGHT_0_HOUR = 0;
     static final int MIDNIGHT_MINUTE = 0;
 
@@ -60,6 +86,23 @@ public final class PartialDateTime implements Serializable {
         this.zone = zone;
     }
 
+    /**
+     * Obtain an instance of optional values.
+     *
+     * @param day
+     *         day or {@code -1} if absent
+     * @param hour
+     *         hour or {@code -1} if absent
+     * @param minute
+     *         minute or {@code -1} if absent
+     * @param zone
+     *         zone or {@code null} if absent
+     *
+     * @return instance with given fields
+     *
+     * @throws DateTimeException
+     *         if a field value is outside valid range or <a href="#continuous-fields">uncontinuous</a> field values are given
+     */
     public static PartialDateTime of(final int day, final int hour, final int minute, @Nullable final ZoneId zone) {
         int fieldValues = INITIAL_FIELD_VALUES;
         if (day >= 0) {
@@ -74,6 +117,23 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, zone);
     }
 
+    /**
+     * Obtain an instance of day, hour, minute and zone.
+     *
+     * @param day
+     *         day
+     * @param hour
+     *         hour
+     * @param minute
+     *         minute
+     * @param zone
+     *         zone
+     *
+     * @return instance with day, hour minute and zone
+     *
+     * @throws DateTimeException
+     *         if a field value is outside valid range
+     */
     public static PartialDateTime ofDayHourMinuteZone(final int day, final int hour, final int minute, final ZoneId zone) {
         requireNonNull(zone, "zone");
         int fieldValues = INITIAL_FIELD_VALUES;
@@ -83,11 +143,33 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, zone);
     }
 
+    /**
+     * Obtain an instance of day, hour minute and zone.
+     *
+     * @param dateTime
+     *         datetime of desired day, hour, minute and zone
+     * @param midnight24h
+     *         {@code true} when midnight hour 24, {@code false} for midnight hour 0
+     *
+     * @return instance with day, hour, minute and zone
+     */
     public static PartialDateTime ofDayHourMinuteZone(final ZonedDateTime dateTime, final boolean midnight24h) {
         requireNonNull(dateTime, "dateTime");
         return ofDayHourMinuteZone(dateTime, midnight24h, dateTime.getZone());
     }
 
+    /**
+     * Obtain an instance of day, hour minute and zone.
+     *
+     * @param temporal
+     *         temporal of desired day, hour and minute
+     * @param midnight24h
+     *         {@code true} when midnight hour 24, {@code false} for midnight hour 0
+     * @param zone
+     *         zone
+     *
+     * @return instance with day, hour, minute and zone
+     */
     public static PartialDateTime ofDayHourMinuteZone(final Temporal temporal, final boolean midnight24h, final ZoneId zone) {
         requireNonNull(temporal, "temporal");
         final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
@@ -95,6 +177,21 @@ public final class PartialDateTime implements Serializable {
                 PartialField.MINUTE.get(temporal, applyMidnight24h), zone);
     }
 
+    /**
+     * Obtain an instance of day, hour and minute.
+     *
+     * @param day
+     *         day
+     * @param hour
+     *         hour
+     * @param minute
+     *         minute
+     *
+     * @return instance with day, hour and minute
+     *
+     * @throws DateTimeException
+     *         if a field value is outside valid range
+     */
     public static PartialDateTime ofDayHourMinute(final int day, final int hour, final int minute) {
         int fieldValues = INITIAL_FIELD_VALUES;
         fieldValues = PartialField.DAY.withRawFieldValue(fieldValues, PartialField.DAY.checkValueWithinValidRange(day));
@@ -103,6 +200,16 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, null);
     }
 
+    /**
+     * Obtain an instance of day, hour and minute.
+     *
+     * @param temporal
+     *         temporal of desired day, hour and minute
+     * @param midnight24h
+     *         {@code true} when midnight hour 24, {@code false} for midnight hour 0
+     *
+     * @return instance with day, hour and minute
+     */
     public static PartialDateTime ofDayHourMinute(final Temporal temporal, final boolean midnight24h) {
         requireNonNull(temporal, "temporal");
         final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
@@ -110,6 +217,19 @@ public final class PartialDateTime implements Serializable {
                 PartialField.MINUTE.get(temporal, applyMidnight24h));
     }
 
+    /**
+     * Obtain an instance of day and hour.
+     *
+     * @param day
+     *         day
+     * @param hour
+     *         hour
+     *
+     * @return instance with day and hour
+     *
+     * @throws DateTimeException
+     *         if a field value is outside valid range
+     */
     public static PartialDateTime ofDayHour(final int day, final int hour) {
         int fieldValues = INITIAL_FIELD_VALUES;
         fieldValues = PartialField.DAY.withRawFieldValue(fieldValues, PartialField.DAY.checkValueWithinValidRange(day));
@@ -117,12 +237,35 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, null);
     }
 
+    /**
+     * Obtain an instance of day and hour.
+     *
+     * @param temporal
+     *         temporal of desired day and hour
+     * @param midnight24h
+     *         {@code true} when midnight hour 24, {@code false} for midnight hour 0
+     *
+     * @return instance with day and hour
+     */
     public static PartialDateTime ofDayHour(final Temporal temporal, final boolean midnight24h) {
         requireNonNull(temporal, "temporal");
         final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
         return ofDayHour(PartialField.DAY.get(temporal, applyMidnight24h), PartialField.HOUR.get(temporal, applyMidnight24h));
     }
 
+    /**
+     * Obtain an instance of hour and minute.
+     *
+     * @param hour
+     *         hour
+     * @param minute
+     *         minute
+     *
+     * @return instance with hour and minute
+     *
+     * @throws DateTimeException
+     *         if a field value is outside valid range
+     */
     public static PartialDateTime ofHourMinute(final int hour, final int minute) {
         int fieldValues = INITIAL_FIELD_VALUES;
         fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, PartialField.HOUR.checkValueWithinValidRange(hour));
@@ -130,30 +273,87 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, null);
     }
 
+    /**
+     * Obtain an instance of hour and minute.
+     *
+     * @param temporal
+     *         temporal of desired hour and minute
+     * @param midnight24h
+     *         {@code true} when midnight hour 24, {@code false} for midnight hour 0
+     *
+     * @return instance with hour and minute
+     */
     public static PartialDateTime ofHourMinute(final Temporal temporal, final boolean midnight24h) {
         requireNonNull(temporal, "temporal");
         final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
         return ofHourMinute(PartialField.HOUR.get(temporal, applyMidnight24h), PartialField.MINUTE.get(temporal, applyMidnight24h));
     }
 
+    /**
+     * Obtain an instance of hour.
+     *
+     * @param hour
+     *         hour
+     *
+     * @return instance with hour
+     *
+     * @throws DateTimeException
+     *         if a hour is outside valid range
+     */
     public static PartialDateTime ofHour(final int hour) {
         int fieldValues = INITIAL_FIELD_VALUES;
         fieldValues = PartialField.HOUR.withRawFieldValue(fieldValues, PartialField.HOUR.checkValueWithinValidRange(hour));
         return new PartialDateTime(fieldValues, null);
     }
 
+    /**
+     * Obtain an instance of hour.
+     *
+     * @param temporal
+     *         temporal of desired hour
+     * @param midnight24h
+     *         {@code true} when midnight hour 24, {@code false} for midnight hour 0
+     *
+     * @return instance with hour
+     */
     public static PartialDateTime ofHour(final Temporal temporal, final boolean midnight24h) {
         requireNonNull(temporal, "temporal");
         final boolean applyMidnight24h = midnight24h && isMidnight(temporal);
         return ofHour(PartialField.HOUR.get(temporal, applyMidnight24h));
     }
 
+    /**
+     * Obtain an instance of singe field.
+     *
+     * @param field
+     *         field
+     * @param value
+     *         field value
+     *
+     * @return instance with single field
+     *
+     * @throws DateTimeException
+     *         if field value is outside valid range
+     */
     public static PartialDateTime of(final PartialField field, final int value) {
         requireNonNull(field, "field");
         field.checkValueWithinValidRange(value);
         return new PartialDateTime(field.withRawFieldValue(INITIAL_FIELD_VALUES, value), null);
     }
 
+    /**
+     * Obtain an instance of provided fields.
+     *
+     * @param fields
+     *         fields
+     * @param values
+     *         values in order from most significant field to least significant field ({@link PartialField} enum order)
+     *
+     * @return instance with given field values
+     *
+     * @throws DateTimeException
+     *         if a field value is outside valid range or number of fields and values mismatch
+     */
     public static PartialDateTime of(final Set<PartialField> fields, final int... values) {
         requireNonNull(fields, "fields");
         requireNonNull(values, "values");
@@ -172,6 +372,23 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, null);
     }
 
+    /**
+     * Obtain an instance of {@code fields} from {@code dateTime}, optionally containing zone and having chosen midnight hour if midnight.
+     *
+     * @param dateTime
+     *         field values and zone
+     * @param fields
+     *         fields to populate new PartialDateTime with
+     * @param useZone
+     *         {@code true} to use zone of {@code dateTime}, {@code false} to omit zone
+     * @param midnightHour
+     *         either {@value #MIDNIGHT_0_HOUR} or {@value #MIDNIGHT_24_HOUR}
+     *
+     * @return instance with given field values
+     *
+     * @throws DateTimeException
+     *         if field value is outside valid range
+     */
     public static PartialDateTime of(final ZonedDateTime dateTime, final Set<PartialField> fields, final boolean useZone, final int midnightHour) {
         requireNonNull(dateTime, "dateTime");
         requireNonNull(fields, "fields");
@@ -189,6 +406,18 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, zone);
     }
 
+    /**
+     * Obtain an instance from string.
+     * See {@link #toString()} for description of string format.
+     *
+     * @param partialDateTimeString
+     *         string to parse
+     *
+     * @return instance from string
+     *
+     * @throws DateTimeParseException
+     *         if string cannot be parsed
+     */
     public static PartialDateTime parse(final String partialDateTimeString) {
         requireNonNull(partialDateTimeString, "partialDateTimeString");
         final Matcher matcher = PARTIAL_TIME_STRING_PATTERN.matcher(partialDateTimeString);
@@ -218,6 +447,25 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(fieldValues, zone);
     }
 
+    /**
+     * Obtain an instance from TAC string.
+     *
+     * <p>
+     * This method attempts to parse field values available in TAC string and optional time zone in the end. The {@code precision} parameter is used as a
+     * hint for least significant field. E.g. {@code "0102", HOUR} results in day 01 and hour 02, while {@code "0102", MINUTE} results in hour 01 and day 02.
+     * But as {@code precision} is only a hint, {@code "010203, HOUR} results in day 01, hour 02 and minute 03.
+     * </p>
+     *
+     * @param tacString
+     *         TAC string to parse
+     * @param precision
+     *         least significant field hint
+     *
+     * @return instance from TAC string
+     *
+     * @throws DateTimeParseException
+     *         if string cannot be parsed
+     */
     public static PartialDateTime parseTACString(final String tacString, final PartialField precision) {
         requireNonNull(tacString, "tacString");
         requireNonNull(precision, "precision");
@@ -263,6 +511,25 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
+    /**
+     * Obtain an instance from TAC string using strict parsing.
+     * The given string is expected to contain exactly given fields ({@code hasFields}) and zone depending on {@code hasZone}.
+     * Parse fails if given TAC string fails to satisfy given requirements.
+     *
+     * @param tacString
+     *         TAC string to parse
+     * @param hasFields
+     *         exact fields to parse
+     * @param hasZone
+     *         {@code true} if TAC string is expected to contain zone, {@code false} otherwise
+     *
+     * @return instance from TAC string
+     *
+     * @throws DateTimeParseException
+     *         if string cannot be parsed
+     * @throws DateTimeException
+     *         if {@code hasFields} is <a href="#continuous-fields">uncontinuous</a>
+     */
     public static PartialDateTime parseTACStringStrict(final String tacString, final Set<PartialField> hasFields, final boolean hasZone) {
         requireNonNull(tacString, "tacString");
         requireNonNull(hasFields, "hasFields");
@@ -279,7 +546,8 @@ public final class PartialDateTime implements Serializable {
 
             for (final PartialField field : PartialField.VALUES) {
                 if (hasFields.contains(field)) {
-                    fieldValues = field.withRawFieldValue(fieldValues, field.checkValueWithinValidRange(Integer.parseInt(tacString.substring(index, index + 2))));
+                    fieldValues = field.withRawFieldValue(fieldValues,
+                            field.checkValueWithinValidRange(Integer.parseInt(tacString.substring(index, index + 2))));
                     index += 2;
                 } else {
                     fieldValues = field.withRawFieldValue(fieldValues, EMPTY_FIELD_VALUE);
@@ -346,80 +614,222 @@ public final class PartialDateTime implements Serializable {
                 .allMatch(field -> !temporal.isSupported(field) || temporal.get(field) == 0);
     }
 
+    /**
+     * Returns a set of fields this PartialDateTime contains.
+     *
+     * @return set of present fields
+     */
     public Set<PartialField> getPresentFields() {
         return getPresentFields(fieldValues);
     }
 
+    /**
+     * Gets the optional value of specified field from this partial date-time as an {@code int}.
+     *
+     * @param field
+     *         the field to get
+     *
+     * @return optional value for the field, empty if field is unset
+     */
     public OptionalInt get(final PartialField field) {
         requireNonNull(field, "field");
         final int value = field.getRawFieldValue(fieldValues);
         return field.isValueWithinValidRange(value) ? OptionalInt.of(value) : OptionalInt.empty();
     }
 
+    /**
+     * Queries, whether this partial date-time has a value for specified field or not.
+     *
+     * @param field
+     *         the field to query
+     *
+     * @return {@code true} if this partial date-time contains specified field, {@code false} otherwise
+     */
     private boolean has(final PartialField field) {
         return hasField(fieldValues, field);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the specifield field being set to specified value.
+     *
+     * @param field
+     *         field to be altered in the result
+     * @param value
+     *         value of specified field to set in the result
+     *
+     * @return a {@code PartialDateTime} based on this object with specified field set to specifield value
+     *
+     * @throws DateTimeException
+     *         if {@code value} is outside it's range or if fields of result would be <a href="#continuous-fields">uncontinuous</a>
+     */
     public PartialDateTime with(final PartialField field, final int value) {
         requireNonNull(field, "field");
         final int newFieldValues = field.withRawFieldValue(this.fieldValues, field.checkValueWithinValidRange(value));
         return newFieldValues == fieldValues ? this : new PartialDateTime(newFieldValues, zone);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the specified field being unset.
+     *
+     * @param field
+     *         field to be unset in the result
+     *
+     * @return a {@code PartialDateTime} based on this object with specifield field unset
+     *
+     * @throws DateTimeException
+     *         if fields of result would be <a href="#continuous-fields">uncontinuous</a>
+     */
     public PartialDateTime without(final PartialField field) {
         requireNonNull(field, "field");
         final int newFieldValues = field.withRawFieldValue(this.fieldValues, EMPTY_FIELD_VALUE);
         return newFieldValues == fieldValues ? this : new PartialDateTime(newFieldValues, zone);
     }
 
+    /**
+     * Gets the minute field if present.
+     *
+     * @return minute
+     */
     public OptionalInt getMinute() {
         return get(PartialField.MINUTE);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the minute altered.
+     *
+     * @param minute
+     *         the minute to set
+     *
+     * @return a {@code PartialDateTime} based on this partial date-time with the requested minute
+     *
+     * @throws DateTimeException
+     *         if minute value is invalid or if fields of result would be <a href="#continuous-fields">uncontinuous</a>
+     */
     public PartialDateTime withMinute(final int minute) {
         return with(PartialField.MINUTE, minute);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the minute field being unset.
+     *
+     * @return a {@code PartialDateTime} based on this object with minute field unset
+     *
+     * @throws DateTimeException
+     *         if fields of result would be <a href="#continuous-fields">uncontinuous</a>
+     */
     public PartialDateTime withoutMinute() {
         return without(PartialField.MINUTE);
     }
 
+    /**
+     * Gets the hour field if present.
+     *
+     * @return hour
+     */
     public OptionalInt getHour() {
         return get(PartialField.HOUR);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the hour altered.
+     *
+     * @param hour
+     *         the hour to set
+     *
+     * @return a {@code PartialDateTime} based on this partial date-time with the requested hour
+     *
+     * @throws DateTimeException
+     *         if hour value is invalid or if fields of result would be <a href="#continuous-fields">uncontinuous</a>
+     */
     public PartialDateTime withHour(final int hour) {
         return with(PartialField.HOUR, hour);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the hour field being unset.
+     *
+     * @return a {@code PartialDateTime} based on this object with hour field unset
+     *
+     * @throws DateTimeException
+     *         if fields of result would be <a href="#continuous-fields">uncontinuous</a>
+     */
     public PartialDateTime withoutHour() {
         return without(PartialField.HOUR);
     }
 
+    /**
+     * Gets the day field if present.
+     *
+     * @return day
+     */
     public OptionalInt getDay() {
         return get(PartialField.DAY);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the day altered.
+     *
+     * @param day
+     *         the day to set
+     *
+     * @return a {@code PartialDateTime} based on this partial date-time with the requested day
+     *
+     * @throws DateTimeException
+     *         if day value is invalid or if fields of result would be <a href="#continuous-fields">uncontinuous</a>
+     */
     public PartialDateTime withDay(final int day) {
         return with(PartialField.DAY, day);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the day field being unset.
+     *
+     * @return a {@code PartialDateTime} based on this object with day field unset
+     *
+     * @throws DateTimeException
+     *         if fields of result would be <a href="#continuous-fields">uncontinuous</a>
+     */
     public PartialDateTime withoutDay() {
         return without(PartialField.DAY);
     }
 
+    /**
+     * Gets the zone if present.
+     *
+     * @return zone
+     */
     public Optional<ZoneId> getZone() {
         return Optional.ofNullable(zone);
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the zone altered.
+     *
+     * @param zone
+     *         the zone to set
+     *
+     * @return a {@code PartialDateTime} based on this partial date-time with the requested zone
+     */
     public PartialDateTime withZone(final ZoneId zone) {
         return new PartialDateTime(fieldValues, requireNonNull(zone, "zone"));
     }
 
+    /**
+     * Returns a copy of this {@code PartialDateTime} with the zone field being unset.
+     *
+     * @return a {@code PartialDateTime} based on this object with zone field unset
+     */
     public PartialDateTime withoutZone() {
         return new PartialDateTime(fieldValues, null);
     }
 
+    /**
+     * Indicates whether this partial date-time represent midnight.
+     * Midnight is specified as hour being either {@value #MIDNIGHT_0_HOUR} or {@value #MIDNIGHT_24_HOUR} and minute is either {@value #MIDNIGHT_MINUTE} or
+     * unset.
+     *
+     * @return {@code true} if this partial date-time represents midnight, {@code false} otherwise
+     */
     public boolean isMidnight() {
         final int rawHour = PartialField.HOUR.getRawFieldValue(fieldValues);
         final int rawMinute = PartialField.MINUTE.getRawFieldValue(fieldValues);
@@ -490,6 +900,18 @@ public final class PartialDateTime implements Serializable {
         return new PartialDateTime(newFieldValues, zone);
     }
 
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} by applying specified year and month of aviation message issue time into this partial.
+     * If this partial date-time is missing zone, UTC (Z) is used as default.
+     *
+     * @param issueYearMonth
+     *         year and month of aviation message issue time
+     *
+     * @return complete zoned date-time
+     *
+     * @throws DateTimeException
+     *         if day is missing or this partial date-time cannot be completed in context of specified {@code issueYearMonth}
+     */
     public ZonedDateTime toZonedDateTime(final YearMonth issueYearMonth) {
         requireNonNull(issueYearMonth, "issueYearMonth");
         final int day = getDay().orElseThrow(() -> new DateTimeException(String.format("%s missing field %s", this, PartialField.DAY)));
@@ -502,6 +924,23 @@ public final class PartialDateTime implements Serializable {
         return toZonedDateTime(issueDate);
     }
 
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} by applying specified date of aviation message issue time into this partial.
+     *
+     * <p>
+     * If this partial date-time is missing day, then {@code issueDate} day of month is used as day. Otherwise {@code issueDate} day is used as reference and
+     * if it is greater than day of partial, partial day is assumed to represent a day in next month to reference date.
+     * If this partial date-time is missing zone, UTC (Z) is used as default.
+     * </p>
+     *
+     * @param issueDate
+     *         date of aviation message issue time
+     *
+     * @return complete zoned date-time
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of specified {@code issueDate}
+     */
     public ZonedDateTime toZonedDateTime(final LocalDate issueDate) {
         requireNonNull(issueDate, "issueDate");
 
@@ -560,31 +999,65 @@ public final class PartialDateTime implements Serializable {
         return PartialField.VALUES.length;
     }
 
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} that is nearest to {@code referenceTime} in time but always after {@code referenceTime}.
+     *
+     * @param referenceTime
+     *         reference time for completion
+     *
+     * @return a {@code ZonedDateTime} that is nearest to {@code referenceTime} in time but always after {@code referenceTime}
+     */
     public ZonedDateTime toZonedDateTimeAfter(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
         return toZonedDateTimeOnSideOf(referenceTime, ChronoZonedDateTime::isAfter, 1);
     }
 
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time but never before
+     * {@code referenceTime}.
+     *
+     * @param referenceTime
+     *         reference time for completion
+     *
+     * @return a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time but never before {@code referenceTime}
+     */
     public ZonedDateTime toZonedDateTimeNotBefore(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
         return toZonedDateTimeOnSideOf(referenceTime, (candidate, reference) -> !candidate.isBefore(reference), 1);
     }
 
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} that is nearest to {@code referenceTime} in time but always before {@code referenceTime}.
+     *
+     * @param referenceTime
+     *         reference time for completion
+     *
+     * @return a {@code ZonedDateTime} that is nearest to {@code referenceTime} in time but always before {@code referenceTime}
+     */
     public ZonedDateTime toZonedDateTimeBefore(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
         return toZonedDateTimeOnSideOf(referenceTime, ChronoZonedDateTime::isBefore, -1);
     }
 
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time but never after
+     * {@code referenceTime}.
+     *
+     * @param referenceTime
+     *         reference time for completion
+     *
+     * @return a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time but never after {@code referenceTime}
+     */
     public ZonedDateTime toZonedDateTimeNotAfter(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
         return toZonedDateTimeOnSideOf(referenceTime, (candidate, reference) -> !candidate.isAfter(reference), -1);
     }
 
-    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition, final int fallbackDirection) {
+    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition,
+            final int fallbackDirection) {
         try {
             @Nullable
-            final ZonedDateTime zonedDateTime = toZonedDateTimeOnSideOf(referenceTime, condition, fallbackDirection, referenceTime,
-                    fallbackDirection < 0 ? 2 : 1);
+            final ZonedDateTime zonedDateTime = toZonedDateTimeOnSideOf(referenceTime, condition, fallbackDirection, referenceTime, fallbackDirection < 0 ? 2 : 1);
             if (zonedDateTime == null) {
                 throw new DateTimeException(String.format("Cannot resolve valid instant represented by %s.", this));
             } else {
@@ -596,7 +1069,8 @@ public final class PartialDateTime implements Serializable {
     }
 
     @Nullable
-    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition, final int fallbackDirection, final ZonedDateTime candidateReference, final int retries) {
+    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final BiPredicate<ZonedDateTime, ZonedDateTime> condition,
+            final int fallbackDirection, final ZonedDateTime candidateReference, final int retries) {
         final ZonedDateTime candidate = getNearestCandidate(candidateReference, fallbackDirection);
         if (represents(candidate) && condition.test(candidate, referenceTime)) {
             return candidate;
@@ -607,6 +1081,15 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time,
+     * no matter if result is before or after {@code referenceTime}.
+     *
+     * @param referenceTime
+     *         reference time for completion
+     *
+     * @return a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time
+     */
     public ZonedDateTime toZonedDateTimeNear(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
         try {
@@ -616,7 +1099,8 @@ public final class PartialDateTime implements Serializable {
             } else if (candidate.isAfter(referenceTime)) {
                 return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime, candidate);
             } else if (!represents(candidate)) {
-                return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime, getNearestCandidate(shiftReference(referenceTime, 1), 1));
+                return representedNearestToReference(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime,
+                        getNearestCandidate(shiftReference(referenceTime, 1), 1));
             } else {
                 return referenceTime;
             }
@@ -650,7 +1134,8 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
-    private ZonedDateTime representedNearestToReference(final ZonedDateTime candidateBefore, final ZonedDateTime referenceTime, final ZonedDateTime candidateAfter) {
+    private ZonedDateTime representedNearestToReference(final ZonedDateTime candidateBefore, final ZonedDateTime referenceTime,
+            final ZonedDateTime candidateAfter) {
         final boolean representsCandidateBefore = represents(candidateBefore);
         final boolean representsCandidateAfter = represents(candidateAfter);
         if (representsCandidateBefore && representsCandidateAfter) {
@@ -660,7 +1145,8 @@ public final class PartialDateTime implements Serializable {
         } else if (representsCandidateAfter) {
             return candidateAfter;
         } else {
-            throw new DateTimeException(String.format("Cannot resolve valid instant represented by %s. Both candidates fail (%s, %s).", this, candidateBefore, candidateAfter));
+            throw new DateTimeException(
+                    String.format("Cannot resolve valid instant represented by %s. Both candidates fail (%s, %s).", this, candidateBefore, candidateAfter));
         }
     }
 
@@ -675,6 +1161,15 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
+    /**
+     * Indicates whether this partial date-time represents given temporal.
+     * That is, whether all fields and zone that exist in both this partial date-time and provided {@code temporal} are equal.
+     *
+     * @param temporal
+     *         temporal to inspect against
+     *
+     * @return {@code true} if this partial date-time represents provided {@code temporal}, otherwise {@code false}
+     */
     public boolean represents(final Temporal temporal) {
         final boolean midnight24h = isMidnight24h();
         for (final PartialField field : PartialField.VALUES) {
@@ -687,6 +1182,11 @@ public final class PartialDateTime implements Serializable {
         return zone == null || temporal instanceof ChronoZonedDateTime && zone.equals(((ChronoZonedDateTime<?>) temporal).getZone());
     }
 
+    /**
+     * Returns a TAC string representation of this partial date-time.
+     *
+     * @return a TAC string representation of this partial date-time
+     */
     public String toTACString() {
         final StringBuilder builder = new StringBuilder();
         for (final PartialField field : PartialField.VALUES) {
@@ -698,6 +1198,32 @@ public final class PartialDateTime implements Serializable {
         return builder.toString();
     }
 
+    /**
+     * Returns a string representation of this partial date-time.
+     * The string format is based on ISO 8601 format {@code YYYY-MM-DDTHH:MM<zone>}, where any missing field is simply omitted (represented as an empty string).
+     * The date or time part are never omitted completely.
+     *
+     * <p>
+     * Examples:
+     * </p>
+     *
+     * <table>
+     * <caption>Examples of PartialDateTime string representations</caption>
+     * <tr><th>PartialDateTime</th><th>String representation</th></tr>
+     * <tr><td>ofDayHourMinuteZone(31, 8, 10, ZoneId.of("Z"))</td><td>--31T08:10Z</td></tr>
+     * <tr><td>ofHourMinuteZone(9, 30, ZoneId.of("+02:00"))</td><td>--T09:30+02:00</td></tr>
+     * <tr><td>ofDay(31)</td><td>--31T:</td></tr>
+     * <tr><td>ofMinute(10)</td><td>--T:08</td></tr>
+     * <tr><td>of(-1, -1, -1, null)</td><td>--T:</td></tr>
+     * </table>
+     *
+     * <p>
+     * The returned string may be used as input for {@link #parse(String)}. Formally, when {@code instance} is any instance of {@code PartialDateTime},
+     * {@code PartialDateTime.parse(instance.toString()).equals(instance)} is always {@code true}.
+     * </p>
+     *
+     * @return a string representation of this partial date-time
+     */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder()//
@@ -729,6 +1255,15 @@ public final class PartialDateTime implements Serializable {
         return Objects.hash(fieldValues, zone);
     }
 
+    /**
+     * Checks whether this {@code PartialDateTime} is equal to other {@code PartialDateTime}.
+     * Two {@code PartialDateTime} objects are considered equal, when they contain equal fields and zone with equal values.
+     *
+     * @param obj
+     *         the object to check, null returns false
+     *
+     * @return {@code true} if this is equal to {@code obj}, {@code false} otherwise
+     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {
@@ -743,18 +1278,27 @@ public final class PartialDateTime implements Serializable {
     }
 
     public enum PartialField {
+        /**
+         * Day of month.
+         */
         DAY(ChronoField.DAY_OF_MONTH) {
             @Override
             int get(final Temporal temporal, final boolean midnight24h) {
                 return (midnight24h ? temporal.minus(1, ChronoUnit.DAYS) : temporal).get(getTemporalField());
             }
         }, //
+        /**
+         * Hour of day.
+         */
         HOUR(ChronoField.HOUR_OF_DAY) {
             @Override
             int get(final Temporal temporal, final boolean midnight24h) {
                 return midnight24h ? MIDNIGHT_24_HOUR : temporal.get(getTemporalField());
             }
         }, //
+        /**
+         * Minute of hour.
+         */
         MINUTE(ChronoField.MINUTE_OF_HOUR) {
             @Override
             int get(final Temporal temporal, final boolean midnight24h) {
@@ -802,6 +1346,11 @@ public final class PartialDateTime implements Serializable {
             return fieldValues & ~(FIELD_MASK << bitIndex) | value << bitIndex;
         }
 
+        /**
+         * Returns the corresponding {@link ChronoField}.
+         *
+         * @return the corresponding {@link ChronoField}
+         */
         public ChronoField getTemporalField() {
             return chronoField;
         }
