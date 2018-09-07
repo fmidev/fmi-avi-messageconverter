@@ -14,10 +14,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.CloudLayer;
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.immutable.CloudLayerImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.metar.ObservedCloudLayer;
 import fi.fmi.avi.model.metar.ObservedClouds;
 
 /**
@@ -27,7 +26,7 @@ import fi.fmi.avi.model.metar.ObservedClouds;
 @FreeBuilder
 @JsonDeserialize(builder = ObservedCloudsImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"layers", "verticalVisibility", "noSignificantCloud", "amountAndHeightUnobservableByAutoSystem"})
+@JsonPropertyOrder({ "layers", "verticalVisibility", "noSignificantCloud", "noCloudsDetectedByAutoSystem", "verticalVisibilityUnobservableByAutoSystem" })
 public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable {
 
     public static ObservedCloudsImpl immutableCopyOf(final ObservedClouds observedClouds) {
@@ -49,11 +48,6 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
     public static class Builder extends ObservedCloudsImpl_Builder {
 
         public Builder() {
-            setAmountUnobservableByAutoSystem(false);
-            setAmountNotDetectedCloudsDetectedByAutoSystem(false);
-            setHeightUnobservableByAutoSystem(false);
-            setHeightNotDetectedCloudsDetectedByAutoSystem(false);
-            setCloudTypeUnobservableByAutoSystem(false);
             setNoCloudsDetectedByAutoSystem(false);
             setNoSignificantCloud(false);
             setVerticalVisibilityUnobservableByAutoSystem(false);
@@ -64,18 +58,13 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
                 return ((ObservedCloudsImpl) value).toBuilder();
             } else {
                 ObservedCloudsImpl.Builder retval = new ObservedCloudsImpl.Builder()//
-                        .setAmountUnobservableByAutoSystem(value.isAmountUnobservableByAutoSystem())
-                        .setAmountNotDetectedCloudsDetectedByAutoSystem(value.isAmountNotDetectedCloudsDetectedByAutoSystem())
-                        .setHeightUnobservableByAutoSystem(value.isHeightUnobservableByAutoSystem())
-                        .setHeightNotDetectedCloudsDetectedByAutoSystem(value.isHeightNotDetectedCloudsDetectedByAutoSystem())
-                        .setCloudTypeUnobservableByAutoSystem(value.isCloudTypeUnobservableByAutoSystem())
                         .setNoCloudsDetectedByAutoSystem(value.isNoCloudsDetectedByAutoSystem())
                         .setNoSignificantCloud(value.isNoSignificantCloud())
                         .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));
 
-                retval.getLayers()
+                value.getLayers()
                         .map(layers -> retval.setLayers(
-                                Collections.unmodifiableList(layers.stream().map(CloudLayerImpl::immutableCopyOf).collect(Collectors.toList()))));
+                                Collections.unmodifiableList(layers.stream().map(ObservedCloudLayerImpl::immutableCopyOf).collect(Collectors.toList()))));
                 return retval;
             }
         }
@@ -86,9 +75,10 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
             return super.setVerticalVisibility(verticalVisibility);
         }
 
+
         @Override
-        @JsonDeserialize(contentAs = CloudLayerImpl.class)
-        public Builder setLayers(final List<CloudLayer> layers) {
+        @JsonDeserialize(contentAs = ObservedCloudLayerImpl.class)
+        public Builder setLayers(final List<ObservedCloudLayer> layers) {
             return super.setLayers(layers);
         }
     }
