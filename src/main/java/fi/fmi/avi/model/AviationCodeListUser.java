@@ -134,7 +134,8 @@ public interface AviationCodeListUser {
     }
 
     enum CloudAmount {
-        SKC(0), FEW(1), SCT(2), BKN(3), OVC(4), ISOL(8), OCNL(10), FRQ(12), LYR(14), EMBD(16);
+        SKC(0), FEW(1), SCT(2), BKN(3), OVC(4), SCT_BKN(6), BKN_OVC(7),//
+        ISOL(8), ISOL_EMBD(9), OCNL(10), OCNL_EMBD(11), FRQ(12), DENSE(13), LYR(14), OBSC(15), EMBD(16), FRQ_EMDB(17), MISSING(31);
 
         public static CloudAmount fromInt(final int code) {
             switch(code) {
@@ -143,11 +144,27 @@ public interface AviationCodeListUser {
                 case 2: return SCT;
                 case 3: return BKN;
                 case 4: return OVC;
+                case 6:
+                    return SCT_BKN;
+                case 7:
+                    return BKN_OVC;
                 case 8: return ISOL;
+                case 9:
+                    return ISOL_EMBD;
                 case 10: return OCNL;
+                case 11:
+                    return OCNL_EMBD;
                 case 12: return FRQ;
+                case 13:
+                    return DENSE;
                 case 14: return LYR;
+                case 15:
+                    return OBSC;
                 case 16: return EMBD;
+                case 17:
+                    return FRQ_EMDB;
+                case 31:
+                    return MISSING;
                 default: throw new IllegalArgumentException("No value for code " + code);
             }
         }
