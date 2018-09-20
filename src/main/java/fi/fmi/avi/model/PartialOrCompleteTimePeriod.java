@@ -42,27 +42,21 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         requireNonNull(referenceTime, "referenceTime");
 
         final List<PartialOrCompleteTime> result = input instanceof Collection ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>();
-        final ZonedDateTime[] completionFloor = new ZonedDateTime[1];
+        final ZonedDateTime[] completionFloor = new ZonedDateTime[] { referenceTime }; // Use as mutable reference
         //Assumption: the start times come in chronological order, but the periods may be (partly) overlapping
         int index = 0;
         for (final PartialOrCompleteTime partialOrCompleteTime : input) {
             if (partialOrCompleteTime == null) {
                 throw new NullPointerException("null element at index " + index);
             } else if (partialOrCompleteTime instanceof PartialOrCompleteTimeInstant) {
-                final Function<PartialDateTime, ZonedDateTime> completion = completionFloor[0] == null //
-                        ? (partial -> partial.toZonedDateTimeNear(referenceTime)) //
-                        : (partial -> partial.toZonedDateTimeNotBefore(completionFloor[0]));
                 final PartialOrCompleteTimeInstant completed = ((PartialOrCompleteTimeInstant) partialOrCompleteTime).toBuilder()
-                        .completePartial(completion)
+                        .completePartial(partial -> partial.toZonedDateTimeNear(completionFloor[0]))
                         .build();
                 result.add(completed);
                 completionFloor[0] = completed.getCompleteTime().orElse(completionFloor[0]);
             } else if (partialOrCompleteTime instanceof PartialOrCompleteTimePeriod) {
-                final Function<PartialDateTime, ZonedDateTime> completion = completionFloor[0] == null //
-                        ? (partial -> partial.toZonedDateTimeNear(referenceTime)) //
-                        : (partial -> partial.toZonedDateTimeNotBefore(completionFloor[0]));
                 final PartialOrCompleteTimePeriod completed = ((PartialOrCompleteTimePeriod) partialOrCompleteTime).toBuilder()//
-                        .completePartial(completion)//
+                        .completePartial(partial -> partial.toZonedDateTimeNear(completionFloor[0]))//
                         .build();
                 result.add(completed);
                 completionFloor[0] = completed.getStartTime()//
