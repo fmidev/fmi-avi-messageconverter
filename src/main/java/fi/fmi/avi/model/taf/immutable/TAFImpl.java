@@ -188,9 +188,18 @@ public abstract class TAFImpl implements TAF, Serializable {
 
         private Builder completeChangeForecastPeriods(final ZonedDateTime reference) {
             if (getChangeForecasts().isPresent() && !getChangeForecasts().get().isEmpty()) {
+                final ZonedDateTime validityStart = getValidityTime()//
+                        .flatMap(PartialOrCompleteTimePeriod::getStartTime)//
+                        .flatMap(PartialOrCompleteTimeInstant::getCompleteTime)//
+                        .orElse(LocalDateTime.MIN.atZone(reference.getZone()));
+                final ZonedDateTime validityEnd = getValidityTime()//
+                        .flatMap(PartialOrCompleteTimePeriod::getEndTime)//
+                        .flatMap(PartialOrCompleteTimeInstant::getCompleteTime)//
+                        .orElse(LocalDateTime.MAX.atZone(reference.getZone()));
                 final List<TAFChangeForecast> changeForecasts = getChangeForecasts().get();
-                final List<PartialOrCompleteTime> times = PartialOrCompleteTimePeriod.completeAscendingPartialTimes(
-                        (Iterable<PartialOrCompleteTimePeriod>) changeForecasts.stream().map(TAFChangeForecast::getPeriodOfChange)::iterator, reference);
+                final Iterable<PartialOrCompleteTimePeriod> partialTimes = changeForecasts.stream().map(TAFChangeForecast::getPeriodOfChange)::iterator;
+                final List<PartialOrCompleteTime> times = PartialOrCompleteTimePeriod.completeAscendingPartialTimes(partialTimes, reference, validityStart,
+                        validityEnd);
                 final List<TAFChangeForecast> completedForecasts = new ArrayList<>();
                 for (int i = 0; i < times.size(); i++) {
                     final PartialOrCompleteTime time = times.get(i);

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,34 +37,47 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     private static final Pattern DAY_HOUR_DAY_HOUR_PATTERN = Pattern.compile(
             "^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
 
-    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input,
-            final ZonedDateTime referenceTime) {
+    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input, final ZonedDateTime referenceTime) {
         requireNonNull(input, "input");
         requireNonNull(referenceTime, "referenceTime");
+        return completeAscendingPartialTimes(input, referenceTime, (partial, reference) -> partial.toZonedDateTimeNear(referenceTime));
+    }
 
+    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input,
+            final ZonedDateTime referenceTime, final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        requireNonNull(input, "input");
+        requireNonNull(referenceTime, "referenceTime");
+        requireNonNull(rangeStartInclusive, "rangeStartInclusive");
+        requireNonNull(rangeEndExclusive, "rangeEndExclusive");
+        return completeAscendingPartialTimes(input, referenceTime,
+                (partial, reference) -> partial.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive));
+    }
+
+    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input,
+            final ZonedDateTime referenceTime, final BiFunction<PartialDateTime, ZonedDateTime, ZonedDateTime> partialCompletion) {
         final List<PartialOrCompleteTime> result = input instanceof Collection ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>();
-        final ZonedDateTime[] completionFloor = new ZonedDateTime[] { referenceTime }; // Use as mutable reference
-        //Assumption: the start times come in chronological order, but the periods may be (partly) overlapping
+        final ZonedDateTime[] rollingReferenceTime = new ZonedDateTime[] { referenceTime }; // Use as mutable reference
+        // Assumption: the start times come in (approximately) chronological order, but the periods may be (partly) overlapping
         int index = 0;
         for (final PartialOrCompleteTime partialOrCompleteTime : input) {
             if (partialOrCompleteTime == null) {
                 throw new NullPointerException("null element at index " + index);
             } else if (partialOrCompleteTime instanceof PartialOrCompleteTimeInstant) {
                 final PartialOrCompleteTimeInstant completed = ((PartialOrCompleteTimeInstant) partialOrCompleteTime).toBuilder()
-                        .completePartial(partial -> partial.toZonedDateTimeNear(completionFloor[0]))
+                        .completePartial(partial -> partialCompletion.apply(partial, rollingReferenceTime[0]))
                         .build();
                 result.add(completed);
-                completionFloor[0] = completed.getCompleteTime().orElse(completionFloor[0]);
+                rollingReferenceTime[0] = completed.getCompleteTime().orElse(rollingReferenceTime[0]);
             } else if (partialOrCompleteTime instanceof PartialOrCompleteTimePeriod) {
                 final PartialOrCompleteTimePeriod completed = ((PartialOrCompleteTimePeriod) partialOrCompleteTime).toBuilder()//
-                        .completePartial(partial -> partial.toZonedDateTimeNear(completionFloor[0]))//
+                        .completePartial(partial -> partialCompletion.apply(partial, rollingReferenceTime[0]))//
                         .build();
                 result.add(completed);
-                completionFloor[0] = completed.getStartTime()//
+                rollingReferenceTime[0] = completed.getStartTime()//
                         .map(PartialOrCompleteTimeInstant::getCompleteTime)//
                         .orElse(completed.getEndTime()//
                                 .flatMap(PartialOrCompleteTimeInstant::getCompleteTime))//
-                        .orElse(completionFloor[0]);
+                        .orElse(rollingReferenceTime[0]);
             } else {
                 throw new IllegalArgumentException("Unknown PartialOrCompleteTime: " + partialOrCompleteTime.getClass() + " <" + partialOrCompleteTime + ">");
             }
@@ -71,12 +85,6 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         }
 
         return result.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(result);
-    }
-
-    public static PartialOrCompleteTimePeriod completePartialTimeReference(final PartialOrCompleteTimePeriod input, final ZonedDateTime reference) {
-        requireNonNull(input, "input");
-        requireNonNull(reference, "reference");
-        return input.toBuilder().completePartialStartingNear(reference).build();
     }
 
     public static PartialOrCompleteTimePeriod createValidityTimeDHDH(final String partialTimePeriod) throws IllegalArgumentException {
