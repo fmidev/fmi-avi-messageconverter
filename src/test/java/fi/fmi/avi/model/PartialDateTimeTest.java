@@ -132,7 +132,7 @@ public final class PartialDateTimeTest {
         }
     }
 
-    private static <T, U> Matcher<T> feature(final String featureName, Function<T, U> getFeature, Matcher<U> subMatcher) {
+    private static <T, U> Matcher<T> feature(final String featureName, final Function<T, U> getFeature, final Matcher<U> subMatcher) {
         return new FeatureMatcher<T, U>(subMatcher, featureName, featureName) {
             @Override
             protected U featureValueOf(final T actual) {
@@ -981,10 +981,148 @@ public final class PartialDateTimeTest {
         final Class<? extends Throwable> expectedException = DateTimeException.class;
         thrown.expect(expectedException);
         thrown.expectMessage(partialDateTime.toString());
-        if (DateTimeException.class.equals(expectedException)) {
+        thrown.expectMessage(referenceTime.toString());
+        final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(referenceTime);
+        fail(String.format("Expected %s but got result: %s", expectedException, result));
+    }
+
+    @Parameters({ //
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // exactly expected
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after expected
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before expected
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // just before expected
+            "2000-01-01T00:00Z, --01T00:00Z, 2000-01-16T11:59:59.999Z, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // maximal after expected
+            "2000-02-01T00:00Z, --01T00:00Z, 2000-01-16T12:00Z,        2000-02-01T00:00Z, 2000-02-01T00:00:00.001Z", // minimal before expected
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-16T12:00Z,        2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // minimal before expected
+            "1999-12-01T00:00Z, --01T00:00Z, 1999-12-16T11:59:59.999Z, 1999-12-01T00:00Z, 1999-12-01T00:00:00.001Z", // maximal after expected
+
+            // Reference at range end
+            "2000-01-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T00:00Z, --03T:,      2000-02-03T00:00Z,        2000-01-01T00:00Z, 2000-02-03T00:00Z       ", // outside range
+            "2000-02-03T00:00Z, --03T:,      2000-02-03T00:00Z,        2000-01-01T00:00Z, 2000-02-03T00:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T:,      2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T:,      2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-02-02T04:05Z, --T04:05,    2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T04:05,    2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-02T04:00Z, --T04:,      2000-02-03T04:00Z,        2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --T04:,      2000-02-03T04:00Z,        2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+
+            "2000-02-03T03:05Z, --T:05,      2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:05,      2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-03T04:04Z, --T:,        2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:,        2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            // Reference before range
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after representable
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before representable
+
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00Z,        2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00:00.001Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after representable
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T02:59:59.999Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before representable
+
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00Z,        2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00:00.001Z, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after representable
+            "2000-01-02T00:00Z, --02T:,      1999-12-01T23:59:59.999Z, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before representable
+
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after representable
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before representable
+
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00Z,        2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00:00.001Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after representable
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T02:59:59.999Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before representable
+
+            "2000-01-02T03:04Z, --T:,        1999-12-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // Reference after range
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after representable
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before representable
+
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00Z,        2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00:00.001Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after representable
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T02:59:59.999Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before representable
+
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00Z,        2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00:00.001Z, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after representable
+            "2000-01-02T00:00Z, --02T:,      2000-02-01T23:59:59.999Z, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before representable
+
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after representable
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before representable
+
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00Z,        2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00:00.001Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after representable
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T02:59:59.999Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before representable
+
+            "2000-01-02T03:04Z, --T:,        2000-02-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+    })
+    @Test
+    public void testToZonedDateTimeNearWithinRange(final String expected, final String partialDateTime, final String referenceTime,
+            final String rangeStartInclusive, final String rangeEndExclusive) {
+        testToZonedDateTimeNearWithinRange(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime),
+                ZonedDateTime.parse(rangeStartInclusive), ZonedDateTime.parse(rangeEndExclusive));
+    }
+
+    public void testToZonedDateTimeNearWithinRange(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
+            final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        assertEquals(String.format("%s.toZonedDateTimeNear(%s, %s, %s)", partialDateTime, referenceTime, rangeStartInclusive, rangeEndExclusive), //
+                expected, partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive));
+    }
+
+    @Parameters({ //
+            // Invalid partial time
+            "--32T00:,   2000-01-01T00:00Z, 2000-01-01T00:00Z,    2000-01-01T00:00:00.001Z", //
+            "--T25:,     2000-01-01T00:00Z, 2000-01-01T00:00Z,    2000-01-01T00:00:00.001Z", //
+            "--T00:61,   2000-01-01T00:00Z, 2000-01-01T00:00Z,    2000-01-01T00:00:00.001Z", //
+
+            // Completable only outside range
+            "--02T03:04, 2000-01-02T03:04Z, 2000-01-01T00:00Z,    2000-01-02T03:04Z       ", // Completable at exclusive end
+            "--02T03:04, 2000-01-02T03:04Z, 2000-01-01T00:00Z,    2000-01-01T00:00:01Z    ", // Not completable within range
+
+            "--T03:04,   2000-01-02T03:04Z, 2000-01-02T00:00Z,    2000-01-02T03:04Z       ", // Completable at exclusive end
+            "--T03:04,   2000-01-02T03:04Z, 2000-01-01T00:00Z,    2000-01-01T00:00:01Z    ", // Not completable within range
+
+            "--T:04,     2000-01-02T03:04Z, 2000-01-02T03:00Z,    2000-01-02T03:04Z       ", // Completable at exclusive end
+            "--T:04,     2000-01-02T03:04Z, 2000-01-01T00:00Z,    2000-01-01T00:00:01Z    ", // Not completable within range
+
+            "--T:,       2000-01-02T03:04Z, 2000-01-01T00:00:01Z, 2000-01-01T00:00:02Z    ", // Not completable within range
+
+            "--T:,       2000-01-01T00:00Z, 2000-01-01T00:00Z,    2000-01-01T00:00Z       ", // Range end at range start
+            "--T:,       2000-01-01T00:00Z, 2000-01-01T00:00:01Z, 2000-01-01T00:00:00Z    ", // Range end before range start
+    })
+    @Test
+    public void testToZonedDateTimeNearWithinRangeInvalid(final String partialDateTime, final String referenceTime, final String rangeStartInclusive,
+            final String rangeEndExclusive) {
+        testToZonedDateTimeNearWithinRangeInvalid(PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime),
+                ZonedDateTime.parse(rangeStartInclusive), ZonedDateTime.parse(rangeEndExclusive));
+    }
+
+    private void testToZonedDateTimeNearWithinRangeInvalid(final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
+            final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        final Class<? extends Throwable> expectedException = DateTimeException.class;
+        thrown.expect(expectedException);
+        if (PartialDateTime.DateTimeRanges.isValid(rangeStartInclusive, rangeEndExclusive)) {
+            thrown.expectMessage(partialDateTime.toString());
             thrown.expectMessage(referenceTime.toString());
         }
-        final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(referenceTime);
+        thrown.expectMessage(rangeStartInclusive.toString());
+        thrown.expectMessage(rangeEndExclusive.toString());
+        final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive);
         fail(String.format("Expected %s but got result: %s", expectedException, result));
     }
 
