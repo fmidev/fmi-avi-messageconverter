@@ -1011,6 +1011,9 @@ public final class PartialDateTime implements Serializable {
      *         reference time for completion
      *
      * @return a {@code ZonedDateTime} that is nearest to {@code referenceTime} in time but always after {@code referenceTime}
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeAfter(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
@@ -1025,6 +1028,9 @@ public final class PartialDateTime implements Serializable {
      *         reference time for completion
      *
      * @return a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time but never before {@code referenceTime}
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeNotBefore(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
@@ -1038,6 +1044,9 @@ public final class PartialDateTime implements Serializable {
      *         reference time for completion
      *
      * @return a {@code ZonedDateTime} that is nearest to {@code referenceTime} in time but always before {@code referenceTime}
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeBefore(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
@@ -1052,6 +1061,9 @@ public final class PartialDateTime implements Serializable {
      *         reference time for completion
      *
      * @return a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time but never after {@code referenceTime}
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeNotAfter(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
@@ -1095,6 +1107,9 @@ public final class PartialDateTime implements Serializable {
      *         reference time for completion
      *
      * @return a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeNear(final ZonedDateTime referenceTime) {
         requireNonNull(referenceTime, "referenceTime");
