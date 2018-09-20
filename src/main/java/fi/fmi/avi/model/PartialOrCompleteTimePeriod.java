@@ -136,6 +136,12 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         return true;
     }
 
+    @JsonIgnore
+    public boolean isCompletePeriod() {
+        return getStartTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent() //
+                && getEndTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent();
+    }
+
     private enum TimePatternGroup {
         day, startDay, endDay, hour, startHour, endHour, minute;
 
