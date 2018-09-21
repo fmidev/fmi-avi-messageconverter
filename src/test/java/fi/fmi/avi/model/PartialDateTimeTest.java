@@ -433,7 +433,7 @@ public final class PartialDateTimeTest {
     @Parameters
     @Test
     public void testRepresentsStrictly(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
-        assertEquals(String.format("%s.representsStrictly(%s)", partialDateTime, temporal), expected, partialDateTime.representsStrictly(temporal));
+        assertEquals(String.format("%s.representsStrict(%s)", partialDateTime, temporal), expected, partialDateTime.representsStrict(temporal));
     }
 
     public List<Object[]> parametersForTestRepresentsStrictly() {
@@ -492,7 +492,7 @@ public final class PartialDateTimeTest {
     @Parameters
     @Test
     public void testRepresentsLoosely(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
-        assertEquals(String.format("%s.representsLoosely(%s)", partialDateTime, temporal), expected, partialDateTime.representsLoosely(temporal));
+        assertEquals(String.format("%s.represents(%s)", partialDateTime, temporal), expected, partialDateTime.represents(temporal));
     }
 
     public List<Object[]> parametersForTestRepresentsLoosely() {

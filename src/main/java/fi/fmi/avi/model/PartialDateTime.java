@@ -1118,7 +1118,7 @@ public final class PartialDateTime implements Serializable {
     private LocalDateTime toLocalDateTimeOnSideOf(final LocalDateTime referenceTime, final RefTimeCondition condition, final LocalDateTime candidateReference,
             final int retries) {
         final LocalDateTime candidate = getNearestCandidate(candidateReference, condition.getFallbackDirection());
-        if (representsLoosely(candidate) && condition.test(candidate, referenceTime)) {
+        if (represents(candidate) && condition.test(candidate, referenceTime)) {
             return candidate;
         } else if (retries > 0) {
             return toLocalDateTimeOnSideOf(referenceTime, condition, shiftReference(candidateReference, condition.getFallbackDirection()), retries - 1);
@@ -1215,7 +1215,7 @@ public final class PartialDateTime implements Serializable {
         } else if (candidate.isAfter(referenceTime) || DateTimeRanges.isAfter(candidate, rangeStartInclusive, rangeEndExclusive)) {
             return representedNearestToReferenceWithin(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime, candidate,
                     rangeStartInclusive, rangeEndExclusive);
-        } else if (!representsLoosely(candidate)) {
+        } else if (!represents(candidate)) {
             return representedNearestToReferenceWithin(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime,
                     getNearestCandidate(shiftReference(referenceTime, 1), 1), rangeStartInclusive, rangeEndExclusive);
         } else {
@@ -1253,9 +1253,8 @@ public final class PartialDateTime implements Serializable {
     private LocalDateTime representedNearestToReferenceWithin(final LocalDateTime candidateBefore, final LocalDateTime referenceTime,
             final LocalDateTime candidateAfter, final LocalDateTime rangeStartInclusive, final LocalDateTime rangeEndExclusive) {
         final boolean representsCandidateBefore =
-                representsLoosely(candidateBefore) && DateTimeRanges.isWithin(candidateBefore, rangeStartInclusive, rangeEndExclusive);
-        final boolean representsCandidateAfter =
-                representsLoosely(candidateAfter) && DateTimeRanges.isWithin(candidateAfter, rangeStartInclusive, rangeEndExclusive);
+                represents(candidateBefore) && DateTimeRanges.isWithin(candidateBefore, rangeStartInclusive, rangeEndExclusive);
+        final boolean representsCandidateAfter = represents(candidateAfter) && DateTimeRanges.isWithin(candidateAfter, rangeStartInclusive, rangeEndExclusive);
         if (representsCandidateBefore && representsCandidateAfter) {
             return nearestToReference(candidateBefore, referenceTime, candidateAfter);
         } else if (representsCandidateBefore) {
@@ -1281,29 +1280,6 @@ public final class PartialDateTime implements Serializable {
     }
 
     /**
-     * Indicates whether this partial date-time represents strictly given temporal.
-     * That is, whether all fields and zone that are present in this partial date-time are supported by provided {@code temporal} and contain equal values.
-     *
-     * @param temporal
-     *         temporal to inspect against
-     *
-     * @return {@code true} if this partial date-time represents provided {@code temporal}, otherwise {@code false}
-     */
-    public boolean representsStrictly(final Temporal temporal) {
-        final boolean midnight24h = isMidnight24h();
-        for (final PartialField field : PartialField.VALUES) {
-            final int rawValue = field.getRawFieldValue(fieldValues);
-            if (field.isValueWithinValidRange(rawValue) //
-                    && (!temporal.isSupported(field.chronoField) || rawValue != field.get(temporal, midnight24h))) {
-                return false;
-            }
-        }
-        @Nullable
-        final ZoneId temporalZone = temporal.query(TemporalQueries.zone());
-        return zone == null || Objects.equals(zone, temporalZone);
-    }
-
-    /**
      * Indicates whether this partial date-time represents loosely given temporal.
      * That is, whether all fields and zone that are commonly present in both this partial date-time and provided {@code temporal} contain equal values.
      *
@@ -1312,7 +1288,7 @@ public final class PartialDateTime implements Serializable {
      *
      * @return {@code true} if this partial date-time represents provided {@code temporal}, otherwise {@code false}
      */
-    public boolean representsLoosely(final Temporal temporal) {
+    public boolean represents(final Temporal temporal) {
         final boolean midnight24h = isMidnight24h();
         for (final PartialField field : PartialField.VALUES) {
             final int rawValue = field.getRawFieldValue(fieldValues);
@@ -1325,6 +1301,29 @@ public final class PartialDateTime implements Serializable {
         @Nullable
         final ZoneId temporalZone = temporal.query(TemporalQueries.zone());
         return zone == null || temporalZone == null || Objects.equals(zone, temporalZone);
+    }
+
+    /**
+     * Indicates whether this partial date-time represents strictly given temporal.
+     * That is, whether all fields and zone that are present in this partial date-time are supported by provided {@code temporal} and contain equal values.
+     *
+     * @param temporal
+     *         temporal to inspect against
+     *
+     * @return {@code true} if this partial date-time represents provided {@code temporal}, otherwise {@code false}
+     */
+    public boolean representsStrict(final Temporal temporal) {
+        final boolean midnight24h = isMidnight24h();
+        for (final PartialField field : PartialField.VALUES) {
+            final int rawValue = field.getRawFieldValue(fieldValues);
+            if (field.isValueWithinValidRange(rawValue) //
+                    && (!temporal.isSupported(field.chronoField) || rawValue != field.get(temporal, midnight24h))) {
+                return false;
+            }
+        }
+        @Nullable
+        final ZoneId temporalZone = temporal.query(TemporalQueries.zone());
+        return zone == null || Objects.equals(zone, temporalZone);
     }
 
     /**

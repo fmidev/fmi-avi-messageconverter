@@ -143,7 +143,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         public Builder() {
             getPartialTime().ifPresent(partialTime -> //
                     getCompleteTime().ifPresent(completeTime -> {
-                        if (!partialTime.representsStrictly(completeTime)) {
+                        if (!partialTime.representsStrict(completeTime)) {
                             throw new IllegalStateException(String.format("completeTime %s does not represent partialTime %s", completeTime, partialTime));
                         }
                     }));
