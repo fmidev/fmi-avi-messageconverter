@@ -432,11 +432,11 @@ public final class PartialDateTimeTest {
 
     @Parameters
     @Test
-    public void testRepresents(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
-        assertEquals(String.format("%s.represents(%s)", partialDateTime, temporal), expected, partialDateTime.represents(temporal));
+    public void testRepresentsStrictly(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
+        assertEquals(String.format("%s.representsStrictly(%s)", partialDateTime, temporal), expected, partialDateTime.representsStrictly(temporal));
     }
 
-    public List<Object[]> parametersForTestRepresents() {
+    public List<Object[]> parametersForTestRepresentsStrictly() {
         final YearMonth yearMonth = YearMonth.of(2000, 2);
         final LocalDate localDate = LocalDate.of(2000, 2, 3);
         final LocalTime localTime = LocalTime.of(4, 5, 6, 7);
@@ -489,6 +489,64 @@ public final class PartialDateTimeTest {
                 .collect(Collectors.toList());
     }
 
+    @Parameters
+    @Test
+    public void testRepresentsLoosely(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
+        assertEquals(String.format("%s.representsLoosely(%s)", partialDateTime, temporal), expected, partialDateTime.representsLoosely(temporal));
+    }
+
+    public List<Object[]> parametersForTestRepresentsLoosely() {
+        final YearMonth yearMonth = YearMonth.of(2000, 2);
+        final LocalDate localDate = LocalDate.of(2000, 2, 3);
+        final LocalTime localTime = LocalTime.of(4, 5, 6, 7);
+        final LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
+        final ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, TEST_ZONE);
+        return Stream.of(//
+                parametersForTestRepresents(true, "--T:", yearMonth, localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--03T:", localDate, localDateTime, zonedDateTime, yearMonth, localTime), //
+                parametersForTestRepresents(true, "--T04:", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--T:05", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--03T04:", localDateTime, zonedDateTime, yearMonth, localDate, localTime), //
+                parametersForTestRepresents(true, "--T04:05", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--03T04:05", localDateTime, zonedDateTime, yearMonth, localDate, localTime), //
+
+                parametersForTestRepresents(true, "--T:Z", yearMonth, localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--03T:Z", localDate, localDateTime, zonedDateTime, yearMonth, localTime), //
+                parametersForTestRepresents(true, "--T04:Z", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--T:05Z", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--03T04:Z", localDateTime, zonedDateTime, yearMonth, localDate, localTime), //
+                parametersForTestRepresents(true, "--T04:05Z", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--03T04:05Z", localDateTime, zonedDateTime, yearMonth, localDate, localTime), //
+
+                parametersForTestRepresents(true, "--07T:", yearMonth, localTime), //
+                parametersForTestRepresents(false, "--07T:", localDate, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T07:", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T07:", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T:07", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T:07", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T07:", yearMonth), //
+                parametersForTestRepresents(false, "--07T07:", localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T07:07", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T07:07", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T07:07", yearMonth), //
+                parametersForTestRepresents(false, "--07T07:07", localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T:Z", yearMonth, localTime), //
+                parametersForTestRepresents(false, "--07T:Z", localDate, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T07:Z", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T07:Z", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T:07Z", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T:07Z", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T07:Z", yearMonth), //
+                parametersForTestRepresents(false, "--07T07:Z", localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T07:07Z", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T07:07Z", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T07:07Z", yearMonth), //
+                parametersForTestRepresents(false, "--07T07:07Z", localDate, localTime, localDateTime, zonedDateTime) //
+        )//
+                .flatMap(t -> t)//
+                .collect(Collectors.toList());
+    }
+
     private Stream<Object[]> parametersForTestRepresents(final boolean expected, final String partialDateTime, final Temporal... temporals) {
         final PartialDateTime parsedPartialDateTime = PartialDateTime.parse(partialDateTime);
         return Stream.of(temporals)//
@@ -521,7 +579,7 @@ public final class PartialDateTimeTest {
     }
 
     private void testToZonedDateTimeYearMonth(final ZonedDateTime expected, final PartialDateTime partialDateTime, final YearMonth issueDate) {
-        assertEquals(String.format("%s.toZonedDateTimeNear(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
+        assertEquals(String.format("%s.toZonedDateTime(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
     }
 
     @Parameters({ //
@@ -566,7 +624,7 @@ public final class PartialDateTimeTest {
     }
 
     private void testToZonedDateTimeLocalDate(final ZonedDateTime expected, final PartialDateTime partialDateTime, final LocalDate issueDate) {
-        assertEquals(String.format("%s.toZonedDateTimeNear(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
+        assertEquals(String.format("%s.toZonedDateTime(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
     }
 
     @Parameters({ //
@@ -1124,6 +1182,22 @@ public final class PartialDateTimeTest {
         thrown.expectMessage(rangeEndExclusive.toString());
         final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive);
         fail(String.format("Expected %s but got result: %s", expectedException, result));
+    }
+
+    @Test
+    public void testToZonedDateTimeNearWithinMaxRange() {
+        final ZoneOffset sourceZone = ZoneOffset.ofHours(6);
+        final ZoneOffset targetZone = ZoneOffset.ofHours(-6);
+        final ZonedDateTime reference = ZonedDateTime.of(2000, 1, 2, 3, 4, 0, 0, targetZone);
+        final ZonedDateTime rangeStart = LocalDateTime.MIN.atZone(sourceZone);
+        final ZonedDateTime rangeEnd = LocalDateTime.MAX.atZone(sourceZone);
+        final PartialDateTime partialDateTime = PartialDateTime.of(reference, EnumSet.allOf(PartialField.class), true, PartialDateTime.MIDNIGHT_0_HOUR);
+
+        // Different zones may cause range bounds over LocalDateTime.MIN/MAX. This should not cause completion fail.
+        final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(reference, rangeStart, rangeEnd);
+
+        final ZonedDateTime expected = reference;
+        assertEquals(reference + " in " + targetZone, expected, result);
     }
 
     @Test
