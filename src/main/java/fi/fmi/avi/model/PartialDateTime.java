@@ -18,12 +18,15 @@ import java.time.temporal.TemporalQueries;
 import java.time.temporal.TemporalUnit;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
@@ -636,6 +639,10 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
+    private static IntStream intStreamRangeClosedDecreasing(final int startInclusive, final int endInclusive) {
+        return IntStream.rangeClosed(-startInclusive, -endInclusive).map(n -> -n);
+    }
+
     /**
      * Returns a set of fields this PartialDateTime contains.
      *
@@ -1031,6 +1038,7 @@ public final class PartialDateTime implements Serializable {
 
     /**
      * Completes this partial date-time into a {@code ZonedDateTime} that is nearest to {@code referenceTime} in time but always after {@code referenceTime}.
+     * Equivalent to {@code toZonedDateTime(referenceTime, ReferenceCondition.AFTER)}.
      *
      * @param referenceTime
      *         reference time for completion
@@ -1041,13 +1049,13 @@ public final class PartialDateTime implements Serializable {
      *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeAfter(final ZonedDateTime referenceTime) {
-        requireNonNull(referenceTime, "referenceTime");
-        return toZonedDateTimeOnSideOf(referenceTime, RefTimeCondition.AFTER);
+        return toZonedDateTime(referenceTime, ReferenceCondition.AFTER);
     }
 
     /**
      * Completes this partial date-time into a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time but never before
      * {@code referenceTime}.
+     * Equivalent to {@code toZonedDateTime(referenceTime, ReferenceCondition.NOT_BEFORE)}.
      *
      * @param referenceTime
      *         reference time for completion
@@ -1058,12 +1066,12 @@ public final class PartialDateTime implements Serializable {
      *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeNotBefore(final ZonedDateTime referenceTime) {
-        requireNonNull(referenceTime, "referenceTime");
-        return toZonedDateTimeOnSideOf(referenceTime, RefTimeCondition.NOT_BEFORE);
+        return toZonedDateTime(referenceTime, ReferenceCondition.NOT_BEFORE);
     }
 
     /**
      * Completes this partial date-time into a {@code ZonedDateTime} that is nearest to {@code referenceTime} in time but always before {@code referenceTime}.
+     * Equivalent to {@code toZonedDateTime(referenceTime, ReferenceCondition.BEFORE)}.
      *
      * @param referenceTime
      *         reference time for completion
@@ -1074,13 +1082,13 @@ public final class PartialDateTime implements Serializable {
      *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeBefore(final ZonedDateTime referenceTime) {
-        requireNonNull(referenceTime, "referenceTime");
-        return toZonedDateTimeOnSideOf(referenceTime, RefTimeCondition.BEFORE);
+        return toZonedDateTime(referenceTime, ReferenceCondition.BEFORE);
     }
 
     /**
      * Completes this partial date-time into a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time but never after
      * {@code referenceTime}.
+     * Equivalent to {@code toZonedDateTime(referenceTime, ReferenceCondition.NOT_AFTER)}.
      *
      * @param referenceTime
      *         reference time for completion
@@ -1091,45 +1099,13 @@ public final class PartialDateTime implements Serializable {
      *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeNotAfter(final ZonedDateTime referenceTime) {
-        requireNonNull(referenceTime, "referenceTime");
-        return toZonedDateTimeOnSideOf(referenceTime, RefTimeCondition.NOT_AFTER);
-    }
-
-    private ZonedDateTime toZonedDateTimeOnSideOf(final ZonedDateTime referenceTime, final RefTimeCondition condition) {
-        final ZoneId targetZone = getZone().orElse(referenceTime.getZone());
-        return toLocalDateTimeOnSideOf(referenceTime.withZoneSameInstant(targetZone).toLocalDateTime(), condition).atZone(targetZone);
-    }
-
-    private LocalDateTime toLocalDateTimeOnSideOf(final LocalDateTime referenceTime, final RefTimeCondition condition) {
-        try {
-            @Nullable
-            final LocalDateTime zonedDateTime = toLocalDateTimeOnSideOf(referenceTime, condition, referenceTime, condition.getRetries());
-            if (zonedDateTime == null) {
-                throw new DateTimeException(String.format("Cannot resolve valid instant represented by %s.", this));
-            } else {
-                return zonedDateTime;
-            }
-        } catch (final DateTimeException exception) {
-            throw new DateTimeException(String.format("Unable to complete %s with %s", this, referenceTime), exception);
-        }
-    }
-
-    @Nullable
-    private LocalDateTime toLocalDateTimeOnSideOf(final LocalDateTime referenceTime, final RefTimeCondition condition, final LocalDateTime candidateReference,
-            final int retries) {
-        final LocalDateTime candidate = getNearestCandidate(candidateReference, condition.getFallbackDirection());
-        if (represents(candidate) && condition.test(candidate, referenceTime)) {
-            return candidate;
-        } else if (retries > 0) {
-            return toLocalDateTimeOnSideOf(referenceTime, condition, shiftReference(candidateReference, condition.getFallbackDirection()), retries - 1);
-        } else {
-            return null;
-        }
+        return toZonedDateTime(referenceTime, ReferenceCondition.NOT_AFTER);
     }
 
     /**
      * Completes this partial date-time into a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time,
      * no matter if result is before or after {@code referenceTime}.
+     * Equivalent to {@code toZonedDateTime(referenceTime, ReferenceCondition.NEAR)}.
      *
      * @param referenceTime
      *         reference time for completion
@@ -1140,21 +1116,14 @@ public final class PartialDateTime implements Serializable {
      *         if this partial date-time cannot be completed in context of provided arguments
      */
     public ZonedDateTime toZonedDateTimeNear(final ZonedDateTime referenceTime) {
-        requireNonNull(referenceTime, "referenceTime");
-
-        final ZoneId targetZone = getZone().orElse(referenceTime.getZone());
-        try {
-            return toLocalDateTimeNear(referenceTime.withZoneSameInstant(targetZone).toLocalDateTime(), LocalDateTime.MIN, LocalDateTime.MAX).atZone(
-                    targetZone);
-        } catch (final DateTimeException exception) {
-            throw new DateTimeException(String.format("Unable to complete %s near %s", this, referenceTime), exception);
-        }
+        return toZonedDateTime(referenceTime, ReferenceCondition.NEAR);
     }
 
     /**
      * Completes this partial date-time into a {@code ZonedDateTime} that is equal or nearest to {@code referenceTime} in time and being between
      * {@code rangeStartInclusive} and {@code rangeEndExclusive}, no matter if result is before or after {@code referenceTime}.
      * If {@code referenceTime} is outside provided range, complete date-time is looked nearest to range bound.
+     * Equivalent to {@code toZonedDateTime(referenceTime, ReferenceCondition.NEAR, rangeStartInclusive, rangeEndExclusive)}.
      *
      * @param referenceTime
      *         reference time for completion
@@ -1172,55 +1141,129 @@ public final class PartialDateTime implements Serializable {
      */
     public ZonedDateTime toZonedDateTimeNear(final ZonedDateTime referenceTime, final ZonedDateTime rangeStartInclusive,
             final ZonedDateTime rangeEndExclusive) {
+        return toZonedDateTime(referenceTime, ReferenceCondition.NEAR, rangeStartInclusive, rangeEndExclusive);
+    }
+
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} that satisfies provided {@code condition} over {@code referenceTime}.
+     *
+     * @param referenceTime
+     *         reference time for completion
+     * @param condition
+     *         condition over over {@code referenceTime} for completion
+     *
+     * @return a {@code ZonedDateTime} that satisfies {@code condition} over {@code referenceTime}
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of provided arguments
+     */
+    public ZonedDateTime toZonedDateTime(final ZonedDateTime referenceTime, final ReferenceCondition condition) {
         requireNonNull(referenceTime, "referenceTime");
+        requireNonNull(condition, "condition");
+
+        final ZoneId targetZone = getZone().orElse(referenceTime.getZone());
+        final boolean strictCondition = condition.isStrictApplicable();
+        try {
+            return toLocalDateTime(referenceTime.withZoneSameInstant(targetZone).toLocalDateTime(), condition, strictCondition, LocalDateTime.MIN,
+                    LocalDateTime.MAX).atZone(targetZone);
+        } catch (final DateTimeException exception) {
+            throw new DateTimeException(
+                    String.format("Unable to complete %s %s %s %s", this, strictCondition ? "strictly" : "preferably", condition, referenceTime), exception);
+        }
+    }
+
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} between {@code rangeStartInclusive} and {@code rangeEndExclusive} that strictly (if
+     * applicable) satisfies provided {@code condition} over {@code referenceTime}.
+     *
+     * @param referenceTime
+     *         reference time for completion
+     * @param condition
+     *         condition over over {@code referenceTime} for completion
+     * @param rangeStartInclusive
+     *         minimum (inclusive) instant for completed date-time
+     * @param rangeEndExclusive
+     *         maximum (exclusive) instant for completed date-time
+     *
+     * @return a {@code ZonedDateTime} between {@code rangeStartInclusive} and  {@code rangeEndExclusive} that strictly satisfies {@code condition} over
+     * {@code referenceTime}
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of provided arguments
+     */
+    public ZonedDateTime toZonedDateTime(final ZonedDateTime referenceTime, final ReferenceCondition condition, final ZonedDateTime rangeStartInclusive,
+            final ZonedDateTime rangeEndExclusive) {
+        return toZonedDateTime(referenceTime, condition, true, rangeStartInclusive, rangeEndExclusive);
+    }
+
+    /**
+     * Completes this partial date-time into a {@code ZonedDateTime} between {@code rangeStartInclusive} and {@code rangeEndExclusive} that preferably or
+     * strictly (depending on {@code strictCondition}) satisfies provided {@code condition} over {@code referenceTime}.
+     *
+     * @param referenceTime
+     *         reference time for completion
+     * @param condition
+     *         condition over over {@code referenceTime} for completion
+     * @param strictCondition
+     *         {@code true} when {@code condition} must be satisfied strictly, or {@code false} if nearest match within range may be returned
+     * @param rangeStartInclusive
+     *         minimum (inclusive) instant for completed date-time
+     * @param rangeEndExclusive
+     *         maximum (exclusive) instant for completed date-time
+     *
+     * @return a {@code ZonedDateTime} between {@code rangeStartInclusive} and  {@code rangeEndExclusive} that strictly or preferably satisfies
+     * {@code condition} over {@code referenceTime}
+     *
+     * @throws DateTimeException
+     *         if this partial date-time cannot be completed in context of provided arguments
+     */
+    public ZonedDateTime toZonedDateTime(final ZonedDateTime referenceTime, final ReferenceCondition condition, final boolean strictCondition,
+            final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        requireNonNull(referenceTime, "referenceTime");
+        requireNonNull(condition, "condition");
         requireNonNull(rangeStartInclusive, "rangeStartInclusive");
         requireNonNull(rangeEndExclusive, "rangeEndExclusive");
         DateTimeRanges.checkIsValid(rangeStartInclusive, rangeEndExclusive);
 
         final ZoneId targetZone = getZone().orElse(referenceTime.getZone());
         try {
-            return toLocalDateTimeNear(referenceTime.withZoneSameInstant(targetZone).toLocalDateTime(),
+            return toLocalDateTime(referenceTime.withZoneSameInstant(targetZone).toLocalDateTime(), condition, strictCondition,
                     toLocalDateTimeInZoneOr(rangeStartInclusive, targetZone, LocalDateTime.MIN),
                     toLocalDateTimeInZoneOr(rangeEndExclusive, targetZone, LocalDateTime.MAX))//
                     .atZone(targetZone);
         } catch (final DateTimeException exception) {
-            throw new DateTimeException(String.format("Unable to complete %s near %s within provided range %s", this, referenceTime,
-                    DateTimeRanges.toString(rangeStartInclusive, rangeEndExclusive)), exception);
+            throw new DateTimeException(
+                    String.format("Unable to complete %s %s %s %s within %s", this, strictCondition ? "strictly" : "preferably", condition, referenceTime,
+                            DateTimeRanges.toString(rangeStartInclusive, rangeEndExclusive)), exception);
         }
     }
 
-    private LocalDateTime toLocalDateTimeNear(final LocalDateTime referenceTime, final LocalDateTime rangeStartInclusive,
-            final LocalDateTime rangeEndExclusive) {
+    private LocalDateTime toLocalDateTime(final LocalDateTime referenceTime, final ReferenceCondition condition, final boolean strictCondition,
+            final LocalDateTime rangeStartInclusive, final LocalDateTime rangeEndExclusive) {
         final TemporalUnit precision = getPrecisionFieldOr(PartialField.MAX_PRECISION).getTemporalField().getBaseUnit();
-        LocalDateTime truncatedRangeStartInclusive = truncate(rangeStartInclusive);
-        if (truncatedRangeStartInclusive.isBefore(rangeStartInclusive)) {
-            final LocalDateTime adjusted = truncatedRangeStartInclusive.plus(1, precision);
-            truncatedRangeStartInclusive = DateTimeRanges.isWithin(adjusted, rangeStartInclusive, rangeEndExclusive) ? adjusted : rangeStartInclusive;
-        }
+        final LocalDateTime truncatedRangeStartInclusive = truncateRangeStart(rangeStartInclusive, rangeEndExclusive, precision);
         final LocalDateTime referenceWithinRange = DateTimeRanges.adjustInto(referenceTime, truncatedRangeStartInclusive, rangeEndExclusive, precision);
 
-        return toLocalDateTimeNearTruncated(referenceWithinRange, truncatedRangeStartInclusive, rangeEndExclusive);
-    }
-
-    private LocalDateTime truncate(final LocalDateTime completedTime) {
-        return completedTime.truncatedTo(getPrecisionFieldOr(PartialField.MAX_PRECISION).getTemporalField().getBaseUnit());
-    }
-
-    private LocalDateTime toLocalDateTimeNearTruncated(final LocalDateTime referenceTime, final LocalDateTime rangeStartInclusive,
-            final LocalDateTime rangeEndExclusive) {
-        final LocalDateTime candidate = getNearestCandidate(referenceTime, referenceTime.isAfter(rangeStartInclusive) ? -1 : 1);
-        if (candidate.isBefore(referenceTime) || DateTimeRanges.isBefore(candidate, rangeStartInclusive, rangeEndExclusive)) {
-            return representedNearestToReferenceWithin(candidate, referenceTime, getNearestCandidate(shiftReference(referenceTime, 1), 1), rangeStartInclusive,
-                    rangeEndExclusive);
-        } else if (candidate.isAfter(referenceTime) || DateTimeRanges.isAfter(candidate, rangeStartInclusive, rangeEndExclusive)) {
-            return representedNearestToReferenceWithin(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime, candidate,
-                    rangeStartInclusive, rangeEndExclusive);
-        } else if (!represents(candidate)) {
-            return representedNearestToReferenceWithin(getNearestCandidate(shiftReference(referenceTime, -1), -1), referenceTime,
-                    getNearestCandidate(shiftReference(referenceTime, 1), 1), rangeStartInclusive, rangeEndExclusive);
-        } else {
-            return referenceTime;
-        }
+        final NearestToReference nearestToReference = new NearestToReference(referenceWithinRange);
+        return IntStream.concat(IntStream.rangeClosed(0, condition.getRetries()), intStreamRangeClosedDecreasing(-1, -condition.getReverseRetries()))//
+                .mapToObj(retry -> getNearestCandidate(shiftReference(referenceWithinRange, retry * condition.getFallbackDirection()),
+                        condition.getFallbackDirection()))//
+                .filter(candidate -> DateTimeRanges.isWithin(candidate, truncatedRangeStartInclusive, rangeEndExclusive) && represents(candidate))//
+                .peek(nearestToReference)//
+                .filter(candidate -> condition.test(candidate, referenceTime))//
+                .findFirst()//
+                .orElseGet(() -> {
+                    @Nullable
+                    final LocalDateTime fallbackNearResult = nearestToReference.get();
+                    if (fallbackNearResult == null) {
+                        throw new DateTimeException(String.format("Cannot resolve an instant near %s represented by %s.", referenceWithinRange, this));
+                    } else if (condition.isStrictApplicable() && strictCondition && !condition.test(fallbackNearResult, referenceTime)) {
+                        throw new DateTimeException(
+                                String.format("Unable to complete %s: nearest value %s within range %s does not strictly satisfy condition %s %s", this,
+                                        fallbackNearResult, DateTimeRanges.toString(rangeStartInclusive, rangeEndExclusive), condition, referenceTime));
+                    }
+                    return fallbackNearResult;
+                });
     }
 
     private LocalDateTime getNearestCandidate(final LocalDateTime referenceTime, final int fallbackDirection) {
@@ -1250,33 +1293,17 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
-    private LocalDateTime representedNearestToReferenceWithin(final LocalDateTime candidateBefore, final LocalDateTime referenceTime,
-            final LocalDateTime candidateAfter, final LocalDateTime rangeStartInclusive, final LocalDateTime rangeEndExclusive) {
-        final boolean representsCandidateBefore =
-                represents(candidateBefore) && DateTimeRanges.isWithin(candidateBefore, rangeStartInclusive, rangeEndExclusive);
-        final boolean representsCandidateAfter = represents(candidateAfter) && DateTimeRanges.isWithin(candidateAfter, rangeStartInclusive, rangeEndExclusive);
-        if (representsCandidateBefore && representsCandidateAfter) {
-            return nearestToReference(candidateBefore, referenceTime, candidateAfter);
-        } else if (representsCandidateBefore) {
-            return candidateBefore;
-        } else if (representsCandidateAfter) {
-            return candidateAfter;
-        } else {
-            throw new DateTimeException(String.format(//
-                    "Cannot resolve an instant within [%s, %s) near %s represented by %s. Both candidates (%s, %s) fail.", //
-                    rangeStartInclusive, rangeEndExclusive, referenceTime, this, candidateBefore, candidateAfter));
-        }
+    private LocalDateTime truncate(final LocalDateTime completedTime) {
+        return completedTime.truncatedTo(getPrecisionFieldOr(PartialField.MAX_PRECISION).getTemporalField().getBaseUnit());
     }
 
-    private LocalDateTime nearestToReference(final LocalDateTime candidateBefore, final LocalDateTime referenceTime, final LocalDateTime candidateAfter) {
-        final Duration durationBefore = Duration.between(candidateBefore, referenceTime);
-        final Duration durationAfter = Duration.between(referenceTime, candidateAfter);
-        final int comparisonResult = durationBefore.compareTo(durationAfter);
-        if (comparisonResult < 0) {
-            return candidateBefore;
-        } else {
-            return candidateAfter;
+    private LocalDateTime truncateRangeStart(final LocalDateTime rangeStartInclusive, final LocalDateTime rangeEndExclusive, final TemporalUnit precision) {
+        final LocalDateTime truncatedRangeStartInclusive = truncate(rangeStartInclusive);
+        if (truncatedRangeStartInclusive.isBefore(rangeStartInclusive)) {
+            final LocalDateTime adjusted = truncatedRangeStartInclusive.plus(1, precision);
+            return DateTimeRanges.isWithin(adjusted, rangeStartInclusive, rangeEndExclusive) ? adjusted : rangeStartInclusive;
         }
+        return truncatedRangeStartInclusive;
     }
 
     /**
@@ -1421,26 +1448,54 @@ public final class PartialDateTime implements Serializable {
         }
     }
 
-    public enum RefTimeCondition {
-        AFTER(1) {
+    /**
+     * Condition over reference time on completion from partial date-time to full date-time.
+     */
+    public enum ReferenceCondition {
+        /**
+         * Result is nearest to reference time.
+         * The {@code strictReference} flag has no effect with {@code NEAR}.
+         */
+        NEAR(-1, false) {
+            @Override
+            boolean test(final LocalDateTime candidate, final LocalDateTime reference) {
+                return false; // enforcing fallback
+            }
+        },
+        /**
+         * Result must be after reference time.
+         */
+        AFTER(1, true) {
             @Override
             boolean test(final LocalDateTime candidate, final LocalDateTime reference) {
                 return candidate.isAfter(reference);
             }
 
-        }, NOT_BEFORE(1) {
+        },
+        /**
+         * Result must not be before reference time, aka equal or after reference time.
+         */
+        NOT_BEFORE(1, true) {
             @Override
             boolean test(final LocalDateTime candidate, final LocalDateTime reference) {
                 return !candidate.isBefore(reference);
             }
 
-        }, BEFORE(-1) {
+        },
+        /**
+         * Result must be before reference time.
+         */
+        BEFORE(-1, true) {
             @Override
             boolean test(final LocalDateTime candidate, final LocalDateTime reference) {
                 return candidate.isBefore(reference);
             }
 
-        }, NOT_AFTER(-1) {
+        },
+        /**
+         * Result must not be after reference time, aka equal or before reference time.
+         */
+        NOT_AFTER(-1, true) {
             @Override
             boolean test(final LocalDateTime candidate, final LocalDateTime reference) {
                 return !candidate.isAfter(reference);
@@ -1449,9 +1504,11 @@ public final class PartialDateTime implements Serializable {
         };
 
         private final int fallbackDirection;
+        private final boolean strictApplicable;
 
-        RefTimeCondition(final int fallbackDirection) {
+        ReferenceCondition(final int fallbackDirection, final boolean strictApplicable) {
             this.fallbackDirection = fallbackDirection;
+            this.strictApplicable = strictApplicable;
         }
 
         abstract boolean test(LocalDateTime candidate, LocalDateTime reference);
@@ -1460,8 +1517,21 @@ public final class PartialDateTime implements Serializable {
             return fallbackDirection;
         }
 
+        boolean isStrictApplicable() {
+            return strictApplicable;
+        }
+
         int getRetries() {
             return getFallbackDirection() < 0 ? 2 : 1;
+        }
+
+        int getReverseRetries() {
+            return getFallbackDirection() > 0 ? 2 : 1;
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase(Locale.US).replace('_', ' ');
         }
     }
 
@@ -1548,6 +1618,53 @@ public final class PartialDateTime implements Serializable {
         abstract int get(Temporal temporal, boolean midnight24h);
     }
 
+    private static final class NearestToReference implements Consumer<LocalDateTime> {
+        private final LocalDateTime reference;
+        private LocalDateTime before = LocalDateTime.MIN;
+        private LocalDateTime after = LocalDateTime.MAX;
+        private boolean isAt = false;
+
+        private NearestToReference(final LocalDateTime reference) {
+            this.reference = reference;
+        }
+
+        @Override
+        public void accept(final LocalDateTime localDateTime) {
+            if (localDateTime.isBefore(reference) && localDateTime.isAfter(before)) {
+                before = localDateTime;
+            } else if (localDateTime.isAfter(reference) && localDateTime.isBefore(after)) {
+                after = localDateTime;
+            } else if (localDateTime.isEqual(reference)) {
+                isAt = true;
+            }
+        }
+
+        @Nullable
+        public LocalDateTime get() {
+            if (isAt) {
+                return reference;
+            }
+            final boolean hasBefore = before != LocalDateTime.MIN;
+            final boolean hasAfter = after != LocalDateTime.MAX;
+            if (hasBefore && hasAfter) {
+                final Duration durationBefore = Duration.between(before, reference);
+                final Duration durationAfter = Duration.between(reference, after);
+                final int comparisonResult = durationBefore.compareTo(durationAfter);
+                if (comparisonResult < 0) {
+                    return before;
+                } else {
+                    return after;
+                }
+            } else if (hasBefore) {
+                return before;
+            } else if (hasAfter) {
+                return after;
+            } else {
+                return null;
+            }
+        }
+    }
+
     static final class DateTimeRanges {
         private DateTimeRanges() {
             throw new UnsupportedOperationException();
@@ -1578,15 +1695,7 @@ public final class PartialDateTime implements Serializable {
             return !instant.isBefore(rangeStartInclusive) && instant.isBefore(rangeEndExclusive);
         }
 
-        static boolean isAfter(final LocalDateTime instant, final LocalDateTime rangeStartInclusive, final LocalDateTime rangeEndExclusive) {
-            return !instant.isBefore(rangeEndExclusive);
-        }
-
-        static boolean isBefore(final LocalDateTime instant, final LocalDateTime rangeStartInclusive, final LocalDateTime rangeEndExclusive) {
-            return instant.isBefore(rangeStartInclusive);
-        }
-
-        static String toString(final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        static String toString(final Temporal rangeStartInclusive, final Temporal rangeEndExclusive) {
             return "[" + rangeStartInclusive + ", " + rangeEndExclusive + ")";
         }
     }
