@@ -138,7 +138,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     }
 
     @JsonIgnore
-    public boolean isCompletePeriod() {
+    public boolean isCompleteStrict() {
         return getStartTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent() //
                 && getEndTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent();
     }
