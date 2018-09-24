@@ -37,13 +37,58 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     private static final Pattern DAY_HOUR_DAY_HOUR_PATTERN = Pattern.compile(
             "^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
 
-    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input,
-            final ZonedDateTime referenceTime) {
+    /**
+     * Completes a sequence of {@code PartialOrCompleteTime}s enforcing completed times in ascending order, but allowing consecutive equal times.
+     * The {@code input} sequence may contain instances of both {@link PartialOrCompleteTimeInstant} and {@link PartialOrCompleteTimePeriod}.
+     *
+     * <p>
+     * Each time element in the {@code input} sequence is completed to a time being equal to or after provided {@code referenceTime}. Following times are
+     * completed to time being equal to or after previous.
+     * </p>
+     *
+     * <p>
+     * Periods are completed by start time, unless start time is empty, in which case period is completed by end time. Therefore periods may overlap each other.
+     * </p>
+     *
+     * <p>
+     * This method is equivalent to {@code completeAscendingPartialTimes(input, referenceTime, PartialDateTime::toZonedDateTimeNotBefore)}.
+     * </p>
+     *
+     * @param input
+     *         sequence of times to be completed
+     * @param referenceTime
+     *         an instant near first time
+     *
+     * @return a list of completed times
+     */
+    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input, final ZonedDateTime referenceTime) {
         return completeAscendingPartialTimes(input, referenceTime, PartialDateTime::toZonedDateTimeNotBefore);
     }
 
-    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input,
-            final ZonedDateTime referenceTime, final BiFunction<PartialDateTime, ZonedDateTime, ZonedDateTime> partialCompletion) {
+    /**
+     * Completes a sequence of {@code PartialOrCompleteTime}s assuming provided times are in ascending order.
+     * The {@code input} sequence may contain instances of both {@link PartialOrCompleteTimeInstant} and {@link PartialOrCompleteTimePeriod}.
+     *
+     * <p>
+     * Each time element in the {@code input} sequence is completed applying provided {@code partialCompletion} function. The reference time for the first
+     * invocation of {@code partialCompletion} function is the provided {@code referenceTime}. Consequent invocations of {@code partialCompletion} will get
+     * the completed instant of previous invocation as reference time.
+     * </p>
+     *
+     * <p>
+     * Periods are completed by start time, unless start time is empty, in which case period is completed by end time. Therefore periods may overlap each other.
+     * </p>
+     *
+     * @param input
+     *         sequence of times to be completed
+     * @param referenceTime
+     *         an instant near first time
+     * @param partialCompletion
+     *         function to complete given {@code PartialDateTime} with given {@code ZonedDateTime} as reference
+     *
+     * @return a list of completed times
+     */
+    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input, final ZonedDateTime referenceTime, final BiFunction<PartialDateTime, ZonedDateTime, ZonedDateTime> partialCompletion) {
         requireNonNull(input, "input");
         requireNonNull(referenceTime, "referenceTime");
         requireNonNull(partialCompletion, "partialCompletion");
@@ -122,6 +167,11 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
 
     public abstract Builder toBuilder();
 
+    /**
+     * Indicates whether present startTime and/or endTime are complete. Empty startTime or endTime is considered as complete.
+     *
+     * @return {@code true} if present times are complete, {@code false} otherwise
+     */
     @JsonIgnore
     public boolean isComplete() {
         final Optional<PartialOrCompleteTimeInstant> start = getStartTime();
@@ -137,6 +187,11 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         return true;
     }
 
+    /**
+     * Indicates whether both startTime and endTime are present and contain completeTime.
+     *
+     * @return {@code true} if both startTime and endTime are present and contain completeTime, {@code false} otherwise
+     */
     @JsonIgnore
     public boolean isCompleteStrict() {
         return getStartTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent() //
@@ -186,11 +241,29 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
                     .build();
         }
 
+        /**
+         * Equivalent to {@code completePartial(partial -> partial.toZonedDateTimeNear(reference))}.
+         *
+         * @param reference
+         *         reference time
+         *
+         * @return this builder
+         */
         public Builder completePartialStartingNear(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             return completePartial(partial -> partial.toZonedDateTimeNear(reference));
         }
 
+        /**
+         * Set the complete times of start and end time.
+         * Start time is completed by applying the provided {@code startCompletion} function. End time is completed to an instant after start time. If start
+         * time is empty, the {@code startCompletion} function is applied to end time.
+         *
+         * @param startCompletion
+         *         function to complete start time from given {@code PartialDateTime} to a complete {@code ZonedDateTime}
+         *
+         * @return this builder
+         */
         public Builder completePartial(final Function<PartialDateTime, ZonedDateTime> startCompletion) {
             requireNonNull(startCompletion, "startCompletion");
             mapStartTime(partialOrComplete -> partialOrComplete.toBuilder().completePartial(startCompletion).build());
@@ -202,11 +275,29 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
                     .build());
         }
 
+        /**
+         * Equivalent to {@code completePartialBackwards(partial -> partial.toZonedDateTimeNear(reference))}.
+         *
+         * @param reference
+         *         reference time
+         *
+         * @return this builder
+         */
         public Builder completePartialEndingNear(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             return completePartialBackwards(partial -> partial.toZonedDateTimeNear(reference));
         }
 
+        /**
+         * Set the complete times of start and end time backwards.
+         * End time is completed by applying the provided {@code startCompletion} function. Start time is completed to an instant before end time. If end
+         * time is empty, the {@code startCompletion} function is applied to start time.
+         *
+         * @param endCompletion
+         *         function to complete end time from given {@code PartialDateTime} to a complete {@code ZonedDateTime}
+         *
+         * @return this builder
+         */
         public Builder completePartialBackwards(final Function<PartialDateTime, ZonedDateTime> endCompletion) {
             requireNonNull(endCompletion, "endCompletion");
             mapEndTime(partialOrComplete -> partialOrComplete.toBuilder()//
