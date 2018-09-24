@@ -37,26 +37,19 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     private static final Pattern DAY_HOUR_DAY_HOUR_PATTERN = Pattern.compile(
             "^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
 
-    public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input, final ZonedDateTime referenceTime) {
-        requireNonNull(input, "input");
-        requireNonNull(referenceTime, "referenceTime");
-        return completeAscendingPartialTimes(input, referenceTime, (partial, reference) -> partial.toZonedDateTimeNear(referenceTime));
-    }
-
     public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input,
-            final ZonedDateTime referenceTime, final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
-        requireNonNull(input, "input");
-        requireNonNull(referenceTime, "referenceTime");
-        requireNonNull(rangeStartInclusive, "rangeStartInclusive");
-        requireNonNull(rangeEndExclusive, "rangeEndExclusive");
-        return completeAscendingPartialTimes(input, referenceTime,
-                (partial, reference) -> partial.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive));
+            final ZonedDateTime referenceTime) {
+        return completeAscendingPartialTimes(input, referenceTime, PartialDateTime::toZonedDateTimeNotBefore);
     }
 
     public static List<PartialOrCompleteTime> completeAscendingPartialTimes(final Iterable<? extends PartialOrCompleteTime> input,
             final ZonedDateTime referenceTime, final BiFunction<PartialDateTime, ZonedDateTime, ZonedDateTime> partialCompletion) {
+        requireNonNull(input, "input");
+        requireNonNull(referenceTime, "referenceTime");
+        requireNonNull(partialCompletion, "partialCompletion");
+
         final List<PartialOrCompleteTime> result = input instanceof Collection ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>();
-        final ZonedDateTime[] rollingReferenceTime = new ZonedDateTime[] { referenceTime }; // Use as mutable reference
+        final ZonedDateTime[] rollingReferenceTime = new ZonedDateTime[] { referenceTime }; // Used as mutable reference
         // Assumption: the start times come in (approximately) chronological order, but the periods may be (partly) overlapping
         int index = 0;
         for (final PartialOrCompleteTime partialOrCompleteTime : input) {

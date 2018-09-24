@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
@@ -102,7 +101,7 @@ public abstract class METARImpl implements METAR, Serializable {
                 times.add(null);
             }
         }
-        times = PartialOrCompleteTimePeriod.completeAscendingPartialTimes(times, reference, PartialDateTime::toZonedDateTimeNotBefore);
+        times = PartialOrCompleteTimePeriod.completeAscendingPartialTimes(times, reference);
         for (int i = 0; i < times.size(); i++) {
             final PartialOrCompleteTime time = times.get(i);
             if (time instanceof PartialOrCompleteTimePeriod) {
