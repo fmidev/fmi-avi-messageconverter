@@ -3,6 +3,7 @@ package fi.fmi.avi.model.taf.immutable;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -184,12 +187,12 @@ public abstract class TAFImpl implements TAF, Serializable {
         private Builder completeAirTemperatureForecast(final ZonedDateTime reference, final ZonedDateTime validityStart, final ZonedDateTime validityEnd) {
             if (getBaseForecast().isPresent() && getBaseForecast().get().getTemperatures().isPresent()) {
                 final List<TAFAirTemperatureForecast> temperatureForecasts = new ArrayList<>();
+                final Function<PartialDateTime, ZonedDateTime> completion = partial -> toZonedDateTimeSatisfyingConditionOrNear(
+                        PartialDateTime.ReferenceCondition.NEAR, false, validityStart, validityEnd).apply(partial, reference);
                 for (final TAFAirTemperatureForecast airTemp : getBaseForecast().get().getTemperatures().get()) {
                     temperatureForecasts.add(TAFAirTemperatureForecastImpl.Builder.from(airTemp)
-                            .mutateMinTemperatureTime(
-                                    time -> time.completePartial(partial -> partial.toZonedDateTimeNear(reference, validityStart, validityEnd)).build())
-                            .mutateMaxTemperatureTime(
-                                    time -> time.completePartial(partial -> partial.toZonedDateTimeNear(reference, validityStart, validityEnd)).build())
+                            .mutateMinTemperatureTime(time -> time.completePartial(completion).build())
+                            .mutateMaxTemperatureTime(time -> time.completePartial(completion).build())
                             .build());
                 }
                 mapBaseForecast(fct -> TAFBaseForecastImpl.Builder.from(fct).setTemperatures(Collections.unmodifiableList(temperatureForecasts)).build());
@@ -202,7 +205,7 @@ public abstract class TAFImpl implements TAF, Serializable {
                 final List<TAFChangeForecast> changeForecasts = getChangeForecasts().get();
                 final Iterable<PartialOrCompleteTimePeriod> partialTimes = changeForecasts.stream().map(TAFChangeForecast::getPeriodOfChange)::iterator;
                 final List<PartialOrCompleteTime> times = PartialOrCompleteTimePeriod.completeAscendingPartialTimes(partialTimes, reference,
-                        (partial, ref) -> partial.toZonedDateTime(ref, PartialDateTime.ReferenceCondition.NOT_BEFORE, false, validityStart, validityEnd));
+                        toZonedDateTimeSatisfyingConditionOrNear(PartialDateTime.ReferenceCondition.NOT_BEFORE, false, validityStart, validityEnd));
                 final List<TAFChangeForecast> completedForecasts = new ArrayList<>();
                 for (int i = 0; i < times.size(); i++) {
                     final PartialOrCompleteTime time = times.get(i);
@@ -212,6 +215,22 @@ public abstract class TAFImpl implements TAF, Serializable {
                 setChangeForecasts(Collections.unmodifiableList(completedForecasts));
             }
             return this;
+        }
+
+        private BiFunction<PartialDateTime, ZonedDateTime, ZonedDateTime> toZonedDateTimeSatisfyingConditionOrNear(
+                final PartialDateTime.ReferenceCondition condition, final boolean strictCondition, final ZonedDateTime validityStart,
+                final ZonedDateTime validityEnd) {
+            return (partial, reference) -> {
+                try {
+                    return partial.toZonedDateTime(reference, condition, strictCondition, validityStart, validityEnd);
+                } catch (final DateTimeException exception) {
+                    try {
+                        return partial.toZonedDateTimeNear(reference);
+                    } catch (final DateTimeException ignored) {
+                        throw exception;
+                    }
+                }
+            };
         }
 
         private Builder completeReferredReport(final ZonedDateTime reference) {
