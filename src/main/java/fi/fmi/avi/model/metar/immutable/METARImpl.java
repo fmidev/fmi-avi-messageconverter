@@ -29,6 +29,7 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.PartialOrCompleteTimes;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
@@ -101,7 +102,7 @@ public abstract class METARImpl implements METAR, Serializable {
                 times.add(null);
             }
         }
-        times = PartialOrCompleteTimePeriod.completeAscendingPartialTimes(times, reference);
+        times = PartialOrCompleteTimes.completeAscendingPartialTimes(times, reference);
         for (int i = 0; i < times.size(); i++) {
             final PartialOrCompleteTime time = times.get(i);
             if (time instanceof PartialOrCompleteTimePeriod) {

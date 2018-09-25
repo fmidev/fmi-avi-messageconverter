@@ -28,6 +28,7 @@ import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.PartialOrCompleteTimes;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
@@ -204,7 +205,7 @@ public abstract class TAFImpl implements TAF, Serializable {
             if (getChangeForecasts().isPresent() && !getChangeForecasts().get().isEmpty()) {
                 final List<TAFChangeForecast> changeForecasts = getChangeForecasts().get();
                 final Iterable<PartialOrCompleteTimePeriod> partialTimes = changeForecasts.stream().map(TAFChangeForecast::getPeriodOfChange)::iterator;
-                final List<PartialOrCompleteTime> times = PartialOrCompleteTimePeriod.completeAscendingPartialTimes(partialTimes, reference,
+                final List<PartialOrCompleteTime> times = PartialOrCompleteTimes.completeAscendingPartialTimes(partialTimes, reference,
                         toZonedDateTimeSatisfyingConditionOrNear(PartialDateTime.ReferenceCondition.NOT_BEFORE, false, validityStart, validityEnd));
                 final List<TAFChangeForecast> completedForecasts = new ArrayList<>();
                 for (int i = 0; i < times.size(); i++) {
