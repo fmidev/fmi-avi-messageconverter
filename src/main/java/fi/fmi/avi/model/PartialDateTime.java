@@ -40,9 +40,9 @@ import com.fasterxml.jackson.databind.util.StdConverter;
  *
  * <p id="continuous-fields">
  * A PartialDateTime may consists of any <em>continuous</em> combination of {@link PartialField#DAY day}, {@link PartialField#HOUR hour} and
- * {@link PartialField#MINUTE} with and without time zone. A continuous combination is a combination containing all fields between most and least significant
- * field. E.g. combinations of just day, day and hour or all day, hour and minute. But combination of day and minute is not allowed as it is missing hour in
- * between.
+ * {@link PartialField#MINUTE minute} with and without time zone. A continuous combination is a combination containing all fields between most and least
+ * significant field. E.g. combinations of just day, day and hour or all day, hour and minute. But combination of day and minute is not allowed as it is
+ * missing hour in between.
  * </p>
  *
  * <p>
