@@ -309,7 +309,7 @@ public abstract class METARImpl implements METAR, Serializable {
         public Builder withAllTimesComplete(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             return withCompleteIssueTimeNear(reference)//
-                    .withCompleteForecastTimes(reference);
+                    .withCompleteForecastTimes(getIssueTimeBuilder().getCompleteTime().orElse(reference));
         }
 
         @Override
