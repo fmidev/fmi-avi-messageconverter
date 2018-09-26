@@ -1,12 +1,10 @@
 package fi.fmi.avi.model.taf.immutable;
 
+import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -21,6 +19,8 @@ import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.taf.TAFChangeForecast;
+import fi.fmi.avi.model.taf.TAFForecast;
+import fi.fmi.avi.model.taf.TAFForecastBuilderHelper;
 import fi.fmi.avi.model.taf.TAFSurfaceWind;
 
 /**
@@ -29,12 +29,12 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
 @FreeBuilder
 @JsonDeserialize(builder = TAFChangeForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"changeIndicator", "periodOfChange", "surfaceWind", "ceilingAndVisibilityOk",
-        "prevailingVisibility", "prevailingVisibilityOperator", "forecastWeather", "noSignificantWeather", "cloud"})
+@JsonPropertyOrder({ "changeIndicator", "periodOfChange", "surfaceWind", "ceilingAndVisibilityOk", "prevailingVisibility", "prevailingVisibilityOperator",
+        "forecastWeather", "noSignificantWeather", "cloud" })
 public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serializable {
 
     public static TAFChangeForecastImpl immutableCopyOf(final TAFChangeForecast changeForecast) {
-        Objects.requireNonNull(changeForecast);
+        requireNonNull(changeForecast);
         if (changeForecast instanceof TAFChangeForecastImpl) {
             return (TAFChangeForecastImpl) changeForecast;
         } else {
@@ -43,39 +43,50 @@ public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serial
     }
 
     public static Optional<TAFChangeForecastImpl> immutableCopyOf(final Optional<TAFChangeForecast> changeForecast) {
-        Objects.requireNonNull(changeForecast);
+        requireNonNull(changeForecast);
         return changeForecast.map(TAFChangeForecastImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
 
-    public static class Builder extends TAFChangeForecastImpl_Builder {
-
-        public static Builder from(TAFChangeForecast value) {
-            if (value instanceof TAFChangeForecastImpl) {
-                return ((TAFChangeForecastImpl) value).toBuilder();
-            } else {
-                Builder retval = new Builder()//
-                        .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())
-                        .setChangeIndicator(value.getChangeIndicator())
-                        .setCloud(CloudForecastImpl.immutableCopyOf(value.getCloud()))
-                        .setNoSignificantWeather(value.isNoSignificantWeather())
-                        .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
-                        .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
-                        .setSurfaceWind(TAFSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))
-                        .setPeriodOfChange(value.getPeriodOfChange());
-
-                value.getForecastWeather()
-                        .map(weather -> retval.setForecastWeather(
-                                Collections.unmodifiableList(weather.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))));
-
-                return retval;
-            }
-        }
+    public static class Builder extends TAFChangeForecastImpl_Builder implements TAFForecast.Builder<TAFChangeForecastImpl, Builder> {
 
         public Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);
+        }
+
+        public static Builder from(final TAFChangeForecast value) {
+            if (value instanceof TAFChangeForecastImpl) {
+                return ((TAFChangeForecastImpl) value).toBuilder();
+            }
+            return new Builder().copyFrom(value);
+        }
+
+        @Override
+        public Builder copyFrom(final TAFForecast value) {
+            if (value instanceof TAFChangeForecastImpl) {
+                return clear().mergeFrom((TAFChangeForecastImpl) value);
+            }
+            TAFForecastBuilderHelper.copyFrom(this, value);
+            if (value instanceof TAFChangeForecast) {
+                copyTAFChangeForecastSpecificValuesFrom((TAFChangeForecast) value);
+            }
+            return this;
+        }
+
+        @Override
+        public Builder mergeFromTAFForecast(final TAFForecast value) {
+            TAFForecastBuilderHelper.mergeFromTAFForecast(this, value);
+            if (value instanceof TAFChangeForecast) {
+                copyTAFChangeForecastSpecificValuesFrom((TAFChangeForecast) value);
+            }
+            return this;
+        }
+
+        private void copyTAFChangeForecastSpecificValuesFrom(final TAFChangeForecast value) {
+            setChangeIndicator(value.getChangeIndicator());
+            setPeriodOfChange(value.getPeriodOfChange());
         }
 
         @Override

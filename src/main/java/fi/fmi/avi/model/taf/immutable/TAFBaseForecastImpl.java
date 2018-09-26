@@ -1,12 +1,10 @@
 package fi.fmi.avi.model.taf.immutable;
 
+import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -22,6 +20,8 @@ import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 import fi.fmi.avi.model.taf.TAFBaseForecast;
+import fi.fmi.avi.model.taf.TAFForecast;
+import fi.fmi.avi.model.taf.TAFForecastBuilderHelper;
 import fi.fmi.avi.model.taf.TAFSurfaceWind;
 
 /**
@@ -30,12 +30,13 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
 @FreeBuilder
 @JsonDeserialize(builder = TAFBaseForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"surfaceWind", "ceilingAndVisibilityOk", "prevailingVisibility", "prevailingVisibilityOperator",
-        "forecastWeather", "noSignificantWeather", "cloud", "temperatures"})
+@JsonPropertyOrder({ "surfaceWind", "ceilingAndVisibilityOk", "prevailingVisibility", "prevailingVisibilityOperator", "forecastWeather", "noSignificantWeather",
+        "cloud", "temperatures" })
 public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializable {
+    private static final long serialVersionUID = -4188299349543187396L;
 
     public static TAFBaseForecastImpl immutableCopyOf(final TAFBaseForecast baseForecast) {
-        Objects.requireNonNull(baseForecast);
+        requireNonNull(baseForecast);
         if (baseForecast instanceof TAFBaseForecastImpl) {
             return (TAFBaseForecastImpl) baseForecast;
         } else {
@@ -44,41 +45,52 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
     }
 
     public static Optional<TAFBaseForecastImpl> immutableCopyOf(final Optional<TAFBaseForecast> baseForecast) {
-        Objects.requireNonNull(baseForecast);
+        requireNonNull(baseForecast);
         return baseForecast.map(TAFBaseForecastImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
 
-    public static class Builder extends TAFBaseForecastImpl_Builder {
-
-        public static Builder from(final TAFBaseForecast value) {
-            if (value instanceof TAFBaseForecastImpl) {
-                return ((TAFBaseForecastImpl) value).toBuilder();
-            } else {
-                Builder retval = new Builder()//
-                        .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())
-                        .setCloud(CloudForecastImpl.immutableCopyOf(value.getCloud()))
-                        .setNoSignificantWeather(value.isNoSignificantWeather())
-                        .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
-                        .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
-                        .setSurfaceWind(TAFSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()));
-
-                value.getForecastWeather()
-                        .map(weather -> retval.setForecastWeather(
-                                Collections.unmodifiableList(weather.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))));
-
-                value.getTemperatures()
-                        .map(temps -> retval.setTemperatures(
-                                Collections.unmodifiableList(temps.stream().map(TAFAirTemperatureForecastImpl::immutableCopyOf).collect(Collectors.toList()))));
-                return retval;
-            }
-        }
+    public static class Builder extends TAFBaseForecastImpl_Builder implements TAFForecast.Builder<TAFBaseForecastImpl, Builder> {
 
         public Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);
         }
+
+        public static Builder from(final TAFBaseForecast value) {
+            if (value instanceof TAFBaseForecastImpl) {
+                return ((TAFBaseForecastImpl) value).toBuilder();
+            }
+            return new Builder().copyFrom(value);
+        }
+
+        @Override
+        public Builder copyFrom(final TAFForecast value) {
+            if (value instanceof TAFBaseForecastImpl) {
+                return clear().mergeFrom((TAFBaseForecastImpl) value);
+            }
+            TAFForecastBuilderHelper.copyFrom(this, value);
+            if (value instanceof TAFBaseForecast) {
+                final TAFBaseForecast fromBaseForecast = (TAFBaseForecast) value;
+                setTemperatures(fromBaseForecast.getTemperatures()//
+                        .map(list -> TAFForecastBuilderHelper.toImmutableList(list, TAFAirTemperatureForecastImpl::immutableCopyOf)));
+            }
+            return this;
+        }
+
+        @Override
+        public Builder mergeFromTAFForecast(final TAFForecast value) {
+            TAFForecastBuilderHelper.mergeFromTAFForecast(this, value);
+            if (value instanceof TAFBaseForecast) {
+                final TAFBaseForecast fromBaseForecast = (TAFBaseForecast) value;
+                fromBaseForecast.getTemperatures()//
+                        .map(list -> TAFForecastBuilderHelper.toImmutableList(list, TAFAirTemperatureForecastImpl::immutableCopyOf))//
+                        .ifPresent(this::setTemperatures);
+            }
+            return this;
+        }
+
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setPrevailingVisibility(final NumericMeasure prevailingVisibility) {

@@ -44,6 +44,7 @@ import com.google.common.testing.NullPointerTester;
 import com.google.common.testing.SerializableTester;
 
 import fi.fmi.avi.model.PartialDateTime.PartialField;
+import fi.fmi.avi.model.PartialDateTime.ReferenceCondition;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
@@ -132,7 +133,7 @@ public final class PartialDateTimeTest {
         }
     }
 
-    private static <T, U> Matcher<T> feature(final String featureName, Function<T, U> getFeature, Matcher<U> subMatcher) {
+    private static <T, U> Matcher<T> feature(final String featureName, final Function<T, U> getFeature, final Matcher<U> subMatcher) {
         return new FeatureMatcher<T, U>(subMatcher, featureName, featureName) {
             @Override
             protected U featureValueOf(final T actual) {
@@ -432,11 +433,11 @@ public final class PartialDateTimeTest {
 
     @Parameters
     @Test
-    public void testRepresents(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
-        assertEquals(String.format("%s.represents(%s)", partialDateTime, temporal), expected, partialDateTime.represents(temporal));
+    public void testRepresentsStrictly(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
+        assertEquals(String.format("%s.representsStrict(%s)", partialDateTime, temporal), expected, partialDateTime.representsStrict(temporal));
     }
 
-    public List<Object[]> parametersForTestRepresents() {
+    public List<Object[]> parametersForTestRepresentsStrictly() {
         final YearMonth yearMonth = YearMonth.of(2000, 2);
         final LocalDate localDate = LocalDate.of(2000, 2, 3);
         final LocalTime localTime = LocalTime.of(4, 5, 6, 7);
@@ -489,6 +490,64 @@ public final class PartialDateTimeTest {
                 .collect(Collectors.toList());
     }
 
+    @Parameters
+    @Test
+    public void testRepresentsLoosely(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
+        assertEquals(String.format("%s.represents(%s)", partialDateTime, temporal), expected, partialDateTime.represents(temporal));
+    }
+
+    public List<Object[]> parametersForTestRepresentsLoosely() {
+        final YearMonth yearMonth = YearMonth.of(2000, 2);
+        final LocalDate localDate = LocalDate.of(2000, 2, 3);
+        final LocalTime localTime = LocalTime.of(4, 5, 6, 7);
+        final LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
+        final ZonedDateTime zonedDateTime = ZonedDateTime.of(localDateTime, TEST_ZONE);
+        return Stream.of(//
+                parametersForTestRepresents(true, "--T:", yearMonth, localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--03T:", localDate, localDateTime, zonedDateTime, yearMonth, localTime), //
+                parametersForTestRepresents(true, "--T04:", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--T:05", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--03T04:", localDateTime, zonedDateTime, yearMonth, localDate, localTime), //
+                parametersForTestRepresents(true, "--T04:05", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--03T04:05", localDateTime, zonedDateTime, yearMonth, localDate, localTime), //
+
+                parametersForTestRepresents(true, "--T:Z", yearMonth, localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--03T:Z", localDate, localDateTime, zonedDateTime, yearMonth, localTime), //
+                parametersForTestRepresents(true, "--T04:Z", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--T:05Z", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--03T04:Z", localDateTime, zonedDateTime, yearMonth, localDate, localTime), //
+                parametersForTestRepresents(true, "--T04:05Z", localTime, localDateTime, zonedDateTime, yearMonth, localDate), //
+                parametersForTestRepresents(true, "--03T04:05Z", localDateTime, zonedDateTime, yearMonth, localDate, localTime), //
+
+                parametersForTestRepresents(true, "--07T:", yearMonth, localTime), //
+                parametersForTestRepresents(false, "--07T:", localDate, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T07:", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T07:", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T:07", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T:07", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T07:", yearMonth), //
+                parametersForTestRepresents(false, "--07T07:", localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T07:07", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T07:07", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T07:07", yearMonth), //
+                parametersForTestRepresents(false, "--07T07:07", localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T:Z", yearMonth, localTime), //
+                parametersForTestRepresents(false, "--07T:Z", localDate, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T07:Z", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T07:Z", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T:07Z", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T:07Z", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T07:Z", yearMonth), //
+                parametersForTestRepresents(false, "--07T07:Z", localDate, localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--T07:07Z", yearMonth, localDate), //
+                parametersForTestRepresents(false, "--T07:07Z", localTime, localDateTime, zonedDateTime), //
+                parametersForTestRepresents(true, "--07T07:07Z", yearMonth), //
+                parametersForTestRepresents(false, "--07T07:07Z", localDate, localTime, localDateTime, zonedDateTime) //
+        )//
+                .flatMap(t -> t)//
+                .collect(Collectors.toList());
+    }
+
     private Stream<Object[]> parametersForTestRepresents(final boolean expected, final String partialDateTime, final Temporal... temporals) {
         final PartialDateTime parsedPartialDateTime = PartialDateTime.parse(partialDateTime);
         return Stream.of(temporals)//
@@ -521,7 +580,7 @@ public final class PartialDateTimeTest {
     }
 
     private void testToZonedDateTimeYearMonth(final ZonedDateTime expected, final PartialDateTime partialDateTime, final YearMonth issueDate) {
-        assertEquals(String.format("%s.toZonedDateTimeNear(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
+        assertEquals(String.format("%s.toZonedDateTime(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
     }
 
     @Parameters({ //
@@ -566,7 +625,7 @@ public final class PartialDateTimeTest {
     }
 
     private void testToZonedDateTimeLocalDate(final ZonedDateTime expected, final PartialDateTime partialDateTime, final LocalDate issueDate) {
-        assertEquals(String.format("%s.toZonedDateTimeNear(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
+        assertEquals(String.format("%s.toZonedDateTime(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
     }
 
     @Parameters({ //
@@ -594,271 +653,806 @@ public final class PartialDateTimeTest {
     }
 
     @Parameters({ //
+            // AFTER
             // Partial with all fields
-            "2000-02-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", //
-            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z", //
-            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z", //
+            "2000-02-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z,             AFTER", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z,      AFTER", //
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z,      AFTER", //
 
             // Partial with day only
-            "2000-02-02T00:00Z, --02T:, 2000-01-02T00:00Z", //
-            "2000-01-02T00:00Z, --02T:, 2000-01-01T23:59:59.999Z", //
-            "2000-01-01T00:00Z, --01T:, 1999-12-31T23:59:59.999Z", //
+            "2000-02-02T00:00Z, --02T:,      2000-01-02T00:00Z,             AFTER", //
+            "2000-01-02T00:00Z, --02T:,      2000-01-01T23:59:59.999Z,      AFTER", //
+            "2000-01-01T00:00Z, --01T:,      1999-12-31T23:59:59.999Z,      AFTER", //
 
             // Partial with hour, minute and zone
-            "2000-01-03T03:04Z, --T03:04Z, 2000-01-02T03:04Z", //
-            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:03:59.999Z", //
-            "2000-01-01T00:00Z, --T00:00Z, 1999-12-31T23:59:59.999Z", //
+            "2000-01-03T03:04Z, --T03:04Z,   2000-01-02T03:04Z, AFTER", //
+            "2000-01-02T03:04Z, --T03:04Z,   2000-01-02T03:03:59.999Z,      AFTER", //
+            "2000-01-01T00:00Z, --T00:00Z,   1999-12-31T23:59:59.999Z,      AFTER", //
 
             // Partial with hour only
-            "2000-01-02T03:00Z, --T03:, 2000-01-01T03:00Z", //
-            "2000-01-01T03:00Z, --T03:, 2000-01-01T02:59:59.999Z", //
-            "2000-01-01T00:00Z, --T00:, 1999-12-31T23:59:59.999Z", //
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00Z,             AFTER", //
+            "2000-01-01T03:00Z, --T03:,      2000-01-01T02:59:59.999Z,      AFTER", //
+            "2000-01-01T00:00Z, --T00:,      1999-12-31T23:59:59.999Z,      AFTER", //
 
             // Partial with minute and zone only
-            "2000-01-01T01:04Z, --T:04Z, 2000-01-01T00:04Z", //
-            "2000-01-01T00:04Z, --T:04Z, 2000-01-01T00:03:59.999Z", //
-            "2000-01-01T00:00Z, --T:00Z, 1999-12-31T23:59:59.999Z", //
+            "2000-01-01T01:04Z, --T:04Z,     2000-01-01T00:04Z, AFTER", //
+            "2000-01-01T00:04Z, --T:04Z,     2000-01-01T00:03:59.999Z,      AFTER", //
+            "2000-01-01T00:00Z, --T:00Z,     1999-12-31T23:59:59.999Z,      AFTER", //
 
             // Empty partial
-            "2000-01-01T00:01Z, --T:, 2000-01-01T00:00Z", //
-            "2000-01-01T00:00Z, --T:, 1999-12-31T23:59:59.999Z", //
+            "2000-01-01T00:01Z, --T:,        2000-01-01T00:00Z, AFTER", //
+            "2000-01-01T00:00Z, --T:,        1999-12-31T23:59:59.999Z,      AFTER", //
 
             // Midnight 00:00 on 28th of February on leap year and non-leap year
-            "2000-03-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z", // leap year
-            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-28T23:59:59.999Z", // leap year
-            "2001-03-29T00:00Z, --29T00:00Z, 2001-02-28T23:59:59.999Z", // non-leap year
-            "2001-03-29T00:00Z, --29T00:00Z, 2001-01-29T00:00Z", // non-leap year
+            "2000-03-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z,             AFTER", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-28T23:59:59.999Z,      AFTER", // leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-02-28T23:59:59.999Z,      AFTER", // non-leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-01-29T00:00Z,             AFTER", // non-leap year
 
             // Midnight 24:00 on 28th of February on leap year and non-leap year
-            "2000-03-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z", // leap year
-            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-28T23:59:59.999Z", // leap year
-            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z", // (non-leap year)
-            "2001-03-01T00:00Z, --28T24:00Z, 2001-01-29T00:00Z", // (non-leap year)
-            "2001-03-01T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z", // (non-leap year)
+            "2000-03-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z,             AFTER", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-28T23:59:59.999Z,      AFTER", // leap year
+            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z,             AFTER", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-01-29T00:00Z,             AFTER", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z,      AFTER", // (non-leap year)
 
             // Reference with non-UTC zone offset
-            "2000-01-02T03:00Z, --T03:Z, 2000-01-01T04:00+01:00", //
-            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T03:59:59.999+01:00", //
-            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T00:59:59.999+01:00", //
-            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T22:59:59.999-01:00", //
+            "2000-01-02T03:00Z, --T03:Z,     2000-01-01T04:00+01:00,        AFTER", //
+            "2000-01-01T03:00Z, --T03:Z,     2000-01-01T03:59:59.999+01:00, AFTER", //
+            "2000-01-01T00:00Z, --T00:Z,     2000-01-01T00:59:59.999+01:00, AFTER", //
+            "2000-01-01T00:00Z, --T00:Z,     1999-12-31T22:59:59.999-01:00, AFTER", //
 
             // Partial with non-UTC zone offset
-            "2000-01-02T00:00+01:00, --T00:+01:00, 2000-01-01T00:00Z", //
-            "2000-01-02T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z", //
-            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z", //
+            "2000-01-02T00:00+01:00, --T00:+01:00, 2000-01-01T00:00Z,       AFTER", //
+            "2000-01-02T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z,       AFTER", //
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z, AFTER", //
+
+            // NOT_BEFORE
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z,             NOT_BEFORE", //
+            "2000-02-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z,      NOT_BEFORE", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z,      NOT_BEFORE", //
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z,      NOT_BEFORE", //
+
+            // Partial with day only
+            "2000-01-02T00:00Z, --02T:,      2000-01-02T00:00Z,             NOT_BEFORE", //
+            "2000-02-02T00:00Z, --02T:,      2000-01-02T00:00:00.001Z,      NOT_BEFORE", //
+            "2000-01-02T00:00Z, --02T:,      2000-01-01T23:59:59.999Z,      NOT_BEFORE", //
+            "2000-01-01T00:00Z, --01T:,      1999-12-31T23:59:59.999Z,      NOT_BEFORE", //
+
+            // Partial with hour, minute and zone
+            "2000-01-02T03:04Z, --T03:04Z,   2000-01-02T03:04Z,             NOT_BEFORE", //
+            "2000-01-03T03:04Z, --T03:04Z,   2000-01-02T03:04:00.001Z,      NOT_BEFORE", //
+            "2000-01-02T03:04Z, --T03:04Z,   2000-01-02T03:03:59.999Z,      NOT_BEFORE", //
+            "2000-01-01T00:00Z, --T00:00Z,   1999-12-31T23:59:59.999Z,      NOT_BEFORE", //
+
+            // Partial with hour only
+            "2000-01-01T03:00Z, --T03:,      2000-01-01T03:00Z,             NOT_BEFORE", //
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00:00.001Z,      NOT_BEFORE", //
+            "2000-01-01T03:00Z, --T03:,      2000-01-01T02:59:59.999Z,      NOT_BEFORE", //
+            "2000-01-01T00:00Z, --T00:,      1999-12-31T23:59:59.999Z,      NOT_BEFORE", //
+
+            // Partial with minute and zone only
+            "2000-01-01T00:04Z, --T:04Z,     2000-01-01T00:04Z,             NOT_BEFORE", //
+            "2000-01-01T01:04Z, --T:04Z,     2000-01-01T00:04:00.001Z,      NOT_BEFORE", //
+            "2000-01-01T00:04Z, --T:04Z,     2000-01-01T00:03:59.999Z,      NOT_BEFORE", //
+            "2000-01-01T00:00Z, --T:00Z,     1999-12-31T23:59:59.999Z,      NOT_BEFORE", //
+
+            // Empty partial
+            "2000-01-01T00:00Z, --T:,        2000-01-01T00:00Z,             NOT_BEFORE", //
+            "2000-01-01T00:01Z, --T:,        2000-01-01T00:00:00.001Z,      NOT_BEFORE", //
+            "2000-01-01T00:00Z, --T:,        1999-12-31T23:59:59.999Z,      NOT_BEFORE", //
+
+            // Midnight 00:00 on 28th of February on leap year and non-leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z,             NOT_BEFORE", // leap year
+            "2000-03-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z,      NOT_BEFORE", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-28T23:59:59.999Z,      NOT_BEFORE", // leap year
+            "2001-01-29T00:00Z, --29T00:00Z, 2001-01-29T00:00Z,             NOT_BEFORE", // non-leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-01-29T00:00:00.001Z,      NOT_BEFORE", // non-leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-02-28T23:59:59.999Z,      NOT_BEFORE", // non-leap year
+
+            // Midnight 24:00 on 28th of February on leap year and non-leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z,             NOT_BEFORE", // leap year
+            "2000-03-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z,      NOT_BEFORE", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-28T23:59:59.999Z,      NOT_BEFORE", // leap year
+            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z,             NOT_BEFORE", // (non-leap year)
+            "2001-01-29T00:00Z, --28T24:00Z, 2001-01-29T00:00Z,             NOT_BEFORE", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-01-29T00:00:00.001Z,      NOT_BEFORE", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z,      NOT_BEFORE", // (non-leap year)
+
+            // Reference with non-UTC zone offset
+            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00+01:00,            NOT_BEFORE", //
+            "2000-01-02T03:00Z, --T03:Z, 2000-01-01T04:00:00.001+01:00,     NOT_BEFORE", //
+            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T03:59:59.999+01:00,     NOT_BEFORE", //
+            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T01:00+01:00,            NOT_BEFORE", //
+            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T22:59:59.999-01:00,     NOT_BEFORE", //
+
+            // Partial with non-UTC zone offset
+            "2000-01-02T00:00+01:00, --T00:+01:00, 2000-01-01T00:00Z,       NOT_BEFORE", //
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z,       NOT_BEFORE", //
+            "2000-01-02T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z, NOT_BEFORE", //
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z, NOT_BEFORE", //
+
+            // BEFORE
+            // Partial with all fields
+            "1999-12-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z,             BEFORE", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z,      BEFORE", //
+
+            // Partial with day only
+            "1999-12-02T00:00Z, --02T:,      2000-01-02T00:00Z,             BEFORE", //
+            "2000-01-02T00:00Z, --02T:,      2000-01-02T00:00:00.001Z,      BEFORE", //
+
+            // Partial with hour, minute and zone
+            "2000-01-01T03:04Z, --T03:04Z,   2000-01-02T03:04Z,             BEFORE", //
+            "2000-01-02T03:04Z, --T03:04Z,   2000-01-02T03:04:00.001Z,      BEFORE", //
+            "1999-12-31T00:00Z, --T00:00Z,   2000-01-01T00:00Z,             BEFORE", //
+
+            // Partial with hour only
+            "2000-01-01T03:00Z, --T03:,      2000-01-02T03:00Z,             BEFORE", //
+            "2000-01-01T03:00Z, --T03:,      2000-01-01T03:00:00.001Z,      BEFORE", //
+            "1999-12-31T00:00Z, --T00:,      2000-01-01T00:00Z,             BEFORE", //
+
+            // Partial with minute and zone only
+            "2000-01-01T02:04Z, --T:04Z,     2000-01-01T03:04Z,             BEFORE", //
+            "2000-01-01T03:04Z, --T:04Z,     2000-01-01T03:04:00.001Z,      BEFORE", //
+            "1999-12-31T23:00Z, --T:00Z,     2000-01-01T00:00Z,             BEFORE", //
+
+            // Empty partial
+            "1999-12-31T23:59Z, --T:,        2000-01-01T00:00Z,             BEFORE", //
+            "2000-01-01T00:00Z, --T:,        2000-01-01T00:00:00.001Z,      BEFORE", //
+
+            // Midnight 00:00 on 28th of February on leap year and non-leap year
+            "2000-01-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z,             BEFORE", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z,      BEFORE", // leap year
+            "2001-01-29T00:00Z, --29T00:00Z, 2001-03-29T00:00Z,             BEFORE", // non-leap year
+
+            // Midnight 24:00 on 28th of February on leap year and non-leap year
+            "2000-01-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z,             BEFORE", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z,      BEFORE", // leap year
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-03-29T00:00Z,             BEFORE", // (non-leap year)
+            "2001-01-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z,             BEFORE", // (non-leap year)
+            "2001-01-29T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z,      BEFORE", // (non-leap year)
+
+            // Reference with non-UTC zone offset
+            "1999-12-31T03:00Z, --T03:Z,     2000-01-01T04:00+01:00,        BEFORE", //
+            "2000-01-01T03:00Z, --T03:Z,     2000-01-01T04:00:00.001+01:00, BEFORE", //
+            "2000-01-01T00:00Z, --T00:Z,     2000-01-01T01:00:00.001+01:00, BEFORE", //
+            "2000-01-01T00:00Z, --T00:Z,     1999-12-31T23:00:00.001-01:00, BEFORE", //
+
+            // Partial with non-UTC zone offset
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z, BEFORE", //
+            "1999-12-31T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z,       BEFORE", //
+
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z,             NOT_AFTER", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z,      NOT_AFTER", //
+            "1999-12-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z,      NOT_AFTER", //
+
+            // Partial with day only
+            "2000-01-02T00:00Z, --02T:,      2000-01-02T00:00Z,             NOT_AFTER", //
+            "2000-01-02T00:00Z, --02T:,      2000-01-02T00:00:00.001Z,      NOT_AFTER", //
+            "1999-12-02T00:00Z, --02T:,      2000-01-01T23:59:59.999Z,      NOT_AFTER", //
+
+            // Partial with hour, minute and zone
+            "2000-01-02T03:04Z, --T03:04Z,   2000-01-02T03:04Z,             NOT_AFTER", //
+            "2000-01-02T03:04Z, --T03:04Z,   2000-01-02T03:04:00.001Z,      NOT_AFTER", //
+            "1999-12-31T03:04Z, --T03:04Z,   2000-01-01T03:03:59.999Z,      NOT_AFTER", //
+
+            // Partial with hour only
+            "2000-01-02T03:00Z, --T03:,      2000-01-02T03:00Z,             NOT_AFTER", //
+            "2000-01-01T03:00Z, --T03:,      2000-01-01T03:00:00.001Z,      NOT_AFTER", //
+            "1999-12-31T03:00Z, --T03:,      2000-01-01T02:59:59.999Z,      NOT_AFTER", //
+
+            // Partial with minute and zone only
+            "2000-01-01T03:04Z, --T:04Z,     2000-01-01T03:04Z,             NOT_AFTER", //
+            "2000-01-01T03:04Z, --T:04Z,     2000-01-01T03:04:00.001Z,      NOT_AFTER", //
+            "1999-12-31T23:04Z, --T:04Z,     2000-01-01T00:03:59.999Z,      NOT_AFTER", //
+
+            // Empty partial
+            "2000-01-01T00:00Z, --T:,        2000-01-01T00:00Z,             NOT_AFTER", //
+            "2000-01-01T00:00Z, --T:,        2000-01-01T00:00:00.001Z,      NOT_AFTER", //
+            "1999-12-31T23:59Z, --T:,        1999-12-31T23:59:59.999Z,      NOT_AFTER", //
+
+            // Midnight 00:00 on 28th of February on leap year and non-leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z,             NOT_AFTER", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z,      NOT_AFTER", // leap year
+            "2000-02-29T00:00Z, --29T00:00Z, 2000-03-28T23:59:59.999Z,      NOT_AFTER", // leap year
+            "2001-03-29T00:00Z, --29T00:00Z, 2001-03-29T00:00Z,             NOT_AFTER", // non-leap year
+            "2001-01-29T00:00Z, --29T00:00Z, 2001-03-28T23:59:59.999Z,      NOT_AFTER", // non-leap year
+
+            // Midnight 24:00 on 28th of February on leap year and non-leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z,             NOT_AFTER", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z,      NOT_AFTER", // leap year
+            "2000-02-29T00:00Z, --28T24:00Z, 2000-03-28T23:59:59.999Z,      NOT_AFTER", // leap year
+            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-29T00:00Z,             NOT_AFTER", // (non-leap year)
+            "2001-03-01T00:00Z, --28T24:00Z, 2001-03-01T00:00Z,             NOT_AFTER", // (non-leap year)
+            "2001-01-29T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z,      NOT_AFTER", // (non-leap year)
+
+            // Reference with non-UTC zone offset
+            "2000-01-01T03:00Z, --T03:Z,     2000-01-01T04:00+01:00,        NOT_AFTER", //
+            "2000-01-01T03:00Z, --T03:Z,     2000-01-01T04:00:00.001+01:00, NOT_AFTER", //
+            "1999-12-31T03:00Z, --T03:Z,     2000-01-01T03:59:59.999+01:00, NOT_AFTER", //
+            "2000-01-01T00:00Z, --T00:Z,     2000-01-01T01:00+01:00,        NOT_AFTER", //
+            "2000-01-01T00:00Z, --T00:Z,     1999-12-31T23:00-01:00,        NOT_AFTER", //
+
+            // Partial with non-UTC zone offset
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z, NOT_AFTER", //
+            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z,       NOT_AFTER", //
+            "1999-12-31T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z, NOT_AFTER", //
+
     })
     @Test
-    public void testToZonedDateTimeAfter(final String expected, final String partialDateTime, final String referenceTime) {
-        testToZonedDateTimeAfter(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
+    public void testToZonedDateTimeCondition(final String expected, final String partialDateTime, final String referenceTime,
+            final ReferenceCondition condition) {
+        testToZonedDateTimeCondition(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime), condition);
     }
 
-    private void testToZonedDateTimeAfter(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
-        assertEquals(String.format("%s.toZonedDateTimeAfter(%s)", partialDateTime, referenceTime), expected,
-                partialDateTime.toZonedDateTimeAfter(referenceTime));
+    private void testToZonedDateTimeCondition(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
+            final ReferenceCondition condition) {
+        assertEquals(String.format("%s.toZonedDateTime(%s, %s)", partialDateTime, referenceTime, condition), expected,
+                partialDateTime.toZonedDateTime(referenceTime, condition));
     }
 
     @Parameters({ //
+            // AFTER
             // Partial with all fields
-            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", //
-            "2000-02-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z", //
-            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z", //
-            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z", //
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z, AFTER,      false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z, AFTER,      true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // just before
+            "2000-01-01T00:00Z, --01T00:00Z, 2000-01-16T11:59:59.999Z, AFTER,      false, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // maximal after
+            "2000-02-01T00:00Z, --01T00:00Z, 2000-01-16T12:00Z,        AFTER,      true,  2000-02-01T00:00Z, 2000-02-01T00:00:00.001Z", // minimal before
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-16T12:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // minimal before
+            "1999-12-01T00:00Z, --01T00:00Z, 1999-12-16T11:59:59.999Z, AFTER,      false, 1999-12-01T00:00Z, 1999-12-01T00:00:00.001Z", // maximal after
 
-            // Partial with day only
-            "2000-01-02T00:00Z, --02T:, 2000-01-02T00:00Z", //
-            "2000-02-02T00:00Z, --02T:, 2000-01-02T00:00:00.001Z", //
-            "2000-01-02T00:00Z, --02T:, 2000-01-01T23:59:59.999Z", //
-            "2000-01-01T00:00Z, --01T:, 1999-12-31T23:59:59.999Z", //
+            // Reference at range end
+            "2000-01-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
 
-            // Partial with hour, minute and zone
-            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:04Z", //
-            "2000-01-03T03:04Z, --T03:04Z, 2000-01-02T03:04:00.001Z", //
-            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:03:59.999Z", //
-            "2000-01-01T00:00Z, --T00:00Z, 1999-12-31T23:59:59.999Z", //
+            "2000-01-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
 
-            // Partial with hour only
-            "2000-01-01T03:00Z, --T03:, 2000-01-01T03:00Z", //
-            "2000-01-02T03:00Z, --T03:, 2000-01-01T03:00:00.001Z", //
-            "2000-01-01T03:00Z, --T03:, 2000-01-01T02:59:59.999Z", //
-            "2000-01-01T00:00Z, --T00:, 1999-12-31T23:59:59.999Z", //
+            "2000-01-03T00:00Z, --03T:,      2000-02-03T00:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T00:00Z       ", // outside range
+            "2000-02-03T00:00Z, --03T:,      2000-02-03T00:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T00:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T:,      2000-03-31T00:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T:,      2000-03-31T00:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
 
-            // Partial with minute and zone only
-            "2000-01-01T00:04Z, --T:04Z, 2000-01-01T00:04Z", //
-            "2000-01-01T01:04Z, --T:04Z, 2000-01-01T00:04:00.001Z", //
-            "2000-01-01T00:04Z, --T:04Z, 2000-01-01T00:03:59.999Z", //
-            "2000-01-01T00:00Z, --T:00Z, 1999-12-31T23:59:59.999Z", //
+            "2000-02-02T04:05Z, --T04:05,    2000-02-03T04:05Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T04:05,    2000-02-03T04:05Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
 
-            // Empty partial
-            "2000-01-01T00:00Z, --T:, 2000-01-01T00:00Z", //
-            "2000-01-01T00:01Z, --T:, 2000-01-01T00:00:00.001Z", //
-            "2000-01-01T00:00Z, --T:, 1999-12-31T23:59:59.999Z", //
+            "2000-02-02T04:00Z, --T04:,      2000-02-03T04:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --T04:,      2000-02-03T04:00Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
 
-            // Midnight 00:00 on 28th of February on leap year and non-leap year
-            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z", // leap year
-            "2000-03-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z", // leap year
-            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-28T23:59:59.999Z", // leap year
-            "2001-01-29T00:00Z, --29T00:00Z, 2001-01-29T00:00Z", // non-leap year
-            "2001-03-29T00:00Z, --29T00:00Z, 2001-01-29T00:00:00.001Z", // non-leap year
-            "2001-03-29T00:00Z, --29T00:00Z, 2001-02-28T23:59:59.999Z", // non-leap year
+            "2000-02-03T03:05Z, --T:05,      2000-02-03T04:05Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:05,      2000-02-03T04:05Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
 
-            // Midnight 24:00 on 28th of February on leap year and non-leap year
-            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z", // leap year
-            "2000-03-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z", // leap year
-            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-28T23:59:59.999Z", // leap year
-            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z", // (non-leap year)
-            "2001-01-29T00:00Z, --28T24:00Z, 2001-01-29T00:00Z", // (non-leap year)
-            "2001-03-01T00:00Z, --28T24:00Z, 2001-01-29T00:00:00.001Z", // (non-leap year)
-            "2001-03-01T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z", // (non-leap year)
+            "2000-02-03T04:04Z, --T:,        2000-02-03T04:05Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:,        2000-02-03T04:05Z,        AFTER,      false, 2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
 
-            // Reference with non-UTC zone offset
-            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00+01:00", //
-            "2000-01-02T03:00Z, --T03:Z, 2000-01-01T04:00:00.001+01:00", //
-            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T03:59:59.999+01:00", //
-            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T01:00+01:00", //
-            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T22:59:59.999-01:00", //
+            // Reference before range
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04Z,        AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04:00.001Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:03:59.999Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
 
-            // Partial with non-UTC zone offset
-            "2000-01-02T00:00+01:00, --T00:+01:00, 2000-01-01T00:00Z", //
-            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z", //
-            "2000-01-02T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z", //
-            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z", //
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00Z,        AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00:00.001Z, AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T02:59:59.999Z, AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00Z,        AFTER,      true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00:00.001Z, AFTER,      true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "2000-01-02T00:00Z, --02T:,      1999-12-01T23:59:59.999Z, AFTER,      true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04Z,        AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04:00.001Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:03:59.999Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00Z,        AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00:00.001Z, AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T02:59:59.999Z, AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T:,        1999-12-02T03:04Z,        AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // Reference after range
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04Z,        AFTER,      false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04:00.001Z, AFTER,      false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:03:59.999Z, AFTER,      false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00Z,        AFTER,      false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00:00.001Z, AFTER,      false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T02:59:59.999Z, AFTER,      false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00Z,        AFTER,      false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00:00.001Z, AFTER,      false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "2000-01-02T00:00Z, --02T:,      2000-02-01T23:59:59.999Z, AFTER,      false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04Z,        AFTER,      false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04:00.001Z, AFTER,      false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:03:59.999Z, AFTER,      false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00Z,        AFTER,      false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00:00.001Z, AFTER,      false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T02:59:59.999Z, AFTER,      false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T:,        2000-02-02T03:04Z,        AFTER,      false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // NOT_BEFORE
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z,        NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // exactly
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z, NOT_BEFORE, false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z, NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // just before
+            "2000-01-01T00:00Z, --01T00:00Z, 2000-01-16T11:59:59.999Z, NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // maximal after
+            "2000-02-01T00:00Z, --01T00:00Z, 2000-01-16T12:00Z,        NOT_BEFORE, true,  2000-02-01T00:00Z, 2000-02-01T00:00:00.001Z", // minimal before
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-16T12:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // minimal before
+            "1999-12-01T00:00Z, --01T00:00Z, 1999-12-16T11:59:59.999Z, NOT_BEFORE, false, 1999-12-01T00:00Z, 1999-12-01T00:00:00.001Z", // maximal after
+
+            // Reference at range end
+            "2000-01-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T00:00Z, --03T:,      2000-02-03T00:00Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-02-03T00:00Z       ", // outside range
+            "2000-02-03T00:00Z, --03T:,      2000-02-03T00:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T00:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T:,      2000-03-31T00:00Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T:,      2000-03-31T00:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-02-02T04:05Z, --T04:05,    2000-02-03T04:05Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T04:05,    2000-02-03T04:05Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-02T04:00Z, --T04:,      2000-02-03T04:00Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --T04:,      2000-02-03T04:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+
+            "2000-02-03T03:05Z, --T:05,      2000-02-03T04:05Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:05,      2000-02-03T04:05Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-03T04:04Z, --T:,        2000-02-03T04:05Z,        NOT_BEFORE, false, 2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:,        2000-02-03T04:05Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            // Reference before range
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04Z,        NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04:00.001Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:03:59.999Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00Z,        NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00:00.001Z, NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T02:59:59.999Z, NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00Z,        NOT_BEFORE, true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00:00.001Z, NOT_BEFORE, true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "2000-01-02T00:00Z, --02T:,      1999-12-01T23:59:59.999Z, NOT_BEFORE, true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04Z,        NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04:00.001Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:03:59.999Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00Z,        NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00:00.001Z, NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T02:59:59.999Z, NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T:,        1999-12-02T03:04Z,        NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // Reference after range
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04Z,        NOT_BEFORE, false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04:00.001Z, NOT_BEFORE, false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:03:59.999Z, NOT_BEFORE, false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00Z,        NOT_BEFORE, false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00:00.001Z, NOT_BEFORE, false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T02:59:59.999Z, NOT_BEFORE, false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00Z,        NOT_BEFORE, false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00:00.001Z, NOT_BEFORE, false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "2000-01-02T00:00Z, --02T:,      2000-02-01T23:59:59.999Z, NOT_BEFORE, false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04Z,        NOT_BEFORE, false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04:00.001Z, NOT_BEFORE, false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:03:59.999Z, NOT_BEFORE, false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00Z,        NOT_BEFORE, false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00:00.001Z, NOT_BEFORE, false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T02:59:59.999Z, NOT_BEFORE, false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T:,        2000-02-02T03:04Z,        NOT_BEFORE, false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // BEFORE
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z, BEFORE,     false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z, BEFORE,     false, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // just before
+            "2000-01-01T00:00Z, --01T00:00Z, 2000-01-16T11:59:59.999Z, BEFORE,     true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // maximal after
+            "2000-02-01T00:00Z, --01T00:00Z, 2000-01-16T12:00Z,        BEFORE,     false, 2000-02-01T00:00Z, 2000-02-01T00:00:00.001Z", // minimal before
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-16T12:00Z,        BEFORE,     false, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // minimal before
+            "1999-12-01T00:00Z, --01T00:00Z, 1999-12-16T11:59:59.999Z, BEFORE,     true,  1999-12-01T00:00Z, 1999-12-01T00:00:00.001Z", // maximal after
+
+            // Reference at range end
+            "2000-01-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-01-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-01-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-01-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-01-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T00:00Z, --03T:,      2000-02-03T00:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T00:00Z       ", // outside range
+            "2000-01-03T00:00Z, --03T:,      2000-02-03T00:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T00:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T:,      2000-03-31T00:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-01-31T00:00Z, --31T:,      2000-03-31T00:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-02-02T04:05Z, --T04:05,    2000-02-03T04:05Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-02T04:05Z, --T04:05,    2000-02-03T04:05Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-02T04:00Z, --T04:,      2000-02-03T04:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-02T04:00Z, --T04:,      2000-02-03T04:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+
+            "2000-02-03T03:05Z, --T:05,      2000-02-03T04:05Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T03:05Z, --T:05,      2000-02-03T04:05Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-03T04:04Z, --T:,        2000-02-03T04:05Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:04Z, --T:,        2000-02-03T04:05Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            // Reference before range
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04Z,        BEFORE,     false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04:00.001Z, BEFORE,     false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:03:59.999Z, BEFORE,     false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00Z,        BEFORE,     false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00:00.001Z, BEFORE,     false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T02:59:59.999Z, BEFORE,     false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00Z,        BEFORE,     false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00:00.001Z, BEFORE,     false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "2000-01-02T00:00Z, --02T:,      1999-12-01T23:59:59.999Z, BEFORE,     false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04Z,        BEFORE,     false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04:00.001Z, BEFORE,     false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:03:59.999Z, BEFORE,     false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00Z,        BEFORE,     false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00:00.001Z, BEFORE,     false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T02:59:59.999Z, BEFORE,     false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T:,        1999-12-02T03:04Z,        BEFORE,     false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // Reference after range
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04Z,        BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04:00.001Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:03:59.999Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00Z,        BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00:00.001Z, BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T02:59:59.999Z, BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00Z,        BEFORE,     true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00:00.001Z, BEFORE,     true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "2000-01-02T00:00Z, --02T:,      2000-02-01T23:59:59.999Z, BEFORE,     true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04Z,        BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04:00.001Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:03:59.999Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00Z,        BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00:00.001Z, BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T02:59:59.999Z, BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T:,        2000-02-02T03:04Z,        BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // NOT_AFTER
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z,        NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // exactly
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z, NOT_AFTER,  false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z, NOT_AFTER,  false, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // just before
+            "2000-01-01T00:00Z, --01T00:00Z, 2000-01-16T11:59:59.999Z, NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // maximal after
+            "2000-02-01T00:00Z, --01T00:00Z, 2000-01-16T12:00Z,        NOT_AFTER,  false, 2000-02-01T00:00Z, 2000-02-01T00:00:00.001Z", // minimal before
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-16T12:00Z,        NOT_AFTER,  false, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // minimal before
+            "1999-12-01T00:00Z, --01T00:00Z, 1999-12-16T11:59:59.999Z, NOT_AFTER,  true,  1999-12-01T00:00Z, 1999-12-01T00:00:00.001Z", // maximal after
+
+            // Reference at range end
+            "2000-01-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T00:00Z, --03T:,      2000-02-03T00:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T00:00Z       ", // outside range
+            "2000-02-03T00:00Z, --03T:,      2000-02-03T00:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T00:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T:,      2000-03-31T00:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T:,      2000-03-31T00:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-02-02T04:05Z, --T04:05,    2000-02-03T04:05Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T04:05,    2000-02-03T04:05Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-02T04:00Z, --T04:,      2000-02-03T04:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --T04:,      2000-02-03T04:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+
+            "2000-02-03T03:05Z, --T:05,      2000-02-03T04:05Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:05,      2000-02-03T04:05Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-03T04:04Z, --T:,        2000-02-03T04:05Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:,        2000-02-03T04:05Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            // Reference before range
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04Z,        NOT_AFTER,  false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04:00.001Z, NOT_AFTER,  false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:03:59.999Z, NOT_AFTER,  false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00Z,        NOT_AFTER,  false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00:00.001Z, NOT_AFTER,  false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T02:59:59.999Z, NOT_AFTER,  false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00Z,        NOT_AFTER,  false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00:00.001Z, NOT_AFTER,  false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "2000-01-02T00:00Z, --02T:,      1999-12-01T23:59:59.999Z, NOT_AFTER,  false, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04Z,        NOT_AFTER,  false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04:00.001Z, NOT_AFTER,  false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:03:59.999Z, NOT_AFTER,  false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00Z,        NOT_AFTER,  false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00:00.001Z, NOT_AFTER,  false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T02:59:59.999Z, NOT_AFTER,  false, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T:,        1999-12-02T03:04Z,        NOT_AFTER,  false, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // Reference after range
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04Z,        NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04:00.001Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:03:59.999Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00Z,        NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00:00.001Z, NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T02:59:59.999Z, NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00Z,        NOT_AFTER,  true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00:00.001Z, NOT_AFTER,  true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "2000-01-02T00:00Z, --02T:,      2000-02-01T23:59:59.999Z, NOT_AFTER,  true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04Z,        NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04:00.001Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:03:59.999Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00Z,        NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00:00.001Z, NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T02:59:59.999Z, NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "2000-01-02T03:04Z, --T:,        2000-02-02T03:04Z,        NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
     })
     @Test
-    public void testToZonedDateTimeNotBefore(final String expected, final String partialDateTime, final String referenceTime) {
-        testToZonedDateTimeNotBefore(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
+    public void testToZonedDateTimeConditionRange(final String expected, final String partialDateTime, final String referenceTime,
+            final ReferenceCondition condition, final boolean strictCondition, final String rangeStartInclusive, final String rangeEndExclusive) {
+        testToZonedDateTimeConditionRange(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime), condition,
+                strictCondition, ZonedDateTime.parse(rangeStartInclusive), ZonedDateTime.parse(rangeEndExclusive));
     }
 
-    private void testToZonedDateTimeNotBefore(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
-        assertEquals(String.format("%s.toZonedDateTimeNotBefore(%s)", partialDateTime, referenceTime), expected,
-                partialDateTime.toZonedDateTimeNotBefore(referenceTime));
+    private void testToZonedDateTimeConditionRange(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
+            final ReferenceCondition condition, final boolean strictCondition, final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        assertEquals(String.format("%s.toZonedDateTime(%s, %s, %s, %s, %s)", partialDateTime, referenceTime, condition, strictCondition, rangeStartInclusive,
+                rangeEndExclusive), //
+                expected, //
+                partialDateTime.toZonedDateTime(referenceTime, condition, strictCondition, rangeStartInclusive, rangeEndExclusive));
     }
 
-    @Parameters({ //
+    @Parameters({//
+            "--T:Z,       2000-01-02T03:04Z,        AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:03Z       ", // invalid range
+
+            // AFTER
             // Partial with all fields
-            "1999-12-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", //
-            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z", //
+            "--02T03:04Z, 2000-01-02T03:04Z,        AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // exactly
+            "--02T03:04Z, 2000-01-02T03:04:00.001Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--01T00:00Z, 2000-01-16T11:59:59.999Z, AFTER,      true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // maximal after
+            "--01T00:00Z, 1999-12-16T11:59:59.999Z, AFTER,      true,  1999-12-01T00:00Z, 1999-12-01T00:00:00.001Z", // maximal after
 
-            // Partial with day only
-            "1999-12-02T00:00Z, --02T:, 2000-01-02T00:00Z", //
-            "2000-01-02T00:00Z, --02T:, 2000-01-02T00:00:00.001Z", //
+            // Reference at range end
+            "--03T04:05,  2000-02-03T04:05Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "--03T04:05,  2000-02-03T04:05Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+            "--31T00:00,  2000-03-31T00:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "--31T00:00,  2000-03-31T00:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
 
-            // Partial with hour, minute and zone
-            "2000-01-01T03:04Z, --T03:04Z, 2000-01-02T03:04Z", //
-            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:04:00.001Z", //
-            "1999-12-31T00:00Z, --T00:00Z, 2000-01-01T00:00Z", //
+            "--03T04:,    2000-02-03T04:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "--03T04:,    2000-02-03T04:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+            "--31T00:,    2000-03-31T00:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "--31T00:,    2000-03-31T00:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
 
-            // Partial with hour only
-            "2000-01-01T03:00Z, --T03:, 2000-01-02T03:00Z", //
-            "2000-01-01T03:00Z, --T03:, 2000-01-01T03:00:00.001Z", //
-            "1999-12-31T00:00Z, --T00:, 2000-01-01T00:00Z", //
+            "--03T:,      2000-02-03T00:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T00:00Z       ", // outside range
+            "--03T:,      2000-02-03T00:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T00:00:00.001Z", // just within range
+            "--31T:,      2000-03-31T00:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "--31T:,      2000-03-31T00:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
 
-            // Partial with minute and zone only
-            "2000-01-01T02:04Z, --T:04Z, 2000-01-01T03:04Z", //
-            "2000-01-01T03:04Z, --T:04Z, 2000-01-01T03:04:00.001Z", //
-            "1999-12-31T23:00Z, --T:00Z, 2000-01-01T00:00Z", //
+            "--T04:05,    2000-02-03T04:05Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "--T04:05,    2000-02-03T04:05Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
 
-            // Empty partial
-            "1999-12-31T23:59Z, --T:, 2000-01-01T00:00Z", //
-            "2000-01-01T00:00Z, --T:, 2000-01-01T00:00:00.001Z", //
+            "--T04:,      2000-02-03T04:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "--T04:,      2000-02-03T04:00Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
 
-            // Midnight 00:00 on 28th of February on leap year and non-leap year
-            "2000-01-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z", // leap year
-            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z", // leap year
-            "2001-01-29T00:00Z, --29T00:00Z, 2001-03-29T00:00Z", // non-leap year
+            "--T:05,      2000-02-03T04:05Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "--T:05,      2000-02-03T04:05Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
 
-            // Midnight 24:00 on 28th of February on leap year and non-leap year
-            "2000-01-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z", // leap year
-            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z", // leap year
-            "2001-03-01T00:00Z, --28T24:00Z, 2001-03-29T00:00Z", // (non-leap year)
-            "2001-01-29T00:00Z, --28T24:00Z, 2001-03-01T00:00Z", // (non-leap year)
-            "2001-01-29T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z", // (non-leap year)
+            "--T:,        2000-02-03T04:05Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "--T:,        2000-02-03T04:05Z,        AFTER,      true,  2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
 
-            // Reference with non-UTC zone offset
-            "1999-12-31T03:00Z, --T03:Z, 2000-01-01T04:00+01:00", //
-            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00:00.001+01:00", //
-            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T01:00:00.001+01:00", //
-            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T23:00:00.001-01:00", //
+            // Reference before range
+            // <none>
 
-            // Partial with non-UTC zone offset
-            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z", //
-            "1999-12-31T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z", //
+            // Reference after range
+            "--02T03:04,  2000-02-02T03:04Z,        AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "--02T03:04,  2000-02-02T03:04:00.001Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--02T03:04,  2000-02-02T03:03:59.999Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "--02T03:,    2000-02-02T03:00Z,        AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "--02T03:,    2000-02-02T03:00:00.001Z, AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "--02T03:,    2000-02-02T02:59:59.999Z, AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "--02T:,      2000-02-02T00:00Z,        AFTER,      true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "--02T:,      2000-02-02T00:00:00.001Z, AFTER,      true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "--02T:,      2000-02-01T23:59:59.999Z, AFTER,      true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "--T03:04,    2000-02-01T03:04Z,        AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "--T03:04,    2000-02-01T03:04:00.001Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--T03:04,    2000-02-01T03:03:59.999Z, AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "--T03:,      2000-02-01T03:00Z,        AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "--T03:,      2000-02-01T03:00:00.001Z, AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "--T03:,      2000-02-01T02:59:59.999Z, AFTER,      true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "--T:,        2000-02-02T03:04Z,        AFTER,      true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // NOT_BEFORE
+            // Partial with all fields
+            "--02T03:04Z, 2000-01-02T03:04:00.001Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--01T00:00Z, 2000-01-16T11:59:59.999Z, NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // maximal after
+            "--01T00:00Z, 1999-12-16T11:59:59.999Z, NOT_BEFORE, true,  1999-12-01T00:00Z, 1999-12-01T00:00:00.001Z", // maximal after
+
+            // Reference at range end
+            "--03T04:05,  2000-02-03T04:05Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "--31T00:00,  2000-03-31T00:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+
+            "--03T04:,    2000-02-03T04:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "--31T00:,    2000-03-31T00:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+
+            "--03T:,      2000-02-03T00:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T00:00Z       ", // outside range
+            "--31T:,      2000-03-31T00:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+
+            "--T04:05,    2000-02-03T04:05Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+
+            "--T04:,      2000-02-03T04:00Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+
+            "--T:05,      2000-02-03T04:05Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+
+            "--T:,        2000-02-03T04:05Z,        NOT_BEFORE, true,  2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+
+            // Reference before range
+            // <none>
+
+            // Reference after range
+            "--02T03:04,  2000-02-02T03:04Z,        NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "--02T03:04,  2000-02-02T03:04:00.001Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--02T03:04,  2000-02-02T03:03:59.999Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "--02T03:,    2000-02-02T03:00Z,        NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "--02T03:,    2000-02-02T03:00:00.001Z, NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "--02T03:,    2000-02-02T02:59:59.999Z, NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "--02T:,      2000-02-02T00:00Z,        NOT_BEFORE, true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "--02T:,      2000-02-02T00:00:00.001Z, NOT_BEFORE, true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "--02T:,      2000-02-01T23:59:59.999Z, NOT_BEFORE, true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "--T03:04,    2000-02-01T03:04Z,        NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "--T03:04,    2000-02-01T03:04:00.001Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--T03:04,    2000-02-01T03:03:59.999Z, NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "--T03:,      2000-02-01T03:00Z,        NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "--T03:,      2000-02-01T03:00:00.001Z, NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "--T03:,      2000-02-01T02:59:59.999Z, NOT_BEFORE, true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "--T:,        2000-02-02T03:04Z,        NOT_BEFORE, true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // BEFORE
+            // Partial with all fields
+            "--02T03:04Z, 2000-01-02T03:04Z,        BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // exactly
+            "--02T03:04Z, 2000-01-02T03:03:59.999Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+            "--01T00:00Z, 1999-12-31T23:59:59.999Z, BEFORE,     true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // just before
+            "--01T00:00Z, 2000-01-16T12:00Z,        BEFORE,     true,  2000-02-01T00:00Z, 2000-02-01T00:00:00.001Z", // minimal before
+            "--01T00:00Z, 1999-12-16T12:00Z,        BEFORE,     true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // minimal before
+
+            // Reference at range end
+            // <none>
+
+            // Reference before range
+            "--02T03:04,  1999-12-02T03:04Z,        BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "--02T03:04,  1999-12-02T03:04:00.001Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--02T03:04,  1999-12-02T03:03:59.999Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "--02T03:,    1999-12-02T03:00Z,        BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "--02T03:,    1999-12-02T03:00:00.001Z, BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "--02T03:,    1999-12-02T02:59:59.999Z, BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "--02T:,      1999-12-02T00:00Z,        BEFORE,     true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "--02T:,      1999-12-02T00:00:00.001Z, BEFORE,     true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "--02T:,      1999-12-01T23:59:59.999Z, BEFORE,     true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "--T03:04,    2000-01-01T03:04Z,        BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "--T03:04,    2000-01-01T03:04:00.001Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--T03:04,    2000-01-01T03:03:59.999Z, BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "--T03:,      2000-01-01T03:00Z,        BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "--T03:,      2000-01-01T03:00:00.001Z, BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "--T03:,      2000-01-01T02:59:59.999Z, BEFORE,     true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "--T:,        1999-12-02T03:04Z,        BEFORE,     true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // Reference after range
+            // <none>
+
+            // NOT_AFTER
+            // Partial with all fields
+            "--02T03:04Z, 2000-01-02T03:03:59.999Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+            "--01T00:00Z, 1999-12-31T23:59:59.999Z, NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // just before
+            "--01T00:00Z, 2000-01-16T12:00Z,        NOT_AFTER,  true,  2000-02-01T00:00Z, 2000-02-01T00:00:00.001Z", // minimal before
+            "--01T00:00Z, 1999-12-16T12:00Z,        NOT_AFTER,  true,  2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // minimal before
+
+            // Reference at range end
+            // <none>
+
+            // Reference before range
+            "--02T03:04,  1999-12-02T03:04Z,        NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "--02T03:04,  1999-12-02T03:04:00.001Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--02T03:04,  1999-12-02T03:03:59.999Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "--02T03:,    1999-12-02T03:00Z,        NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "--02T03:,    1999-12-02T03:00:00.001Z, NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "--02T03:,    1999-12-02T02:59:59.999Z, NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "--02T:,      1999-12-02T00:00Z,        NOT_AFTER,  true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "--02T:,      1999-12-02T00:00:00.001Z, NOT_AFTER,  true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after
+            "--02T:,      1999-12-01T23:59:59.999Z, NOT_AFTER,  true,  2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before
+
+            "--T03:04,    2000-01-01T03:04Z,        NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "--T03:04,    2000-01-01T03:04:00.001Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after
+            "--T03:04,    2000-01-01T03:03:59.999Z, NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before
+
+            "--T03:,      2000-01-01T03:00Z,        NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "--T03:,      2000-01-01T03:00:00.001Z, NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after
+            "--T03:,      2000-01-01T02:59:59.999Z, NOT_AFTER,  true,  2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before
+
+            "--T:,        1999-12-02T03:04Z,        NOT_AFTER,  true,  2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // Reference after range
+            // <none>
     })
     @Test
-    public void testToZonedDateTimeBefore(final String expected, final String partialDateTime, final String referenceTime) {
-        testToZonedDateTimeBefore(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
+    public void testToZonedDateTimeConditionRangeInvalid(final String partialDateTime, final String referenceTime, final ReferenceCondition condition,
+            final boolean strictCondition, final String rangeStartInclusive, final String rangeEndExclusive) {
+        testToZonedDateTimeConditionRangeInvalid(PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime), condition, strictCondition,
+                ZonedDateTime.parse(rangeStartInclusive), ZonedDateTime.parse(rangeEndExclusive));
     }
 
-    private void testToZonedDateTimeBefore(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
-        assertEquals(String.format("%s.toZonedDateTimeBefore(%s)", partialDateTime, referenceTime), expected,
-                partialDateTime.toZonedDateTimeBefore(referenceTime));
-    }
-
-    @Parameters({ //
-            // Partial with all fields
-            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z", //
-            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z", //
-            "1999-12-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z", //
-
-            // Partial with day only
-            "2000-01-02T00:00Z, --02T:, 2000-01-02T00:00Z", //
-            "2000-01-02T00:00Z, --02T:, 2000-01-02T00:00:00.001Z", //
-            "1999-12-02T00:00Z, --02T:, 2000-01-01T23:59:59.999Z", //
-
-            // Partial with hour, minute and zone
-            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:04Z", //
-            "2000-01-02T03:04Z, --T03:04Z, 2000-01-02T03:04:00.001Z", //
-            "1999-12-31T03:04Z, --T03:04Z, 2000-01-01T03:03:59.999Z", //
-
-            // Partial with hour only
-            "2000-01-02T03:00Z, --T03:, 2000-01-02T03:00Z", //
-            "2000-01-01T03:00Z, --T03:, 2000-01-01T03:00:00.001Z", //
-            "1999-12-31T03:00Z, --T03:, 2000-01-01T02:59:59.999Z", //
-
-            // Partial with minute and zone only
-            "2000-01-01T03:04Z, --T:04Z, 2000-01-01T03:04Z", //
-            "2000-01-01T03:04Z, --T:04Z, 2000-01-01T03:04:00.001Z", //
-            "1999-12-31T23:04Z, --T:04Z, 2000-01-01T00:03:59.999Z", //
-
-            // Empty partial
-            "2000-01-01T00:00Z, --T:, 2000-01-01T00:00Z", //
-            "2000-01-01T00:00Z, --T:, 2000-01-01T00:00:00.001Z", //
-            "1999-12-31T23:59Z, --T:, 1999-12-31T23:59:59.999Z", //
-
-            // Midnight 00:00 on 28th of February on leap year and non-leap year
-            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00Z", // leap year
-            "2000-02-29T00:00Z, --29T00:00Z, 2000-02-29T00:00:00.001Z", // leap year
-            "2000-02-29T00:00Z, --29T00:00Z, 2000-03-28T23:59:59.999Z", // leap year
-            "2001-03-29T00:00Z, --29T00:00Z, 2001-03-29T00:00Z", // non-leap year
-            "2001-01-29T00:00Z, --29T00:00Z, 2001-03-28T23:59:59.999Z", // non-leap year
-
-            // Midnight 24:00 on 28th of February on leap year and non-leap year
-            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00Z", // leap year
-            "2000-02-29T00:00Z, --28T24:00Z, 2000-02-29T00:00:00.001Z", // leap year
-            "2000-02-29T00:00Z, --28T24:00Z, 2000-03-28T23:59:59.999Z", // leap year
-            "2001-03-29T00:00Z, --28T24:00Z, 2001-03-29T00:00Z", // (non-leap year)
-            "2001-03-01T00:00Z, --28T24:00Z, 2001-03-01T00:00Z", // (non-leap year)
-            "2001-01-29T00:00Z, --28T24:00Z, 2001-02-28T23:59:59.999Z", // (non-leap year)
-
-            // Reference with non-UTC zone offset
-            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00+01:00", //
-            "2000-01-01T03:00Z, --T03:Z, 2000-01-01T04:00:00.001+01:00", //
-            "1999-12-31T03:00Z, --T03:Z, 2000-01-01T03:59:59.999+01:00", //
-            "2000-01-01T00:00Z, --T00:Z, 2000-01-01T01:00+01:00", //
-            "2000-01-01T00:00Z, --T00:Z, 1999-12-31T23:00-01:00", //
-
-            // Partial with non-UTC zone offset
-            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00:00.001Z", //
-            "2000-01-01T00:00+01:00, --T00:+01:00, 1999-12-31T23:00Z", //
-            "1999-12-31T00:00+01:00, --T00:+01:00, 1999-12-31T22:59:59.999Z", //
-    })
-    @Test
-    public void testToZonedDateTimeNotAfter(final String expected, final String partialDateTime, final String referenceTime) {
-        testToZonedDateTimeNotAfter(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime));
-    }
-
-    private void testToZonedDateTimeNotAfter(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
-        assertEquals(String.format("%s.toZonedDateTimeNotAfter(%s)", partialDateTime, referenceTime), expected,
-                partialDateTime.toZonedDateTimeNotAfter(referenceTime));
+    private void testToZonedDateTimeConditionRangeInvalid(final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
+            final ReferenceCondition condition, final boolean strictCondition, final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        final Class<? extends Throwable> expectedException = DateTimeException.class;
+        thrown.expect(expectedException);
+        if (PartialDateTime.DateTimeRanges.isValid(rangeStartInclusive, rangeEndExclusive)) {
+            thrown.expectMessage(partialDateTime.toString());
+            thrown.expectMessage(referenceTime.toString());
+        }
+        thrown.expectMessage(rangeStartInclusive.toString());
+        thrown.expectMessage(rangeEndExclusive.toString());
+        final ZonedDateTime result = partialDateTime.toZonedDateTime(referenceTime, condition, strictCondition, rangeStartInclusive, rangeEndExclusive);
+        fail(String.format("Expected %s but got result: %s", expectedException, result));
     }
 
     @Parameters({ //
@@ -981,11 +1575,165 @@ public final class PartialDateTimeTest {
         final Class<? extends Throwable> expectedException = DateTimeException.class;
         thrown.expect(expectedException);
         thrown.expectMessage(partialDateTime.toString());
-        if (DateTimeException.class.equals(expectedException)) {
-            thrown.expectMessage(referenceTime.toString());
-        }
+        thrown.expectMessage(referenceTime.toString());
         final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(referenceTime);
         fail(String.format("Expected %s but got result: %s", expectedException, result));
+    }
+
+    @Parameters({ //
+            // Partial with all fields
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // exactly expected
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after expected
+            "2000-01-02T03:04Z, --02T03:04Z, 2000-01-02T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before expected
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-31T23:59:59.999Z, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // just before expected
+            "2000-01-01T00:00Z, --01T00:00Z, 2000-01-16T11:59:59.999Z, 2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // maximal after expected
+            "2000-02-01T00:00Z, --01T00:00Z, 2000-01-16T12:00Z,        2000-02-01T00:00Z, 2000-02-01T00:00:00.001Z", // minimal before expected
+            "2000-01-01T00:00Z, --01T00:00Z, 1999-12-16T12:00Z,        2000-01-01T00:00Z, 2000-01-01T00:00:00.001Z", // minimal before expected
+            "1999-12-01T00:00Z, --01T00:00Z, 1999-12-16T11:59:59.999Z, 1999-12-01T00:00Z, 1999-12-01T00:00:00.001Z", // maximal after expected
+
+            // Reference at range end
+            "2000-01-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --03T04:05,  2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:00,  2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --03T04:,    2000-02-03T04:00Z,        2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T00:,    2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-01-03T00:00Z, --03T:,      2000-02-03T00:00Z,        2000-01-01T00:00Z, 2000-02-03T00:00Z       ", // outside range
+            "2000-02-03T00:00Z, --03T:,      2000-02-03T00:00Z,        2000-01-01T00:00Z, 2000-02-03T00:00:00.001Z", // just within range
+            "2000-01-31T00:00Z, --31T:,      2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00Z       ", // outside range
+            "2000-03-31T00:00Z, --31T:,      2000-03-31T00:00Z,        2000-01-01T00:00Z, 2000-03-31T00:00:00.001Z", // just within range
+
+            "2000-02-02T04:05Z, --T04:05,    2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T04:05,    2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-02T04:00Z, --T04:,      2000-02-03T04:00Z,        2000-01-01T00:00Z, 2000-02-03T04:00Z       ", // outside range
+            "2000-02-03T04:00Z, --T04:,      2000-02-03T04:00Z,        2000-01-01T00:00Z, 2000-02-03T04:00:00.001Z", // just within range
+
+            "2000-02-03T03:05Z, --T:05,      2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:05,      2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            "2000-02-03T04:04Z, --T:,        2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05Z       ", // outside range
+            "2000-02-03T04:05Z, --T:,        2000-02-03T04:05Z,        2000-01-01T00:00Z, 2000-02-03T04:05:00.001Z", // just within range
+
+            // Reference before range
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after representable
+            "2000-01-02T03:04Z, --02T03:04,  1999-12-02T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before representable
+
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00Z,        2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T03:00:00.001Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after representable
+            "2000-01-02T03:00Z, --02T03:,    1999-12-02T02:59:59.999Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before representable
+
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00Z,        2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      1999-12-02T00:00:00.001Z, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after representable
+            "2000-01-02T00:00Z, --02T:,      1999-12-01T23:59:59.999Z, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before representable
+
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after representable
+            "2000-01-02T03:04Z, --T03:04,    2000-01-01T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before representable
+
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00Z,        2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T03:00:00.001Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after representable
+            "2000-01-02T03:00Z, --T03:,      2000-01-01T02:59:59.999Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before representable
+
+            "2000-01-02T03:04Z, --T:,        1999-12-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+
+            // Reference after range
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after representable
+            "2000-01-02T03:04Z, --02T03:04,  2000-02-02T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before representable
+
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00Z,        2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T03:00:00.001Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after representable
+            "2000-01-02T03:00Z, --02T03:,    2000-02-02T02:59:59.999Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before representable
+
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00Z,        2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // representable
+            "2000-01-02T00:00Z, --02T:,      2000-02-02T00:00:00.001Z, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just after representable
+            "2000-01-02T00:00Z, --02T:,      2000-02-01T23:59:59.999Z, 2000-01-02T00:00Z, 2000-01-02T00:00:00.001Z", // just before representable
+
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:04:00.001Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just after representable
+            "2000-01-02T03:04Z, --T03:04,    2000-02-01T03:03:59.999Z, 2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // just before representable
+
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00Z,        2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // representable
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T03:00:00.001Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just after representable
+            "2000-01-02T03:00Z, --T03:,      2000-02-01T02:59:59.999Z, 2000-01-02T03:00Z, 2000-01-02T03:00:00.001Z", // just before representable
+
+            "2000-01-02T03:04Z, --T:,        2000-02-02T03:04Z,        2000-01-02T03:04Z, 2000-01-02T03:04:00.001Z", // representable
+    })
+    @Test
+    public void testToZonedDateTimeNearWithinRange(final String expected, final String partialDateTime, final String referenceTime,
+            final String rangeStartInclusive, final String rangeEndExclusive) {
+        testToZonedDateTimeNearWithinRange(ZonedDateTime.parse(expected), PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime),
+                ZonedDateTime.parse(rangeStartInclusive), ZonedDateTime.parse(rangeEndExclusive));
+    }
+
+    public void testToZonedDateTimeNearWithinRange(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
+            final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        assertEquals(String.format("%s.toZonedDateTimeNear(%s, %s, %s)", partialDateTime, referenceTime, rangeStartInclusive, rangeEndExclusive), //
+                expected, partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive));
+    }
+
+    @Parameters({ //
+            // Invalid partial time
+            "--32T00:,   2000-01-01T00:00Z, 2000-01-01T00:00Z,    2000-01-01T00:00:00.001Z", //
+            "--T25:,     2000-01-01T00:00Z, 2000-01-01T00:00Z,    2000-01-01T00:00:00.001Z", //
+            "--T00:61,   2000-01-01T00:00Z, 2000-01-01T00:00Z,    2000-01-01T00:00:00.001Z", //
+
+            // Completable only outside range
+            "--02T03:04, 2000-01-02T03:04Z, 2000-01-01T00:00Z,    2000-01-02T03:04Z       ", // Completable at exclusive end
+            "--02T03:04, 2000-01-02T03:04Z, 2000-01-01T00:00Z,    2000-01-01T00:00:01Z    ", // Not completable within range
+
+            "--T03:04,   2000-01-02T03:04Z, 2000-01-02T00:00Z,    2000-01-02T03:04Z       ", // Completable at exclusive end
+            "--T03:04,   2000-01-02T03:04Z, 2000-01-01T00:00Z,    2000-01-01T00:00:01Z    ", // Not completable within range
+
+            "--T:04,     2000-01-02T03:04Z, 2000-01-02T03:00Z,    2000-01-02T03:04Z       ", // Completable at exclusive end
+            "--T:04,     2000-01-02T03:04Z, 2000-01-01T00:00Z,    2000-01-01T00:00:01Z    ", // Not completable within range
+
+            "--T:,       2000-01-02T03:04Z, 2000-01-01T00:00:01Z, 2000-01-01T00:00:02Z    ", // Not completable within range
+
+            "--T:,       2000-01-01T00:00Z, 2000-01-01T00:00Z,    2000-01-01T00:00Z       ", // Range end at range start
+            "--T:,       2000-01-01T00:00Z, 2000-01-01T00:00:01Z, 2000-01-01T00:00:00Z    ", // Range end before range start
+    })
+    @Test
+    public void testToZonedDateTimeNearWithinRangeInvalid(final String partialDateTime, final String referenceTime, final String rangeStartInclusive,
+            final String rangeEndExclusive) {
+        testToZonedDateTimeNearWithinRangeInvalid(PartialDateTime.parse(partialDateTime), ZonedDateTime.parse(referenceTime),
+                ZonedDateTime.parse(rangeStartInclusive), ZonedDateTime.parse(rangeEndExclusive));
+    }
+
+    private void testToZonedDateTimeNearWithinRangeInvalid(final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
+            final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
+        final Class<? extends Throwable> expectedException = DateTimeException.class;
+        thrown.expect(expectedException);
+        if (PartialDateTime.DateTimeRanges.isValid(rangeStartInclusive, rangeEndExclusive)) {
+            thrown.expectMessage(partialDateTime.toString());
+            thrown.expectMessage(referenceTime.toString());
+        }
+        thrown.expectMessage(rangeStartInclusive.toString());
+        thrown.expectMessage(rangeEndExclusive.toString());
+        final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive);
+        fail(String.format("Expected %s but got result: %s", expectedException, result));
+    }
+
+    @Test
+    public void testToZonedDateTimeNearWithinMaxRange() {
+        final ZoneOffset sourceZone = ZoneOffset.ofHours(6);
+        final ZoneOffset targetZone = ZoneOffset.ofHours(-6);
+        final ZonedDateTime reference = ZonedDateTime.of(2000, 1, 2, 3, 4, 0, 0, targetZone);
+        final ZonedDateTime rangeStart = LocalDateTime.MIN.atZone(sourceZone);
+        final ZonedDateTime rangeEnd = LocalDateTime.MAX.atZone(sourceZone);
+        final PartialDateTime partialDateTime = PartialDateTime.of(reference, EnumSet.allOf(PartialField.class), true, PartialDateTime.MIDNIGHT_0_HOUR);
+
+        // Different zones may cause range bounds over LocalDateTime.MIN/MAX. This should not cause completion fail.
+        final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(reference, rangeStart, rangeEnd);
+
+        final ZonedDateTime expected = reference;
+        assertEquals(reference + " in " + targetZone, expected, result);
     }
 
     @Test

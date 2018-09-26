@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.immutable;
 
+import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
@@ -13,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,6 +29,7 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.PartialOrCompleteTimes;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
@@ -49,21 +50,19 @@ import fi.fmi.avi.model.metar.WindShear;
 @FreeBuilder
 @JsonDeserialize(builder = METARImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"status", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility", "runwayVisualRanges", "presentWeather", "cloud",
+@JsonPropertyOrder({ "status", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility", "runwayVisualRanges", "presentWeather", "cloud",
         "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates", "snowClosure",
-        "noSignificantChanges", "trend", "remarks", "permissibleUsage",
-        "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID",
-        "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime",
-        "translatedTAC"})
+        "noSignificantChanges", "trend", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+        "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class METARImpl implements METAR, Serializable {
 
     public static METARImpl immutableCopyOf(final MeteorologicalTerminalAirReport msg) {
-        Objects.requireNonNull(msg);
+        requireNonNull(msg);
         if (msg instanceof METAR) {
             if (msg instanceof METARImpl) {
                 return (METARImpl) msg;
             } else {
-                return Builder.from((METAR)msg).build();
+                return Builder.from((METAR) msg).build();
             }
         } else if (msg instanceof SPECI) {
             try {
@@ -75,46 +74,45 @@ public abstract class METARImpl implements METAR, Serializable {
             } catch (IllegalArgumentException iae) {
                 //NOOP: msg is not a SPECI proxy instance, fallback to regular copy
             }
-            return Builder.from((SPECI)msg).build();
+            return Builder.from((SPECI) msg).build();
         } else {
             throw new IllegalArgumentException("original is neither a METAR or a SPECI, cannot create a copy");
         }
     }
 
     public static Optional<METARImpl> immutableCopyOf(final Optional<MeteorologicalTerminalAirReport> metar) {
-        Objects.requireNonNull(metar);
+        requireNonNull(metar);
         return metar.map(METARImpl::immutableCopyOf);
     }
 
-
-    protected static Optional<List<TrendForecast>> getTimeCompletedTrends(final List<TrendForecast> oldTrends, final YearMonth issueYearMonth, int issueDay,
-            int issueHour, final ZoneId tz) throws IllegalArgumentException {
-        Optional<List<TrendForecast>> retval = Optional.empty();
-        if (oldTrends != null) {
-            final ZonedDateTime approximateIssueTime = ZonedDateTime.of(
-                    LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz);
-            retval = Optional.of(new ArrayList<>());
-            List<PartialOrCompleteTime> list = new ArrayList<>();
-            for (TrendForecast fct : oldTrends) {
-                if (fct.getPeriodOfChange().isPresent()) {
-                    list.add(fct.getPeriodOfChange().get());
-                } else if (fct.getInstantOfChange().isPresent()) {
-                    list.add(fct.getInstantOfChange().get());
-                }
-            }
-            list = PartialOrCompleteTimePeriod.completePartialTimeReferenceList(list, approximateIssueTime);
-            for (int i = 0; i < list.size(); i++) {
-                PartialOrCompleteTime time = list.get(i);
-                if (time instanceof PartialOrCompleteTimePeriod) {
-                    retval.get().add(TrendForecastImpl.Builder.from(oldTrends.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
-                } else if (time instanceof PartialOrCompleteTimeInstant) {
-                    retval.get().add(TrendForecastImpl.Builder.from(oldTrends.get(i)).setInstantOfChange((PartialOrCompleteTimeInstant) time).build());
-                }
+    protected static List<TrendForecast> completeTrendTimes(final List<TrendForecast> trendForecasts, final ZonedDateTime reference) {
+        requireNonNull(trendForecasts, "trendForecasts");
+        requireNonNull(reference, "reference");
+        if (trendForecasts.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<TrendForecast> builder = new ArrayList<>(trendForecasts.size());
+        List<PartialOrCompleteTime> times = new ArrayList<>(trendForecasts.size());
+        for (final TrendForecast forecast : trendForecasts) {
+            if (forecast.getPeriodOfChange().isPresent()) {
+                times.add(forecast.getPeriodOfChange().get());
+            } else if (forecast.getInstantOfChange().isPresent()) {
+                times.add(forecast.getInstantOfChange().get());
+            } else {
+                times.add(null);
             }
         }
-        return retval;
+        times = PartialOrCompleteTimes.completeAscendingPartialTimes(times, reference);
+        for (int i = 0; i < times.size(); i++) {
+            final PartialOrCompleteTime time = times.get(i);
+            if (time instanceof PartialOrCompleteTimePeriod) {
+                builder.add(TrendForecastImpl.Builder.from(trendForecasts.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
+            } else if (time instanceof PartialOrCompleteTimeInstant) {
+                builder.add(TrendForecastImpl.Builder.from(trendForecasts.get(i)).setInstantOfChange((PartialOrCompleteTimeInstant) time).build());
+            }
+        }
+        return Collections.unmodifiableList(builder);
     }
-
 
     public abstract Builder toBuilder();
 
@@ -131,7 +129,7 @@ public abstract class METARImpl implements METAR, Serializable {
             return false;
         }
         if (this.getTrends().isPresent()) {
-            for(TrendForecast trend:this.getTrends().get()) {
+            for (TrendForecast trend : this.getTrends().get()) {
                 if (trend.getPeriodOfChange().isPresent()) {
                     if (!trend.getPeriodOfChange().get().isComplete()) {
                         return false;
@@ -154,7 +152,7 @@ public abstract class METARImpl implements METAR, Serializable {
             return false;
         }
         if (this.getRunwayStates().isPresent()) {
-            for(RunwayState state:this.getRunwayStates().get()) {
+            for (RunwayState state : this.getRunwayStates().get()) {
                 if (state.getRunwayDirection().isPresent()) {
                     if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
                         ad = state.getRunwayDirection().get().getAssociatedAirportHeliport().get();
@@ -167,7 +165,7 @@ public abstract class METARImpl implements METAR, Serializable {
         }
 
         if (this.getRunwayVisualRanges().isPresent()) {
-            for (RunwayVisualRange range:this.getRunwayVisualRanges().get()) {
+            for (RunwayVisualRange range : this.getRunwayVisualRanges().get()) {
                 if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
                     ad = range.getRunwayDirection().getAssociatedAirportHeliport().get();
                     if (!ad.getReferencePoint().isPresent()) {
@@ -187,20 +185,6 @@ public abstract class METARImpl implements METAR, Serializable {
             setRoutineDelayed(false);
             setSnowClosure(false);
             setNoSignificantChanges(false);
-        }
-
-        public SPECI buildAsSPECI() {
-            if (isRoutineDelayed()) {
-                throw new IllegalStateException("Routine delayed (RTD) is true, cannot build as SPECI");
-            }
-            return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[]{SPECI.class}, new SPECIInvocationHandler(this.build()));
-        }
-
-        public SPECI buildPartialAsSPECI() {
-            if (isRoutineDelayed()) {
-                throw new IllegalStateException("Routine delayed (RTD) is true, cannot build as SPECI");
-            }
-            return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[]{SPECI.class}, new SPECIInvocationHandler(this.buildPartial()));
         }
 
         private static Builder from(final MeteorologicalTerminalAirReport value) {
@@ -288,16 +272,45 @@ public abstract class METARImpl implements METAR, Serializable {
             return retval;
         }
 
-        public Builder withCompleteForecastTimes(final YearMonth issueYearMonth, int issueDay, int issueHour, final ZoneId tz) throws IllegalArgumentException {
-            if (getTrends().isPresent()) {
-                return setTrends(getTimeCompletedTrends(getTrends().get(), issueYearMonth, issueDay, issueHour, tz));
-            } else {
-                return this;
+        public SPECI buildAsSPECI() {
+            if (isRoutineDelayed()) {
+                throw new IllegalStateException("Routine delayed (RTD) is true, cannot build as SPECI");
             }
+            return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[] { SPECI.class }, new SPECIInvocationHandler(this.build()));
         }
 
-        public Builder withCompleteIssueTime(final YearMonth yearMonth) throws IllegalArgumentException {
-            return mutateIssueTime((input) -> input.completedWithIssueYearMonth(yearMonth));
+        public SPECI buildPartialAsSPECI() {
+            if (isRoutineDelayed()) {
+                throw new IllegalStateException("Routine delayed (RTD) is true, cannot build as SPECI");
+            }
+            return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[] { SPECI.class }, new SPECIInvocationHandler(this.buildPartial()));
+        }
+
+        public Builder withCompleteIssueTime(final YearMonth yearMonth) {
+            return mutateIssueTime((input) -> input.completePartialAt(yearMonth));
+        }
+
+        public Builder withCompleteIssueTimeNear(final ZonedDateTime reference) {
+            return mutateIssueTime((input) -> input.completePartialNear(reference));
+        }
+
+        public Builder withCompleteForecastTimes(final YearMonth issueYearMonth, final int issueDay, final int issueHour, final ZoneId tz)
+                throws IllegalArgumentException {
+            requireNonNull(issueYearMonth, "issueYearMonth");
+            requireNonNull(tz, "tz");
+            return withCompleteForecastTimes(
+                    ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz));
+        }
+
+        public Builder withCompleteForecastTimes(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return mapTrends(trends -> completeTrendTimes(trends, reference));
+        }
+
+        public Builder withAllTimesComplete(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return withCompleteIssueTimeNear(reference)//
+                    .withCompleteForecastTimes(getIssueTimeBuilder().getCompleteTime().orElse(reference));
         }
 
         @Override
@@ -307,13 +320,14 @@ public abstract class METARImpl implements METAR, Serializable {
             if (getRunwayStates().isPresent()) {
                 List<RunwayState> oldStates = getRunwayStates().get();
                 List<RunwayState> newStates = new ArrayList<>(oldStates.size());
-                for (RunwayState state:oldStates) {
+                for (RunwayState state : oldStates) {
                     if (state.getRunwayDirection().isPresent()) {
                         if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
                             RunwayStateImpl.Builder builder = RunwayStateImpl.immutableCopyOf(state).toBuilder();
-                            builder.setRunwayDirection(
-                                    RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection().get()).toBuilder()
-                                            .setAssociatedAirportHeliport(aerodrome).build());
+                            builder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection().get())
+                                    .toBuilder()
+                                    .setAssociatedAirportHeliport(aerodrome)
+                                    .build());
 
                             newStates.add(builder.build());
                         }
@@ -324,12 +338,11 @@ public abstract class METARImpl implements METAR, Serializable {
             if (getRunwayVisualRanges().isPresent()) {
                 List<RunwayVisualRange> oldRanges = getRunwayVisualRanges().get();
                 List<RunwayVisualRange> newRanges = new ArrayList<>(oldRanges.size());
-                for (RunwayVisualRange range:oldRanges) {
+                for (RunwayVisualRange range : oldRanges) {
                     if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
                         RunwayVisualRangeImpl.Builder builder = RunwayVisualRangeImpl.immutableCopyOf(range).toBuilder();
                         builder.setRunwayDirection(
-                                RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection()).toBuilder()
-                                        .setAssociatedAirportHeliport(aerodrome).build());
+                                RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection()).toBuilder().setAssociatedAirportHeliport(aerodrome).build());
                         newRanges.add(builder.build());
                     }
                 }
@@ -418,7 +431,7 @@ public abstract class METARImpl implements METAR, Serializable {
     }
 
     static class SPECIInvocationHandler implements InvocationHandler {
-        private METARImpl delegate;
+        private final METARImpl delegate;
 
         SPECIInvocationHandler(final METARImpl delegate) {
             this.delegate = delegate;
@@ -431,8 +444,8 @@ public abstract class METARImpl implements METAR, Serializable {
                 return delegateMethod.invoke(delegate, args);
             } catch (NoSuchMethodException nsme) {
                 throw new RuntimeException("SPECI method " + method.getName() + "(" + Arrays.toString(method.getParameterTypes()) + ") not implemented by "
-                        + METARImpl.class.getSimpleName()
-                                + ", cannot delegate. Make sure that " + METARImpl.class.getCanonicalName() + " implements all SPECI methods");
+                        + METARImpl.class.getSimpleName() + ", cannot delegate. Make sure that " + METARImpl.class.getCanonicalName()
+                        + " implements all SPECI methods");
             }
         }
 

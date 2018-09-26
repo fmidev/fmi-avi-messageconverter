@@ -10,7 +10,6 @@ import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
 
 /**
  * A generic interface for all aviation related weather reports and forecasts.
- *
  */
 
 public interface AviationWeatherMessage {
@@ -23,8 +22,7 @@ public interface AviationWeatherMessage {
      *
      * @return the fully resolved issue time
      *
-     * @see PartialOrCompleteTimeInstant.Builder#completedWithIssueYearMonth(YearMonth)
-     *
+     * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
      */
     PartialOrCompleteTimeInstant getIssueTime();
 
@@ -43,28 +41,28 @@ public interface AviationWeatherMessage {
      * @return permissible usage,
      */
     Optional<PermissibleUsage> getPermissibleUsage();
-    
+
     /**
      * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
      *
      * @return permissible usage reason,
      */
     Optional<PermissibleUsageReason> getPermissibleUsageReason();
-    
+
     /**
      * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
      *
      * @return permissible usage supplementary
      */
     Optional<String> getPermissibleUsageSupplementary();
-    
+
     /**
      * Indication of the message has been created by automatic translation from another format.
      *
      * @return true if the message has been translated
      */
     boolean isTranslated();
-    
+
     /**
      * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
      *
@@ -78,28 +76,28 @@ public interface AviationWeatherMessage {
      * @return reception time of the original bulletin (if available)
      */
     Optional<ZonedDateTime> getTranslatedBulletinReceptionTime();
-    
+
     /**
      * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
      *
      * @return translation centre designator (if available)
      */
     Optional<String> getTranslationCentreDesignator();
-    
+
     /**
      * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
      *
      * @return translation centre name (if available)
      */
     Optional<String> getTranslationCentreName();
-    
+
     /**
      * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
      *
      * @return time the translation occurred
      */
     Optional<ZonedDateTime> getTranslationTime();
-    
+
     /**
      * Returns the original TAC format message, if available.
      *

@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -142,7 +143,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
         public Builder() {
             getPartialTime().ifPresent(partialTime -> //
                     getCompleteTime().ifPresent(completeTime -> {
-                        if (!partialTime.represents(completeTime)) {
+                        if (!partialTime.representsStrict(completeTime)) {
                             throw new IllegalStateException(String.format("completeTime %s does not represent partialTime %s", completeTime, partialTime));
                         }
                     }));
@@ -160,7 +161,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             }
         }
 
-        public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonth(final YearMonth issueYearMonth) {
+        public Builder completePartialAt(final YearMonth issueYearMonth) {
             if (getPartialTime().isPresent()) {
                 return setCompleteTime(getPartialTime().get().toZonedDateTime(issueYearMonth));
             } else if (getCompleteTime().isPresent()) {
@@ -170,7 +171,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             }
         }
 
-        public PartialOrCompleteTimeInstant.Builder completedWithIssueYearMonthDay(final YearMonth issueYearMonth, final int issueDayOfMonth) {
+        public Builder completePartialAt(final YearMonth issueYearMonth, final int issueDayOfMonth) {
             if (getPartialTime().isPresent()) {
                 return setCompleteTime(getPartialTime().get().toZonedDateTime(issueYearMonth.atDay(issueDayOfMonth)));
             } else if (getCompleteTime().isPresent()) {
@@ -179,6 +180,16 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             } else {
                 throw new IllegalStateException("Neither of partialTime or completeTime is present");
             }
+        }
+
+        public Builder completePartialNear(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return completePartial(partial -> partial.toZonedDateTimeNear(reference));
+        }
+
+        public Builder completePartial(final Function<PartialDateTime, ZonedDateTime> completion) {
+            requireNonNull(completion, "completion");
+            return setCompleteTime(getPartialTime().map(completion));
         }
     }
 }
