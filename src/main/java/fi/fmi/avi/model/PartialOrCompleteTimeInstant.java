@@ -137,7 +137,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
                         .orElse(OptionalInt.empty()));
     }
 
-    abstract Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends PartialOrCompleteTimeInstant_Builder {
         public Builder() {
