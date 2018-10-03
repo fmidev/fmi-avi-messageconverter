@@ -45,7 +45,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
         _WEATHER_CODES.put("+DZSNRA", "Heavy precipitation of drizzle, snow and rain");
         _WEATHER_CODES.put("+FZDZ", "Heavy precipitation of freezing drizzle");
         _WEATHER_CODES.put("+FZDZRA", "Heavy precipitation of freezing drizzle and rain");
-        _WEATHER_CODES.put("+FZRA", "Heavy precipitation of freezng rain");
+        _WEATHER_CODES.put("+FZRA", "Heavy precipitation of freezing rain");
         _WEATHER_CODES.put("+FZRADZ", "Heavy precipitation of freezing rain and drizzle");
         _WEATHER_CODES.put("+FZUP", "Heavy unidentified freezing precipitation");
         _WEATHER_CODES.put("+PL", "Heavy precipitation of ice pellets");
@@ -432,6 +432,29 @@ public abstract class WeatherImpl implements Weather, Serializable {
         _WEATHER_CODES.put("VCSS", "Sandstorm in the vicinity");
         _WEATHER_CODES.put("VCTS", "Thunderstorm in the vicinity");
         _WEATHER_CODES.put("VCVA", "Volcanic ash in the vicinity");
+
+        //The following combination codes are missing from the WMO code list at https://codes.wmo.int/306/4678
+        _WEATHER_CODES.put("FZRASN", "Precipitation of freezing rain and snow");
+        _WEATHER_CODES.put("FZRAPL", "Precipitation of freezing rain and ice pellets");
+        _WEATHER_CODES.put("FZRASG", "Precipitation of freezing rain and snow grains");
+        _WEATHER_CODES.put("FZDZSG", "Precipitation of freezing drizzle and snow grains");
+        _WEATHER_CODES.put("FZDZSN", "Precipitation of freezing drizzle and snow");
+        _WEATHER_CODES.put("FZDZPL", "Precipitation of freezing drizzle and ice pellets");
+
+        _WEATHER_CODES.put("-FZRASN", "Light precipitation of freezing rain and snow");
+        _WEATHER_CODES.put("-FZRAPL", "Light precipitation of freezing rain and ice pellets");
+        _WEATHER_CODES.put("-FZRASG", "Light precipitation of freezing rain and snow grains");
+        _WEATHER_CODES.put("-FZDZSG", "Light precipitation of freezing drizzle and snow grains");
+        _WEATHER_CODES.put("-FZDZSN", "Light precipitation of freezing drizzle and snow");
+        _WEATHER_CODES.put("-FZDZPL", "Light precipitation of freezing drizzle and ice pellets");
+
+        _WEATHER_CODES.put("+FZRASN", "Heavy precipitation of freezing rain and snow");
+        _WEATHER_CODES.put("+FZRAPL", "Heavy precipitation of freezing rain and ice pellets");
+        _WEATHER_CODES.put("+FZRASG", "Heavy precipitation of freezing rain and snow grains");
+        _WEATHER_CODES.put("+FZDZSG", "Heavy precipitation of freezing drizzle and snow grains");
+        _WEATHER_CODES.put("+FZDZSN", "Heavy precipitation of freezing drizzle and snow");
+        _WEATHER_CODES.put("+FZDZPL", "Heavy precipitation of freezing drizzle and ice pellets");
+
         WEATHER_CODES = Collections.unmodifiableMap(_WEATHER_CODES);
     }
 
