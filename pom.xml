@@ -11,7 +11,7 @@
   <description>Aviation weather message conversions</description>
   <groupId>fi.fmi.avi.converter</groupId>
   <artifactId>fmi-avi-messageconverter</artifactId>
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.2-SNAPSHOT</version>
 
   <scm>
     <connection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</connection>
@@ -31,6 +31,31 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <repositories>
+   <repository>
+    <id>fmi-os-mvn-snapshot-repo</id>
+    <url>https://raw.githubusercontent.com/fmidev/fmi-os-mvn-snapshot-repo/master</url>
+    <snapshots>
+      <enabled>true</enabled>
+      <updatePolicy>always</updatePolicy>
+    </snapshots>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+  </repository> 
+  <repository>
+    <id>fmi-os-mvn-release-repo</id>
+    <url>https://raw.githubusercontent.com/fmidev/fmi-os-mvn-repo/master</url>
+    <snapshots>
+      <enabled>false</enabled>
+    </snapshots>
+    <releases>
+      <enabled>true</enabled>
+      <updatePolicy>daily</updatePolicy>
+    </releases>
+  </repository>
+</repositories>  
 
   <dependencies>
     <dependency>
@@ -110,6 +135,21 @@
       <artifactId>guava-testlib</artifactId>
       <version>26.0-jre</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.locationtech.jts</groupId>
+      <artifactId>jts-core</artifactId>
+      <version>1.15.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.locationtech.jts.io</groupId>
+      <artifactId>jts-io-common</artifactId>
+      <version>1.15.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.betadriven</groupId>
+      <artifactId>jackson-datatype-jts</artifactId>
+      <version>2.6-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
