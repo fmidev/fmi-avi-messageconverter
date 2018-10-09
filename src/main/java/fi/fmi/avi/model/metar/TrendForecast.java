@@ -1,61 +1,37 @@
 package fi.fmi.avi.model.metar;
 
-import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.Weather;
-
 
 public interface TrendForecast extends AviationCodeListUser {
 
-    TrendTimeGroups getTimeGroups();
+    Optional<PartialOrCompleteTimePeriod> getPeriodOfChange();
+
+    Optional<PartialOrCompleteTimeInstant> getInstantOfChange();
 
     boolean isCeilingAndVisibilityOk();
 
     TrendForecastChangeIndicator getChangeIndicator();
 
-    NumericMeasure getPrevailingVisibility();
+    Optional<NumericMeasure> getPrevailingVisibility();
 
-    RelationalOperator getPrevailingVisibilityOperator();
+    Optional<RelationalOperator> getPrevailingVisibilityOperator();
 
-    TrendForecastSurfaceWind getSurfaceWind();
+    Optional<TrendForecastSurfaceWind> getSurfaceWind();
 
-    List<Weather> getForecastWeather();
-
-    List<String> getForecastWeatherCodes();
+    Optional<List<Weather>> getForecastWeather();
 
     boolean isNoSignificantWeather();
 
-    CloudForecast getCloud();
+    Optional<CloudForecast> getCloud();
 
-    ColorState getColorState();
-
-    /**
-     * Sets the time groups of the trend forecast.
-     *
-     * @param timeGroups the time groups
-     */
-    void setTimeGroups(TrendTimeGroups timeGroups);
-
-    void setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
-
-    void setChangeIndicator(TrendForecastChangeIndicator changeIndicator);
-
-    void setPrevailingVisibility(NumericMeasure prevailingVisibility);
-
-    void setPrevailingVisibilityOperator(RelationalOperator prevailingVisibilityOperator);
-
-    void setSurfaceWind(TrendForecastSurfaceWind surfaceWind);
-
-    void setForecastWeather(List<Weather> forecastWeather);
-
-    void setNoSignificantWeather(boolean nsw);
-
-    void setCloud(CloudForecast cloud);
-
-    void setColorState(ColorState color);
+    Optional<ColorState> getColorState();
 
 }

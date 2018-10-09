@@ -1,19 +1,17 @@
 package fi.fmi.avi.model.metar;
 
 import java.util.List;
+import java.util.Optional;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.RunwayDirection;
 
 public interface WindShear extends AviationCodeListUser {
 
-    boolean isAllRunways();
+    boolean isAppliedToAllRunways();
 
-    List<RunwayDirection> getRunwayDirections();
+    Optional<List<RunwayDirection>> getRunwayDirections();
 
 
-    void setAllRunways(boolean allRunways);
-
-    void setRunwayDirections(List<RunwayDirection> runwayDirections);
 
 }

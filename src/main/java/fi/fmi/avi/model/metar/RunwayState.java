@@ -1,66 +1,44 @@
 package fi.fmi.avi.model.metar;
 
+import java.util.Optional;
+
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.RunwayDirection;
 
 public interface RunwayState extends AviationCodeListUser {
 
-    boolean isAllRunways();
+    boolean isAppliedToAllRunways();
 
     boolean isCleared();
 
     boolean isEstimatedSurfaceFrictionUnreliable();
 
-    boolean isSnowClosure();
-    
     boolean isRepetition();
-    
+
     boolean isDepthNotMeasurable();
-    
+
+    boolean isDepthInsignificant();
+
     boolean isRunwayNotOperational();
 
-    RunwayDirection getRunwayDirection();
+    Optional<RunwayDirection> getRunwayDirection();
 
-    RunwayDeposit getDeposit();
+    Optional<RunwayDeposit> getDeposit();
 
-    RunwayContamination getContamination();
+    Optional<RunwayContamination> getContamination();
 
-    NumericMeasure getDepthOfDeposit();
-    
-    RelationalOperator getDepthOperator();
+    Optional<NumericMeasure> getDepthOfDeposit();
 
-    Double getEstimatedSurfaceFriction();
-    
-    BreakingAction getBreakingAction();
-    
+    Optional<RelationalOperator> getDepthOperator();
 
-    void setAllRunways(boolean allRunways);
+    /**
+     * The estimated surface friction, if known. The value shall be between 0.00 and 0.98.
+     *
+     * @return
+     */
+    Optional<Double> getEstimatedSurfaceFriction();
 
-    void setCleared(boolean cleared);
-
-    void setEstimatedSurfaceFrictionUnreliable(boolean estimatedSurfaceFrictionUnreliable);
-
-    void setSnowClosure(boolean snowClosure);
-    
-    void setRepetition(boolean repetition);
-    
-    void setDepthNotMeasurable(boolean notMeasurable);
-    
-    void setRunwayNotOperational(boolean notOperational);
-
-    void setRunwayDirection(RunwayDirection runwayDirection);
-
-    void setDeposit(RunwayDeposit deposit);
-
-    void setContamination(RunwayContamination contamination);
-
-    void setDepthOfDeposit(NumericMeasure depthOfDeposit);
-   
-    void setDepthOperator(RelationalOperator operator); 
-
-    void setEstimatedSurfaceFriction(Double estimatedSurfaceFriction);
-    
-    void setBreakingAction(BreakingAction action);
+    Optional<BrakingAction> getBrakingAction();
 
 }

@@ -1,14 +1,10 @@
 package fi.fmi.avi.model;
 
+import java.util.Optional;
 
 public interface Weather {
 
     String getCode();
 
-    String getDescription();
-
-    void setCode(final String code);
-
-    void setDescription(final String description);
-
+    Optional<String> getDescription();
 }

@@ -7,13 +7,8 @@ import static fi.fmi.avi.model.AviationCodeListUser.RelationalOperator.BELOW;
  */
 public interface AviationCodeListUser {
 
-    String CODELIST_AERODROME_PRESENT_OR_FORECAST_WEATHER = "http://codes.wmo.int/49-2/AerodromePresentOrForecastWeather";
-    String CODELIST_AERODROME_RECENT_WEATHER = "http://codes.wmo.int/49-2/AerodromeRecentWeather";
     String CODELIST_CLOUD_AMOUNT_REPORTED_AT_AERODROME = "http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome";
     String CODELIST_SIGNIFICANT_CONVECTIVE_CLOUD_TYPE = "http://codes.wmo.int/49-2/SigConvectiveCloudType";
-    String CODELIST_SEA_SURFACE_STATE = "http://codes.wmo.int/bufr4/codeflag/0-22-061";
-    String CODELIST_RUNWAY_DEPOSITS = "http://codes.wmo.int/bufr4/codeflag/0-20-086";
-    String CODELIST_RUNWAY_CONTAMINATION = "http://codes.wmo.int/bufr4/codeflag/0-20-087";
 
     String CODELIST_VALUE_PREFIX_SIG_WEATHER = "http://codes.wmo.int/306/4678/";
     String CODELIST_VALUE_PREFIX_CLOUD_AMOUNT_REPORTED_AT_AERODROME = "http://codes.wmo.int/bufr4/codeflag/0-20-008/";
@@ -21,6 +16,23 @@ public interface AviationCodeListUser {
     String CODELIST_VALUE_PREFIX_SEA_SURFACE_STATE = "http://codes.wmo.int/bufr4/codeflag/0-22-061/";
     String CODELIST_VALUE_PREFIX_RUNWAY_DEPOSITS = "http://codes.wmo.int/bufr4/codeflag/0-20-086/";
     String CODELIST_VALUE_PREFIX_RUNWAY_CONTAMINATION = "http://codes.wmo.int/bufr4/codeflag/0-20-087/";
+    String CODELIST_VALUE_PREFIX_RUNWAY_SURFACE_FRICTION_OR_BRAKING_ACTION = "http://codes.wmo.int/bufr4/codeflag/0-20-089/";
+
+    String CODELIST_VALUE_NIL_REASON_NOTHING_OF_OPERATIONAL_SIGNIFICANCE = "http://codes.wmo.int/common/nil/nothingOfOperationalSignificance";
+    String CODELIST_VALUE_NIL_REASON_NOT_OBSERVABLE = "http://codes.wmo.int/common/nil/notObservable";
+    String CODELIST_VALUE_NIL_REASON_NOT_DETECTED_BY_AUTO_SYSTEM = "http://codes.wmo.int/common/nil/notDetectedByAutoSystem";
+    String CODELIST_VALUE_NIL_REASON_NO_SIGNIFICANT_CHANGE = "http://codes.wmo.int/common/nil/noSignificantChange";
+
+    String MET_AERODROME_FORECAST_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeForecast";
+    String MET_AERODROME_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeForecast";
+    String TAF_PROCEDURE_DESCRIPTION = "WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 5 TECHNICAL SPECIFICATIONS RELATED TO FORECASTS";
+
+    String MET_AERODROME_OBSERVATION_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeObservation";
+    String MET_AERODROME_OBSERVATION_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeObservation";
+    String METAR_PROCDURE_DESCRIPTION = "WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 3 TECHNICAL SPECIFICATIONS RELATED TO METEOROLOGICAL OBSERVATIONS AND REPORTS";
+
+    String TREND_FORECAST_OBSERVATION_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeTrendForecast";
+    String TREND_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeTrendForecast";
 
     enum MetarStatus {
         NORMAL(0), CORRECTION(1), MISSING(2);
@@ -96,13 +108,15 @@ public interface AviationCodeListUser {
     }
 
     enum VisualRangeTendency {
-        UPWARD(0), NO_CHANGE(1), DOWNWARD(2);
+        UPWARD(0), NO_CHANGE(1), DOWNWARD(2), MISSING_VALUE(3);
 
         public static VisualRangeTendency fromInt(final int code) {
             switch(code) {
                 case 0: return UPWARD;
                 case 1: return NO_CHANGE;
                 case 2: return DOWNWARD;
+                case 3:
+                    return MISSING_VALUE;
                 default: throw new IllegalArgumentException("No value for code " + code);
             }
         }
@@ -120,7 +134,8 @@ public interface AviationCodeListUser {
     }
 
     enum CloudAmount {
-        SKC(0), FEW(1), SCT(2), BKN(3), OVC(4), ISOL(8), OCNL(10), FRQ(12), LYR(14), EMBD(16);
+        SKC(0), FEW(1), SCT(2), BKN(3), OVC(4), SCT_BKN(6), BKN_OVC(7),//
+        ISOL(8), ISOL_EMBD(9), OCNL(10), OCNL_EMBD(11), FRQ(12), DENSE(13), LYR(14), OBSC(15), EMBD(16), FRQ_EMDB(17), MISSING(31);
 
         public static CloudAmount fromInt(final int code) {
             switch(code) {
@@ -129,11 +144,27 @@ public interface AviationCodeListUser {
                 case 2: return SCT;
                 case 3: return BKN;
                 case 4: return OVC;
+                case 6:
+                    return SCT_BKN;
+                case 7:
+                    return BKN_OVC;
                 case 8: return ISOL;
+                case 9:
+                    return ISOL_EMBD;
                 case 10: return OCNL;
+                case 11:
+                    return OCNL_EMBD;
                 case 12: return FRQ;
+                case 13:
+                    return DENSE;
                 case 14: return LYR;
+                case 15:
+                    return OBSC;
                 case 16: return EMBD;
+                case 17:
+                    return FRQ_EMDB;
+                case 31:
+                    return MISSING;
                 default: throw new IllegalArgumentException("No value for code " + code);
             }
         }
@@ -261,23 +292,23 @@ public interface AviationCodeListUser {
         }
     }
 
-    enum BreakingAction {
+    enum BrakingAction {
         POOR(91), MEDIUM_POOR(92), MEDIUM(93), MEDIUM_GOOD(94), GOOD(95);
 
         private final int code;
 
-        public static BreakingAction fromInt(final int code) {
+        public static BrakingAction fromInt(final int code) {
             switch(code) {
                 case 91: return POOR;
                 case 92: return MEDIUM_POOR;
-                case 93: return BreakingAction.MEDIUM;
+                case 93: return MEDIUM;
                 case 94: return MEDIUM_GOOD;
                 case 95: return GOOD;
                 default: return null;
             }
         }
 
-        BreakingAction(final int code) {
+        BrakingAction(final int code) {
             this.code = code;
         }
 
@@ -287,11 +318,10 @@ public interface AviationCodeListUser {
     }
 
     enum TrendForecastChangeIndicator {
-        NO_SIGNIFICANT_CHANGES(0), BECOMING(1), TEMPORARY_FLUCTUATIONS(2);
+        BECOMING(1), TEMPORARY_FLUCTUATIONS(2);
 
         public static TrendForecastChangeIndicator fromInt(final int code) {
             switch (code) {
-                case 0: return NO_SIGNIFICANT_CHANGES;
                 case 1: return BECOMING;
                 case 2: return TEMPORARY_FLUCTUATIONS;
                 default: throw new IllegalArgumentException("No value for code " + code);

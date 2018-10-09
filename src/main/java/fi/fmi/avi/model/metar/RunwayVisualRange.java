@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.metar;
 
+import java.util.Optional;
+
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.RunwayDirection;
@@ -8,35 +10,18 @@ public interface RunwayVisualRange extends AviationCodeListUser {
 
     RunwayDirection getRunwayDirection();
 
-    NumericMeasure getMeanRVR();
+    Optional<NumericMeasure> getMeanRVR();
 
-    NumericMeasure getVaryingRVRMinimum();
+    Optional<NumericMeasure> getVaryingRVRMinimum();
 
-    NumericMeasure getVaryingRVRMaximum();
+    Optional<NumericMeasure> getVaryingRVRMaximum();
 
-    RelationalOperator getMeanRVROperator();
-    
-    RelationalOperator getVaryingRVRMinimumOperator();
-    
-    RelationalOperator getVaryingRVRMaximumOperator();
+    Optional<RelationalOperator> getMeanRVROperator();
 
-    VisualRangeTendency getPastTendency();
+    Optional<RelationalOperator> getVaryingRVRMinimumOperator();
 
+    Optional<RelationalOperator> getVaryingRVRMaximumOperator();
 
-    void setRunwayDirection(RunwayDirection runwayDirection);
-
-    void setMeanRVR(NumericMeasure meanRVR);
-
-    void setVaryingRVRMinimum(NumericMeasure minimum);
-
-    void setVaryingRVRMaximum(NumericMeasure maximum);
-
-    void setMeanRVROperator(RelationalOperator meanRVROperator);
-    
-    void setVaryingRVRMinimumOperator(RelationalOperator minRVROperator);
-    
-    void setVaryingRVRMaximumOperator(RelationalOperator maxRVROperator);
-
-    void setPastTendency(VisualRangeTendency pastTendency);
+    Optional<VisualRangeTendency> getPastTendency();
 
 }

@@ -1,97 +1,221 @@
 package fi.fmi.avi.model;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import static java.util.Objects.requireNonNull;
 
+import java.time.YearMonth;
+import java.time.ZonedDateTime;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fi.fmi.avi.model.PartialDateTime.PartialField;
 
 /**
- * Created by rinne on 27/10/17.
+ * Created by rinne on 04/04/2018.
  */
-public interface PartialOrCompleteTimePeriod {
+@FreeBuilder
+@JsonDeserialize(builder = PartialOrCompleteTimePeriod.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({ "startTime", "endTime" })
+public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime {
 
-    String getPartialStartTime();
+    private static final Pattern DAY_HOUR_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<startHour>[0-9]{2})(?<endHour>[0-9]{2})$");
+    private static final Pattern DAY_HOUR_DAY_HOUR_PATTERN = Pattern.compile(
+            "^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
 
-    int getStartTimeDay();
+    public static PartialOrCompleteTimePeriod createValidityTimeDHDH(final String partialTimePeriod) throws IllegalArgumentException {
+        final Matcher matcher = DAY_HOUR_DAY_HOUR_PATTERN.matcher(partialTimePeriod);
+        if (matcher.matches()) {
+            return new PartialOrCompleteTimePeriod.Builder()//
+                    .setStartTime(PartialOrCompleteTimeInstant.of(
+                            PartialDateTime.ofDayHour(TimePatternGroup.startDay.intValue(matcher), TimePatternGroup.startHour.intValue(matcher))))//
+                    .setEndTime(PartialOrCompleteTimeInstant.of(
+                            PartialDateTime.ofDayHour(TimePatternGroup.endDay.intValue(matcher), TimePatternGroup.endHour.intValue(matcher))))//
+                    .build();
+        } else {
+            throw new IllegalArgumentException("time period does not match pattern " + DAY_HOUR_DAY_HOUR_PATTERN);
+        }
+    }
 
-    int getStartTimeHour();
+    public static PartialOrCompleteTimePeriod createValidityTimeDHH(final String partialTimePeriod) throws IllegalArgumentException {
+        final Matcher matcher = DAY_HOUR_HOUR_PATTERN.matcher(partialTimePeriod);
+        if (matcher.matches()) {
+            return new PartialOrCompleteTimePeriod.Builder()//
+                    .setStartTime(PartialOrCompleteTimeInstant.of(
+                            PartialDateTime.ofDayHour(TimePatternGroup.day.intValue(matcher), TimePatternGroup.startHour.intValue(matcher))))//
+                    .setEndTime(PartialOrCompleteTimeInstant.of(
+                            PartialDateTime.ofDayHour(TimePatternGroup.day.intValue(matcher), TimePatternGroup.endHour.intValue(matcher))))//
+                    .build();
+        } else {
+            throw new IllegalArgumentException("time period does not match pattern " + DAY_HOUR_HOUR_PATTERN);
+        }
+    }
 
-    int getStartTimeMinute();
+    public static PartialOrCompleteTimePeriod createValidityTime(final String partialTimePeriod) throws IllegalArgumentException {
+        try {
+            return createValidityTimeDHDH(partialTimePeriod);
+        } catch (final IllegalArgumentException iae) {
+            return createValidityTimeDHH(partialTimePeriod);
+        }
+    }
 
-    ZonedDateTime getCompleteStartTime();
+    public abstract Optional<PartialOrCompleteTimeInstant> getStartTime();
 
-    String getCompleteStartTimeAsISOString();
+    public abstract Optional<PartialOrCompleteTimeInstant> getEndTime();
 
-
-    String getPartialEndTime();
-
-    int getEndTimeDay();
-
-    int getEndTimeHour();
-
-    int getEndTimeMinute();
-
-    ZonedDateTime getCompleteEndTime();
-
-    String getCompleteEndTimeAsISOString();
-
-    /**
-     * Sets the partial start time using the implementation specific pattern.
-     * Sets he complete start time to null.
-     *
-     * @param time the time as String
-     */
-    void setPartialStartTime(String time);
-
-    /**
-     * Sets the partial start time using day, hour and minute.
-     *
-     * Sets the complete start time to null.
-     *
-     * @param day the start day-of-month
-     * @param hour the start hour-of-day
-     * @param minute the start minute-of-hour
-     */
-    void setPartialStartTime(int day, int hour, int minute);
-
-
-    void setCompleteStartTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone);
-
-    void setCompleteStartTime(ZonedDateTime time);
-
-    void setCompleteStartTimeAsISOString(String isoDateTime);
-
-    /**
-     * Sets the partial start time using the implementation specific pattern.
-     *
-     * Sets the complete end time to null.
-     *
-     * @param time the time as String
-     */
-    void setPartialEndTime(String time);
+    public abstract Builder toBuilder();
 
     /**
-     * Sets the complete end time to null.
+     * Indicates whether present startTime and/or endTime are complete. Empty startTime or endTime is considered as complete.
      *
-     * @param day the end day-of-month
-     * @param hour the end hour-of-day
-     * @param minute the end minute-of-hour
+     * @return {@code true} if present times are complete, {@code false} otherwise
      */
-    void setPartialEndTime(int day, int hour, int minute);
+    @JsonIgnore
+    public boolean isComplete() {
+        final Optional<PartialOrCompleteTimeInstant> start = getStartTime();
+        final Optional<PartialOrCompleteTimeInstant> end = getEndTime();
+        if (start.isPresent()) {
+            if (!start.get().getCompleteTime().isPresent()) {
+                return false;
+            }
+        }
+        if (end.isPresent()) {
+            return end.get().getCompleteTime().isPresent();
+        }
+        return true;
+    }
 
-    void setCompleteEndTime(int year, int monthOfYear, int dayOfMonth, int hour, int minute, ZoneId timeZone);
+    /**
+     * Indicates whether both startTime and endTime are present and contain completeTime.
+     *
+     * @return {@code true} if both startTime and endTime are present and contain completeTime, {@code false} otherwise
+     */
+    @JsonIgnore
+    public boolean isCompleteStrict() {
+        return getStartTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent() //
+                && getEndTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent();
+    }
 
-    void setCompleteEndTime(ZonedDateTime time);
+    private enum TimePatternGroup {
+        day, startDay, endDay, hour, startHour, endHour, minute;
 
-    void setCompleteEndTimeAsISOString(String isoDateTime);
+        public int intValue(final Matcher matcher) {
+            return Integer.parseInt(stringValue(matcher));
+        }
 
+        public String stringValue(final Matcher matcher) {
+            return matcher.group(name());
+        }
+    }
 
-    boolean hasStartTime();
+    public static class Builder extends PartialOrCompleteTimePeriod_Builder {
+        public Builder setTrendTimeGroupToken(final String token) {
+            requireNonNull(token, "token");
+            final String kind = token.substring(0, Math.min(2, token.length()));
+            final String time = token.substring(Math.min(2, token.length()));
+            final PartialOrCompleteTimeInstant partial = PartialOrCompleteTimeInstant.of(
+                    PartialDateTime.parseTACStringStrict(time, EnumSet.of(PartialField.HOUR, PartialField.MINUTE), false));
+            if ("FM".equals(kind)) {
+                return setStartTime(partial);
+            } else if ("TL".equals(kind)) {
+                return setEndTime(partial);
+            } else {
+                throw new IllegalArgumentException("token does not begin with FM or TL: " + token);
+            }
+        }
 
-    boolean hasEndTime();
+        @Override
+        public Builder setEndTime(final PartialOrCompleteTimeInstant time) {
+            return super.setEndTime(tryToMidnight24h(time));
+        }
 
-    boolean isStartTimeComplete();
+        private PartialOrCompleteTimeInstant tryToMidnight24h(final PartialOrCompleteTimeInstant time) {
+            if (time.getPartialTime().map(PartialDateTime::isMidnight24h).orElse(true) || !time.getCompleteTime().isPresent()) {
+                return time;
+            }
+            final ZonedDateTime completeTime = time.getCompleteTime().get();
+            return time.toBuilder()//
+                    .mapPartialTime(partialTime -> partialTime.withMidnight24h(YearMonth.from(completeTime)))//
+                    .build();
+        }
 
-    boolean isEndTimeComplete();
+        /**
+         * Equivalent to {@code completePartial(partial -> partial.toZonedDateTimeNear(reference))}.
+         *
+         * @param reference
+         *         reference time
+         *
+         * @return this builder
+         */
+        public Builder completePartialStartingNear(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return completePartial(partial -> partial.toZonedDateTimeNear(reference));
+        }
 
-    boolean endsAtMidnight();
+        /**
+         * Set the complete times of start and end time.
+         * Start time is completed by applying the provided {@code startCompletion} function. End time is completed to an instant after start time. If start
+         * time is empty, the {@code startCompletion} function is applied to end time.
+         *
+         * @param startCompletion
+         *         function to complete start time from given {@code PartialDateTime} to a complete {@code ZonedDateTime}
+         *
+         * @return this builder
+         */
+        public Builder completePartial(final Function<PartialDateTime, ZonedDateTime> startCompletion) {
+            requireNonNull(startCompletion, "startCompletion");
+            mapStartTime(partialOrComplete -> partialOrComplete.toBuilder().completePartial(startCompletion).build());
+            return mapEndTime(partialOrComplete -> partialOrComplete.toBuilder()//
+                    .completePartial(getStartTime()//
+                            .flatMap(PartialOrCompleteTimeInstant::getCompleteTime)
+                            .map(completeTime -> (Function<PartialDateTime, ZonedDateTime>) partial -> partial.toZonedDateTimeAfter(completeTime))
+                            .orElse(startCompletion))//
+                    .build());
+        }
+
+        /**
+         * Equivalent to {@code completePartialBackwards(partial -> partial.toZonedDateTimeNear(reference))}.
+         *
+         * @param reference
+         *         reference time
+         *
+         * @return this builder
+         */
+        public Builder completePartialEndingNear(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return completePartialBackwards(partial -> partial.toZonedDateTimeNear(reference));
+        }
+
+        /**
+         * Set the complete times of start and end time backwards.
+         * End time is completed by applying the provided {@code startCompletion} function. Start time is completed to an instant before end time. If end
+         * time is empty, the {@code startCompletion} function is applied to start time.
+         *
+         * @param endCompletion
+         *         function to complete end time from given {@code PartialDateTime} to a complete {@code ZonedDateTime}
+         *
+         * @return this builder
+         */
+        public Builder completePartialBackwards(final Function<PartialDateTime, ZonedDateTime> endCompletion) {
+            requireNonNull(endCompletion, "endCompletion");
+            mapEndTime(partialOrComplete -> partialOrComplete.toBuilder()//
+                    .completePartial(endCompletion)//
+                    .build());
+            return mapStartTime(partialOrComplete -> partialOrComplete.toBuilder()//
+                    .completePartial(getStartTime()//
+                            .flatMap(PartialOrCompleteTimeInstant::getCompleteTime)//
+                            .map(zonedDateTime -> (Function<PartialDateTime, ZonedDateTime>) partial -> partial.toZonedDateTimeBefore(zonedDateTime))//
+                            .orElse(endCompletion))//
+                    .build());
+        }
+    }
 }

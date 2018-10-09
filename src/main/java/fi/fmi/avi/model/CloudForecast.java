@@ -1,19 +1,18 @@
 package fi.fmi.avi.model;
 
 import java.util.List;
+import java.util.Optional;
+
 
 public interface CloudForecast extends AviationCodeListUser {
 
-	boolean isNoSignificantCloud();
-	  
-    NumericMeasure getVerticalVisibility();
-    
-    void setNoSignificantCloud(boolean nsc);
+    boolean isNoSignificantCloud();
 
-    void setVerticalVisibility(NumericMeasure verticalVisibility);
+    boolean isVerticalVisibilityMissing();
 
-    List<CloudLayer> getLayers();
+    Optional<NumericMeasure> getVerticalVisibility();
 
-    void setLayers(List<CloudLayer> layers);
+    Optional<List<CloudLayer>> getLayers();
+
 
 }

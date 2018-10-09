@@ -1,17 +1,13 @@
 package fi.fmi.avi.model;
 
+import java.util.Optional;
+
 public interface CloudLayer extends AviationCodeListUser {
 
-    CloudAmount getAmount();
+    Optional<CloudAmount> getAmount();
 
-    NumericMeasure getBase();
+    Optional<NumericMeasure> getBase();
 
-    CloudType getCloudType();
-
-    void setAmount(CloudAmount amount);
-
-    void setBase(NumericMeasure base);
-
-    void setCloudType(CloudType cloudType);
+    Optional<CloudType> getCloudType();
 
 }
