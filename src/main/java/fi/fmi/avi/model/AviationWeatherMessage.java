@@ -1,6 +1,5 @@
 package fi.fmi.avi.model;
 
-import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,19 +11,7 @@ import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
  * A generic interface for all aviation related weather reports and forecasts.
  */
 
-public interface AviationWeatherMessage {
-
-    /**
-     * Returns the issue time of the message.
-     * It the returned {@link PartialOrCompleteTimeInstant} may or may not contain
-     * a completely resolved date time depending on which information it was
-     * created with.
-     *
-     * @return the fully resolved issue time
-     *
-     * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
-     */
-    PartialOrCompleteTimeInstant getIssueTime();
+public interface AviationWeatherMessage extends AviationWeatherMessageOrCollection {
 
     /**
      * Returns the remarks, if included in the message.
@@ -66,7 +53,7 @@ public interface AviationWeatherMessage {
     /**
      * See https://schemas.wmo.int/iwxxm/2.1/common.xsd
      *
-     * @return bulleting id of the original message (if available),
+     * @return bulletin id of the original message (if available),
      */
     Optional<String> getTranslatedBulletinID();
 
