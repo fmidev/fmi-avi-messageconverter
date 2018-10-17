@@ -41,10 +41,6 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
 
     public static class Builder extends SeaStateImpl_Builder {
 
-        public Builder() {
-            setSeaSurfaceTemperatureUnobservableByAutoSystem(false);
-        }
-
         public static Builder from(final SeaState value) {
             if (value instanceof SeaStateImpl) {
                 return ((SeaStateImpl) value).toBuilder();
@@ -52,18 +48,9 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
                 return new SeaStateImpl.Builder()//
                         .setSeaSurfaceState(value.getSeaSurfaceState())//
                         .setSeaSurfaceTemperature(NumericMeasureImpl.immutableCopyOf(value.getSeaSurfaceTemperature()))//
-                        .setSeaSurfaceTemperatureUnobservableByAutoSystem(value.isSeaSurfaceTemperatureUnobservableByAutoSystem())//
                         .setSignificantWaveHeight(NumericMeasureImpl.immutableCopyOf(value.getSignificantWaveHeight()));
             }
 
-        }
-
-        @Override
-        public SeaStateImpl build() {
-            if (!this.getSeaSurfaceTemperature().isPresent() && !this.isSeaSurfaceTemperatureUnobservableByAutoSystem()) {
-                throw new IllegalStateException("seaSurfaceTemperatureUnobservableByAutoSystem must be true if the seaSurfaceTemperature is not given");
-            }
-            return super.build();
         }
 
         @Override
