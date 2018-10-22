@@ -13,9 +13,11 @@ import fi.fmi.avi.model.sigmet.SigmetAnalysis;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETImpl.Builder.class)
@@ -45,13 +47,23 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
     @Override
     @JsonIgnore
     public boolean areAllTimeReferencesComplete() {
+        if (!this.getValidityPeriod().isComplete()) {
+            return false;
+        }
+        if (this.getAnalysis().isPresent()) {
+            for (SigmetAnalysis sa : this.getAnalysis().get()){
+                if (sa.getAnalysisTime().isPresent()&&!sa.getAnalysisTime().get().getCompleteTime().isPresent()){
+                    return false;
+                }
+                if (sa.getForecastTime().isPresent()&&!sa.getForecastTime().get().getCompleteTime().isPresent()){
+                    return false;
+                }
+            }
+        }
+        if (this.getCancelledReference().isPresent()&&(!this.getCancelledReference().get().getValidityPeriod().isComplete())) {
+            return false;
+        }
         return true;
-    }
-
-    @Override
-    @JsonIgnore
-    public SIGMET createCancelSigmet() {
-        return null;
     }
 
     public static class Builder extends SIGMETImpl_Builder {
@@ -60,19 +72,38 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
             if (value instanceof SIGMETImpl) {
                 return ((SIGMETImpl) value).toBuilder();
             } else {
-                return new Builder()
-                        .setIssuingAirTrafficServicesUnit(value.getIssuingAirTrafficServicesUnit())
-                        .setMeteorologicalWatchOffice(value.getMeteorologicalWatchOffice())
-                        .setAnalysis(value.getAnalysis())
+                //From AviationWeatherMessage
+                Builder retval = new Builder()//
                         .setIssueTime(value.getIssueTime())
-                        .setStatus(value.getStatus())
-                        .setVolcanicAshMovedToFIR(value.getVolcanicAshMovedToFIR())
-                        .setCancelledReference(value.getCancelledReference())
-                        .setSigmetPhenomenon(value.getSigmetPhenomenon())
-                        .setValidityPeriod(value.getValidityPeriod())
+                        .setPermissibleUsage(value.getPermissibleUsage())
+                        .setPermissibleUsageReason(value.getPermissibleUsageReason())
+                        .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
+                        .setTranslated(value.isTranslated())
+                        .setTranslatedBulletinID(value.getTranslatedBulletinID())
+                        .setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime())
+                        .setTranslationCentreDesignator(value.getTranslationCentreDesignator())
+                        .setTranslationCentreName(value.getTranslationCentreName())
+                        .setTranslationTime(value.getTranslationTime())
+                        .setTranslatedTAC(value.getTranslatedTAC());
+
+                value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
+
+                //From AirTrafficServicesUnitWeatherMessage
+                        retval.setIssuingAirTrafficServicesUnit(UnitPropertyGroupImpl.immutableCopyOf(value.getIssuingAirTrafficServicesUnit()))
+                        .setMeteorologicalWatchOffice(UnitPropertyGroupImpl.immutableCopyOf(value.getMeteorologicalWatchOffice()));
+
+                //From Sigmet
+                retval.setStatus(value.getStatus())
                         .setSequenceNumber(value.getSequenceNumber())
-                        .setCancelledReference(value.getCancelledReference())
-                        ;
+                        .setValidityPeriod(value.getValidityPeriod())
+                        .setSigmetPhenomenon(value.getSigmetPhenomenon())
+                        .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))
+                        .setVolcanicAshMovedToFIR(value.getVolcanicAshMovedToFIR());
+
+                value.getAnalysis()
+                        .map(an -> retval.setAnalysis((Collections.unmodifiableList(an.stream().map(SigmetAnalysisImpl::immutableCopyOf).collect(Collectors.toList())))));
+
+                return retval;
             }
         }
 

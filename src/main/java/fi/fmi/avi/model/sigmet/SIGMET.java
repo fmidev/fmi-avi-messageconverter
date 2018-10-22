@@ -18,6 +18,4 @@ public interface SIGMET extends AirTrafficServicesUnitWeatherMessage, AviationCo
     public Optional<String> getVolcanicAshMovedToFIR();
 
     public SigmetReportStatus getStatus();
-
-    public SIGMET createCancelSigmet();
 }
