@@ -2,6 +2,7 @@ package fi.fmi.avi.model.taf.immutable;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -38,6 +39,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
             setContainingAmendedMessages(false);
             setContainingCorrectedMessages(false);
             setContainingDelayedMessages(false);
+            setBulletinAugmentationNumber(OptionalInt.empty());
         }
 
         public static Builder from(final TAFBulletinHeading value) {
@@ -55,12 +57,11 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
             }
         }
 
-        @Override
         public Builder setBulletinAugmentationNumber(final int bulletinAugmentationNumber) {
             if (bulletinAugmentationNumber < 1 || bulletinAugmentationNumber > 26) {
                 throw new IllegalArgumentException("Value must be between 1 and 26");
             }
-            return super.setBulletinAugmentationNumber(bulletinAugmentationNumber);
+            return super.setBulletinAugmentationNumber(OptionalInt.of(bulletinAugmentationNumber));
         }
 
         /**
@@ -75,7 +76,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
             if (!Character.isAlphabetic(asChar) || asChar < 'A' || asChar > 'Z') {
                 throw new IllegalArgumentException("Value must be between 'A' and 'Z'");
             }
-            return super.setBulletinAugmentationNumber(asChar - 'A' + 1);
+            return super.setBulletinAugmentationNumber(OptionalInt.of(asChar - 'A' + 1));
         }
     }
 }
