@@ -1,14 +1,12 @@
 package fi.fmi.avi.converter.json.conf;
 
+import fi.fmi.avi.converter.json.*;
+import fi.fmi.avi.model.sigmet.SIGMET;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionSpecification;
-import fi.fmi.avi.converter.json.METARJSONParser;
-import fi.fmi.avi.converter.json.METARJSONSerializer;
-import fi.fmi.avi.converter.json.TAFJSONParser;
-import fi.fmi.avi.converter.json.TAFJSONSerializer;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.taf.TAF;
 
@@ -32,6 +30,12 @@ public class JSONConverter {
             null, "METAR, fmi-avi-messageconverter JSON");
 
     /**
+     * Pre-configured spec for {@link SIGMET} to IWXXM 2.1 XML format TAF document String.
+     */
+    public static final ConversionSpecification<SIGMET, String> SIGMET_POJO_TO_JSON_STRING = new ConversionSpecification<>(SIGMET.class, String.class,
+            null, "SIGMET, fmi-avi-messageconverter JSON");
+
+    /**
      * Pre-configured spec for IWXXM 2.1 XML format TAF document String to {@link TAF}.
      */
     public static final ConversionSpecification<String, TAF> JSON_STRING_TO_TAF_POJO = new ConversionSpecification<>(String.class,TAF.class,
@@ -43,6 +47,13 @@ public class JSONConverter {
      */
     public static final ConversionSpecification<String, METAR> JSON_STRING_TO_METAR_POJO = new ConversionSpecification<>(String.class, METAR.class,
             "METAR, fmi-avi-messageconverter JSON", null);
+
+    /**
+     * Pre-configured spec for IWXXM 2.1 XML format SIGMET document DOM Node to {@link TAF}.
+     */
+    public static final ConversionSpecification<String, SIGMET> JSON_STRING_TO_SIGMET_POJO = new ConversionSpecification<>(String.class, SIGMET.class,
+            "SIGMET, fmi-avi-messageconverter JSON", null);
+
 
 
     @Bean
@@ -63,6 +74,14 @@ public class JSONConverter {
     @Bean
     public AviMessageSpecificConverter<String, METAR> metarJSONParser() {
         return new METARJSONParser();
+    }
+
+    @Bean
+    public AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser() {return new SIGMETJSONParser();}
+
+    @Bean
+    public AviMessageSpecificConverter<SIGMET, String> sigmetJSONSerializer() {
+        return new SIGMETJSONSerializer();
     }
 
 }
