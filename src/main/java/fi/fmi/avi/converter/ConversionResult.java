@@ -12,7 +12,18 @@ import java.util.Optional;
  */
 public class ConversionResult<T> {
 
-    public enum Status {SUCCESS, FAIL, WITH_ERRORS, WITH_WARNINGS}
+    public enum Status {
+        SUCCESS(0), FAIL(3), WITH_ERRORS(2), WITH_WARNINGS(1);
+        private int criticality;
+
+        Status(int criticality) {
+            this.criticality = criticality;
+        }
+
+        public static boolean isMoreCritical(final Status status, final Status reference) {
+            return status.criticality > reference.criticality;
+        }
+    }
 
     private T convertedMessage;
     private IssueList issues;
