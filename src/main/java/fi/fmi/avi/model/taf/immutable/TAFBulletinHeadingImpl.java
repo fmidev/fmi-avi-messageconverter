@@ -17,6 +17,7 @@ import fi.fmi.avi.model.taf.TAFBulletinHeading;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "validLessThan12Hours" })
 public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
+
     public static TAFBulletinHeadingImpl immutableCopyOf(final TAFBulletinHeading heading) {
         Objects.requireNonNull(heading);
         if (heading instanceof TAFBulletinHeadingImpl) {
@@ -43,10 +44,12 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
             if (value instanceof TAFBulletinHeadingImpl) {
                 return ((TAFBulletinHeadingImpl) value).toBuilder();
             } else {
-                return new TAFBulletinHeadingImpl.Builder().setLocationIndicator(value.getLocationIndicator())
-                        .setGeographicalDesignator(value.getGeographicalDesignator())
-                        .setBulletinNumber(value.getBulletinNumber()).setType(value.getType())
-                        .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())
+                return new TAFBulletinHeadingImpl.Builder()//
+                        .setLocationIndicator(value.getLocationIndicator())//
+                        .setGeographicalDesignator(value.getGeographicalDesignator())//
+                        .setBulletinNumber(value.getBulletinNumber())//
+                        .setType(value.getType())//
+                        .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())//
                         .setValidLessThan12Hours(value.isValidLessThan12Hours());
             }
         }
@@ -73,4 +76,5 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
             return super.setBulletinAugmentationNumber(OptionalInt.of(asChar - 'A' + 1));
         }
     }
+
 }
