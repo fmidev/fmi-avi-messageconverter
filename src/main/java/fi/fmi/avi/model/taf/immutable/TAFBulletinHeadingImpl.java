@@ -15,8 +15,7 @@ import fi.fmi.avi.model.taf.TAFBulletinHeading;
 @FreeBuilder
 @JsonDeserialize(builder = TAFBulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "containingDelayedMessages", "containingAmendedMessages",
-        "containingCorrectedMessages", "bulletinAugmentationNumber", "validLessThan12Hours" })
+@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "validLessThan12Hours" })
 public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
     public static TAFBulletinHeadingImpl immutableCopyOf(final TAFBulletinHeading heading) {
         Objects.requireNonNull(heading);
@@ -36,9 +35,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
     public static class Builder extends TAFBulletinHeadingImpl_Builder {
 
         public Builder() {
-            setContainingAmendedMessages(false);
-            setContainingCorrectedMessages(false);
-            setContainingDelayedMessages(false);
+            setType(Type.NORMAL);
             setBulletinAugmentationNumber(OptionalInt.empty());
         }
 
@@ -48,10 +45,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
             } else {
                 return new TAFBulletinHeadingImpl.Builder().setLocationIndicator(value.getLocationIndicator())
                         .setGeographicalDesignator(value.getGeographicalDesignator())
-                        .setBulletinNumber(value.getBulletinNumber())
-                        .setContainingDelayedMessages(value.isContainingDelayedMessages())
-                        .setContainingAmendedMessages(value.isContainingAmendedMessages())
-                        .setContainingCorrectedMessages(value.isContainingCorrectedMessages())
+                        .setBulletinNumber(value.getBulletinNumber()).setType(value.getType())
                         .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())
                         .setValidLessThan12Hours(value.isValidLessThan12Hours());
             }

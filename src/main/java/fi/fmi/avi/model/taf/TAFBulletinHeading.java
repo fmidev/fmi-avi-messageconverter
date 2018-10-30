@@ -4,9 +4,9 @@ import fi.fmi.avi.model.BulletinHeading;
 
 public interface TAFBulletinHeading extends BulletinHeading {
 
-    boolean isContainingAmendedMessages();
+    Type getType();
 
-    boolean isContainingCorrectedMessages();
+    enum Type {NORMAL, DELAYED, AMENDED, CORRECTED}
 
     boolean isValidLessThan12Hours();
 

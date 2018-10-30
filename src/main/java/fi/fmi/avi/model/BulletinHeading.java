@@ -26,13 +26,6 @@ public interface BulletinHeading {
     int getBulletinNumber();
 
     /**
-     * Corresponds to the 'RRx' part of the abbreviated heading
-     *
-     * @return
-     */
-    boolean isContainingDelayedMessages();
-
-    /**
      * Corresponds to the A-Z letter 'x' of the RRx, AAx or CCx part of the abbreviated heading
      *
      * @return
