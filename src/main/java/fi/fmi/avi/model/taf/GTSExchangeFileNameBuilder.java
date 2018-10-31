@@ -108,7 +108,7 @@ public class GTSExchangeFileNameBuilder {
         if (this.heading == null) {
             throw new IllegalStateException("No TAFBulletin heading set");
         }
-        if (this.fileType != null) {
+        if (this.fileType == null) {
             throw new IllegalStateException("File type not set");
         }
         if (this.timeStamp == null) {
