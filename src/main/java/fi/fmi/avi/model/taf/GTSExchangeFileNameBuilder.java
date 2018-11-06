@@ -2,13 +2,19 @@ package fi.fmi.avi.model.taf;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.OptionalInt;
+import java.util.Set;
 
 /**
  * See WMO No.386 Manual on the global telecommunications system, Attachment II-15, GTS Data Exchange Methods, SFTP/FTP procedures and file naming
  * convention.
  */
 public class GTSExchangeFileNameBuilder {
+
+    private Set<TimeStampField> fieldsToInclude = new HashSet<>();
 
     private GTSExchangePFlag pFlag;
     private TAFBulletinHeading heading;
@@ -17,9 +23,13 @@ public class GTSExchangeFileNameBuilder {
     private String freeFormPart;
     private boolean isMetadataFile;
     private LocalDateTime timeStamp;
-
     public GTSExchangeFileNameBuilder() {
         this.isMetadataFile = false;
+        this.fieldsToInclude.addAll(Arrays.asList(TimeStampField.YEAR, TimeStampField.MONTH, TimeStampField.DAY, TimeStampField.HOUR, TimeStampField.MINUTE));
+    }
+
+    public Set<TimeStampField> getTimeStampFieldsToInclude() {
+        return Collections.unmodifiableSet(this.fieldsToInclude);
     }
 
     public GTSExchangePFlag getPFlag() {
@@ -104,24 +114,9 @@ public class GTSExchangeFileNameBuilder {
         return this;
     }
 
-    public String build() {
-        if (this.heading == null) {
-            throw new IllegalStateException("No TAFBulletin heading set");
-        }
-        if (this.fileType == null) {
-            throw new IllegalStateException("File type not set");
-        }
-        if (this.timeStamp == null) {
-            this.timeStamp = LocalDateTime.now();
-        }
-
-        //TODO: rest of the types
-        switch (this.pFlag) {
-            case A:
-                return createATypeFileName();
-            default:
-                throw new IllegalStateException("Names with pFlag value '" + this.pFlag + "' not yet supported");
-        }
+    public GTSExchangeFileNameBuilder setTimeStampFieldsToInclude(final TimeStampField... fields) {
+        this.fieldsToInclude = new HashSet<>(fieldsToInclude);
+        return this;
     }
 
     private String createATypeFileName() {
@@ -161,7 +156,8 @@ public class GTSExchangeFileNameBuilder {
         sb.append('C');
         sb.append('_');
         sb.append(heading.getLocationIndicator());
-        sb.append(this.timeStamp.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+        sb.append('_');
+        sb.append(this.timeStamp.format(getFormatter()));
         if (this.freeFormPart != null) {
             sb.append('_');
             sb.append(freeFormPart);
@@ -174,6 +170,68 @@ public class GTSExchangeFileNameBuilder {
         }
         return sb.toString();
     }
+
+    public String build() {
+        if (this.heading == null) {
+            throw new IllegalStateException("No TAFBulletin heading set");
+        }
+        if (this.fileType == null) {
+            throw new IllegalStateException("File type not set");
+        }
+        if (this.timeStamp == null) {
+            this.timeStamp = LocalDateTime.now();
+        }
+
+        //TODO: rest of the types
+        switch (this.pFlag) {
+            case A:
+                return createATypeFileName();
+            default:
+                throw new IllegalStateException("Names with pFlag value '" + this.pFlag + "' not yet supported");
+        }
+    }
+
+    private DateTimeFormatter getFormatter() {
+        StringBuilder sb = new StringBuilder();
+        if (this.fieldsToInclude.contains(TimeStampField.YEAR)) {
+            sb.append("yyyy");
+        } else {
+            sb.append("----");
+        }
+
+        if (this.fieldsToInclude.contains(TimeStampField.MONTH)) {
+            sb.append("MM");
+        } else {
+            sb.append("--");
+        }
+
+        if (this.fieldsToInclude.contains(TimeStampField.DAY)) {
+            sb.append("dd");
+        } else {
+            sb.append("--");
+        }
+
+        if (this.fieldsToInclude.contains(TimeStampField.HOUR)) {
+            sb.append("HH");
+        } else {
+            sb.append("--");
+        }
+
+        if (this.fieldsToInclude.contains(TimeStampField.MINUTE)) {
+            sb.append("mm");
+        } else {
+            sb.append("--");
+        }
+
+        if (this.fieldsToInclude.contains(TimeStampField.SECOND)) {
+            sb.append("ss");
+        } else {
+            sb.append("--");
+        }
+        return DateTimeFormatter.ofPattern(sb.toString());
+    }
+
+    public enum TimeStampField {YEAR, MONTH, DAY, HOUR, MINUTE, SECOND}
 
     public enum GTSExchangePFlag {T, A, W, Z, X}
 
