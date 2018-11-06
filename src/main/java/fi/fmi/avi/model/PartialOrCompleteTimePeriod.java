@@ -2,6 +2,7 @@ package fi.fmi.avi.model;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.Duration;
 import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.util.EnumSet;
@@ -103,6 +104,20 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     public boolean isCompleteStrict() {
         return getStartTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent() //
                 && getEndTime().flatMap(PartialOrCompleteTimeInstant::getCompleteTime).isPresent();
+    }
+
+    /**
+     * Returns a non-empty Duration between the start and end times, is both are given and complete.
+     *
+     * @return a time duration, or Optional.empty() if either or both of the validity start and end times are incomplete or missing.
+     */
+    @JsonIgnore
+    public Optional<Duration> getValidityTimeSpan() {
+        if (isCompleteStrict()) {
+            return Optional.of(Duration.between(this.getStartTime().get().getCompleteTime().get(), this.getEndTime().get().getCompleteTime().get()));
+        } else {
+            return Optional.empty();
+        }
     }
 
     private enum TimePatternGroup {
