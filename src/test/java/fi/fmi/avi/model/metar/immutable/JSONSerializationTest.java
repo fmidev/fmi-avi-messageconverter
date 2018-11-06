@@ -1,26 +1,21 @@
 package fi.fmi.avi.model.metar.immutable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import fi.fmi.avi.model.AviationWeatherMessage;
+import java.io.IOException;
+import java.time.YearMonth;
+import java.time.ZoneId;
+
+import org.junit.Test;
+
+import fi.fmi.avi.JSONTestUtil;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.GeoPositionImpl;
 import fi.fmi.avi.model.metar.METAR;
-import org.junit.Test;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.YearMonth;
-import java.time.ZoneId;
 
 public class JSONSerializationTest {
 
     @Test
     public void testMETAR() throws IOException {
-        METAR m = readFromJSON("metar11.json", METARImpl.class);
+        METAR m = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("metar11.json"), METARImpl.class);
         METARImpl.Builder mib = METARImpl.immutableCopyOf(m).toBuilder();
         AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()
                 .setDesignator("EETN")
@@ -41,25 +36,4 @@ public class JSONSerializationTest {
         //printAsJson(m);
     }
 
-    protected <T extends AviationWeatherMessage> T readFromJSON(String fileName, Class<T> clz) throws IOException {
-        T retval = null;
-        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new Jdk8Module());
-        om.registerModule(new JavaTimeModule());
-        InputStream is = JSONSerializationTest.class.getResourceAsStream(fileName);
-        if (is != null) {
-            retval = om.readValue(is, clz);
-        } else {
-            throw new FileNotFoundException("Resource '" + fileName + "' could not be loaded");
-        }
-        return retval;
-    }
-
-    protected static void printAsJson(AviationWeatherMessage msg) throws IOException {
-        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new Jdk8Module());
-        om.registerModule(new JavaTimeModule());
-        ObjectWriter writer = om.writerWithDefaultPrettyPrinter();
-        writer.writeValue(System.out, msg);
-    }
 }
