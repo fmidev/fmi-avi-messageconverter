@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.taf.immutable;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -9,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 
 @FreeBuilder
@@ -43,6 +46,27 @@ public abstract class TAFBulletinImpl implements TAFBulletin {
                         .setHeading(TAFBulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .addAllMessages(value.getMessages());
             }
+        }
+
+        @Override
+        public TAFBulletinImpl build() {
+            //check the all the TAFs are short or long consistently with the heading info
+            Optional<PartialOrCompleteTimePeriod> validity;
+            Optional<Duration> span;
+            Duration twelweHours = Duration.ofHours(12);
+            for (TAF taf : this.getMessages()) {
+                validity = taf.getValidityTime();
+                if (validity.isPresent()) {
+                    span = validity.get().getValidityTimeSpan();
+                    if (span.isPresent()) {
+                        if (getHeading().isValidLessThan12Hours() == (span.get().compareTo(twelweHours) >= 0)) {
+                            throw new IllegalStateException("TAF contained in bulletin has time span of " + span.get().toHours() + " hours which is "
+                                    + "inconsistent with the heading isValidLessThan12Hours: " + getHeading().isValidLessThan12Hours());
+                        }
+                    }
+                }
+            }
+            return super.build();
         }
     }
 }
