@@ -21,6 +21,7 @@ import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 import fi.fmi.avi.model.taf.TAFChangeForecast;
@@ -28,7 +29,6 @@ import fi.fmi.avi.model.taf.immutable.TAFAirTemperatureForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFBaseForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
-import fi.fmi.avi.model.taf.immutable.TAFSurfaceWindImpl;
 
 public class TAFTimeReferencesTest {
 
@@ -165,7 +165,7 @@ public class TAFTimeReferencesTest {
                         .setTemperatures(temperatures)//
                         .setCeilingAndVisibilityOk(true)//
                         .setPrevailingVisibility(new NumericMeasureImpl.Builder().setUom("m").setValue(8000.0).build())//
-                        .setSurfaceWind(new TAFSurfaceWindImpl.Builder()//
+                        .setSurfaceWind(new SurfaceWindImpl.Builder()//
                                 .setMeanWindDirection(new NumericMeasureImpl.Builder().setUom("deg").setValue(180.0).build())//
                                 .setMeanWindSpeed(new NumericMeasureImpl.Builder().setUom("[kn_i]").setValue(15.0).build())//
                                 .setVariableDirection(false)//

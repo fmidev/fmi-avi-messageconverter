@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.metar.immutable;
 
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -16,12 +15,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.SurfaceWind;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.TrendForecast;
-import fi.fmi.avi.model.metar.TrendForecastSurfaceWind;
+
+;
 
 /**
  * Created by rinne on 13/04/2018.
@@ -69,7 +71,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
                         .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
                         .setNoSignificantWeather(value.isNoSignificantWeather())
                         .setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
-                        .setSurfaceWind(TrendForecastSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))
+                        .setSurfaceWind(SurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))
                         .setCloud(CloudForecastImpl.immutableCopyOf(value.getCloud()));
 
                 value.getForecastWeather()
@@ -86,8 +88,8 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
         }
 
         @Override
-        @JsonDeserialize(as = TrendForecastSurfaceWindImpl.class)
-        public Builder setSurfaceWind(final TrendForecastSurfaceWind surfaceWind) {
+        @JsonDeserialize(as = SurfaceWindImpl.class)
+        public Builder setSurfaceWind(final SurfaceWind surfaceWind) {
             return super.setSurfaceWind(surfaceWind);
         }
 

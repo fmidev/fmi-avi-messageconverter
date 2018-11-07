@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
-import fi.fmi.avi.model.taf.immutable.TAFSurfaceWindImpl;
 
 /**
  * Helper methods for implementations of {@link TAFForecast.Builder}.
@@ -39,7 +39,7 @@ public final class TAFForecastBuilderHelper {
         builder.setNoSignificantWeather(value.isNoSignificantWeather());
         builder.setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()));
         builder.setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator());
-        builder.setSurfaceWind(TAFSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()));
+        builder.setSurfaceWind(SurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()));
         builder.setForecastWeather(value.getForecastWeather()//
                 .map(list -> toImmutableList(list, WeatherImpl::immutableCopyOf)));
     }
@@ -97,7 +97,7 @@ public final class TAFForecastBuilderHelper {
 
     private static void mergeSurfaceWind(final TAFForecast.Builder<?, ?> builder, final TAFForecast from) {
         from.getSurfaceWind()//
-                .map(TAFSurfaceWindImpl::immutableCopyOf)//
+                .map(SurfaceWindImpl::immutableCopyOf)//
                 .ifPresent(builder::setSurfaceWind);
     }
 

@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.taf.immutable;
+package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,42 +11,41 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.taf.TAFSurfaceWind;
+import fi.fmi.avi.model.SurfaceWind;
 
 /**
  * Created by rinne on 18/04/2018.
  */
 @FreeBuilder
-@JsonDeserialize(builder = TAFSurfaceWindImpl.Builder.class)
+@JsonDeserialize(builder = SurfaceWindImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"meanWindDirection", "variableDirection", "meanWindSpeed", "meanWindSpeedOperator",
         "windGust", "windGustOperator"})
-public abstract class TAFSurfaceWindImpl implements TAFSurfaceWind, Serializable {
+public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
 
-    public static TAFSurfaceWindImpl immutableCopyOf(final TAFSurfaceWind surfaceWind) {
+    public static SurfaceWindImpl immutableCopyOf(final SurfaceWind surfaceWind) {
         Objects.requireNonNull(surfaceWind);
-        if (surfaceWind instanceof TAFSurfaceWindImpl) {
-            return (TAFSurfaceWindImpl) surfaceWind;
+        if (surfaceWind instanceof SurfaceWindImpl) {
+            return (SurfaceWindImpl) surfaceWind;
         } else {
             return Builder.from(surfaceWind).build();
         }
     }
 
-    public static Optional<TAFSurfaceWindImpl> immutableCopyOf(final Optional<TAFSurfaceWind> surfaceWind) {
+    public static Optional<SurfaceWindImpl> immutableCopyOf(final Optional<SurfaceWind> surfaceWind) {
         Objects.requireNonNull(surfaceWind);
-        return surfaceWind.map(TAFSurfaceWindImpl::immutableCopyOf);
+        return surfaceWind.map(SurfaceWindImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
 
-    public static class Builder extends TAFSurfaceWindImpl_Builder {
+    public static class Builder extends SurfaceWindImpl_Builder {
 
-        public static Builder from(final TAFSurfaceWind value) {
-            if (value instanceof TAFSurfaceWindImpl) {
-                return ((TAFSurfaceWindImpl) value).toBuilder();
+        public static Builder from(final SurfaceWind value) {
+            if (value instanceof SurfaceWindImpl) {
+                return ((SurfaceWindImpl) value).toBuilder();
             } else {
-                return new TAFSurfaceWindImpl.Builder()//
+                return new SurfaceWindImpl.Builder()//
                         .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
                         .setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())
                         .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
@@ -61,7 +60,7 @@ public abstract class TAFSurfaceWindImpl implements TAFSurfaceWind, Serializable
         }
 
         @Override
-        public TAFSurfaceWindImpl build() {
+        public SurfaceWindImpl build() {
             if (!isVariableDirection() && !getMeanWindDirection().isPresent()) {
                 throw new IllegalStateException("MeanWindDirection must be present if variableDirection is false");
             }

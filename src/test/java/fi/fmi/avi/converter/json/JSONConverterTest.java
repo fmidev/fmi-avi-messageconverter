@@ -28,12 +28,12 @@ import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.CloudLayerImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.immutable.TAFBaseForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
-import fi.fmi.avi.model.taf.immutable.TAFSurfaceWindImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -66,8 +66,7 @@ public class JSONConverterTest {
                 .setValidityTime(PartialOrCompleteTimePeriod.createValidityTime("2712/2812"))
                 .setBaseForecast(new TAFBaseForecastImpl.Builder()
                         .setForecastWeather(WeatherImpl.fromCodes("-RA"))
-                        .setPrevailingVisibility(NumericMeasureImpl.of(8000.0, "m"))
-                        .setSurfaceWind(new TAFSurfaceWindImpl.Builder()
+                        .setPrevailingVisibility(NumericMeasureImpl.of(8000.0, "m")).setSurfaceWind(new SurfaceWindImpl.Builder()
                                 .setMeanWindDirection(NumericMeasureImpl.of(140,"deg"))
                                 .setMeanWindSpeed(NumericMeasureImpl.of(15.0, "[kn_i]"))
                                 .setWindGust(NumericMeasureImpl.of(25.0, "[kn_i]"))
@@ -106,8 +105,7 @@ public class JSONConverterTest {
                         .build(),
                 new TAFChangeForecastImpl.Builder()
                         .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.BECOMING)
-                        .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2720/2722"))
-                        .setSurfaceWind(new TAFSurfaceWindImpl.Builder()
+                        .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2720/2722")).setSurfaceWind(new SurfaceWindImpl.Builder()
                                 .setMeanWindDirection(NumericMeasureImpl.of(160, "deg"))
                                 .setMeanWindSpeed(NumericMeasureImpl.of(12.0, "[kn_i]"))
                                 .build())

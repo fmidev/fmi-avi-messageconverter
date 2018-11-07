@@ -14,15 +14,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.SurfaceWind;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 import fi.fmi.avi.model.taf.TAFBaseForecast;
 import fi.fmi.avi.model.taf.TAFForecast;
 import fi.fmi.avi.model.taf.TAFForecastBuilderHelper;
-import fi.fmi.avi.model.taf.TAFSurfaceWind;
 
 /**
  * Created by rinne on 18/04/2018.
@@ -98,8 +99,8 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
         }
 
         @Override
-        @JsonDeserialize(as = TAFSurfaceWindImpl.class)
-        public Builder setSurfaceWind(final TAFSurfaceWind surfaceWind) {
+        @JsonDeserialize(as = SurfaceWindImpl.class)
+        public Builder setSurfaceWind(final SurfaceWind surfaceWind) {
             return super.setSurfaceWind(surfaceWind);
         }
 
