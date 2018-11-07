@@ -1,12 +1,12 @@
 {
   "status": "NORMAL",
   "issuingAirTrafficServicesUnit": {
-    "name": "EHAA",
+    "name": "AMSTERDAM",
     "type": "FIR",
     "designator": "EHAA"
   },
   "meteorologicalWatchOffice": {
-    "name": "EHDB",
+    "name": "DE BILT",
     "type": "MWO",
     "designator": "EHDB"
   },

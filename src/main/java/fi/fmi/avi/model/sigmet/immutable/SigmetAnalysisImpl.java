@@ -1,17 +1,19 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.sigmet.SigmetAnalysis;
-import org.inferred.freebuilder.FreeBuilder;
-
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Optional;
 
 @FreeBuilder
 @JsonDeserialize(builder = SigmetAnalysisImpl.Builder.class)
@@ -39,8 +41,7 @@ public abstract class SigmetAnalysisImpl implements SigmetAnalysis, Serializable
             if (value instanceof SigmetAnalysisImpl) {
                 return ((SigmetAnalysisImpl) value).toBuilder();
             } else {
-                return new Builder()
-                        .setAnalysisTime(value.getAnalysisTime())
+                return new Builder().setAnalysisTime(value.getAnalysisTime())
                         .setAnalysisGeometry(value.getAnalysisGeometry())
                         .setAnalysisType(value.getAnalysisType())
                         .setLowerLimit(value.getLowerLimit())
@@ -53,53 +54,53 @@ public abstract class SigmetAnalysisImpl implements SigmetAnalysis, Serializable
                         .setForecastTime(value.getForecastTime())
                         .setForecastGeometry(value.getForecastGeometry())
                         .setForecastApproximateLocation(value.getForecastApproximateLocation())
-                        .setAnalysisApproximateLocation(value.getAnalysisApproximateLocation())
-                        ;
+                        .setAnalysisApproximateLocation(value.getAnalysisApproximateLocation());
             }
         }
 
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setUpperLimit(NumericMeasure upperLimit) {
+        public Builder setUpperLimit(final NumericMeasure upperLimit) {
             return super.setUpperLimit(upperLimit);
         }
 
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setLowerLimit(NumericMeasure lowerLimit) {
+        public Builder setLowerLimit(final NumericMeasure lowerLimit) {
             return super.setLowerLimit(lowerLimit);
         }
 
         @Override
-        public Builder setUpperLimitOperator(AviationCodeListUser.RelationalOperator operator) {
+        public Builder setUpperLimitOperator(final AviationCodeListUser.RelationalOperator operator) {
             return super.setUpperLimitOperator(operator);
         }
 
         @Override
-        public Builder setLowerLimitOperator(AviationCodeListUser.RelationalOperator operator) {
+        public Builder setLowerLimitOperator(final AviationCodeListUser.RelationalOperator operator) {
             return super.setLowerLimitOperator(operator);
         }
 
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingSpeed(NumericMeasure movingSpeed) {
+        public Builder setMovingSpeed(final NumericMeasure movingSpeed) {
             return super.setMovingSpeed(movingSpeed);
         }
 
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingDirection(NumericMeasure movingDirection) {
+        public Builder setMovingDirection(final NumericMeasure movingDirection) {
             return super.setMovingDirection(movingDirection);
         }
+
         @Override
         @JsonDeserialize(as = PartialOrCompleteTimeInstant.class)
-        public Builder setAnalysisTime(PartialOrCompleteTimeInstant analysisTime) {
+        public Builder setAnalysisTime(final PartialOrCompleteTimeInstant analysisTime) {
             return super.setAnalysisTime(analysisTime);
         }
 
         @Override
         @JsonDeserialize(as = PartialOrCompleteTimeInstant.class)
-        public Builder setForecastTime(PartialOrCompleteTimeInstant forecastTime) {
+        public Builder setForecastTime(final PartialOrCompleteTimeInstant forecastTime) {
             return super.setForecastTime(forecastTime);
         }
 

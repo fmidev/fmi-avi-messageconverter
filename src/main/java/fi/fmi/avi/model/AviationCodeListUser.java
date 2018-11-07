@@ -34,6 +34,16 @@ public interface AviationCodeListUser {
     String TREND_FORECAST_OBSERVATION_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeTrendForecast";
     String TREND_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeTrendForecast";
 
+    String CODELIST_VALUE_PREFIX_OM_SAMPLING="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/";
+	String CODELIST_VALUE_EPSG_4326="http://www.opengis.net/def/crs/EPSG/0/4326";
+
+	String CODELIST_VALUE_SIGMET_PROCESS="WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 6-1 TECHNICAL SPECIFICATIONS "
+            + "RELATED TO SIGMET INFORMATION";
+	String CODELIST_SIGMET_EVOLVING_CONDITION_COLLECTION_ANALYSIS="http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/SIGMETEvolvingConditionCollectionAnalysis";
+	String CODELIST_SIGWX_PHENOMENA_ROOT="http://codes.wmo.int/49-2/SigWxPhenomena/";
+	String CODELIST_SIGMET_POSITION_COLLECTION_ANALYSIS="http://codes.wmo.int/49-2/observable-property/SIGMETPositionCollectionAnalysis";
+
+
     enum MetarStatus {
         NORMAL(0), CORRECTION(1), MISSING(2);
 

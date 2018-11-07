@@ -59,13 +59,13 @@ public abstract class SigmetReferenceImpl implements SigmetReference, Serializab
 
         @Override
         @JsonDeserialize(as = AeronauticalSignificantWeatherPhenomenon.class)
-        public Builder setPhenomenon(final  AeronauticalSignificantWeatherPhenomenon sigmetPhenomenon) {
+        public Builder setPhenomenon(final AeronauticalSignificantWeatherPhenomenon sigmetPhenomenon) {
             return super.setPhenomenon(sigmetPhenomenon);
         }
 
         @Override
         @JsonDeserialize(as = PartialOrCompleteTimePeriod.class)
-        public Builder setValidityPeriod(final  PartialOrCompleteTimePeriod validityPeriod) {
+        public Builder setValidityPeriod(final PartialOrCompleteTimePeriod validityPeriod) {
             return super.setValidityPeriod(validityPeriod);
         }
     }

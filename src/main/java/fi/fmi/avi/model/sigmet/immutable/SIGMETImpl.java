@@ -1,30 +1,33 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.UnitPropertyGroup;
-import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SigmetReference;
-import fi.fmi.avi.model.sigmet.SigmetAnalysis;
-import org.inferred.freebuilder.FreeBuilder;
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.UnitPropertyGroup;
+import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
+import fi.fmi.avi.model.sigmet.SIGMET;
+import fi.fmi.avi.model.sigmet.SigmetAnalysis;
+import fi.fmi.avi.model.sigmet.SigmetReference;
+
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis", "forecastPositionAnalysis", "cancelledReport", "remarks", "permissibleUsage",
-        "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime",
-        "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC"})
+@JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis",
+        "forecastPositionAnalysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+        "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 
 public abstract class SIGMETImpl implements SIGMET, Serializable {
 
@@ -51,16 +54,16 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
             return false;
         }
         if (this.getAnalysis().isPresent()) {
-            for (SigmetAnalysis sa : this.getAnalysis().get()){
-                if (sa.getAnalysisTime().isPresent()&&!sa.getAnalysisTime().get().getCompleteTime().isPresent()){
+            for (SigmetAnalysis sa : this.getAnalysis().get()) {
+                if (sa.getAnalysisTime().isPresent() && !sa.getAnalysisTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
-                if (sa.getForecastTime().isPresent()&&!sa.getForecastTime().get().getCompleteTime().isPresent()){
+                if (sa.getForecastTime().isPresent() && !sa.getForecastTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
         }
-        if (this.getCancelledReference().isPresent()&&(!this.getCancelledReference().get().getValidityPeriod().isComplete())) {
+        if (this.getCancelledReference().isPresent() && (!this.getCancelledReference().get().getValidityPeriod().isComplete())) {
             return false;
         }
         return true;
@@ -86,10 +89,10 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                         .setTranslationTime(value.getTranslationTime())
                         .setTranslatedTAC(value.getTranslatedTAC());
 
-                value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
+                value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(new ArrayList<>(remarks))));
 
                 //From AirTrafficServicesUnitWeatherMessage
-                        retval.setIssuingAirTrafficServicesUnit(UnitPropertyGroupImpl.immutableCopyOf(value.getIssuingAirTrafficServicesUnit()))
+                retval.setIssuingAirTrafficServicesUnit(UnitPropertyGroupImpl.immutableCopyOf(value.getIssuingAirTrafficServicesUnit()))
                         .setMeteorologicalWatchOffice(UnitPropertyGroupImpl.immutableCopyOf(value.getMeteorologicalWatchOffice()));
 
                 //From Sigmet
@@ -101,12 +104,12 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                         .setVolcanicAshMovedToFIR(value.getVolcanicAshMovedToFIR());
 
                 value.getAnalysis()
-                        .map(an -> retval.setAnalysis((Collections.unmodifiableList(an.stream().map(SigmetAnalysisImpl::immutableCopyOf).collect(Collectors.toList())))));
+                        .map(an -> retval.setAnalysis(
+                                (Collections.unmodifiableList(an.stream().map(SigmetAnalysisImpl::immutableCopyOf).collect(Collectors.toList())))));
 
                 return retval;
             }
         }
-
 
         @Override
         @JsonDeserialize(as = UnitPropertyGroupImpl.class)
@@ -134,7 +137,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
 
         @Override
         @JsonDeserialize(as = PartialOrCompleteTimeInstant.class)
-        public Builder setIssueTime(PartialOrCompleteTimeInstant issueTime) {
+        public Builder setIssueTime(final PartialOrCompleteTimeInstant issueTime) {
             return super.setIssueTime(issueTime);
         }
 
