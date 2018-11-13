@@ -11,13 +11,13 @@
   <description>Aviation weather message conversions</description>
   <groupId>fi.fmi.avi.converter</groupId>
   <artifactId>fmi-avi-messageconverter</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.1.0</version>
 
   <scm>
     <connection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</connection>
     <developerConnection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</developerConnection>
     <url>https://github.com/fmidev/fmi-avi-messageconverter</url>
-    <tag>HEAD</tag>
+    <tag>fmi-avi-messageconverter-3.1.0</tag>
   </scm>
 
   <dependencyManagement>
