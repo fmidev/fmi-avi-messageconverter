@@ -6,10 +6,13 @@ import java.util.Optional;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
+import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
 
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETBulletinImpl.Builder.class)
@@ -43,6 +46,19 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin {
                         .setHeading(SIGMETBulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .addAllMessages(value.getMessages());
             }
+        }
+
+        @Override
+        @JsonDeserialize(as = SIGMETBulletinHeadingImpl.class)
+        public Builder setHeading(final SIGMETBulletinHeading heading) {
+            return super.setHeading(heading);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = SIGMETImpl.class)
+        @JsonProperty("messages")
+        public Builder addMessages(final SIGMET... messages) {
+            return super.addMessages(messages);
         }
     }
 }

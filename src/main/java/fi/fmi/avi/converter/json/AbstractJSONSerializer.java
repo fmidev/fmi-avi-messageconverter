@@ -11,7 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionIssue;
 import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.model.AviationWeatherMessage;
+import fi.fmi.avi.model.AviationWeatherMessageOrCollection;
 
 /**
  * Common functionality for all JSON serializers.
@@ -29,7 +29,7 @@ public abstract class AbstractJSONSerializer {
      *
      * @return the result of the conversion
      */
-    protected ConversionResult<String> doConvertMessage(AviationWeatherMessage input, ConversionHints hints) {
+    protected ConversionResult<String> doConvertMessage(AviationWeatherMessageOrCollection input, ConversionHints hints) {
         ConversionResult<String> result = new ConversionResult<>();
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());

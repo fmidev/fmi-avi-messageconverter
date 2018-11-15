@@ -53,7 +53,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
     public static class Builder extends SIGMETImpl_Builder {
 
         public Builder() {
-
+            setTranslated(false);
         }
 
         public static Builder from(final SIGMET value) {

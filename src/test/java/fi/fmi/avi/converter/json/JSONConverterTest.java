@@ -22,6 +22,7 @@ import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
@@ -30,10 +31,19 @@ import fi.fmi.avi.model.immutable.CloudLayerImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
+import fi.fmi.avi.model.metar.METAR;
+import fi.fmi.avi.model.sigmet.SIGMET;
+import fi.fmi.avi.model.sigmet.SIGMETBulletin;
+import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
+import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinHeadingImpl;
+import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinImpl;
+import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 import fi.fmi.avi.model.taf.TAF;
+import fi.fmi.avi.model.taf.TAFBulletin;
 import fi.fmi.avi.model.taf.immutable.TAFBaseForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
+import junit.framework.TestCase;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -53,6 +63,47 @@ public class JSONConverterTest {
     }
 
     @Test
+    public void testMETARParsing() throws Exception {
+        InputStream is = JSONConverterTest.class.getResourceAsStream("metar1.json");
+        Objects.requireNonNull(is);
+        String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        ConversionResult<METAR> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_METAR_POJO, ConversionHints.EMPTY);
+        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+    }
+
+    @Test
+    public void testSIGMETParsing() throws Exception {
+        InputStream is = JSONConverterTest.class.getResourceAsStream("sigmet1.json");
+        Objects.requireNonNull(is);
+        String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+    }
+
+    @Test
+    public void testTAFBulletinParsing() throws Exception {
+        InputStream is = JSONConverterTest.class.getResourceAsStream("tafBulletin1.json");
+        Objects.requireNonNull(is);
+        String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        ConversionResult<TAFBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_TAF_BULLETIN_POJO, ConversionHints.EMPTY);
+        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+    }
+
+    @Test
+    public void testSIGMETBulletinParsing() throws Exception {
+        InputStream is = JSONConverterTest.class.getResourceAsStream("sigmetBulletin1.json");
+        Objects.requireNonNull(is);
+        String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        ConversionResult<SIGMETBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_BULLETIN_POJO, ConversionHints.EMPTY);
+        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+    }
+
+
+    @Test
     public void testTAFSerialization() throws Exception {
         InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
         Objects.requireNonNull(is);
@@ -65,8 +116,8 @@ public class JSONConverterTest {
                 .setAerodrome(new AerodromeImpl.Builder().setDesignator("EFVA").build())
                 .setValidityTime(PartialOrCompleteTimePeriod.createValidityTime("2712/2812"))
                 .setBaseForecast(new TAFBaseForecastImpl.Builder()
-                        .setForecastWeather(WeatherImpl.fromCodes("-RA"))
-                        .setPrevailingVisibility(NumericMeasureImpl.of(8000.0, "m")).setSurfaceWind(new SurfaceWindImpl.Builder()
+                        .setForecastWeather(WeatherImpl.fromCodes("-RA")).setPrevailingVisibility(NumericMeasureImpl.of(8000.0, "m"))//
+                        .setSurfaceWind(new SurfaceWindImpl.Builder()
                                 .setMeanWindDirection(NumericMeasureImpl.of(140,"deg"))
                                 .setMeanWindSpeed(NumericMeasureImpl.of(15.0, "[kn_i]"))
                                 .setWindGust(NumericMeasureImpl.of(25.0, "[kn_i]"))
@@ -105,7 +156,8 @@ public class JSONConverterTest {
                         .build(),
                 new TAFChangeForecastImpl.Builder()
                         .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.BECOMING)
-                        .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2720/2722")).setSurfaceWind(new SurfaceWindImpl.Builder()
+                        .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2720/2722"))//
+                        .setSurfaceWind(new SurfaceWindImpl.Builder()
                                 .setMeanWindDirection(NumericMeasureImpl.of(160, "deg"))
                                 .setMeanWindSpeed(NumericMeasureImpl.of(12.0, "[kn_i]"))
                                 .build())
@@ -146,4 +198,44 @@ public class JSONConverterTest {
         assertTrue(resultReader.readLine() == null);
     }
 
+    @Test
+    public void testSIGMETBulletinSerialization() throws Exception {
+        InputStream is = JSONConverterTest.class.getResourceAsStream("sigmetBulletin1.json");
+        Objects.requireNonNull(is);
+        String reference = IOUtils.toString(is, "UTF-8");
+        is.close();
+
+        SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
+                .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
+                        .setPartialTime(PartialDateTime.ofDayHourMinute(2, 5, 0))).setHeading(new SIGMETBulletinHeadingImpl.Builder()//
+                        .setGeographicalDesignator("FI")//
+                        .setLocationIndicator("EFKL")//
+                        .setBulletinNumber(31)//
+                        .setSIGMETType(SIGMETBulletinHeading.SIGMETType.SEVERE_WEATHER).build());
+
+        builder.addMessages(new SIGMETImpl.Builder()//
+                .setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
+                        + "EFIN FINLAND FIR SEV TURB FCST AT 0740Z\n"//
+                        + "S OF LINE N5953 E01931 -\n"//
+                        + "N6001 E02312 - N6008 E02606 - N6008\n"//
+                        + "E02628 FL220-340 MOV N 15KT\n"//
+                        + "WKN=").setTranslated(false).build());
+        SIGMETBulletin msg = builder.build();
+
+        ConversionResult<String> jsonResult = this.converter.convertMessage(msg, JSONConverter.SIGMET_BULLETIN_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        assertEquals(ConversionResult.Status.SUCCESS, jsonResult.getStatus());
+
+        TestCase.assertTrue(jsonResult.getConvertedMessage().isPresent());
+
+        BufferedReader refReader = new BufferedReader(new StringReader(reference));
+        BufferedReader resultReader = new BufferedReader(new StringReader(jsonResult.getConvertedMessage().get()));
+        String line = null;
+        int lineNo = 0;
+        while ((line = refReader.readLine()) != null) {
+            lineNo++;
+            assertEquals("Line " + lineNo + " does not match", line, resultReader.readLine());
+        }
+        assertTrue(resultReader.readLine() == null);
+
+    }
 }

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionIssue;
 import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.model.AviationWeatherMessage;
+import fi.fmi.avi.model.AviationWeatherMessageOrCollection;
 
 /**
  * Common functionality for all JSON parsers.
@@ -34,7 +34,8 @@ public abstract class AbstractJSONParser {
      * @return result of the conversion
      */
     @SuppressWarnings("unchecked")
-    protected <T extends AviationWeatherMessage> ConversionResult<T> doConvertMessage(String input, Class<T> clz, Class<?> implClz, ConversionHints hints) {
+    protected <T extends AviationWeatherMessageOrCollection> ConversionResult<T> doConvertMessage(String input, Class<T> clz, Class<?> implClz,
+            ConversionHints hints) {
         ConversionResult<T> result = new ConversionResult<>();
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());

@@ -7,12 +7,14 @@ import java.util.Optional;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
+import fi.fmi.avi.model.taf.TAFBulletinHeading;
 
 @FreeBuilder
 @JsonDeserialize(builder = TAFBulletinImpl.Builder.class)
@@ -67,6 +69,19 @@ public abstract class TAFBulletinImpl implements TAFBulletin {
                 }
             }
             return super.build();
+        }
+
+        @Override
+        @JsonDeserialize(as = TAFBulletinHeadingImpl.class)
+        public Builder setHeading(final TAFBulletinHeading heading) {
+            return super.setHeading(heading);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = TAFImpl.class)
+        @JsonProperty("messages")
+        public Builder addMessages(final TAF... messages) {
+            return super.addMessages(messages);
         }
     }
 }
