@@ -16,7 +16,7 @@ import java.util.Set;
  *  }
  * </pre>
  *
- *  @author Ilkka Rinne / Spatineo Oy 2017
+ * @author Ilkka Rinne / Spatineo Oy 2017
  */
 public class AviMessageConverter {
 
@@ -28,17 +28,20 @@ public class AviMessageConverter {
      * The returned {@link ConversionResult} includes the status, the converted message and the possible
      * {@link ConversionIssue}s.
      *
-     * @see ConversionResult
+     * @param input
+     *         the input message
+     * @param spec
+     *         {@link ConversionSpecification} to use
+     * @param <S>
+     *         the type of the input message
+     * @param <T>
+     *         the type of the output message
      *
-     * @param input the input message
-     * @param spec {@link ConversionSpecification} to use
-     * @param <S> the type of the input message
-     * @param <T> the type of the output message
-     * 
      * @return the result of the conversion
-     * 
+     *
+     * @see ConversionResult
      */
-    public <S, T> ConversionResult<T> convertMessage(S input, ConversionSpecification<S, T> spec)  {
+    public <S, T> ConversionResult<T> convertMessage(final S input, final ConversionSpecification<S, T> spec) {
         return convertMessage(input, spec, null);
     }
 
@@ -49,51 +52,64 @@ public class AviMessageConverter {
      * The returned {@link ConversionResult} includes the status, the converted message and the possible
      * {@link ConversionIssue}s.
      *
-     * @param input the input message
-     * @param spec {@link ConversionSpecification} to use
-     * @param <S> the type of the input message
-     * @param <T> the type of the output message
-     * @param hints to guide the conversion process
+     * @param input
+     *         the input message
+     * @param spec
+     *         {@link ConversionSpecification} to use
+     * @param <S>
+     *         the type of the input message
+     * @param <T>
+     *         the type of the output message
+     * @param hints
+     *         to guide the conversion process
      *
      * @return the result of the conversion
      */
     @SuppressWarnings("unchecked")
-    public <S, T> ConversionResult<T> convertMessage(S input, ConversionSpecification<S, T> spec, ConversionHints hints) {
-        for (ConversionSpecification<?, ?> toMatch : parsers.keySet()) {
+    public <S, T> ConversionResult<T> convertMessage(final S input, final ConversionSpecification<S, T> spec, final ConversionHints hints) {
+        for (final ConversionSpecification<?, ?> toMatch : parsers.keySet()) {
             if (toMatch.equals(spec)) {
                 return ((AviMessageSpecificConverter<S, T>) parsers.get(spec)).convertMessage(input, hints);
             }
         }
         throw new IllegalArgumentException("Unable to parse message using specification " + spec);
     }
-    
+
     /**
-     * Sets the message specific converter
-     * @param spec the provided specification
-     * @param converter the converter implementation
-     * @param <S> source object class
-     * @param <T> target object class
+     * Sets the message specific converter.
+     *
+     * @param spec
+     *         the provided specification
+     * @param converter
+     *         the converter implementation
+     * @param <S>
+     *         source object class
+     * @param <T>
+     *         target object class
      */
-    public <S, T> void setMessageSpecificConverter(ConversionSpecification<S, T> spec, AviMessageSpecificConverter<S, T> converter) {
+    public <S, T> void setMessageSpecificConverter(final ConversionSpecification<S, T> spec, final AviMessageSpecificConverter<S, T> converter) {
         this.parsers.put(spec, converter);
     }
 
     /**
      * Return true is the particular conversion is supported by this converter.
      *
-     * @param spec to query
+     * @param spec
+     *         to query
+     *
      * @return true if supported
      */
     public boolean isSpecificationSupported(final ConversionSpecification<?, ?> spec) {
         return this.parsers.containsKey(spec);
     }
+
     /**
-     * Returns all the {@link ConversionSpecification}s supported by this 
+     * Returns all the {@link ConversionSpecification}s supported by this
      * AviMessageConverter implementation.
-     * 
+     *
      * @return set of supported specifications
      */
-    public Set<ConversionSpecification<?,?>> getSupportedSpecifications()  {
+    public Set<ConversionSpecification<?, ?>> getSupportedSpecifications() {
         return this.parsers.keySet();
     }
 }

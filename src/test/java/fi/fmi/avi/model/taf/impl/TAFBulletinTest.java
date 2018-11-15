@@ -21,27 +21,30 @@ public class TAFBulletinTest {
     @Test
     public void testTAFBulletinLengthConsistentLong() throws Exception {
         TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
-        AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder().setDesignator("EETN")
-                .setName("Vaasa Airport")
-                .setFieldElevationValue(19.0)
-                .setLocationIndicatorICAO("EFVA")
-                .setReferencePoint(new GeoPositionImpl.Builder().setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")
-                        .setCoordinates(new Double[] { 21.762199401855, 63.050701141357 })
-                        .setElevationValue(19.0)
-                        .setElevationUom("m")
+        AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()//
+                .setDesignator("EETN")//
+                .setName("Vaasa Airport")//
+                .setFieldElevationValue(19.0)//
+                .setLocationIndicatorICAO("EFVA")//
+                .setReferencePoint(new GeoPositionImpl.Builder()//
+                        .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")//
+                        .setCoordinates(new Double[] { 21.762199401855, 63.050701141357 })//
+                        .setElevationValue(19.0)//
+                        .setElevationUom("m")//
                         .build());
         TAFImpl.Builder tafBuilder = TAFImpl.immutableCopyOf(t).toBuilder();
-        tafBuilder.setAerodrome(airportBuilder.build())
-                .withCompleteIssueTime(YearMonth.of(2017, 7))
-                .withCompleteForecastTimes(YearMonth.of(2017, 7), 27, 11, ZoneId.of("Z"))
+        tafBuilder.setAerodrome(airportBuilder.build())//
+                .withCompleteIssueTime(YearMonth.of(2017, 7))//
+                .withCompleteForecastTimes(YearMonth.of(2017, 7), 27, 11, ZoneId.of("Z"))//
                 .setTranslationTime(ZonedDateTime.now());
 
-        TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder().setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))
-                .setHeading(new TAFBulletinHeadingImpl.Builder().setType(TAFBulletinHeading.Type.NORMAL)
-                        .setGeographicalDesignator("FI")
-                        .setLocationIndicator("EFKL")
-                        .setBulletinNumber(31)
-                        .setValidLessThan12Hours(false)
+        TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
+                .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
+                .setHeading(new TAFBulletinHeadingImpl.Builder().setType(TAFBulletinHeading.Type.NORMAL)//
+                        .setGeographicalDesignator("FI")//
+                        .setLocationIndicator("EFKL")//
+                        .setBulletinNumber(31)//
+                        .setValidLessThan12Hours(false)//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
         bulletinBuilder.build();
@@ -50,27 +53,30 @@ public class TAFBulletinTest {
     @Test(expected = IllegalStateException.class)
     public void testTAFBulletinLengthInconsistentLong() throws Exception {
         TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
-        AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder().setDesignator("EETN")
-                .setName("Vaasa Airport")
-                .setFieldElevationValue(19.0)
-                .setLocationIndicatorICAO("EFVA")
-                .setReferencePoint(new GeoPositionImpl.Builder().setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")
-                        .setCoordinates(new Double[] { 21.762199401855, 63.050701141357 })
-                        .setElevationValue(19.0)
-                        .setElevationUom("m")
+        AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()//
+                .setDesignator("EETN")//
+                .setName("Vaasa Airport")//
+                .setFieldElevationValue(19.0)//
+                .setLocationIndicatorICAO("EFVA")//
+                .setReferencePoint(new GeoPositionImpl.Builder()//
+                        .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")//
+                        .setCoordinates(new Double[] { 21.762199401855, 63.050701141357 })//
+                        .setElevationValue(19.0)//
+                        .setElevationUom("m")//
                         .build());
         TAFImpl.Builder tafBuilder = TAFImpl.immutableCopyOf(t).toBuilder();
-        tafBuilder.setAerodrome(airportBuilder.build())
-                .withCompleteIssueTime(YearMonth.of(2017, 7))
-                .withCompleteForecastTimes(YearMonth.of(2017, 7), 27, 11, ZoneId.of("Z"))
+        tafBuilder.setAerodrome(airportBuilder.build())//
+                .withCompleteIssueTime(YearMonth.of(2017, 7))//
+                .withCompleteForecastTimes(YearMonth.of(2017, 7), 27, 11, ZoneId.of("Z"))//
                 .setTranslationTime(ZonedDateTime.now());
 
-        TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder().setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))
-                .setHeading(new TAFBulletinHeadingImpl.Builder().setType(TAFBulletinHeading.Type.NORMAL)
-                        .setGeographicalDesignator("FI")
-                        .setLocationIndicator("EFKL")
-                        .setBulletinNumber(31)
-                        .setValidLessThan12Hours(true)
+        TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
+                .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
+                .setHeading(new TAFBulletinHeadingImpl.Builder().setType(TAFBulletinHeading.Type.NORMAL)//
+                        .setGeographicalDesignator("FI")//
+                        .setLocationIndicator("EFKL")//
+                        .setBulletinNumber(31)//
+                        .setValidLessThan12Hours(true)//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
         bulletinBuilder.build();

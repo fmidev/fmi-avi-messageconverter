@@ -5,6 +5,16 @@ import java.util.OptionalInt;
 public interface BulletinHeading {
 
     /**
+     * Type of the content (AAx, RRx, CCx) part of the abbreviated heading
+     *
+     * @return
+     */
+    Type getType();
+
+    enum Type {NORMAL, DELAYED, AMENDED, CORRECTED}
+
+
+    /**
      * This corresponds to the 'CCCC' part of the abbreviated heading
      *
      * @return

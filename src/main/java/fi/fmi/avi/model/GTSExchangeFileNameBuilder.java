@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.taf;
+package fi.fmi.avi.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,6 +7,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.OptionalInt;
 import java.util.Set;
+
+import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
+import fi.fmi.avi.model.taf.TAFBulletinHeading;
 
 /**
  * See WMO No.386 Manual on the global telecommunications system, Attachment II-15, GTS Data Exchange Methods, SFTP/FTP procedures and file naming
@@ -17,12 +20,13 @@ public class GTSExchangeFileNameBuilder {
     private Set<TimeStampField> fieldsToInclude = new HashSet<>();
 
     private GTSExchangePFlag pFlag;
-    private TAFBulletinHeading heading;
+    private BulletinHeading heading;
     private GTSExchangeFileType fileType;
     private GTSExchangeCompressionType compressionType;
     private String freeFormPart;
     private boolean isMetadataFile;
     private LocalDateTime timeStamp;
+
     public GTSExchangeFileNameBuilder() {
         this.isMetadataFile = false;
         this.fieldsToInclude.addAll(Arrays.asList(TimeStampField.YEAR, TimeStampField.MONTH, TimeStampField.DAY, TimeStampField.HOUR, TimeStampField.MINUTE));
@@ -41,11 +45,11 @@ public class GTSExchangeFileNameBuilder {
         return this;
     }
 
-    public TAFBulletinHeading getHeading() {
+    public BulletinHeading getHeading() {
         return heading;
     }
 
-    public GTSExchangeFileNameBuilder setHeading(final TAFBulletinHeading heading) {
+    public GTSExchangeFileNameBuilder setHeading(final BulletinHeading heading) {
         if (heading.getGeographicalDesignator() == null || heading.getGeographicalDesignator().length() != 2) {
             throw new IllegalArgumentException("Invalid geographical location code '" + heading.getGeographicalDesignator() + "' in TAF bulletin");
         }
@@ -61,7 +65,7 @@ public class GTSExchangeFileNameBuilder {
                 throw new IllegalArgumentException(
                         "Illegal bulletin augmentation number '" + augNumber.getAsInt() + "', the value must be between 1 and  " + ('Z' - 'A' + 1));
             }
-            if (TAFBulletinHeading.Type.NORMAL == heading.getType()) {
+            if (BulletinHeading.Type.NORMAL == heading.getType()) {
                 throw new IllegalArgumentException("Bulletin contains augmentation number, but the type is NORMAL");
             }
         }
@@ -126,11 +130,27 @@ public class GTSExchangeFileNameBuilder {
             sb.append('M');
         }
         sb.append('_');
-        sb.append('F');
-        if (heading.isValidLessThan12Hours()) {
-            sb.append('C');
-        } else {
-            sb.append('T');
+        if (this.heading instanceof TAFBulletinHeading) {
+            sb.append('F');
+            if (((TAFBulletinHeading) heading).isValidLessThan12Hours()) {
+                sb.append('C');
+            } else {
+                sb.append('T');
+            }
+        } else if (this.heading instanceof SIGMETBulletinHeading) {
+            sb.append('W');
+            SIGMETBulletinHeading sbh = (SIGMETBulletinHeading) heading;
+            switch (sbh.getSIGMETType()) {
+                case SEVERE_WEATHER:
+                    sb.append('S');
+                    break;
+                case TROPICAL_CYCLONE:
+                    sb.append('Y');
+                    break;
+                case VOLCANIC_ASH:
+                    sb.append('V');
+                    break;
+            }
         }
         sb.append(heading.getGeographicalDesignator());
         sb.append(String.format("%02d", heading.getBulletinNumber()));
@@ -173,7 +193,7 @@ public class GTSExchangeFileNameBuilder {
 
     public String build() {
         if (this.heading == null) {
-            throw new IllegalStateException("No TAFBulletin heading set");
+            throw new IllegalStateException("No bulletin heading set");
         }
         if (this.fileType == null) {
             throw new IllegalStateException("File type not set");
