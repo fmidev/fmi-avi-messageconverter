@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 import fi.fmi.avi.model.taf.TAFBulletinHeading;
@@ -52,7 +50,9 @@ public abstract class TAFBulletinImpl implements TAFBulletin {
 
         @Override
         public TAFBulletinImpl build() {
+            //NOTE: check disabled, it seems that the length of TAF is no longer relevant in bulletins / Ilkka Rinne 27th Nov 2018
             //check the all the TAFs are short or long consistently with the heading info
+            /*
             Optional<PartialOrCompleteTimePeriod> validity;
             Optional<Duration> span;
             Duration twelweHours = Duration.ofHours(12);
@@ -68,6 +68,7 @@ public abstract class TAFBulletinImpl implements TAFBulletin {
                     }
                 }
             }
+            */
             return super.build();
         }
 
