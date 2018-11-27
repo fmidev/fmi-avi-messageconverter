@@ -4,6 +4,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import fi.fmi.avi.JSONTestUtil;
@@ -50,6 +51,8 @@ public class TAFBulletinTest {
         bulletinBuilder.build();
     }
 
+    //Check for TAF length removed, so ignoring the test
+    @Ignore
     @Test(expected = IllegalStateException.class)
     public void testTAFBulletinLengthInconsistentLong() throws Exception {
         TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
