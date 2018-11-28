@@ -1,39 +1,39 @@
 {
   "status": "NORMAL",
   "issuingAirTrafficServicesUnit": {
-    "name": "AMSTERDAM FIR",
+    "name": "AMSTERDAM",
     "type": "FIR",
     "designator": "EHAA"
   },
   "meteorologicalWatchOffice": {
-    "name": "De Bilt",
+    "name": "DE BILT",
     "type": "MWO",
     "designator": "EHDB"
   },
   "sequenceNumber": "1",
   "issueTime": {
-    "completeTime": "2017-08-27T11:30:00Z"
+    "completeTime": "2018-08-27T11:30:00Z"
   },
   "validityPeriod": {
     "startTime": {
-      "completeTime": "2017-08-27T11:30:00Z"
+      "partialTime": "--27T12:00"
     },
     "endTime": {
-      "completeTime": "2017-08-27T18:00:00Z"
+      "completeTime": "2018-08-27T18:00:00Z"
     }
   },
-  "sigmetPhenomenon": "EMBD_TS",
+  "sigmetPhenomenon": "VA",
   "analysis": [
     {
       "analysisTime": {
-        "completeTime": "2017-08-27T12:00:00Z"
+        "completeTime": "2017-08-27T11:30:00Z"
       },
       "lowerLimit": {
-        "value": 10.0,
+        "value": 10,
         "uom": "FL"
       },
       "upperLimit": {
-        "value": 35.0,
+        "value": 35,
         "uom": "FL"
       },
       "analysisType": "OBSERVATION",
@@ -90,6 +90,12 @@
       }
     }
   ],
-  "permissibleUsage" : "NON_OPERATIONAL",
-  "permissibleUsageReason" : "EXERCISE"
+  "volcano": {
+    "volcanoPosition": {
+      "coordinateReferenceSystemId":"EPSG:4326",
+      "coordinates":[52.0,5.2]
+    },
+    "volcanoName": "GRIMSVOTN"
+  },
+  "translated": false
 }

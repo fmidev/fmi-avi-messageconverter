@@ -22,27 +22,28 @@ import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETDeserializer;
 import fi.fmi.avi.model.sigmet.SigmetAnalysis;
 import fi.fmi.avi.model.sigmet.SigmetReference;
+import fi.fmi.avi.model.sigmet.WVSIGMET;
 
 @FreeBuilder
-@JsonDeserialize(using=SIGMETDeserializer.class, builder = SIGMETImpl.Builder.class)
+@JsonDeserialize(builder = WVSIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis",
         "forecastPositionAnalysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class SIGMETImpl implements SIGMET, Serializable {
+public abstract class WVSIGMETImpl implements WVSIGMET, Serializable {
 
-    public static SIGMETImpl immutableCopyOf(final SIGMET sigmet) {
+    public static WVSIGMETImpl immutableCopyOf(final WVSIGMET sigmet) {
         Objects.requireNonNull(sigmet);
-        if (sigmet instanceof SIGMETImpl) {
-            return (SIGMETImpl) sigmet;
+        if (sigmet instanceof WVSIGMETImpl) {
+            return (WVSIGMETImpl) sigmet;
         } else {
             return Builder.from(sigmet).build();
         }
     }
 
-    public static Optional<SIGMETImpl> immutableCopyOf(final Optional<SIGMET> sigmet) {
+    public static Optional<WVSIGMETImpl> immutableCopyOf(final Optional<WVSIGMET> sigmet) {
         Objects.requireNonNull(sigmet);
-        return sigmet.map(SIGMETImpl::immutableCopyOf);
+        return sigmet.map(WVSIGMETImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
@@ -69,11 +70,11 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         return true;
     }
 
-    public static class Builder extends SIGMETImpl_Builder {
+    public static class Builder extends WVSIGMETImpl_Builder {
 
-        public static Builder from(final SIGMET value) {
-            if (value instanceof SIGMETImpl) {
-                return ((SIGMETImpl) value).toBuilder();
+        public static Builder from(final WVSIGMET value) {
+            if (value instanceof WVSIGMETImpl) {
+                return ((WVSIGMETImpl) value).toBuilder();
             } else {
                 //From AviationWeatherMessage
                 Builder retval = new Builder()//

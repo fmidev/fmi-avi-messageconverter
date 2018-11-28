@@ -481,10 +481,10 @@ public interface AviationCodeListUser {
 
     }
 
-    enum SigmetReportStatus {
+    enum SigmetAirmetReportStatus {
         NORMAL(0), CANCELLATION(1);
 
-        public static SigmetReportStatus fromInt(final int code) {
+        public static SigmetAirmetReportStatus fromInt(final int code) {
             switch (code) {
                 case 0: return NORMAL;
                 case 1: return CANCELLATION;
@@ -494,7 +494,7 @@ public interface AviationCodeListUser {
 
         private final int code;
 
-        SigmetReportStatus(final int code) {
+        SigmetAirmetReportStatus(final int code) {
             this.code = code;
         }
 

@@ -16,33 +16,40 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
+import fi.fmi.avi.model.VolcanoDescription;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
+import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SIGMETDeserializer;
 import fi.fmi.avi.model.sigmet.SigmetAnalysis;
 import fi.fmi.avi.model.sigmet.SigmetReference;
+import fi.fmi.avi.model.sigmet.VASIGMET;
 
 @FreeBuilder
-@JsonDeserialize(using=SIGMETDeserializer.class, builder = SIGMETImpl.Builder.class)
+@JsonDeserialize(builder = VASIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis",
-        "forecastPositionAnalysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+        "forecastPositionAnalysis", "volcano", "noVolcanicAshExpected", "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage",
+        "permissibleUsageReason",
+        "permissibleUsageSupplementary",
+        "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class SIGMETImpl implements SIGMET, Serializable {
 
-    public static SIGMETImpl immutableCopyOf(final SIGMET sigmet) {
+public abstract class VASIGMETImpl implements VASIGMET, Serializable {
+
+    public static VASIGMETImpl immutableCopyOf(final VASIGMET sigmet) {
         Objects.requireNonNull(sigmet);
-        if (sigmet instanceof SIGMETImpl) {
-            return (SIGMETImpl) sigmet;
+        if (sigmet instanceof VASIGMETImpl) {
+            return (VASIGMETImpl) sigmet;
         } else {
             return Builder.from(sigmet).build();
         }
     }
 
-    public static Optional<SIGMETImpl> immutableCopyOf(final Optional<SIGMET> sigmet) {
+    public static Optional<VASIGMETImpl> immutableCopyOf(final Optional<VASIGMET> sigmet) {
         Objects.requireNonNull(sigmet);
-        return sigmet.map(SIGMETImpl::immutableCopyOf);
+        return sigmet.map(VASIGMETImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
@@ -69,11 +76,11 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         return true;
     }
 
-    public static class Builder extends SIGMETImpl_Builder {
+    public static class Builder extends VASIGMETImpl_Builder {
 
         public static Builder from(final SIGMET value) {
-            if (value instanceof SIGMETImpl) {
-                return ((SIGMETImpl) value).toBuilder();
+            if (value instanceof VASIGMETImpl) {
+                return ((VASIGMETImpl) value).toBuilder();
             } else {
                 //From AviationWeatherMessage
                 Builder retval = new Builder()//
@@ -106,6 +113,14 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                         .map(an -> retval.setAnalysis(
                                 (Collections.unmodifiableList(an.stream().map(SigmetAnalysisImpl::immutableCopyOf).collect(Collectors.toList())))));
 
+                if (value instanceof VASIGMET) {
+                    //From VASigmet
+                    VASIGMET va=(VASIGMET)value;
+                    retval.setVolcano(VolcanoDescriptionImpl.immutableCopyOf((va.getVolcano())));
+                    retval.setNoVolcanicAshExpected(va.getNoVolcanicAshExpected());
+                    retval.setVolcanicAshMovedToFIR(va.getVolcanicAshMovedToFIR());
+                }
+
                 return retval;
             }
         }
@@ -129,7 +144,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(as = SigmetReference.class)
+        @JsonDeserialize(as = SigmetReferenceImpl.class)
         public Builder setCancelledReference(final SigmetReference cancelledReference) {
             return super.setCancelledReference(cancelledReference);
         }
@@ -140,5 +155,17 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
             return super.setIssueTime(issueTime);
         }
 
+        @Override
+        @JsonDeserialize(as = PartialOrCompleteTimePeriod.class)
+        public Builder setValidityPeriod(final PartialOrCompleteTimePeriod validityPeriod) {
+            return super.setValidityPeriod(validityPeriod);
+        }
+
+        @Override
+        @JsonDeserialize(as= VolcanoDescriptionImpl.class)
+        public Builder setVolcano(final VolcanoDescription volcano) { return super.setVolcano(volcano);}
+
+        @Override
+        public Builder setNoVolcanicAshExpected(boolean noVolcanicAshExpected) { return super.setNoVolcanicAshExpected(noVolcanicAshExpected);}
     }
 }

@@ -1,7 +1,6 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -16,7 +15,6 @@ import fi.fmi.avi.model.sigmet.SigmetAnalysis;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -58,7 +56,7 @@ public class SigmetTest {
                 .setIssuingAirTrafficServicesUnit(new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAM", "FIR").build())
                 .setMeteorologicalWatchOffice(new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
                 .setSequenceNumber("1")
-                .setStatus(AviationCodeListUser.SigmetReportStatus.NORMAL)
+                .setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
                 .setValidityPeriod(new PartialOrCompleteTimePeriod.Builder()
                         .setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T14:00:00Z")))
                         .setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T18:00:00Z")))
