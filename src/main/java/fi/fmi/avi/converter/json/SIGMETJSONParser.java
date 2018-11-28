@@ -22,7 +22,7 @@ public class SIGMETJSONParser extends AbstractJSONParser implements AviMessageSp
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<SIGMET> convertMessage(String input, ConversionHints hints) {
+    public ConversionResult<SIGMET> convertMessage(final String input, final ConversionHints hints) {
         return doConvertMessage(input, SIGMET.class, SIGMETImpl.class, hints);
     }
 }

@@ -22,7 +22,7 @@ public class TAFBulletinJSONParser extends AbstractJSONParser implements AviMess
      * @return the conversion result.
      */
     @Override
-    public ConversionResult<TAFBulletin> convertMessage(String input, ConversionHints hints) {
+    public ConversionResult<TAFBulletin> convertMessage(final String input, final ConversionHints hints) {
         return doConvertMessage(input, TAFBulletin.class, TAFBulletinImpl.class, hints);
     }
 }

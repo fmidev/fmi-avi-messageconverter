@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 import org.junit.Test;
@@ -54,63 +55,63 @@ public class JSONConverterTest {
 
     @Test
     public void testTAFParsing() throws Exception {
-        InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
         Objects.requireNonNull(is);
-        String input = IOUtils.toString(is,"UTF-8");
+        final String input = IOUtils.toString(is,"UTF-8");
         is.close();
-        ConversionResult<TAF> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_TAF_POJO, ConversionHints.EMPTY);
+        final ConversionResult<TAF> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_TAF_POJO, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
     }
 
     @Test
     public void testMETARParsing() throws Exception {
-        InputStream is = JSONConverterTest.class.getResourceAsStream("metar1.json");
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("metar1.json");
         Objects.requireNonNull(is);
-        String input = IOUtils.toString(is, "UTF-8");
+        final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        ConversionResult<METAR> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_METAR_POJO, ConversionHints.EMPTY);
+        final ConversionResult<METAR> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_METAR_POJO, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
     }
 
     @Test
     public void testSIGMETParsing() throws Exception {
-        InputStream is = JSONConverterTest.class.getResourceAsStream("sigmet1.json");
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("sigmet1.json");
         Objects.requireNonNull(is);
-        String input = IOUtils.toString(is, "UTF-8");
+        final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
     }
 
     @Test
     public void testTAFBulletinParsing() throws Exception {
-        InputStream is = JSONConverterTest.class.getResourceAsStream("tafBulletin1.json");
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("tafBulletin1.json");
         Objects.requireNonNull(is);
-        String input = IOUtils.toString(is, "UTF-8");
+        final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        ConversionResult<TAFBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_TAF_BULLETIN_POJO, ConversionHints.EMPTY);
+        final ConversionResult<TAFBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_TAF_BULLETIN_POJO, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
     }
 
     @Test
     public void testSIGMETBulletinParsing() throws Exception {
-        InputStream is = JSONConverterTest.class.getResourceAsStream("sigmetBulletin1.json");
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("sigmetBulletin1.json");
         Objects.requireNonNull(is);
-        String input = IOUtils.toString(is, "UTF-8");
+        final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        ConversionResult<SIGMETBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_BULLETIN_POJO, ConversionHints.EMPTY);
+        final ConversionResult<SIGMETBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_BULLETIN_POJO, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
     }
 
 
     @Test
     public void testTAFSerialization() throws Exception {
-        InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
         Objects.requireNonNull(is);
-        String reference = IOUtils.toString(is,"UTF-8");
+        final String reference = IOUtils.toString(is,"UTF-8");
         is.close();
 
-        TAFImpl.Builder builder = new TAFImpl.Builder();
+        final TAFImpl.Builder builder = new TAFImpl.Builder();
         builder.setStatus(AviationCodeListUser.TAFStatus.NORMAL)
                 .setIssueTime(PartialOrCompleteTimeInstant.createIssueTime("271137Z"))
                 .setAerodrome(new AerodromeImpl.Builder().setDesignator("EFVA").build())
@@ -141,10 +142,9 @@ public class JSONConverterTest {
                         .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2715/2717"))
                         .setPrevailingVisibility(NumericMeasureImpl.of(5000.0, "m"))
                         .setCloud(new CloudForecastImpl.Builder()
-                                .setLayers(Arrays.asList(new CloudLayerImpl.Builder()
-                                                .setBase(NumericMeasureImpl.of(700, "[ft_i]"))
-                                                .setAmount(AviationCodeListUser.CloudAmount.BKN)
-                                                .build()))
+                                .setLayers(Collections.singletonList(new CloudLayerImpl.Builder().setBase(NumericMeasureImpl.of(700, "[ft_i]"))
+                                        .setAmount(AviationCodeListUser.CloudAmount.BKN)
+                                        .build()))
                                 .build()
                         )
                         .build(),
@@ -174,8 +174,7 @@ public class JSONConverterTest {
                         .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2802/2806"))
                         .setPrevailingVisibility(NumericMeasureImpl.of(3000.0, "m"))
                         .setCloud(new CloudForecastImpl.Builder()
-                                .setLayers(Arrays.asList(new CloudLayerImpl.Builder()
-                                        .setBase(NumericMeasureImpl.of(400, "[ft_i]"))
+                                .setLayers(Collections.singletonList(new CloudLayerImpl.Builder().setBase(NumericMeasureImpl.of(400, "[ft_i]"))
                                         .setAmount(AviationCodeListUser.CloudAmount.BKN)
                                         .build()))
                                 .build()
@@ -183,12 +182,12 @@ public class JSONConverterTest {
                         .build())
         );
 
-        ConversionResult<String> result = converter.convertMessage(builder.build(), JSONConverter.TAF_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> result = converter.convertMessage(builder.build(), JSONConverter.TAF_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 
-        BufferedReader refReader = new BufferedReader(new StringReader(reference));
-        BufferedReader resultReader = new BufferedReader(new StringReader(result.getConvertedMessage().get()));
+        final BufferedReader refReader = new BufferedReader(new StringReader(reference));
+        final BufferedReader resultReader = new BufferedReader(new StringReader(result.getConvertedMessage().get()));
         String line = null;
         int lineNo = 0;
         while ((line = refReader.readLine()) != null) {
@@ -200,12 +199,12 @@ public class JSONConverterTest {
 
     @Test
     public void testSIGMETBulletinSerialization() throws Exception {
-        InputStream is = JSONConverterTest.class.getResourceAsStream("sigmetBulletin1.json");
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("sigmetBulletin1.json");
         Objects.requireNonNull(is);
-        String reference = IOUtils.toString(is, "UTF-8");
+        final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
 
-        SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
+        final SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
                 .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
                         .setPartialTime(PartialDateTime.ofDayHourMinute(2, 5, 0))).setHeading(new SIGMETBulletinHeadingImpl.Builder()//
                         .setGeographicalDesignator("FI")//
@@ -220,9 +219,9 @@ public class JSONConverterTest {
                         + "N6001 E02312 - N6008 E02606 - N6008\n"//
                         + "E02628 FL220-340 MOV N 15KT\n"//
                         + "WKN=").setTranslated(false).build());
-        SIGMETBulletin msg = builder.build();
+        final SIGMETBulletin msg = builder.build();
 
-        ConversionResult<String> jsonResult = this.converter.convertMessage(msg, JSONConverter.SIGMET_BULLETIN_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> jsonResult = this.converter.convertMessage(msg, JSONConverter.SIGMET_BULLETIN_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertEquals(ConversionResult.Status.SUCCESS, jsonResult.getStatus());
 
         TestCase.assertTrue(jsonResult.getConvertedMessage().isPresent());

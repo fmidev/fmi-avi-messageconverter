@@ -63,11 +63,11 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
 
         /**
          * Convenience method for setting the bulletin augmentation number as a
-         * character between 'A' and 'Z' used in the GTS abbreviated heading syntax.
+         * character used in the GTS abbreviated heading syntax.
          *
-         * @param asChar
+         * @param asChar character between 'A' and 'Z'
          *
-         * @return
+         * @return the builder
          */
         public Builder setBulletinAugmentationNumber(final char asChar) {
             if (!Character.isAlphabetic(asChar) || asChar < 'A' || asChar > 'Z') {

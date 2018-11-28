@@ -33,9 +33,9 @@ public interface RunwayState extends AviationCodeListUser {
     Optional<RelationalOperator> getDepthOperator();
 
     /**
-     * The estimated surface friction, if known. The value shall be between 0.00 and 0.98.
+     * The estimated surface friction, if known.
      *
-     * @return
+     * @return the surface friction between 0.00 and 0.98
      */
     Optional<Double> getEstimatedSurfaceFriction();
 

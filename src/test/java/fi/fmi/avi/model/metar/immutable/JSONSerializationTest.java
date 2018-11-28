@@ -16,8 +16,8 @@ public class JSONSerializationTest {
     @Test
     public void testMETAR() throws IOException {
         METAR m = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("metar11.json"), METARImpl.class);
-        METARImpl.Builder mib = METARImpl.immutableCopyOf(m).toBuilder();
-        AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()
+        final METARImpl.Builder mib = METARImpl.immutableCopyOf(m).toBuilder();
+        final AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()
                 .setDesignator("EETN")
                 .setName("Tallinn Airport")
                 .setFieldElevationValue(40.0)

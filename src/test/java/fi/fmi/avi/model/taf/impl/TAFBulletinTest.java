@@ -21,8 +21,8 @@ public class TAFBulletinTest {
 
     @Test
     public void testTAFBulletinLengthConsistentLong() throws Exception {
-        TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
-        AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()//
+        final TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
+        final AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()//
                 .setDesignator("EETN")//
                 .setName("Vaasa Airport")//
                 .setFieldElevationValue(19.0)//
@@ -33,13 +33,13 @@ public class TAFBulletinTest {
                         .setElevationValue(19.0)//
                         .setElevationUom("m")//
                         .build());
-        TAFImpl.Builder tafBuilder = TAFImpl.immutableCopyOf(t).toBuilder();
+        final TAFImpl.Builder tafBuilder = TAFImpl.immutableCopyOf(t).toBuilder();
         tafBuilder.setAerodrome(airportBuilder.build())//
                 .withCompleteIssueTime(YearMonth.of(2017, 7))//
                 .withCompleteForecastTimes(YearMonth.of(2017, 7), 27, 11, ZoneId.of("Z"))//
                 .setTranslationTime(ZonedDateTime.now());
 
-        TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
+        final TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
                 .setHeading(new TAFBulletinHeadingImpl.Builder().setType(TAFBulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
@@ -55,8 +55,8 @@ public class TAFBulletinTest {
     @Ignore
     @Test(expected = IllegalStateException.class)
     public void testTAFBulletinLengthInconsistentLong() throws Exception {
-        TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
-        AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()//
+        final TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
+        final AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()//
                 .setDesignator("EETN")//
                 .setName("Vaasa Airport")//
                 .setFieldElevationValue(19.0)//
@@ -67,13 +67,13 @@ public class TAFBulletinTest {
                         .setElevationValue(19.0)//
                         .setElevationUom("m")//
                         .build());
-        TAFImpl.Builder tafBuilder = TAFImpl.immutableCopyOf(t).toBuilder();
+        final TAFImpl.Builder tafBuilder = TAFImpl.immutableCopyOf(t).toBuilder();
         tafBuilder.setAerodrome(airportBuilder.build())//
                 .withCompleteIssueTime(YearMonth.of(2017, 7))//
                 .withCompleteForecastTimes(YearMonth.of(2017, 7), 27, 11, ZoneId.of("Z"))//
                 .setTranslationTime(ZonedDateTime.now());
 
-        TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
+        final TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
                 .setHeading(new TAFBulletinHeadingImpl.Builder().setType(TAFBulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//

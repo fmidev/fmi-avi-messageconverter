@@ -23,8 +23,6 @@ import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.TrendForecast;
 
-;
-
 /**
  * Created by rinne on 13/04/2018.
  */
@@ -35,6 +33,8 @@ import fi.fmi.avi.model.metar.TrendForecast;
         "prevailingVisibility", "prevailingVisibilityOperator", "noSignificantWeather", "forecastWeather",
         "cloud", "colorState"})
 public abstract class TrendForecastImpl implements TrendForecast, Serializable {
+
+    private static final long serialVersionUID = 6616569232494572943L;
 
     public static TrendForecastImpl immutableCopyOf(final TrendForecast trendForecast) {
         Objects.requireNonNull(trendForecast);
@@ -63,7 +63,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
             if (value instanceof TrendForecastImpl) {
                 return ((TrendForecastImpl) value).toBuilder();
             } else {
-                Builder retval = new TrendForecastImpl.Builder()//
+                final Builder retval = new TrendForecastImpl.Builder()//
                         .setPeriodOfChange(value.getPeriodOfChange())
                         .setInstantOfChange(value.getInstantOfChange())
                         .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())

@@ -13,9 +13,9 @@ public class SIGMETBulletinTest {
 
     @Test
     public void testSIGMETBulletin() throws Exception {
-        SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
+        final SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
                 .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
-                        .setPartialTime(PartialDateTime.ofDayHourMinute(17, 7, 00))).setHeading(new SIGMETBulletinHeadingImpl.Builder()//
+                        .setPartialTime(PartialDateTime.ofDayHourMinute(17, 7, 0))).setHeading(new SIGMETBulletinHeadingImpl.Builder()//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//

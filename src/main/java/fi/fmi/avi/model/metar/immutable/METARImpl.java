@@ -56,6 +56,8 @@ import fi.fmi.avi.model.metar.WindShear;
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class METARImpl implements METAR, Serializable {
 
+    private static final long serialVersionUID = 5959988117998705772L;
+
     public static METARImpl immutableCopyOf(final MeteorologicalTerminalAirReport msg) {
         requireNonNull(msg);
         if (msg instanceof METAR) {
@@ -66,12 +68,12 @@ public abstract class METARImpl implements METAR, Serializable {
             }
         } else if (msg instanceof SPECI) {
             try {
-                InvocationHandler handler = Proxy.getInvocationHandler(msg);
+                final InvocationHandler handler = Proxy.getInvocationHandler(msg);
                 if (handler instanceof SPECIInvocationHandler) {
                     //msg is a SPECI proxy, return the internal delegate:
                     return ((SPECIInvocationHandler) handler).getDelegate();
                 }
-            } catch (IllegalArgumentException iae) {
+            } catch (final IllegalArgumentException iae) {
                 //NOOP: msg is not a SPECI proxy instance, fallback to regular copy
             }
             return Builder.from((SPECI) msg).build();
@@ -80,6 +82,7 @@ public abstract class METARImpl implements METAR, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<METARImpl> immutableCopyOf(final Optional<MeteorologicalTerminalAirReport> metar) {
         requireNonNull(metar);
         return metar.map(METARImpl::immutableCopyOf);
@@ -129,7 +132,7 @@ public abstract class METARImpl implements METAR, Serializable {
             return false;
         }
         if (this.getTrends().isPresent()) {
-            for (TrendForecast trend : this.getTrends().get()) {
+            for (final TrendForecast trend : this.getTrends().get()) {
                 if (trend.getPeriodOfChange().isPresent()) {
                     if (!trend.getPeriodOfChange().get().isComplete()) {
                         return false;
@@ -152,7 +155,7 @@ public abstract class METARImpl implements METAR, Serializable {
             return false;
         }
         if (this.getRunwayStates().isPresent()) {
-            for (RunwayState state : this.getRunwayStates().get()) {
+            for (final RunwayState state : this.getRunwayStates().get()) {
                 if (state.getRunwayDirection().isPresent()) {
                     if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
                         ad = state.getRunwayDirection().get().getAssociatedAirportHeliport().get();
@@ -165,7 +168,7 @@ public abstract class METARImpl implements METAR, Serializable {
         }
 
         if (this.getRunwayVisualRanges().isPresent()) {
-            for (RunwayVisualRange range : this.getRunwayVisualRanges().get()) {
+            for (final RunwayVisualRange range : this.getRunwayVisualRanges().get()) {
                 if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
                     ad = range.getRunwayDirection().getAssociatedAirportHeliport().get();
                     if (!ad.getReferencePoint().isPresent()) {
@@ -192,17 +195,17 @@ public abstract class METARImpl implements METAR, Serializable {
                 return ((METARImpl) value).toBuilder();
             } else if (value instanceof SPECI) {
                 try {
-                    InvocationHandler handler = Proxy.getInvocationHandler(value);
+                    final InvocationHandler handler = Proxy.getInvocationHandler(value);
                     if (handler instanceof SPECIInvocationHandler) {
                         //value is a SPECI proxy, return a Builder of the internal delegate:
                         return ((SPECIInvocationHandler) handler).getDelegate().toBuilder();
                     }
-                } catch (IllegalArgumentException iae) {
+                } catch (final IllegalArgumentException iae) {
                     //NOOP, non-proxy SPECIs fallback to using the full METARImpl.Builder
                 }
             }
             //From AviationWeatherMessage:
-            METARImpl.Builder retval = new METARImpl.Builder()//
+            final METARImpl.Builder retval = new METARImpl.Builder()//
                     .setIssueTime(value.getIssueTime())
                     .setPermissibleUsage(value.getPermissibleUsage())
                     .setPermissibleUsageReason(value.getPermissibleUsageReason())
@@ -261,13 +264,13 @@ public abstract class METARImpl implements METAR, Serializable {
         }
 
         public static Builder from(final METAR value) {
-            Builder retval = from((MeteorologicalTerminalAirReport) value);
+            final Builder retval = from((MeteorologicalTerminalAirReport) value);
             retval.setRoutineDelayed(value.isRoutineDelayed());
             return retval;
         }
 
         public static Builder from(final SPECI value) {
-            Builder retval = from((MeteorologicalTerminalAirReport) value);
+            final Builder retval = from((MeteorologicalTerminalAirReport) value);
             retval.setRoutineDelayed(false);
             return retval;
         }
@@ -316,33 +319,34 @@ public abstract class METARImpl implements METAR, Serializable {
         @Override
         @JsonDeserialize(as = AerodromeImpl.class)
         public Builder setAerodrome(final Aerodrome aerodrome) {
-            Builder retval = super.setAerodrome(aerodrome);
+            final Builder retval = super.setAerodrome(aerodrome);
             if (getRunwayStates().isPresent()) {
-                List<RunwayState> oldStates = getRunwayStates().get();
-                List<RunwayState> newStates = new ArrayList<>(oldStates.size());
-                for (RunwayState state : oldStates) {
+                final List<RunwayState> oldStates = getRunwayStates().get();
+                final List<RunwayState> newStates = new ArrayList<>(oldStates.size());
+                for (final RunwayState state : oldStates) {
                     if (state.getRunwayDirection().isPresent()) {
                         if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
-                            RunwayStateImpl.Builder builder = RunwayStateImpl.immutableCopyOf(state).toBuilder();
-                            builder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection().get())
-                                    .toBuilder()
-                                    .setAssociatedAirportHeliport(aerodrome)
-                                    .build());
+                            final RunwayStateImpl.Builder builder = RunwayStateImpl.immutableCopyOf(state).toBuilder();
+                                builder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(state.getRunwayDirection().get()).toBuilder()//
+                                        .setAssociatedAirportHeliport(aerodrome)
+                                        .build());
 
-                            newStates.add(builder.build());
+                                newStates.add(builder.build());
                         }
                     }
                 }
                 setRunwayStates(newStates);
             }
             if (getRunwayVisualRanges().isPresent()) {
-                List<RunwayVisualRange> oldRanges = getRunwayVisualRanges().get();
-                List<RunwayVisualRange> newRanges = new ArrayList<>(oldRanges.size());
-                for (RunwayVisualRange range : oldRanges) {
+                final List<RunwayVisualRange> oldRanges = getRunwayVisualRanges().get();
+                final List<RunwayVisualRange> newRanges = new ArrayList<>(oldRanges.size());
+                for (final RunwayVisualRange range : oldRanges) {
                     if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
-                        RunwayVisualRangeImpl.Builder builder = RunwayVisualRangeImpl.immutableCopyOf(range).toBuilder();
+                        final RunwayVisualRangeImpl.Builder builder = RunwayVisualRangeImpl.immutableCopyOf(range).toBuilder();
                         builder.setRunwayDirection(
-                                RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection()).toBuilder().setAssociatedAirportHeliport(aerodrome).build());
+                                RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection()).toBuilder()//
+                                        .setAssociatedAirportHeliport(aerodrome)//
+                                        .build());
                         newRanges.add(builder.build());
                     }
                 }
@@ -438,11 +442,11 @@ public abstract class METARImpl implements METAR, Serializable {
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             try {
-                Method delegateMethod = METARImpl.class.getMethod(method.getName(), method.getParameterTypes());
+                final Method delegateMethod = METARImpl.class.getMethod(method.getName(), method.getParameterTypes());
                 return delegateMethod.invoke(delegate, args);
-            } catch (NoSuchMethodException nsme) {
+            } catch (final NoSuchMethodException nsme) {
                 throw new RuntimeException("SPECI method " + method.getName() + "(" + Arrays.toString(method.getParameterTypes()) + ") not implemented by "
                         + METARImpl.class.getSimpleName() + ", cannot delegate. Make sure that " + METARImpl.class.getCanonicalName()
                         + " implements all SPECI methods");

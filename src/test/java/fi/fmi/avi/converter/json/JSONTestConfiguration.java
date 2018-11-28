@@ -50,7 +50,7 @@ public class JSONTestConfiguration {
 
     @Bean
     public AviMessageConverter aviMessageConverter() {
-        AviMessageConverter p = new AviMessageConverter();
+        final AviMessageConverter p = new AviMessageConverter();
         p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_TAF_POJO, tafJSONParser);
         p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_METAR_POJO, metarJSONParser);
         p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_SIGMET_POJO, sigmetJSONParser);

@@ -22,7 +22,7 @@ public class METARJSONParser extends AbstractJSONParser implements AviMessageSpe
      * @return the conversion result.
      */
     @Override
-    public ConversionResult<METAR> convertMessage(String input, ConversionHints hints) {
+    public ConversionResult<METAR> convertMessage(final String input, final ConversionHints hints) {
         return doConvertMessage(input, METAR.class, METARImpl.class, hints);
     }
 }

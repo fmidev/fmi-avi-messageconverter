@@ -7,19 +7,19 @@ public class ConversionException extends Exception {
 
     private static final long serialVersionUID = -7814522773938439916L;
 
-    public ConversionException(String message) {
+    public ConversionException(final String message) {
         super(message);
     }
 
-    public ConversionException(Throwable cause) {
+    public ConversionException(final Throwable cause) {
         super(cause);
     }
 
-    public ConversionException(String message, Throwable cause) {
+    public ConversionException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public ConversionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public ConversionException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

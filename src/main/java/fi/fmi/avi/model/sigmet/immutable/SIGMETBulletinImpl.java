@@ -29,6 +29,7 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<SIGMETBulletinImpl> immutableCopyOf(final Optional<SIGMETBulletin> bulletin) {
         return bulletin.map(SIGMETBulletinImpl::immutableCopyOf);
     }

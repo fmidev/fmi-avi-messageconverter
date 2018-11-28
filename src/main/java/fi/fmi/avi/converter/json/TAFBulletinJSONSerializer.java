@@ -21,7 +21,7 @@ public class TAFBulletinJSONSerializer extends AbstractJSONSerializer implements
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<String> convertMessage(TAFBulletin input, ConversionHints hints) {
+    public ConversionResult<String> convertMessage(final TAFBulletin input, final ConversionHints hints) {
         return doConvertMessage(input, hints);
     }
 }

@@ -28,10 +28,11 @@ import fi.fmi.avi.model.Weather;
 public abstract class WeatherImpl implements Weather, Serializable {
 
     public final static Map<String, String> WEATHER_CODES;
+    private static final long serialVersionUID = -8305449806092913488L;
 
     //Copied from https://codes.wmo.int/306/4678
     static {
-        Map<String, String> _WEATHER_CODES = new HashMap<>();
+        final Map<String, String> _WEATHER_CODES = new HashMap<>();
         _WEATHER_CODES.put("+DZ", "Heavy precipitation of drizzle");
         _WEATHER_CODES.put("+DZPL", "Heavy precipitation of drizzle and ice pellets");
         _WEATHER_CODES.put("+DZPLRA", "Heavy precipitation of drizzle, ice pellets and rain");
@@ -472,11 +473,11 @@ public abstract class WeatherImpl implements Weather, Serializable {
         return weather.map(WeatherImpl::immutableCopyOf);
     }
 
-    public static List<Weather> fromCodes(String...codes) {
-        List<Weather> retval = new ArrayList<>();
+    public static List<Weather> fromCodes(final String...codes) {
+        final List<Weather> retval = new ArrayList<>();
         if (codes != null) {
-            for (String code:codes) {
-                WeatherImpl.Builder wb = new Builder().setCode(code);
+            for (final String code:codes) {
+                final WeatherImpl.Builder wb = new Builder().setCode(code);
                 if (WEATHER_CODES.containsKey(code)) {
                     wb.setDescription(WEATHER_CODES.get(code));
                 }

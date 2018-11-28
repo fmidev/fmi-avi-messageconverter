@@ -23,6 +23,8 @@ import fi.fmi.avi.model.RunwayDirection;
 @JsonPropertyOrder({"designator", "elevationTDZ", "trueBearing", "associatedAirportHeliport"})
 public abstract class RunwayDirectionImpl implements RunwayDirection, Serializable {
 
+    private static final long serialVersionUID = -5003174214648821010L;
+
     public static RunwayDirectionImpl immutableCopyOf(final RunwayDirection runwayDirection) {
         Objects.requireNonNull(runwayDirection);
         if (runwayDirection instanceof RunwayDirectionImpl) {
@@ -32,6 +34,7 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<RunwayDirectionImpl> immutableCopyOf(final Optional<RunwayDirection> runwayDirection) {
         Objects.requireNonNull(runwayDirection);
         return runwayDirection.map(RunwayDirectionImpl::immutableCopyOf);

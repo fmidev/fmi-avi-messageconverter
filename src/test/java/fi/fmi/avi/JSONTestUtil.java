@@ -13,9 +13,9 @@ import fi.fmi.avi.model.AviationWeatherMessage;
 
 public class JSONTestUtil {
 
-    public static <T extends AviationWeatherMessage> T readFromJSON(InputStream is, Class<T> clz) throws IOException {
+    public static <T extends AviationWeatherMessage> T readFromJSON(final InputStream is, final Class<T> clz) throws IOException {
         T retval = null;
-        ObjectMapper om = new ObjectMapper();
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
         if (is != null) {
@@ -26,11 +26,11 @@ public class JSONTestUtil {
         return retval;
     }
 
-    public static void printAsJson(AviationWeatherMessage msg, OutputStream out) throws IOException {
-        ObjectMapper om = new ObjectMapper();
+    public static void printAsJson(final AviationWeatherMessage msg, final OutputStream out) throws IOException {
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
-        ObjectWriter writer = om.writerWithDefaultPrettyPrinter();
+        final ObjectWriter writer = om.writerWithDefaultPrettyPrinter();
         writer.writeValue(out, msg);
     }
 }

@@ -28,6 +28,8 @@ import fi.fmi.avi.model.metar.RunwayState;
         "cleared" })
 public abstract class RunwayStateImpl implements RunwayState, Serializable {
 
+    private static final long serialVersionUID = 5824760002670364242L;
+
     public static RunwayStateImpl immutableCopyOf(final RunwayState runwayState) {
         Objects.requireNonNull(runwayState);
         if (runwayState instanceof RunwayStateImpl) {
@@ -37,6 +39,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<RunwayStateImpl> immutableCopyOf(final Optional<RunwayState> runwayState) {
         Objects.requireNonNull(runwayState);
         return runwayState.map(RunwayStateImpl::immutableCopyOf);

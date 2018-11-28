@@ -22,7 +22,7 @@ public class SIGMETBulletinJSONParser extends AbstractJSONParser implements AviM
      * @return the conversion result.
      */
     @Override
-    public ConversionResult<SIGMETBulletin> convertMessage(String input, ConversionHints hints) {
+    public ConversionResult<SIGMETBulletin> convertMessage(final String input, final ConversionHints hints) {
         return doConvertMessage(input, SIGMETBulletin.class, SIGMETBulletinImpl.class, hints);
     }
 }

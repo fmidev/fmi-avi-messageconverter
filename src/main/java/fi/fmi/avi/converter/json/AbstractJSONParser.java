@@ -34,19 +34,19 @@ public abstract class AbstractJSONParser {
      * @return result of the conversion
      */
     @SuppressWarnings("unchecked")
-    protected <T extends AviationWeatherMessageOrCollection> ConversionResult<T> doConvertMessage(String input, Class<T> clz, Class<?> implClz,
-            ConversionHints hints) {
-        ConversionResult<T> result = new ConversionResult<>();
-        ObjectMapper om = new ObjectMapper();
+    protected <T extends AviationWeatherMessageOrCollection> ConversionResult<T> doConvertMessage(final String input, final Class<T> clz, final Class<?> implClz,
+            final ConversionHints hints) {
+        final ConversionResult<T> result = new ConversionResult<>();
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
         try {
-            Object o = om.readValue(input, implClz);
+            final Object o = om.readValue(input, implClz);
             if (clz.isAssignableFrom(implClz)) {
                 result.setConvertedMessage((T) o);
             }
             result.setStatus(ConversionResult.Status.SUCCESS);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             result.addIssue(new ConversionIssue(ConversionIssue.Severity.ERROR, ConversionIssue.Type.OTHER, "Error parsing JSON", e));
             result.setStatus(ConversionResult.Status.FAIL);
         }

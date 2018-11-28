@@ -23,6 +23,8 @@ import fi.fmi.avi.model.taf.TAFReference;
 @JsonPropertyOrder({"status", "aerodrome", "issueTime", "validityTime"})
 public abstract class TAFReferenceImpl implements TAFReference, Serializable {
 
+    private static final long serialVersionUID = 8909829850430522942L;
+
     public static TAFReferenceImpl immutableCopyOf(final TAFReference tafReference) {
         Objects.requireNonNull(tafReference);
         if (tafReference instanceof TAFReferenceImpl) {
@@ -32,6 +34,7 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<TAFReferenceImpl> immutableCopyOf(final Optional<TAFReference> tafReference) {
         Objects.requireNonNull(tafReference);
         return tafReference.map(TAFReferenceImpl::immutableCopyOf);

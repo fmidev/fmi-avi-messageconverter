@@ -59,7 +59,7 @@ public class GTSExchangeFileNameBuilder {
         if (heading.getLocationIndicator() == null || heading.getLocationIndicator().length() != 4) {
             throw new IllegalArgumentException("Invalid location indicator '" + heading.getLocationIndicator() + "' in TAF bulletin");
         }
-        OptionalInt augNumber = heading.getBulletinAugmentationNumber();
+        final OptionalInt augNumber = heading.getBulletinAugmentationNumber();
         if (augNumber.isPresent()) {
             if (augNumber.getAsInt() < 1 || augNumber.getAsInt() > ('Z' - 'A' + 1)) {
                 throw new IllegalArgumentException(
@@ -124,7 +124,7 @@ public class GTSExchangeFileNameBuilder {
     }
 
     private String createATypeFileName() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append('A');
         if (this.isMetadataFile) {
             sb.append('M');
@@ -139,7 +139,7 @@ public class GTSExchangeFileNameBuilder {
             }
         } else if (this.heading instanceof SIGMETBulletinHeading) {
             sb.append('W');
-            SIGMETBulletinHeading sbh = (SIGMETBulletinHeading) heading;
+            final SIGMETBulletinHeading sbh = (SIGMETBulletinHeading) heading;
             switch (sbh.getSIGMETType()) {
                 case SEVERE_WEATHER:
                     sb.append('S');
@@ -155,7 +155,7 @@ public class GTSExchangeFileNameBuilder {
         sb.append(heading.getGeographicalDesignator());
         sb.append(String.format("%02d", heading.getBulletinNumber()));
         sb.append(heading.getLocationIndicator());
-        OptionalInt augNumber = heading.getBulletinAugmentationNumber();
+        final OptionalInt augNumber = heading.getBulletinAugmentationNumber();
         if (augNumber.isPresent()) {
             int seqNumber = augNumber.getAsInt();
             seqNumber = 'A' + seqNumber - 1;
@@ -212,7 +212,7 @@ public class GTSExchangeFileNameBuilder {
     }
 
     private DateTimeFormatter getFormatter() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (this.fieldsToInclude.contains(TimeStampField.YEAR)) {
             sb.append("yyyy");
         } else {

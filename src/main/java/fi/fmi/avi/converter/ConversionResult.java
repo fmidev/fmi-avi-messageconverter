@@ -1,6 +1,7 @@
 package fi.fmi.avi.converter;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public class ConversionResult<T> {
         SUCCESS(0), FAIL(3), WITH_ERRORS(2), WITH_WARNINGS(1);
         private int criticality;
 
-        Status(int criticality) {
+        Status(final int criticality) {
             this.criticality = criticality;
         }
 
@@ -68,7 +69,7 @@ public class ConversionResult<T> {
                 return Status.FAIL;
             } else {
                 boolean warningsFound = false;
-                for (ConversionIssue issue : this.issues) {
+                for (final ConversionIssue issue : this.issues) {
                     if (ConversionIssue.Severity.ERROR == issue.getSeverity()) {
                         return Status.WITH_ERRORS;
                     } else if (ConversionIssue.Severity.WARNING == issue.getSeverity()) {
@@ -106,14 +107,14 @@ public class ConversionResult<T> {
      * @return the issue list.
      */
     public List<ConversionIssue> getConversionIssues() {
-        return this.issues;
+        return Collections.unmodifiableList(this.issues);
     }
 
     /**
      * Sets the result of the conversion.
      * @param message the conversion output
      */
-    public void setConvertedMessage(T message) {
+    public void setConvertedMessage(final T message) {
         this.convertedMessage = message;
     }
 
@@ -121,7 +122,7 @@ public class ConversionResult<T> {
      * Adds a single issue.
      * @param issue to add
      */
-    public void addIssue(ConversionIssue issue) {
+    public void addIssue(final ConversionIssue issue) {
         if (issue != null) {
             this.issues.add(issue);
         }
@@ -131,7 +132,7 @@ public class ConversionResult<T> {
      * Adds a collection of issues.
      * @param issues issue collecion
      */
-    public void addIssue(Collection<ConversionIssue> issues) {
+    public void addIssue(final Collection<ConversionIssue> issues) {
         if (issues != null && !issues.isEmpty()) {
             this.issues.addAll(issues);
         }

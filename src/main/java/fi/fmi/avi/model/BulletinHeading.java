@@ -7,7 +7,7 @@ public interface BulletinHeading {
     /**
      * Type of the content (AAx, RRx, CCx) part of the abbreviated heading
      *
-     * @return
+     * @return the type of the content
      */
     Type getType();
 
@@ -17,28 +17,28 @@ public interface BulletinHeading {
     /**
      * This corresponds to the 'CCCC' part of the abbreviated heading
      *
-     * @return
+     * @return the indicator
      */
     String getLocationIndicator();
 
     /**
      * This corresponds to the 'A<sub>1</sub>A<sub>2</sub>' part of the abbreviated heading
      *
-     * @return
+     * @return the designator
      */
     String getGeographicalDesignator();
 
     /**
      * This corresponds to the 'ii' number of the abbreviated heading
      *
-     * @return
+     * @return the number
      */
     int getBulletinNumber();
 
     /**
      * Corresponds to the A-Z letter 'x' of the RRx, AAx or CCx part of the abbreviated heading
      *
-     * @return
+     * @return the augmentation number
      */
     OptionalInt getBulletinAugmentationNumber();
 

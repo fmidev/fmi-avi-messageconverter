@@ -32,6 +32,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     private static final Pattern DAY_HOUR_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<startHour>[0-9]{2})(?<endHour>[0-9]{2})$");
     private static final Pattern DAY_HOUR_DAY_HOUR_PATTERN = Pattern.compile(
             "^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
+    private static final long serialVersionUID = 875078230227696812L;
 
     public static PartialOrCompleteTimePeriod createValidityTimeDHDH(final String partialTimePeriod) throws IllegalArgumentException {
         final Matcher matcher = DAY_HOUR_DAY_HOUR_PATTERN.matcher(partialTimePeriod);
@@ -111,6 +112,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
      *
      * @return a time duration, or Optional.empty() if either or both of the validity start and end times are incomplete or missing.
      */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @JsonIgnore
     public Optional<Duration> getValidityTimeSpan() {
         if (isCompleteStrict()) {

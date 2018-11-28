@@ -22,6 +22,8 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonPropertyOrder({"value", "uom"})
 public abstract class NumericMeasureImpl implements NumericMeasure, Serializable {
 
+    private static final long serialVersionUID = 8955711992731295488L;
+
     public static NumericMeasureImpl of(final Integer value, final String uom) {
         return new Builder().setValue(value.doubleValue()).setUom(uom).build();
     }
@@ -39,6 +41,7 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<NumericMeasureImpl> immutableCopyOf(final Optional<NumericMeasure> numericMeasure) {
         return numericMeasure.map(NumericMeasureImpl::immutableCopyOf);
     }

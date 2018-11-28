@@ -27,6 +27,7 @@ public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<SIGMETBulletinHeadingImpl> immutableCopyOf(final Optional<SIGMETBulletinHeading> heading) {
         return heading.map(SIGMETBulletinHeadingImpl::immutableCopyOf);
     }

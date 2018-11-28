@@ -298,6 +298,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
             this(privateKey, description, (Object[]) null);
         }
 
+        @Override
         public boolean isCompatibleValue(final Object value) {
             boolean retval = true;
             if (this.fixedOptions != null) {
@@ -391,7 +392,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         if (key == null) {
             throw new NullPointerException();
         }
-        return hintMap.containsKey((Key) key);
+        return hintMap.containsKey(key);
     }
 
     @Override
@@ -408,6 +409,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         return this.hintMap.get(key);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T get(final Key key, final Class<T> clz) {
         final Object o = this.hintMap.get(key);
         if (o != null) {
@@ -495,6 +497,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         return this.hintMap.hashCode();
     }
 
+    @Override
     public Object clone() {
         try {
             final ConversionHints copy = (ConversionHints) super.clone();

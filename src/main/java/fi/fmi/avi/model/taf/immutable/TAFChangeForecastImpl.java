@@ -34,6 +34,8 @@ import fi.fmi.avi.model.taf.TAFForecastBuilderHelper;
         "forecastWeather", "noSignificantWeather", "cloud" })
 public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serializable {
 
+    private static final long serialVersionUID = -4546515627257056285L;
+
     public static TAFChangeForecastImpl immutableCopyOf(final TAFChangeForecast changeForecast) {
         requireNonNull(changeForecast);
         if (changeForecast instanceof TAFChangeForecastImpl) {

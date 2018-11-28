@@ -18,7 +18,7 @@ public class TAFJSONSerializer extends AbstractJSONSerializer implements AviMess
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<String> convertMessage(TAF input, ConversionHints hints) {
+    public ConversionResult<String> convertMessage(final TAF input, final ConversionHints hints) {
         return doConvertMessage(input,  hints);
     }
 }

@@ -21,7 +21,7 @@ public class SIGMETBulletinJSONSerializer extends AbstractJSONSerializer impleme
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<String> convertMessage(SIGMETBulletin input, ConversionHints hints) {
+    public ConversionResult<String> convertMessage(final SIGMETBulletin input, final ConversionHints hints) {
         return doConvertMessage(input, hints);
     }
 }

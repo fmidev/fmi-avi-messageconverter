@@ -7,4 +7,5 @@ import java.io.Serializable;
  */
 public abstract class PartialOrCompleteTime implements Serializable {
 
+    private static final long serialVersionUID = 3713515928060581255L;
 }

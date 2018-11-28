@@ -28,12 +28,15 @@ import fi.fmi.avi.model.metar.RunwayVisualRange;
         "varyingRVRMaximum", "varyingRVRMaximumOperator", "pastTendency"})
 public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serializable {
 
+    private static final long serialVersionUID = 6512555668623334989L;
+
     public static List<RunwayVisualRange> copyOfList(final List<RunwayVisualRange> runwayVisualRanges) {
         return null;
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<List<RunwayVisualRange>> copyOfList(final Optional<List<RunwayVisualRange>> runwayVisualRanges) {
-        return null;
+        return Optional.empty();
     }
 
     public static RunwayVisualRangeImpl immutableCopyOf(final RunwayVisualRange runwayVisualRange) {
@@ -45,6 +48,7 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<RunwayVisualRangeImpl> immutableCopyOf(final Optional<RunwayVisualRange> runwayVisualRange) {
         Objects.requireNonNull(runwayVisualRange);
         return runwayVisualRange.map(RunwayVisualRangeImpl::immutableCopyOf);

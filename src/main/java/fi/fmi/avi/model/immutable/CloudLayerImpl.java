@@ -23,6 +23,8 @@ import fi.fmi.avi.model.NumericMeasure;
 @JsonPropertyOrder({"amount", "base", "cloudType"})
 public abstract class CloudLayerImpl implements CloudLayer, Serializable {
 
+    private static final long serialVersionUID = 7576387664491299068L;
+
     public static CloudLayerImpl immutableCopyOf(final CloudLayer cloudLayer) {
         Objects.requireNonNull(cloudLayer);
         if (cloudLayer instanceof CloudLayerImpl) {
@@ -32,6 +34,7 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<CloudLayerImpl> immutableCopyOf(final Optional<CloudLayer> cloudLayer) {
         Objects.requireNonNull(cloudLayer);
         return cloudLayer.map(CloudLayerImpl::immutableCopyOf);

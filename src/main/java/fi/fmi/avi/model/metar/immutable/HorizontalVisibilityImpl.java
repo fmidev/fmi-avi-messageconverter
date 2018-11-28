@@ -24,6 +24,8 @@ import fi.fmi.avi.model.metar.HorizontalVisibility;
 @JsonPropertyOrder({"prevailingVisibility", "prevailingVisibilityOperator", "minimumVisibility", "minimumVisibilityDirection"})
 public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, Serializable {
 
+    private static final long serialVersionUID = 5189785512501203996L;
+
     public static HorizontalVisibilityImpl immutableCopyOf(final HorizontalVisibility horizontalVisibility) {
         Objects.requireNonNull(horizontalVisibility);
         if (horizontalVisibility instanceof HorizontalVisibilityImpl) {
@@ -33,6 +35,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<HorizontalVisibilityImpl> immutableCopyOf(final Optional<HorizontalVisibility> horizontalVisibility) {
         Objects.requireNonNull(horizontalVisibility);
         return horizontalVisibility.map(HorizontalVisibilityImpl::immutableCopyOf);

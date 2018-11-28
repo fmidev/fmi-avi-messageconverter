@@ -24,6 +24,7 @@ import fi.fmi.avi.model.taf.TAFBulletin;
 /**
  * Spring configuration for Java POJO and JSON conversion.
  */
+@SuppressWarnings("SpringFacetCodeInspection")
 @Configuration
 public class JSONConverter {
 

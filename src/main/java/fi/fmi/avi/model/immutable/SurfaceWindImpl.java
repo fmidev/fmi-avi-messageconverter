@@ -23,6 +23,8 @@ import fi.fmi.avi.model.SurfaceWind;
         "windGust", "windGustOperator"})
 public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
 
+    private static final long serialVersionUID = -1854059197765450606L;
+
     public static SurfaceWindImpl immutableCopyOf(final SurfaceWind surfaceWind) {
         Objects.requireNonNull(surfaceWind);
         if (surfaceWind instanceof SurfaceWindImpl) {
@@ -32,6 +34,7 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<SurfaceWindImpl> immutableCopyOf(final Optional<SurfaceWind> surfaceWind) {
         Objects.requireNonNull(surfaceWind);
         return surfaceWind.map(SurfaceWindImpl::immutableCopyOf);
@@ -39,6 +42,7 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
 
     public abstract Builder toBuilder();
 
+    @SuppressWarnings("EmptyMethod")
     public static class Builder extends SurfaceWindImpl_Builder {
 
         public static Builder from(final SurfaceWind value) {

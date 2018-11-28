@@ -8,6 +8,8 @@ import java.util.Collection;
  */
 public class IssueList extends ArrayList<ConversionIssue> {
 
+    private static final long serialVersionUID = 3557570152367284981L;
+
     /**
      * Constructs an empty list with an initial capacity of ten.
      */

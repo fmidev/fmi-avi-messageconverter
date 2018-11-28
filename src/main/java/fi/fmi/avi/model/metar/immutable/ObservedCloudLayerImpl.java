@@ -32,6 +32,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<ObservedCloudLayerImpl> immutableCopyOf(final Optional<CloudLayer> layer) {
         Objects.requireNonNull(layer);
         return layer.map(ObservedCloudLayerImpl::immutableCopyOf);

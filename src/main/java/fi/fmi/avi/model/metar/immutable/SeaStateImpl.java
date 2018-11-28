@@ -23,6 +23,8 @@ import fi.fmi.avi.model.metar.SeaState;
 @JsonPropertyOrder({ "seaSurfaceTemperature", "seaSurfaceTemperatureUnobservableByAutoSystem", "seaSurfaceState", "significantWaveHeight" })
 public abstract class SeaStateImpl implements SeaState, Serializable {
 
+    private static final long serialVersionUID = -2776254118856198495L;
+
     public static SeaStateImpl immutableCopyOf(final SeaState seaState) {
         Objects.requireNonNull(seaState);
         if (seaState instanceof SeaStateImpl) {
@@ -32,6 +34,7 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<SeaStateImpl> immutableCopyOf(final Optional<SeaState> seaState) {
         Objects.requireNonNull(seaState);
         return seaState.map(SeaStateImpl::immutableCopyOf);

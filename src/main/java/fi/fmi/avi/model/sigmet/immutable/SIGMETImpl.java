@@ -22,6 +22,8 @@ import fi.fmi.avi.model.sigmet.SIGMET;
         "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class SIGMETImpl implements SIGMET, Serializable {
 
+    private static final long serialVersionUID = 7783515832011053005L;
+
     public static SIGMETImpl immutableCopyOf(final SIGMET sigmet) {
         requireNonNull(sigmet);
         if (sigmet instanceof SIGMETImpl) {
@@ -31,6 +33,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<SIGMETImpl> immutableCopyOf(final Optional<SIGMET> sigmet) {
         requireNonNull(sigmet);
         return sigmet.map(SIGMETImpl::immutableCopyOf);
@@ -60,7 +63,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
             if (value instanceof SIGMETImpl) {
                 return ((SIGMETImpl) value).toBuilder();
             } else {
-                Builder retval = new Builder().setPermissibleUsage(value.getPermissibleUsage())
+                final Builder retval = new Builder().setPermissibleUsage(value.getPermissibleUsage())
                         .setPermissibleUsageReason(value.getPermissibleUsageReason())
                         .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
                         .setTranslated(value.isTranslated())

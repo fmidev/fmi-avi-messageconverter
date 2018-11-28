@@ -23,6 +23,8 @@ import fi.fmi.avi.model.GeoPosition;
 @JsonPropertyOrder({"designator", "name", "locationIndicatorICAO", "fieldElevation", "referencePoint"})
 public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
+    private static final long serialVersionUID = -6822087279546133445L;
+
     public static AerodromeImpl immutableCopyOf(final Aerodrome aerodrome) {
         Objects.requireNonNull(aerodrome);
         if (aerodrome instanceof AerodromeImpl) {
@@ -32,6 +34,7 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<AerodromeImpl> immutableCopyOf(final Optional<Aerodrome> aerodrome) {
         return aerodrome.map(AerodromeImpl::immutableCopyOf);
     }
