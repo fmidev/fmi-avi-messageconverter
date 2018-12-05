@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface SigmetAnalysis {
     public SigmetAnalysisType getAnalysisType();
-    public Geometry getAnalysisGeometry();
+    public Optional<Geometry> getAnalysisGeometry();
     public Optional<PartialOrCompleteTimeInstant> getAnalysisTime();
     public Optional<Boolean> getAnalysisApproximateLocation();
 
