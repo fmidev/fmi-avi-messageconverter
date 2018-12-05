@@ -167,5 +167,11 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
 
         @Override
         public Builder setNoVolcanicAshExpected(boolean noVolcanicAshExpected) { return super.setNoVolcanicAshExpected(noVolcanicAshExpected);}
+
+        @Override
+        @JsonDeserialize(as = UnitPropertyGroupImpl.class)
+        public Builder setVolcanicAshMovedToFIR(final UnitPropertyGroup issuingAirTrafficServicesUnit) {
+            return super.setVolcanicAshMovedToFIR(issuingAirTrafficServicesUnit);
+        }
     }
 }
