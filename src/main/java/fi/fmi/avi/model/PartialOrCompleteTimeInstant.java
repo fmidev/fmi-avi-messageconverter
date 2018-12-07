@@ -143,12 +143,17 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
     public static class Builder extends PartialOrCompleteTimeInstant_Builder {
         public Builder() {
+        }
+
+        @Override
+        public PartialOrCompleteTimeInstant build() {
             getPartialTime().ifPresent(partialTime -> //
                     getCompleteTime().ifPresent(completeTime -> {
                         if (!partialTime.representsStrict(completeTime)) {
                             throw new IllegalStateException(String.format("completeTime %s does not represent partialTime %s", completeTime, partialTime));
                         }
                     }));
+            return super.build();
         }
 
         public Builder setTrendTimeGroupToken(final String token) {
