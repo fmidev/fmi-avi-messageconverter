@@ -2,7 +2,6 @@ package fi.fmi.avi.model.sigmet.immutable;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -38,7 +37,6 @@ public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading
 
         public Builder() {
             setType(Type.NORMAL);
-            setBulletinAugmentationNumber(OptionalInt.empty());
         }
 
         public static Builder from(final SIGMETBulletinHeading value) {

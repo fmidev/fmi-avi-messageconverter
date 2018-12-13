@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.OptionalInt;
+import java.util.Optional;
 import java.util.Set;
 
 import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
@@ -59,11 +59,11 @@ public class GTSExchangeFileNameBuilder {
         if (heading.getLocationIndicator() == null || heading.getLocationIndicator().length() != 4) {
             throw new IllegalArgumentException("Invalid location indicator '" + heading.getLocationIndicator() + "' in TAF bulletin");
         }
-        final OptionalInt augNumber = heading.getBulletinAugmentationNumber();
+        final Optional<Integer> augNumber = heading.getBulletinAugmentationNumber();
         if (augNumber.isPresent()) {
-            if (augNumber.getAsInt() < 1 || augNumber.getAsInt() > ('Z' - 'A' + 1)) {
+            if (augNumber.get().intValue() < 1 || augNumber.get().intValue() > ('Z' - 'A' + 1)) {
                 throw new IllegalArgumentException(
-                        "Illegal bulletin augmentation number '" + augNumber.getAsInt() + "', the value must be between 1 and  " + ('Z' - 'A' + 1));
+                        "Illegal bulletin augmentation number '" + augNumber.get() + "', the value must be between 1 and  " + ('Z' - 'A' + 1));
             }
             if (BulletinHeading.Type.NORMAL == heading.getType()) {
                 throw new IllegalArgumentException("Bulletin contains augmentation number, but the type is NORMAL");
@@ -155,9 +155,9 @@ public class GTSExchangeFileNameBuilder {
         sb.append(heading.getGeographicalDesignator());
         sb.append(String.format("%02d", heading.getBulletinNumber()));
         sb.append(heading.getLocationIndicator());
-        final OptionalInt augNumber = heading.getBulletinAugmentationNumber();
+        final Optional<Integer> augNumber = heading.getBulletinAugmentationNumber();
         if (augNumber.isPresent()) {
-            int seqNumber = augNumber.getAsInt();
+            int seqNumber = augNumber.get().intValue();
             seqNumber = 'A' + seqNumber - 1;
             switch (heading.getType()) {
                 case AMENDED:

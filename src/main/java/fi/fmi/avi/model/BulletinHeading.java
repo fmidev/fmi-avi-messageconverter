@@ -1,6 +1,6 @@
 package fi.fmi.avi.model;
 
-import java.util.OptionalInt;
+import java.util.Optional;
 
 public interface BulletinHeading {
 
@@ -40,6 +40,6 @@ public interface BulletinHeading {
      *
      * @return the augmentation number
      */
-    OptionalInt getBulletinAugmentationNumber();
+    Optional<Integer> getBulletinAugmentationNumber();
 
 }

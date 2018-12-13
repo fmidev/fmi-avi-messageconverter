@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.taf.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,7 +19,7 @@ import fi.fmi.avi.model.taf.TAFBulletinHeading;
 @JsonDeserialize(builder = TAFBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "issueTime", "heading", "messages" })
-public abstract class TAFBulletinImpl implements TAFBulletin {
+public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
 
     public static TAFBulletinImpl immutableCopyOf(final TAFBulletin bulletin) {
         Objects.requireNonNull(bulletin);

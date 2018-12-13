@@ -1,8 +1,8 @@
 package fi.fmi.avi.model.taf.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -16,7 +16,7 @@ import fi.fmi.avi.model.taf.TAFBulletinHeading;
 @JsonDeserialize(builder = TAFBulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "validLessThan12Hours" })
-public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
+public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Serializable {
 
     public static TAFBulletinHeadingImpl immutableCopyOf(final TAFBulletinHeading heading) {
         Objects.requireNonNull(heading);
@@ -37,7 +37,6 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
 
         public Builder() {
             setType(Type.NORMAL);
-            setBulletinAugmentationNumber(OptionalInt.empty());
         }
 
         public static Builder from(final TAFBulletinHeading value) {
@@ -58,7 +57,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
             if (bulletinAugmentationNumber < 1 || bulletinAugmentationNumber > 26) {
                 throw new IllegalArgumentException("Value must be between 1 and 26");
             }
-            return super.setBulletinAugmentationNumber(OptionalInt.of(bulletinAugmentationNumber));
+            return super.setBulletinAugmentationNumber(Optional.of(Integer.valueOf(bulletinAugmentationNumber)));
         }
 
         /**
@@ -73,7 +72,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading {
             if (!Character.isAlphabetic(asChar) || asChar < 'A' || asChar > 'Z') {
                 throw new IllegalArgumentException("Value must be between 'A' and 'Z'");
             }
-            return super.setBulletinAugmentationNumber(OptionalInt.of(asChar - 'A' + 1));
+            return super.setBulletinAugmentationNumber(Optional.of(Integer.valueOf(asChar - 'A' + 1)));
         }
     }
 
