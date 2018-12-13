@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import fi.fmi.avi.JSONTestUtil;
+import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.GeoPositionImpl;
@@ -45,7 +46,7 @@ public class TAFBulletinTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setValidLessThan12Hours(false)//
+                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.AERODROME_VT_LONG)//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
         bulletinBuilder.build();
@@ -79,7 +80,7 @@ public class TAFBulletinTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setValidLessThan12Hours(true)//
+                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.AERODROME_VT_SHORT)//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
         bulletinBuilder.build();

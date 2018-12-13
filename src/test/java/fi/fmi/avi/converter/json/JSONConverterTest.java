@@ -23,6 +23,7 @@ import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
@@ -35,7 +36,6 @@ import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
-import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
@@ -210,7 +210,8 @@ public class JSONConverterTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setSIGMETType(SIGMETBulletinHeading.SIGMETType.SEVERE_WEATHER).build());
+                        .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.SIGMET)//
+                        .build());
 
         builder.addMessages(new SIGMETImpl.Builder()//
                 .setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//

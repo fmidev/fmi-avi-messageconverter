@@ -14,7 +14,7 @@ import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETBulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "SIGMETType" })
+@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "dataTypeDesignatorT2" })
 public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading {
 
     public static SIGMETBulletinHeadingImpl immutableCopyOf(final SIGMETBulletinHeading heading) {
@@ -49,7 +49,7 @@ public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading
                         .setBulletinNumber(value.getBulletinNumber())//
                         .setType(value.getType())//
                         .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())//
-                        .setSIGMETType(value.getSIGMETType());
+                        .setDataTypeDesignatorT2(value.getDataTypeDesignatorT2());
             }
 
         }
@@ -60,6 +60,24 @@ public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading
                 return super.setType(type);
             } else {
                 throw new IllegalArgumentException("SIGMET bulletins can only be of type " + Type.NORMAL + " or " + Type.CORRECTED);
+            }
+        }
+
+        @Override
+        public Builder setDataTypeDesignatorT2(final WarningsDataTypeDesignatorT2 t2) {
+            if (t2 != WarningsDataTypeDesignatorT2.SIGMET && t2 != WarningsDataTypeDesignatorT2.TROPICAL_CYCLONE_SIGMET && t2 != WarningsDataTypeDesignatorT2.VOLCANIC_ASH_CLOUDS_SIGMET) {
+                throw new IllegalArgumentException("Value for t2 for SIGMETBulletin must be " + WarningsDataTypeDesignatorT2.SIGMET + ", " + WarningsDataTypeDesignatorT2.TROPICAL_CYCLONE_SIGMET + ", or " + WarningsDataTypeDesignatorT2.VOLCANIC_ASH_CLOUDS_SIGMET);
+            }
+            return super.setDataTypeDesignatorT2(t2);
+        }
+
+        @Deprecated
+        public Builder setSIGMETType(final SIGMETType type) {
+            switch (type) {
+                case SEVERE_WEATHER: return this.setDataTypeDesignatorT2(WarningsDataTypeDesignatorT2.SIGMET);
+                case VOLCANIC_ASH: return this.setDataTypeDesignatorT2(WarningsDataTypeDesignatorT2.VOLCANIC_ASH_CLOUDS_SIGMET);
+                case TROPICAL_CYCLONE: return this.setDataTypeDesignatorT2(WarningsDataTypeDesignatorT2.TROPICAL_CYCLONE_SIGMET);
+                default: throw new IllegalArgumentException("Unknown type");
             }
         }
     }

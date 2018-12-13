@@ -8,9 +8,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
-import fi.fmi.avi.model.taf.TAFBulletinHeading;
-
 /**
  * See WMO No.386 Manual on the global telecommunications system, Attachment II-15, GTS Data Exchange Methods, SFTP/FTP procedures and file naming
  * convention.
@@ -27,28 +24,53 @@ public class GTSExchangeFileNameBuilder {
     private boolean isMetadataFile;
     private LocalDateTime timeStamp;
 
+    /**
+     *
+     */
     public GTSExchangeFileNameBuilder() {
         this.isMetadataFile = false;
         this.fieldsToInclude.addAll(Arrays.asList(TimeStampField.YEAR, TimeStampField.MONTH, TimeStampField.DAY, TimeStampField.HOUR, TimeStampField.MINUTE));
     }
 
+    /**
+     *
+     * @return
+     */
     public Set<TimeStampField> getTimeStampFieldsToInclude() {
         return Collections.unmodifiableSet(this.fieldsToInclude);
     }
 
+    /**
+     *
+     * @return
+     */
     public GTSExchangePFlag getPFlag() {
         return pFlag;
     }
 
+    /**
+     *
+     * @param pFlag
+     * @return
+     */
     public GTSExchangeFileNameBuilder setPFlag(final GTSExchangePFlag pFlag) {
         this.pFlag = pFlag;
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public BulletinHeading getHeading() {
         return heading;
     }
 
+    /**
+     *
+     * @param heading
+     * @return
+     */
     public GTSExchangeFileNameBuilder setHeading(final BulletinHeading heading) {
         if (heading.getGeographicalDesignator() == null || heading.getGeographicalDesignator().length() != 2) {
             throw new IllegalArgumentException("Invalid geographical location code '" + heading.getGeographicalDesignator() + "' in TAF bulletin");
@@ -73,54 +95,130 @@ public class GTSExchangeFileNameBuilder {
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public GTSExchangeFileType getFileType() {
         return fileType;
     }
 
+    /**
+     *
+     * @param fileType
+     * @return
+     */
     public GTSExchangeFileNameBuilder setFileType(final GTSExchangeFileType fileType) {
         this.fileType = fileType;
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public GTSExchangeCompressionType getCompressionType() {
         return compressionType;
     }
 
+    /**
+     *
+     * @param compressionType
+     * @return
+     */
     public GTSExchangeFileNameBuilder setCompressionType(final GTSExchangeCompressionType compressionType) {
         this.compressionType = compressionType;
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFreeFormPart() {
         return freeFormPart;
     }
 
+    /**
+     *
+     * @param freeFormPart
+     * @return
+     */
     public GTSExchangeFileNameBuilder setFreeFormPart(final String freeFormPart) {
         this.freeFormPart = freeFormPart;
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
 
+    /**
+     *
+     * @param timeStamp
+     * @return
+     */
     public GTSExchangeFileNameBuilder setTimeStamp(final LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isMetadataFile() {
         return isMetadataFile;
     }
 
+    /**
+     *
+     * @param metadataFile
+     * @return
+     */
     public GTSExchangeFileNameBuilder setMetadataFile(final boolean metadataFile) {
         isMetadataFile = metadataFile;
         return this;
     }
 
+    /**
+     *
+     * @param fields
+     * @return
+     */
     public GTSExchangeFileNameBuilder setTimeStampFieldsToInclude(final TimeStampField... fields) {
         this.fieldsToInclude = new HashSet<>(fieldsToInclude);
         return this;
+    }
+
+
+
+    /**
+     *
+     * @return
+     */
+    public String build() {
+        if (this.heading == null) {
+            throw new IllegalStateException("No bulletin heading set");
+        }
+        if (this.fileType == null) {
+            throw new IllegalStateException("File type not set");
+        }
+        if (this.timeStamp == null) {
+            this.timeStamp = LocalDateTime.now();
+        }
+
+        //TODO: rest of the types
+        switch (this.pFlag) {
+            case A:
+                return createATypeFileName();
+            default:
+                throw new IllegalStateException("Names with pFlag value '" + this.pFlag + "' not yet supported");
+        }
     }
 
     private String createATypeFileName() {
@@ -130,46 +228,17 @@ public class GTSExchangeFileNameBuilder {
             sb.append('M');
         }
         sb.append('_');
-        if (this.heading instanceof TAFBulletinHeading) {
-            sb.append('F');
-            if (((TAFBulletinHeading) heading).isValidLessThan12Hours()) {
-                sb.append('C');
-            } else {
-                sb.append('T');
-            }
-        } else if (this.heading instanceof SIGMETBulletinHeading) {
-            sb.append('W');
-            final SIGMETBulletinHeading sbh = (SIGMETBulletinHeading) heading;
-            switch (sbh.getSIGMETType()) {
-                case SEVERE_WEATHER:
-                    sb.append('S');
-                    break;
-                case TROPICAL_CYCLONE:
-                    sb.append('Y');
-                    break;
-                case VOLCANIC_ASH:
-                    sb.append('V');
-                    break;
-            }
+        if (this.fileType == GTSExchangeFileType.XML) {
+            sb.append(heading.getDataDesignatorsForXML());
+        } else {
+            sb.append(heading.getDataDesignatorsForTAC());
         }
-        sb.append(heading.getGeographicalDesignator());
-        sb.append(String.format("%02d", heading.getBulletinNumber()));
         sb.append(heading.getLocationIndicator());
         final Optional<Integer> augNumber = heading.getBulletinAugmentationNumber();
         if (augNumber.isPresent()) {
             int seqNumber = augNumber.get().intValue();
             seqNumber = 'A' + seqNumber - 1;
-            switch (heading.getType()) {
-                case AMENDED:
-                    sb.append("AA");
-                    break;
-                case CORRECTED:
-                    sb.append("CC");
-                    break;
-                case DELAYED:
-                    sb.append("RR");
-                    break;
-            }
+            sb.append(heading.getType().getPrefix());
             sb.append(Character.toChars(seqNumber));
         }
         sb.append('_');
@@ -189,26 +258,6 @@ public class GTSExchangeFileNameBuilder {
             sb.append(this.compressionType.getExtension());
         }
         return sb.toString();
-    }
-
-    public String build() {
-        if (this.heading == null) {
-            throw new IllegalStateException("No bulletin heading set");
-        }
-        if (this.fileType == null) {
-            throw new IllegalStateException("File type not set");
-        }
-        if (this.timeStamp == null) {
-            this.timeStamp = LocalDateTime.now();
-        }
-
-        //TODO: rest of the types
-        switch (this.pFlag) {
-            case A:
-                return createATypeFileName();
-            default:
-                throw new IllegalStateException("Names with pFlag value '" + this.pFlag + "' not yet supported");
-        }
     }
 
     private DateTimeFormatter getFormatter() {

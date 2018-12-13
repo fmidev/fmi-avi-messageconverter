@@ -15,7 +15,7 @@ import fi.fmi.avi.model.taf.TAFBulletinHeading;
 @FreeBuilder
 @JsonDeserialize(builder = TAFBulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "validLessThan12Hours" })
+@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "dataTypeDesignatorT2" })
 public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Serializable {
 
     public static TAFBulletinHeadingImpl immutableCopyOf(final TAFBulletinHeading heading) {
@@ -49,10 +49,11 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Seri
                         .setBulletinNumber(value.getBulletinNumber())//
                         .setType(value.getType())//
                         .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())//
-                        .setValidLessThan12Hours(value.isValidLessThan12Hours());
+                        .setDataTypeDesignatorT2(value.getDataTypeDesignatorT2());
             }
         }
 
+        @Override
         public Builder setBulletinAugmentationNumber(final int bulletinAugmentationNumber) {
             if (bulletinAugmentationNumber < 1 || bulletinAugmentationNumber > 26) {
                 throw new IllegalArgumentException("Value must be between 1 and 26");
@@ -73,6 +74,23 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Seri
                 throw new IllegalArgumentException("Value must be between 'A' and 'Z'");
             }
             return super.setBulletinAugmentationNumber(Integer.valueOf(asChar - 'A' + 1));
+        }
+
+        @Override
+        public Builder setDataTypeDesignatorT2(final ForecastsDataTypeDesignatorT2 t2) {
+            if (t2 != ForecastsDataTypeDesignatorT2.AERODROME_VT_SHORT && t2 != ForecastsDataTypeDesignatorT2.AERODROME_VT_LONG) {
+                throw new IllegalArgumentException("Value for T2 for TAFBulletin must be either " + ForecastsDataTypeDesignatorT2.AERODROME_VT_SHORT + " or " +ForecastsDataTypeDesignatorT2.AERODROME_VT_LONG);
+            }
+            return super.setDataTypeDesignatorT2(t2);
+        }
+
+        @Deprecated
+        public Builder setValidLessThan12Hours(final boolean isShort) {
+            if (isShort) {
+                return this.setDataTypeDesignatorT2(ForecastsDataTypeDesignatorT2.AERODROME_VT_SHORT);
+            } else {
+                return this.setDataTypeDesignatorT2(ForecastsDataTypeDesignatorT2.AERODROME_VT_LONG);
+            }
         }
     }
 
