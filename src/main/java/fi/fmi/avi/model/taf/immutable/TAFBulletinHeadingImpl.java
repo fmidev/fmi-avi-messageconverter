@@ -57,7 +57,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Seri
             if (bulletinAugmentationNumber < 1 || bulletinAugmentationNumber > 26) {
                 throw new IllegalArgumentException("Value must be between 1 and 26");
             }
-            return super.setBulletinAugmentationNumber(Optional.of(Integer.valueOf(bulletinAugmentationNumber)));
+            return super.setBulletinAugmentationNumber(Integer.valueOf(bulletinAugmentationNumber));
         }
 
         /**
@@ -72,7 +72,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Seri
             if (!Character.isAlphabetic(asChar) || asChar < 'A' || asChar > 'Z') {
                 throw new IllegalArgumentException("Value must be between 'A' and 'Z'");
             }
-            return super.setBulletinAugmentationNumber(Optional.of(Integer.valueOf(asChar - 'A' + 1)));
+            return super.setBulletinAugmentationNumber(Integer.valueOf(asChar - 'A' + 1));
         }
     }
 
