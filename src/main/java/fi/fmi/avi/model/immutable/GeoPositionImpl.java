@@ -48,8 +48,8 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
                 return ((GeoPositionImpl) value).toBuilder();
             } else {
                 return new GeoPositionImpl.Builder()//
-                        .setCoordinateReferenceSystemId(value.getCoordinateReferenceSystemId())
-                        .setCoordinates(value.getCoordinates())
+                        .setCoordinateReferenceSystemId(value.getCoordinateReferenceSystemId())//
+                        .addAllCoordinates(value.getCoordinates())
                         .setElevationUom(value.getElevationUom())
                         .setElevationValue(value.getElevationValue());
             }

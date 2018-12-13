@@ -29,7 +29,7 @@ public class TAFBulletinTest {
                 .setLocationIndicatorICAO("EFVA")//
                 .setReferencePoint(new GeoPositionImpl.Builder()//
                         .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")//
-                        .setCoordinates(new Double[] { 21.762199401855, 63.050701141357 })//
+                        .addCoordinates(21.762199401855, 63.050701141357)//
                         .setElevationValue(19.0)//
                         .setElevationUom("m")//
                         .build());
@@ -63,7 +63,7 @@ public class TAFBulletinTest {
                 .setLocationIndicatorICAO("EFVA")//
                 .setReferencePoint(new GeoPositionImpl.Builder()//
                         .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")//
-                        .setCoordinates(new Double[] { 21.762199401855, 63.050701141357 })//
+                        .addCoordinates(21.762199401855, 63.050701141357)//
                         .setElevationValue(19.0)//
                         .setElevationUom("m")//
                         .build());
