@@ -18,7 +18,7 @@ import fi.fmi.avi.model.NumericMeasure;
 
 @FreeBuilder
 @JsonDeserialize(builder = NumericMeasureImpl.Builder.class)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.ALWAYS)
 @JsonPropertyOrder({"value", "uom"})
 public abstract class NumericMeasureImpl implements NumericMeasure, Serializable {
 
