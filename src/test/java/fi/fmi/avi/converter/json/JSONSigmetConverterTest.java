@@ -12,8 +12,10 @@ import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.*;
 import fi.fmi.avi.model.immutable.*;
 import fi.fmi.avi.model.sigmet.*;
-import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
-import fi.fmi.avi.model.sigmet.immutable.SigmetAnalysisImpl;
+import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryImpl;
+import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.sigmet.immutable.WSSIGMETImpl;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.locationtech.jts.geom.Geometry;
@@ -23,12 +25,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,22 +42,6 @@ public class JSONSigmetConverterTest {
     @Autowired
     private AviMessageConverter converter;
 
-
-    public void test1() {
-        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new Jdk8Module());
-        om.registerModule(new JavaTimeModule());
-        om.registerModule(new JtsModule());
-        String input="{     \"time\": \"2017-08-24T12:30:00Z\",\"lowerLimit\": {\"value\": 10, \"uom\": \"FL\"},"+
-        "\"analysisType\": \"OBSERVATION\",\"intensityChange\": \"NO_CHANGE\", \"approximateLocation\":false, \"geometry\":"+
-                "{\"type\":\"Polygon\", \"coordinates\":[[[5.0,52.0],[6.0,53.0],[4.0,54.0],[5.0,52.0]]]}"+
-                "}";
-        try {
-            Object o = om.readValue(input, SigmetAnalysisImpl.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void testSIGMETParsing() throws Exception {
         InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("sigmet1.json");
@@ -84,7 +68,7 @@ public class JSONSigmetConverterTest {
         String reference = IOUtils.toString(is,"UTF-8");
         is.close();
 
-        SIGMETImpl.Builder builder = new SIGMETImpl.Builder();
+        WSSIGMETImpl.Builder builder = new WSSIGMETImpl.Builder();
 
         UnitPropertyGroup mwo=new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
         UnitPropertyGroup fir=new UnitPropertyGroupImpl.Builder().setPropertyGroup( "AMSTERDAM FIR", "EHAA", "FIR").build();
@@ -94,37 +78,40 @@ public class JSONSigmetConverterTest {
         String fpaGeomString="{ \"type\": \"Polygon\", \"coordinates\":[[[5.0,53.0],[6.0,54.0],[4.0,55.0],[5.0,53.0]]]}";
         Geometry fpaGeom=(Geometry)om.readValue(fpaGeomString, Geometry.class);
 
-        SigmetAnalysis analysis1=new SigmetAnalysisImpl.Builder()
-                .setAnalysisTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")))
-                .setLowerLimit(NumericMeasureImpl.of(10, "FL"))
-                .setUpperLimit(NumericMeasureImpl.of(35,"FL"))
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
-                .setAnalysisApproximateLocation(false)
-                .setAnalysisGeometry(geom)
-                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
-                .setForecastGeometry(fpaGeom)
-                .setForecastTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")))
-                .build();
-        List<SigmetAnalysis> analysis=new ArrayList<>();
-        analysis.add(analysis1);
-
         PartialOrCompleteTimeInstant.Builder issueTimeBuilder=new PartialOrCompleteTimeInstant.Builder();
         issueTimeBuilder.setCompleteTime(ZonedDateTime.parse("2017-08-27T11:30:00Z"));
         PartialOrCompleteTimePeriod.Builder validPeriod=new PartialOrCompleteTimePeriod.Builder();
         validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
         validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
+        PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
+        geomBuilder.setApproximateLocation(false);
+        List<Geometry> geoms=Arrays.asList(geom);
+        geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
+        geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
+        geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
+        geomBuilder.setUpperLimit(NumericMeasureImpl.of(35,"FL"));
+
+        PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
+        fpGeomBuilder.setApproximateLocation(false);
+        fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
+        fpGeomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
+
         builder.setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
                 .setMeteorologicalWatchOffice(mwo)
                 .setIssuingAirTrafficServicesUnit(fir)
                 .setIssueTime(issueTimeBuilder.build())
-                .setTranslated(false)
+                .setTranslated(true)
                 .setPermissibleUsage(AviationCodeListUser.PermissibleUsage.NON_OPERATIONAL)
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
                 .setSequenceNumber("1")
-                .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
+                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 .setValidityPeriod(validPeriod.build())
-                .setAnalysis(analysis);
+                .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+                .setAnalysisGeometries(Arrays.asList(geomBuilder.build()))
+                .setForecastGeometries(Arrays.asList(fpGeomBuilder.build())
+                );
 
         SIGMET sigmet=builder.build();
         ConversionResult<String> result = converter.convertMessage(sigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);

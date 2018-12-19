@@ -1,19 +1,17 @@
 package fi.fmi.avi.model.sigmet;
 
-import fi.fmi.avi.model.AirTrafficServicesUnitWeatherMessage;
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.SIGMETAIRMET;
-
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.SIGMETAIRMET;
 
-@JsonDeserialize(using=SIGMETDeserializer.class)
-public interface SIGMET extends SIGMETAIRMET {
-    AeronauticalSignificantWeatherPhenomenon getSigmetPhenomenon();
+public interface AIRMET extends SIGMETAIRMET {
+    AeronauticalAirmetWeatherPhenomenon getAirmetPhenomenon();
+    Optional<AirmetCloudLevels>getCloudLevels();
+    Optional<AirmetWind>getWind();
+    Optional<WeatherCausingVisibilityReduction>getObscuration();
+
     Optional<SigmetReference> getCancelledReference();
 
     public SigmetAnalysisType getAnalysisType();
@@ -24,14 +22,10 @@ public interface SIGMET extends SIGMETAIRMET {
 
     public Optional<SigmetIntensityChange> getIntensityChange();
 
-    public Optional<List<PhenomenonGeometry>> getForecastGeometries();
-
-    public Optional<Boolean> getNoVaExpected(); //Only applicable to ForecastPositionAnalysis
-
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    interface Builder<T extends SIGMET, B extends Builder<T, B>> {
+    interface Builder<T extends AIRMET, B extends Builder<T, B>> {
         /**
-         * Returns a newly-created {@link SIGMET} based on the contents of the {@code Builder}.
+         * Returns a newly-created {@link AIRMET} based on the contents of the {@code Builder}.
          *
          * @throws IllegalStateException
          *         if any field has not been set
@@ -58,7 +52,7 @@ public interface SIGMET extends SIGMETAIRMET {
          *
          * @return this builder
          */
-        B copyFrom(SIGMET value);
+        B copyFrom(AIRMET value);
 
         /**
          * Merges the given {@code SIGMET} into this builder.
@@ -79,7 +73,7 @@ public interface SIGMET extends SIGMETAIRMET {
          *
          * @return this builder
          */
-        B mergeFromTAFForecast(SIGMET value);
+        B mergeFromTAFForecast(AIRMET value);
 
         /**
          * Resets the state of this builder.

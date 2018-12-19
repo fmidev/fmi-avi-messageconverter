@@ -17,32 +17,39 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.UnitPropertyGroup;
+import fi.fmi.avi.model.immutable.AirspaceImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
+import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
+import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETDeserializer;
-import fi.fmi.avi.model.sigmet.SigmetAnalysis;
 import fi.fmi.avi.model.sigmet.SigmetReference;
+import fi.fmi.avi.model.sigmet.WSSIGMET;
 
 @FreeBuilder
-@JsonDeserialize(using=SIGMETDeserializer.class, builder = SIGMETImpl.Builder.class)
+//@JsonDeserialize(using=SIGMETDeserializer.class, builder = WSSIGMETImpl.Builder.class)
+@JsonDeserialize(builder = WSSIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis",
-        "forecastPositionAnalysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+@JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "airspace",
+        "analysisGeometries",
+        "forecastGeometries",
+        "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class SIGMETImpl implements SIGMET, Serializable {
+public abstract class WSSIGMETImpl implements SIGMET, Serializable {
 
-    public static SIGMETImpl immutableCopyOf(final SIGMET sigmet) {
+    public static WSSIGMETImpl immutableCopyOf(final WSSIGMET sigmet) {
         Objects.requireNonNull(sigmet);
-        if (sigmet instanceof SIGMETImpl) {
-            return (SIGMETImpl) sigmet;
+        if (sigmet instanceof WSSIGMETImpl) {
+            return (WSSIGMETImpl) sigmet;
         } else {
             return Builder.from(sigmet).build();
         }
     }
 
-    public static Optional<SIGMETImpl> immutableCopyOf(final Optional<SIGMET> sigmet) {
+    public static Optional<WSSIGMETImpl> immutableCopyOf(final Optional<WSSIGMET> sigmet) {
         Objects.requireNonNull(sigmet);
-        return sigmet.map(SIGMETImpl::immutableCopyOf);
+        return sigmet.map(WSSIGMETImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
@@ -53,12 +60,16 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         if (!this.getValidityPeriod().isComplete()) {
             return false;
         }
-        if (this.getAnalysis().isPresent()) {
-            for (SigmetAnalysis sa : this.getAnalysis().get()) {
-                if (sa.getAnalysisTime().isPresent() && !sa.getAnalysisTime().get().getCompleteTime().isPresent()) {
+        if (this.getAnalysisGeometries().isPresent()) {
+            for (PhenomenonGeometryWithHeight geometryWithHeight : this.getAnalysisGeometries().get()) {
+                if (geometryWithHeight.getTime().isPresent() && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
-                if (sa.getForecastTime().isPresent() && !sa.getForecastTime().get().getCompleteTime().isPresent()) {
+            }
+        }
+        if (this.getForecastGeometries().isPresent()) {
+            for (PhenomenonGeometry geometry: this.getForecastGeometries().get()) {
+                if (geometry.getTime().isPresent() && !geometry.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
@@ -69,11 +80,15 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         return true;
     }
 
-    public static class Builder extends SIGMETImpl_Builder {
+    public static class Builder extends WSSIGMETImpl_Builder {
+
+        public Builder() {
+            this.setTranslated(false);
+        }
 
         public static Builder from(final SIGMET value) {
-            if (value instanceof SIGMETImpl) {
-                return ((SIGMETImpl) value).toBuilder();
+            if (value instanceof WSSIGMETImpl) {
+                return ((WSSIGMETImpl) value).toBuilder();
             } else {
                 //From AviationWeatherMessage
                 Builder retval = new Builder()//
@@ -95,16 +110,24 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                 retval.setIssuingAirTrafficServicesUnit(UnitPropertyGroupImpl.immutableCopyOf(value.getIssuingAirTrafficServicesUnit()))
                         .setMeteorologicalWatchOffice(UnitPropertyGroupImpl.immutableCopyOf(value.getMeteorologicalWatchOffice()));
 
-                //From Sigmet
-                retval.setStatus(value.getStatus())
+                //From SigmetAirmet
+                retval.setAirspace(AirspaceImpl.immutableCopyOf(value.getAirspace()))
+                        .setStatus(value.getStatus())
                         .setSequenceNumber(value.getSequenceNumber())
-                        .setValidityPeriod(value.getValidityPeriod())
-                        .setSigmetPhenomenon(value.getSigmetPhenomenon())
-                        .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()));
+                        .setValidityPeriod(value.getValidityPeriod());
 
-                value.getAnalysis()
-                        .map(an -> retval.setAnalysis(
-                                (Collections.unmodifiableList(an.stream().map(SigmetAnalysisImpl::immutableCopyOf).collect(Collectors.toList())))));
+                //From Sigmet
+                retval.setSigmetPhenomenon(value.getSigmetPhenomenon())
+                        .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))
+                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))
+                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()));
+
+                value.getAnalysisGeometries().map(an -> retval.setAnalysisGeometries(
+                        (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryWithHeightImpl::immutableCopyOf).collect(Collectors.toList())))));
+
+                value.getForecastGeometries().map(an -> retval.setForecastGeometries(
+                        (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryImpl::immutableCopyOf).collect(Collectors.toList())))));
+
 
                 return retval;
             }
@@ -117,9 +140,15 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(contentAs = SigmetAnalysisImpl.class)
-        public Builder setAnalysis(final List<SigmetAnalysis> analysis) {
-            return super.setAnalysis(analysis);
+        @JsonDeserialize(contentAs = PhenomenonGeometryWithHeightImpl.class)
+        public WSSIGMETImpl.Builder setAnalysisGeometries(final List<PhenomenonGeometryWithHeight> analysis) {
+            return super.setAnalysisGeometries(analysis);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = PhenomenonGeometryImpl.class)
+        public WSSIGMETImpl.Builder setForecastGeometries(final List<PhenomenonGeometry> analysis) {
+            return super.setForecastGeometries(analysis);
         }
 
         @Override

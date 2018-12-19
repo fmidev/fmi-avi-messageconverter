@@ -3,13 +3,11 @@ package fi.fmi.avi.model.sigmet;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-import fi.fmi.avi.model.sigmet.immutable.WVSIGMETImpl;
+import fi.fmi.avi.model.sigmet.immutable.WSSIGMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.VASIGMETImpl;
 
 public class SIGMETDeserializer extends StdDeserializer<SIGMET> {
@@ -23,7 +21,7 @@ public class SIGMETDeserializer extends StdDeserializer<SIGMET> {
 
     @Override
     public SIGMET deserialize(JsonParser jp, DeserializationContext ctxt)
-      throws IOException, JsonProcessingException {
+      throws IOException {
 
         TreeNode sigmetTree = jp.readValueAsTree();
         if (sigmetTree.get("volcano") != null) {
@@ -33,7 +31,7 @@ public class SIGMETDeserializer extends StdDeserializer<SIGMET> {
         }
 
         System.err.println("Deserializing a WS SIGMET");
-        WVSIGMETImpl sigmet = jp.getCodec().treeToValue(sigmetTree, WVSIGMETImpl.class);
+        WSSIGMETImpl sigmet = jp.getCodec().treeToValue(sigmetTree, WSSIGMETImpl.class);
         return sigmet;
     }
 }

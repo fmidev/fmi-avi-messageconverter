@@ -4,5 +4,7 @@ public interface SIGMETAIRMET  extends AirTrafficServicesUnitWeatherMessage, Avi
         String getSequenceNumber();
         PartialOrCompleteTimePeriod getValidityPeriod();
 
+        Airspace getAirspace();
+
         SigmetAirmetReportStatus getStatus();
 }

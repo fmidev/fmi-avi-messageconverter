@@ -18,32 +18,35 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
+import fi.fmi.avi.model.sigmet.AIRMET;
+import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
+import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
+import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SIGMETDeserializer;
-import fi.fmi.avi.model.sigmet.SigmetAnalysis;
 import fi.fmi.avi.model.sigmet.SigmetReference;
-import fi.fmi.avi.model.sigmet.WVSIGMET;
+import fi.fmi.avi.model.sigmet.WSSIGMET;
 
 @FreeBuilder
-@JsonDeserialize(builder = WVSIGMETImpl.Builder.class)
+//@JsonDeserialize(using=SIGMETDeserializer.class, builder = WSSIGMETImpl.Builder.class)
+@JsonDeserialize(builder = AIRMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis",
-        "forecastPositionAnalysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+        "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class WVSIGMETImpl implements WVSIGMET, Serializable {
+public abstract class AIRMETImpl implements AIRMET, Serializable {
 
-    public static WVSIGMETImpl immutableCopyOf(final WVSIGMET sigmet) {
-        Objects.requireNonNull(sigmet);
-        if (sigmet instanceof WVSIGMETImpl) {
-            return (WVSIGMETImpl) sigmet;
+    public static AIRMETImpl immutableCopyOf(final AIRMET airmet) {
+        Objects.requireNonNull(airmet);
+        if (airmet instanceof AIRMETImpl) {
+            return (AIRMETImpl) airmet;
         } else {
-            return Builder.from(sigmet).build();
+            return Builder.from(airmet).build();
         }
     }
 
-    public static Optional<WVSIGMETImpl> immutableCopyOf(final Optional<WVSIGMET> sigmet) {
+    public static Optional<AIRMETImpl> immutableCopyOf(final Optional<AIRMET> sigmet) {
         Objects.requireNonNull(sigmet);
-        return sigmet.map(WVSIGMETImpl::immutableCopyOf);
+        return sigmet.map(AIRMETImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
@@ -54,27 +57,29 @@ public abstract class WVSIGMETImpl implements WVSIGMET, Serializable {
         if (!this.getValidityPeriod().isComplete()) {
             return false;
         }
-        if (this.getAnalysis().isPresent()) {
-            for (SigmetAnalysis sa : this.getAnalysis().get()) {
-                if (sa.getAnalysisTime().isPresent() && !sa.getAnalysisTime().get().getCompleteTime().isPresent()) {
-                    return false;
-                }
-                if (sa.getForecastTime().isPresent() && !sa.getForecastTime().get().getCompleteTime().isPresent()) {
+        if (this.getAnalysisGeometries().isPresent()) {
+            for (PhenomenonGeometryWithHeight geometryWithHeight : this.getAnalysisGeometries().get()) {
+                if (geometryWithHeight.getTime().isPresent() && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
         }
+
         if (this.getCancelledReference().isPresent() && (!this.getCancelledReference().get().getValidityPeriod().isComplete())) {
             return false;
         }
         return true;
     }
 
-    public static class Builder extends WVSIGMETImpl_Builder {
+    public static class Builder extends AIRMETImpl_Builder {
 
-        public static Builder from(final WVSIGMET value) {
-            if (value instanceof WVSIGMETImpl) {
-                return ((WVSIGMETImpl) value).toBuilder();
+        public Builder() {
+            setTranslated(false);
+        }
+
+        public static Builder from(final AIRMET value) {
+            if (value instanceof AIRMETImpl) {
+                return ((AIRMETImpl) value).toBuilder();
             } else {
                 //From AviationWeatherMessage
                 Builder retval = new Builder()//
@@ -100,12 +105,12 @@ public abstract class WVSIGMETImpl implements WVSIGMET, Serializable {
                 retval.setStatus(value.getStatus())
                         .setSequenceNumber(value.getSequenceNumber())
                         .setValidityPeriod(value.getValidityPeriod())
-                        .setSigmetPhenomenon(value.getSigmetPhenomenon())
+                        .setAirmetPhenomenon(value.getAirmetPhenomenon())
                         .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()));
 
-                value.getAnalysis()
-                        .map(an -> retval.setAnalysis(
-                                (Collections.unmodifiableList(an.stream().map(SigmetAnalysisImpl::immutableCopyOf).collect(Collectors.toList())))));
+                value.getAnalysisGeometries().map(an -> retval.setAnalysisGeometries(
+                        (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryWithHeightImpl::immutableCopyOf).collect(Collectors.toList())))));
+
 
                 return retval;
             }
@@ -118,9 +123,9 @@ public abstract class WVSIGMETImpl implements WVSIGMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(contentAs = SigmetAnalysisImpl.class)
-        public Builder setAnalysis(final List<SigmetAnalysis> analysis) {
-            return super.setAnalysis(analysis);
+        @JsonDeserialize(contentAs = PhenomenonGeometryWithHeightImpl.class)
+        public AIRMETImpl.Builder setAnalysisGeometries(final List<PhenomenonGeometryWithHeight> analysis) {
+            return super.setAnalysisGeometries(analysis);
         }
 
         @Override
@@ -139,6 +144,12 @@ public abstract class WVSIGMETImpl implements WVSIGMET, Serializable {
         @JsonDeserialize(as = PartialOrCompleteTimeInstant.class)
         public Builder setIssueTime(final PartialOrCompleteTimeInstant issueTime) {
             return super.setIssueTime(issueTime);
+        }
+
+        @Override
+        @JsonDeserialize(as = AirmetCloudLevelsImpl.class)
+        public Builder setCloudLevels(AirmetCloudLevels cloudLevels) {
+            return super.setCloudLevels(cloudLevels);
         }
 
     }

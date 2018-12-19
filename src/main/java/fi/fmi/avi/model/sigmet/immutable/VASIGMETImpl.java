@@ -19,10 +19,13 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.VolcanoDescription;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
+import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
+import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SigmetAnalysis;
+import fi.fmi.avi.model.sigmet.SIGMETDeserializer;
 import fi.fmi.avi.model.sigmet.SigmetReference;
 import fi.fmi.avi.model.sigmet.VASIGMET;
 
@@ -30,12 +33,9 @@ import fi.fmi.avi.model.sigmet.VASIGMET;
 @JsonDeserialize(builder = VASIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis",
-        "forecastPositionAnalysis", "volcano", "noVolcanicAshExpected", "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage",
-        "permissibleUsageReason",
-        "permissibleUsageSupplementary",
-        "translated",
+        "forecastPositionAnalysis", "volcano", "noVolcanicAshExpected", "volcanicAshMovedToFIR",
+        "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-
 public abstract class VASIGMETImpl implements VASIGMET, Serializable {
 
     public static VASIGMETImpl immutableCopyOf(final VASIGMET sigmet) {
@@ -60,12 +60,16 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
         if (!this.getValidityPeriod().isComplete()) {
             return false;
         }
-        if (this.getAnalysis().isPresent()) {
-            for (SigmetAnalysis sa : this.getAnalysis().get()) {
-                if (sa.getAnalysisTime().isPresent() && !sa.getAnalysisTime().get().getCompleteTime().isPresent()) {
+        if (this.getAnalysisGeometries().isPresent()) {
+            for (PhenomenonGeometryWithHeight geometryWithHeight : this.getAnalysisGeometries().get()) {
+                if (geometryWithHeight.getTime().isPresent() && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
-                if (sa.getForecastTime().isPresent() && !sa.getForecastTime().get().getCompleteTime().isPresent()) {
+            }
+        }
+        if (this.getForecastGeometries().isPresent()) {
+            for (PhenomenonGeometry geometry: this.getForecastGeometries().get()) {
+                if (geometry.getTime().isPresent() && !geometry.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
@@ -78,6 +82,10 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
 
     public static class Builder extends VASIGMETImpl_Builder {
 
+        public Builder() {
+          this.setTranslated(false);
+        }
+
         public static Builder from(final SIGMET value) {
             if (value instanceof VASIGMETImpl) {
                 return ((VASIGMETImpl) value).toBuilder();
@@ -88,6 +96,7 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
                         .setPermissibleUsage(value.getPermissibleUsage())
                         .setPermissibleUsageReason(value.getPermissibleUsageReason())
                         .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
+                        .setAnalysisType(value.getAnalysisType())
                         .setTranslated(value.isTranslated())
                         .setTranslatedBulletinID(value.getTranslatedBulletinID())
                         .setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime())
@@ -102,23 +111,30 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
                 retval.setIssuingAirTrafficServicesUnit(UnitPropertyGroupImpl.immutableCopyOf(value.getIssuingAirTrafficServicesUnit()))
                         .setMeteorologicalWatchOffice(UnitPropertyGroupImpl.immutableCopyOf(value.getMeteorologicalWatchOffice()));
 
-                //From Sigmet
-                retval.setStatus(value.getStatus())
-                        .setSequenceNumber(value.getSequenceNumber())
-                        .setValidityPeriod(value.getValidityPeriod())
-                        .setSigmetPhenomenon(value.getSigmetPhenomenon())
-                        .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()));
+                //From SigmetAirmet
+                retval.setAirspace(value.getAirspace())
+                    .setStatus(value.getStatus())
+                    .setSequenceNumber(value.getSequenceNumber())
+                    .setValidityPeriod(value.getValidityPeriod());
 
-                value.getAnalysis()
-                        .map(an -> retval.setAnalysis(
-                                (Collections.unmodifiableList(an.stream().map(SigmetAnalysisImpl::immutableCopyOf).collect(Collectors.toList())))));
+                //From Sigmet
+                retval.setSigmetPhenomenon(value.getSigmetPhenomenon())
+                        .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))
+                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))
+                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()));
+
+                value.getAnalysisGeometries().map(an -> retval.setAnalysisGeometries(
+                        (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryWithHeightImpl::immutableCopyOf).collect(Collectors.toList())))));
+
+                value.getForecastGeometries().map(an -> retval.setForecastGeometries(
+                        (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryImpl::immutableCopyOf).collect(Collectors.toList())))));
 
                 if (value instanceof VASIGMET) {
                     //From VASigmet
                     VASIGMET va=(VASIGMET)value;
                     retval.setVolcano(VolcanoDescriptionImpl.immutableCopyOf((va.getVolcano())));
-                    retval.setNoVolcanicAshExpected(va.getNoVolcanicAshExpected());
-                    retval.setVolcanicAshMovedToFIR(va.getVolcanicAshMovedToFIR());
+                    if (va.getNoVolcanicAshExpected().isPresent()) retval.setNoVolcanicAshExpected(va.getNoVolcanicAshExpected().get());
+                    if (va.getVolcanicAshMovedToFIR().isPresent()) retval.setVolcanicAshMovedToFIR(va.getVolcanicAshMovedToFIR().get());
                 }
 
                 return retval;
@@ -132,9 +148,15 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(contentAs = SigmetAnalysisImpl.class)
-        public Builder setAnalysis(final List<SigmetAnalysis> analysis) {
-            return super.setAnalysis(analysis);
+        @JsonDeserialize(contentAs = PhenomenonGeometryWithHeightImpl.class)
+        public Builder setAnalysisGeometries(final List<PhenomenonGeometryWithHeight> analysis) {
+            return super.setAnalysisGeometries(analysis);
+        }
+
+        @Override
+        @JsonDeserialize(contentAs = PhenomenonGeometryImpl.class)
+        public Builder setForecastGeometries(final List<PhenomenonGeometry> analysis) {
+            return super.setForecastGeometries(analysis);
         }
 
         @Override
@@ -168,6 +190,11 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
         @Override
         public Builder setNoVolcanicAshExpected(boolean noVolcanicAshExpected) { return super.setNoVolcanicAshExpected(noVolcanicAshExpected);}
 
+ /*       @Override
+        public Builder setTranslated(boolean translated) {
+            return super.setTranslated(translated);
+        }
+*/
         @Override
         @JsonDeserialize(as = UnitPropertyGroupImpl.class)
         public Builder setVolcanicAshMovedToFIR(final UnitPropertyGroup issuingAirTrafficServicesUnit) {

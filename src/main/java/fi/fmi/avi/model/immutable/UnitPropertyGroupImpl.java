@@ -25,8 +25,8 @@ public abstract class UnitPropertyGroupImpl implements UnitPropertyGroup, Serial
         }
     }
 
-    public static Optional<UnitPropertyGroupImpl> immutableCopyOf(final Optional<UnitPropertyGroup> UnitPropertyGroup) {
-        return UnitPropertyGroup.map(UnitPropertyGroupImpl::immutableCopyOf);
+    public static Optional<UnitPropertyGroupImpl> immutableCopyOf(final Optional<UnitPropertyGroup> unitPropertyGroup) {
+        return unitPropertyGroup.map(UnitPropertyGroupImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
