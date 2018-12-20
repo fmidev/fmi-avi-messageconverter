@@ -20,7 +20,7 @@ import java.util.Set;
  */
 public class AviMessageConverter {
 
-    private final Map<ConversionSpecification<?, ?>, AviMessageSpecificConverter<?, ?>> parsers = new HashMap<>();
+    private final Map<ConversionSpecification<?, ?>, AviMessageSpecificConverter<?, ?>> converters = new HashMap<>();
 
     /**
      * Converts the given message according to the <code>spec</code>.
@@ -67,12 +67,12 @@ public class AviMessageConverter {
      */
     @SuppressWarnings("unchecked")
     public <S, T> ConversionResult<T> convertMessage(final S input, final ConversionSpecification<S, T> spec, final ConversionHints hints) {
-        for (final ConversionSpecification<?, ?> toMatch : parsers.keySet()) {
+        for (final ConversionSpecification<?, ?> toMatch : converters.keySet()) {
             if (toMatch.equals(spec)) {
-                return ((AviMessageSpecificConverter<S, T>) parsers.get(spec)).convertMessage(input, hints);
+                return ((AviMessageSpecificConverter<S, T>) converters.get(spec)).convertMessage(input, hints);
             }
         }
-        throw new IllegalArgumentException("Unable to parse message using specification " + spec);
+        throw new IllegalArgumentException("No converter for conversion specification " + spec + ", check configuration");
     }
 
     /**
@@ -88,7 +88,7 @@ public class AviMessageConverter {
      *         target object class
      */
     public <S, T> void setMessageSpecificConverter(final ConversionSpecification<S, T> spec, final AviMessageSpecificConverter<S, T> converter) {
-        this.parsers.put(spec, converter);
+        this.converters.put(spec, converter);
     }
 
     /**
@@ -100,7 +100,7 @@ public class AviMessageConverter {
      * @return true if supported
      */
     public boolean isSpecificationSupported(final ConversionSpecification<?, ?> spec) {
-        return this.parsers.containsKey(spec);
+        return this.converters.containsKey(spec);
     }
 
     /**
@@ -110,6 +110,6 @@ public class AviMessageConverter {
      * @return set of supported specifications
      */
     public Set<ConversionSpecification<?, ?>> getSupportedSpecifications() {
-        return this.parsers.keySet();
+        return this.converters.keySet();
     }
 }
