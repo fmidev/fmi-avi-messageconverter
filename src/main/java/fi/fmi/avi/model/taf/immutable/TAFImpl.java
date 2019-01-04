@@ -124,7 +124,6 @@ public abstract class TAFImpl implements TAF, Serializable {
             } else {
                 //From AviationWeatherMessage:
                 final Builder retval = new Builder()//
-                        .setIssueTime(value.getIssueTime())
                         .setPermissibleUsage(value.getPermissibleUsage())
                         .setPermissibleUsageReason(value.getPermissibleUsageReason())
                         .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
@@ -139,7 +138,8 @@ public abstract class TAFImpl implements TAF, Serializable {
                 value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
 
                 //From AerodromeWeatherMessage:
-                retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()));
+                retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))
+                    .setIssueTime(value.getIssueTime());
 
                 //From TAF:
                 retval.setStatus(value.getStatus())

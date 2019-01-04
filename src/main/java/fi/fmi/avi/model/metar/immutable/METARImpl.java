@@ -206,7 +206,6 @@ public abstract class METARImpl implements METAR, Serializable {
             }
             //From AviationWeatherMessage:
             final METARImpl.Builder retval = new METARImpl.Builder()//
-                    .setIssueTime(value.getIssueTime())
                     .setPermissibleUsage(value.getPermissibleUsage())
                     .setPermissibleUsageReason(value.getPermissibleUsageReason())
                     .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
@@ -221,7 +220,8 @@ public abstract class METARImpl implements METAR, Serializable {
             value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
 
             //From AerodromeWeatherMessage:
-            retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()));
+            retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))//
+                    .setIssueTime(value.getIssueTime());
 
             //From MeteorologicalTerminalAirReport:
             retval.setAutomatedStation(value.isAutomatedStation())
