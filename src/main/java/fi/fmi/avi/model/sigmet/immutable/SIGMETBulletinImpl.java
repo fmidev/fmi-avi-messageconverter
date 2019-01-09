@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,7 +19,9 @@ import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
 @JsonDeserialize(builder = SIGMETBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "issueTime", "heading", "messages" })
-public abstract class SIGMETBulletinImpl implements SIGMETBulletin {
+public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable {
+
+    private static final long serialVersionUID = 7742724278322130499L;
 
     public static SIGMETBulletinImpl immutableCopyOf(final SIGMETBulletin bulletin) {
         Objects.requireNonNull(bulletin);

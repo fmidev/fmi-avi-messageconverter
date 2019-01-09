@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -15,7 +16,9 @@ import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
 @JsonDeserialize(builder = SIGMETBulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "dataTypeDesignatorT2" })
-public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading {
+public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading, Serializable {
+
+    private static final long serialVersionUID = 325981659259497087L;
 
     public static SIGMETBulletinHeadingImpl immutableCopyOf(final SIGMETBulletinHeading heading) {
         Objects.requireNonNull(heading);
@@ -65,8 +68,10 @@ public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading
 
         @Override
         public Builder setDataTypeDesignatorT2(final WarningsDataTypeDesignatorT2 t2) {
-            if (t2 != WarningsDataTypeDesignatorT2.SIGMET && t2 != WarningsDataTypeDesignatorT2.TROPICAL_CYCLONE_SIGMET && t2 != WarningsDataTypeDesignatorT2.VOLCANIC_ASH_CLOUDS_SIGMET) {
-                throw new IllegalArgumentException("Value for t2 for SIGMETBulletin must be " + WarningsDataTypeDesignatorT2.SIGMET + ", " + WarningsDataTypeDesignatorT2.TROPICAL_CYCLONE_SIGMET + ", or " + WarningsDataTypeDesignatorT2.VOLCANIC_ASH_CLOUDS_SIGMET);
+            if (t2 != WarningsDataTypeDesignatorT2.SIGMET && t2 != WarningsDataTypeDesignatorT2.TROPICAL_CYCLONE_SIGMET
+                    && t2 != WarningsDataTypeDesignatorT2.VOLCANIC_ASH_CLOUDS_SIGMET) {
+                throw new IllegalArgumentException("Value for t2 for SIGMETBulletin must be " + WarningsDataTypeDesignatorT2.SIGMET + ", "
+                        + WarningsDataTypeDesignatorT2.TROPICAL_CYCLONE_SIGMET + ", or " + WarningsDataTypeDesignatorT2.VOLCANIC_ASH_CLOUDS_SIGMET);
             }
             return super.setDataTypeDesignatorT2(t2);
         }

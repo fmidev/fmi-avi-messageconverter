@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,7 +20,9 @@ import fi.fmi.avi.model.metar.ObservedCloudLayer;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "amount", "base", "cloudType", "amountNotDetectedByAutoSystem", "amountUnobservableByAutoSystem", "heightNotDetectedByAutoSystem",
         "heightUnobservableByAutoSystem", "cloudTypeUnobservableByAutoSystem" })
-public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.ObservedCloudLayer {
+public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.ObservedCloudLayer, Serializable {
+
+    private static final long serialVersionUID = 7312850983219439091L;
 
     public static ObservedCloudLayerImpl immutableCopyOf(final CloudLayer layer) {
         Objects.requireNonNull(layer);
