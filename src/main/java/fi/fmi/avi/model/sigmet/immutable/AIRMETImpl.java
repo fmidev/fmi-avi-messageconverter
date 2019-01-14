@@ -15,8 +15,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.UnitPropertyGroup;
+import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
@@ -30,7 +32,8 @@ import fi.fmi.avi.model.sigmet.WSSIGMET;
 //@JsonDeserialize(using=SIGMETDeserializer.class, builder = WSSIGMETImpl.Builder.class)
 @JsonDeserialize(builder = AIRMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis",
+@JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "airspace",
+        "analysis",
         "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class AIRMETImpl implements AIRMET, Serializable {
@@ -101,6 +104,9 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                 retval.setIssuingAirTrafficServicesUnit(UnitPropertyGroupImpl.immutableCopyOf(value.getIssuingAirTrafficServicesUnit()))
                         .setMeteorologicalWatchOffice(UnitPropertyGroupImpl.immutableCopyOf(value.getMeteorologicalWatchOffice()));
 
+                //From AirmetSigmet
+                retval.setAirspace(AirspaceImpl.immutableCopyOf(value.getAirspace()));
+
                 //From Sigmet
                 retval.setStatus(value.getStatus())
                         .setSequenceNumber(value.getSequenceNumber())
@@ -152,5 +158,8 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
             return super.setCloudLevels(cloudLevels);
         }
 
+        @Override
+        @JsonDeserialize(as = AirspaceImpl.class)
+        public Builder setAirspace(Airspace airspace) { return super.setAirspace(airspace);}
     }
 }

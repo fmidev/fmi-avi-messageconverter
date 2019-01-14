@@ -6,10 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.TacOrGeoGeometry;
+import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
@@ -70,10 +73,14 @@ public class SigmetTest {
     }
 
     public SIGMET buildSigmet() {
+        Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+
+
         WSSIGMETImpl.Builder sm=new WSSIGMETImpl.Builder()
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T14:00:00Z")))
                 .setIssuingAirTrafficServicesUnit(new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAM", "FIR").build())
                 .setMeteorologicalWatchOffice(new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
+                .setAirspace(airspace)
                 .setSequenceNumber("1")
                 .setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
                 .setValidityPeriod(new PartialOrCompleteTimePeriod.Builder()

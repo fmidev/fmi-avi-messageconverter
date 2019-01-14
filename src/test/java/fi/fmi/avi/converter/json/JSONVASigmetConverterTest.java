@@ -30,10 +30,12 @@ import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionIssue;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
+import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
+import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.GeoPositionImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
@@ -85,7 +87,9 @@ public class JSONVASigmetConverterTest {
         VASIGMETImpl.Builder builder = new VASIGMETImpl.Builder();
 
         UnitPropertyGroup mwo=new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        UnitPropertyGroup fir=new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
+        UnitPropertyGroup fir=new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build();
+
+        Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
         String geomString="{ \"type\": \"Polygon\", \"coordinates\":[[[5.0,52.0],[6.0,53.0],[4.0,54.0],[5.0,52.0]]]}";
         Geometry geom=(Geometry)om.readValue(geomString, Geometry.class);
@@ -121,6 +125,7 @@ public class JSONVASigmetConverterTest {
         builder.setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
                 .setMeteorologicalWatchOffice(mwo)
                 .setIssuingAirTrafficServicesUnit(fir)
+                .setAirspace(airspace)
                 .setIssueTime(issueTimeBuilder.build())
                 .setPermissibleUsage(AviationCodeListUser.PermissibleUsage.NON_OPERATIONAL)
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)

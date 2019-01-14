@@ -1,7 +1,7 @@
 {
   "status": "NORMAL",
   "issuingAirTrafficServicesUnit": {
-    "name": "AMSTERDAM FIR",
+    "name": "AMSTERDAM",
     "type": "FIR",
     "designator": "EHAA"
   },
@@ -21,6 +21,11 @@
     "endTime": {
       "completeTime": "2017-08-27T18:00:00Z"
     }
+  },
+  "airspace": {
+    "designator": "EHAA",
+    "name": "AMSTERDAM",
+    "type": "FIR"
   },
   "sigmetPhenomenon": "EMBD_TS",
   "permissibleUsage":"NON_OPERATIONAL",

@@ -15,10 +15,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.VolcanoDescription;
+import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
@@ -32,8 +34,9 @@ import fi.fmi.avi.model.sigmet.VASIGMET;
 @FreeBuilder
 @JsonDeserialize(builder = VASIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "analysis",
-        "forecastPositionAnalysis", "volcano", "noVolcanicAshExpected", "volcanicAshMovedToFIR",
+@JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "airspace",
+        "analysisGeometries",
+        "forecastGeometries", "volcano", "noVolcanicAshExpected", "volcanicAshMovedToFIR",
         "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class VASIGMETImpl implements VASIGMET, Serializable {
@@ -112,7 +115,7 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
                         .setMeteorologicalWatchOffice(UnitPropertyGroupImpl.immutableCopyOf(value.getMeteorologicalWatchOffice()));
 
                 //From SigmetAirmet
-                retval.setAirspace(value.getAirspace())
+                retval.setAirspace(AirspaceImpl.immutableCopyOf(value.getAirspace()))
                     .setStatus(value.getStatus())
                     .setSequenceNumber(value.getSequenceNumber())
                     .setValidityPeriod(value.getValidityPeriod());
@@ -200,5 +203,9 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
         public Builder setVolcanicAshMovedToFIR(final UnitPropertyGroup issuingAirTrafficServicesUnit) {
             return super.setVolcanicAshMovedToFIR(issuingAirTrafficServicesUnit);
         }
+
+        @Override
+        @JsonDeserialize( as = AirspaceImpl.class)
+        public Builder setAirspace(Airspace airspace) { return super.setAirspace(airspace);}
     }
 }

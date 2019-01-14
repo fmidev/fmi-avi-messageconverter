@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
@@ -158,7 +159,7 @@ public abstract class WSSIGMETImpl implements SIGMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(as = SigmetReference.class)
+        @JsonDeserialize(as = SigmetReferenceImpl.class)
         public Builder setCancelledReference(final SigmetReference cancelledReference) {
             return super.setCancelledReference(cancelledReference);
         }
@@ -169,5 +170,8 @@ public abstract class WSSIGMETImpl implements SIGMET, Serializable {
             return super.setIssueTime(issueTime);
         }
 
+        @Override
+        @JsonDeserialize( as = AirspaceImpl.class)
+        public Builder setAirspace(Airspace airspace) { return super.setAirspace(airspace);}
     }
 }
