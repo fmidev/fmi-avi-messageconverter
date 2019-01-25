@@ -84,6 +84,14 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Seri
             return super.setDataTypeDesignatorT2(t2);
         }
 
+        @Override
+        public Builder setGeographicalDesignator(final String designator) {
+            if (designator != null && designator.length() != 2) {
+                throw new IllegalArgumentException("Geographical designator must be a string with length 2");
+            }
+            return super.setGeographicalDesignator(designator);
+        }
+
         @Deprecated
         public Builder setValidLessThan12Hours(final boolean isShort) {
             if (isShort) {

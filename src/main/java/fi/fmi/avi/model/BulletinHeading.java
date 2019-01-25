@@ -5,7 +5,7 @@ import java.util.Optional;
 public interface BulletinHeading {
 
     /**
-     * Type of the content (AAx, RRx, CCx) part of the abbreviated heading
+     * Type of the content (AAx, RRx, CCx) part of the abbreviated heading.
      *
      * @return the type of the content
      */
@@ -89,6 +89,16 @@ public interface BulletinHeading {
 
     enum Type {
         NORMAL(""), DELAYED("RR"), AMENDED("AA"), CORRECTED("CC");
+
+        public static Type fromCode(final String code) {
+            for (Type t : Type.values()) {
+                if (t.getPrefix().equals(code)) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown prefix '" + code + "'");
+        }
+
         private String prefix;
 
         Type(final String prefix) {
@@ -125,6 +135,15 @@ public interface BulletinHeading {
         UPPER_AIR_DATA('U'),//
         NATIONAL_DATA('V'),//
         WARNINGS('W');
+
+        public static DataTypeDesignatorT1 fromCode(final char code) {
+            for (DataTypeDesignatorT1 t : DataTypeDesignatorT1.values()) {
+                if (t.getCode() == code) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown code '" + code + "'");
+        }
 
         private final char code;
 
@@ -164,6 +183,15 @@ public interface BulletinHeading {
         MISCELLANEOUS('X'),
         SHIPPING_AREA('Z');
 
+        public static ForecastsDataTypeDesignatorT2 fromCode(final char code) {
+            for (ForecastsDataTypeDesignatorT2 t : ForecastsDataTypeDesignatorT2.values()) {
+                if (t.getCode() == code) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown code '" + code + "'");
+        }
+
         private final char code;
 
         ForecastsDataTypeDesignatorT2(final char code) {
@@ -190,6 +218,15 @@ public interface BulletinHeading {
         SEVERE_THUNDERSTORM('U'),//
         VOLCANIC_ASH_CLOUDS_SIGMET('V'),
         WARNINGS_AND_WEATHER_SUMMARY('W');
+
+        public static WarningsDataTypeDesignatorT2 fromCode(final char code) {
+            for (WarningsDataTypeDesignatorT2 t : WarningsDataTypeDesignatorT2.values()) {
+                if (t.getCode() == code) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown code '" + code + "'");
+        }
 
         private final char code;
 
