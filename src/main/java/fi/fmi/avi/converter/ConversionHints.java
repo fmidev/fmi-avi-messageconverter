@@ -197,6 +197,10 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final ConversionHints SIGMET;
 
     /**
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_AIRMET}
+     */
+    public static final ConversionHints AIRMET;
+    /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_ARS}
      */
     public static final ConversionHints ARS;
@@ -234,6 +238,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
         SPECI = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SPECI);
         SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SIGMET);
+        AIRMET = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_AIRMET);
         ARS = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_ARS);
 
         STRICT_PARSING = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
