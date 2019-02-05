@@ -54,9 +54,8 @@ public class JSONAirmetConverterTest {
     @Autowired
     private AviMessageConverter converter;
 
-
     public void testAIRMETParsing() throws Exception {
-        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet1.json");
+        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
         Objects.requireNonNull(is);
         String input = IOUtils.toString(is,"UTF-8");
         is.close();
@@ -71,6 +70,16 @@ public class JSONAirmetConverterTest {
     ObjectMapper om;
 
     @Test
+    public void testAIRMETparse() throws Exception {
+        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet_moving.json");
+        Objects.requireNonNull(is);
+        String reference = IOUtils.toString(is,"UTF-8");
+        is.close();
+        AIRMET am=((AIRMETImpl.Builder)om.readValue(reference, AIRMETImpl.Builder.class)).build();
+        System.err.println("am:"+am);
+    }
+
+    @Test
     public void testAIRMETSerialization() throws Exception {
 /*        ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
@@ -78,10 +87,12 @@ public class JSONAirmetConverterTest {
         om.registerModule(new JtsModule());
         om.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);*/
 
-        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet1.json");
+        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
         Objects.requireNonNull(is);
         String reference = IOUtils.toString(is,"UTF-8");
         is.close();
+        AIRMET am=((AIRMETImpl.Builder)om.readValue(reference, AIRMETImpl.Builder.class)).build();
+        System.err.println("am:"+am);
 
         AIRMETImpl.Builder builder = new AIRMETImpl.Builder();
 
@@ -123,6 +134,8 @@ public class JSONAirmetConverterTest {
                 .setPermissibleUsage(AviationCodeListUser.PermissibleUsage.NON_OPERATIONAL)
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
                 .setSequenceNumber("1")
+                .setMovingDirection(NumericMeasureImpl.of(180, "deg"))
+                .setMovingSpeed(NumericMeasureImpl.of(10, "[kn_i]"))
                 .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
                 .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 .setValidityPeriod(validPeriod.build())
@@ -134,6 +147,7 @@ public class JSONAirmetConverterTest {
         ConversionResult<String> result = converter.convertMessage(airmet, JSONConverter.AIRMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
+        System.err.println("JSON:"+result.getConvertedMessage().get());
 
         JsonNode refRoot=om.readTree(reference); 
         JsonNode convertedRoot=om.readTree(result.getConvertedMessage().get());

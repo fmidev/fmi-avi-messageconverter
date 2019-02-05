@@ -3,6 +3,8 @@ package fi.fmi.avi.model.sigmet;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.SIGMETAIRMET;
 

@@ -16,9 +16,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Airspace;
+import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
@@ -29,10 +31,10 @@ import fi.fmi.avi.model.sigmet.SigmetReference;
 import fi.fmi.avi.model.sigmet.WSSIGMET;
 
 @FreeBuilder
-//@JsonDeserialize(using=SIGMETDeserializer.class, builder = WSSIGMETImpl.Builder.class)
 @JsonDeserialize(builder = AIRMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "airspace",
+        "movingDirection", "movingSpeed",
         "analysis",
         "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
@@ -112,6 +114,8 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                         .setSequenceNumber(value.getSequenceNumber())
                         .setValidityPeriod(value.getValidityPeriod())
                         .setAirmetPhenomenon(value.getAirmetPhenomenon())
+                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))
+                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()))
                         .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()));
 
                 value.getAnalysisGeometries().map(an -> retval.setAnalysisGeometries(
@@ -161,5 +165,13 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         @Override
         @JsonDeserialize(as = AirspaceImpl.class)
         public Builder setAirspace(Airspace airspace) { return super.setAirspace(airspace);}
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMovingSpeed(NumericMeasure speed) { return super.setMovingSpeed(speed);}
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMovingDirection(NumericMeasure direction) { return super.setMovingDirection(direction);}
     }
 }

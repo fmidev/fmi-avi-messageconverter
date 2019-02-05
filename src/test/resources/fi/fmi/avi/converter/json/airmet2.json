@@ -22,6 +22,11 @@
       "completeTime": "2017-08-27T18:00:00Z"
     }
   },
+  "airspace" : {
+    "designator" : "EHAA",
+    "name" : "AMSTERDAM",
+    "type" : "FIR"
+  },
   "airmetPhenomenon": "MOD_ICE",
   "permissibleUsage":"NON_OPERATIONAL",
   "permissibleUsageReason":"EXERCISE",
