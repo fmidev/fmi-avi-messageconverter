@@ -158,30 +158,29 @@ public interface BulletinHeading {
 
     enum ForecastsDataTypeDesignatorT2 implements DataTypeDesignatorT2 {
 
-        AVIATION_AREA_OR_GAMET_OR_ADVISORIES('A'),//
-        UPPER_AIR_WINDS_AND_TEMPERATURES('B'),//
-        AERODROME_VT_SHORT('C'),//
-        RADIOLOGICAL_TRAJECTORY_DOSE('D'),//
-        EXTENDED('E'),//
-        SHIPPING('F'),//
-        HYDROLOGICAL('G'),//
-        UPPER_AIR_THICKNESS('H'),//
-        ICEBERG('I'),//
-        RADIO_WARNING_SERVICE('J'),//
-        TROPICAL_CYCLONE_ADVISORIES('K'),//
-        LOCAL_OR_AREA('L'),//
-        TEMPERATURE_EXTREMES('M'),//
-        GUIDANCE('O'),//
-        PUBLIC('P'),//
-        OTHER_SHIPPING('Q'),//
-        AVIATION_ROUTE('R'),//
-        SURFACE('S'),//
-        AERODROME_VT_LONG('T'),//
-        UPPER_AIR('U'),//
-        VOLCANIC_ASH_ADVISORIES('V'),//
-        WINTER_SPORTS('W'),//
-        MISCELLANEOUS('X'),
-        SHIPPING_AREA('Z');
+        FCT_AVIATION_AREA_OR_GAMET_OR_ADVISORIES('A'),//
+        FCT_UPPER_AIR_WINDS_AND_TEMPERATURES('B'),//
+        FCT_AERODROME_VT_SHORT('C'),//
+        FCT_RADIOLOGICAL_TRAJECTORY_DOSE('D'),//
+        FCT_EXTENDED('E'),//
+        FCT_SHIPPING('F'),//
+        FCT_HYDROLOGICAL('G'),//
+        FCT_UPPER_AIR_THICKNESS('H'),//
+        FCT_ICEBERG('I'),//
+        FCT_RADIO_WARNING_SERVICE('J'),//
+        FCT_TROPICAL_CYCLONE_ADVISORIES('K'),//
+        FCT_LOCAL_OR_AREA('L'),//
+        FCT_TEMPERATURE_EXTREMES('M'),//
+        FCT_GUIDANCE('O'),//
+        FCT_PUBLIC('P'),//
+        FCT_OTHER_SHIPPING('Q'),//
+        FCT_AVIATION_ROUTE('R'),//
+        FCT_SURFACE('S'),//
+        FCT_AERODROME_VT_LONG('T'),//
+        FCT_UPPER_AIR('U'),//
+        FCT_VOLCANIC_ASH_ADVISORIES('V'),//
+        FCT_WINTER_SPORTS('W'),//
+        FCT_MISCELLANEOUS('X'), FCT_SHIPPING_AREA('Z');
 
         public static ForecastsDataTypeDesignatorT2 fromCode(final char code) {
             for (ForecastsDataTypeDesignatorT2 t : ForecastsDataTypeDesignatorT2.values()) {
@@ -198,6 +197,7 @@ public interface BulletinHeading {
             this.code = code;
         }
 
+        @Override
         public char getCode() {
             return code;
         }
@@ -205,19 +205,18 @@ public interface BulletinHeading {
 
     enum WarningsDataTypeDesignatorT2 implements DataTypeDesignatorT2 {
 
-        AIRMET('A'),//
-        TROPICAL_CYCLONE_SIGMET('C'),//
-        TSUNAMI('E'),//
-        TORNADO('F'),//
-        HYDROLOGICAL_OR_RIVER_FLOOD('G'),//
-        MARINE_OR_COASTAL_FLOOD('H'),//
-        OTHER('O'),//
-        HUMANITARIAN_ACTIVITIES('R'),//
-        SIGMET('S'),//
-        TROPICAL_CYCLONE_TYPHOON_OR_HURRICANE('T'),//
-        SEVERE_THUNDERSTORM('U'),//
-        VOLCANIC_ASH_CLOUDS_SIGMET('V'),
-        WARNINGS_AND_WEATHER_SUMMARY('W');
+        WRN_AIRMET('A'),//
+        WRN_TROPICAL_CYCLONE_SIGMET('C'),//
+        WRN_TSUNAMI('E'),//
+        WRN_TORNADO('F'),//
+        WRN_HYDROLOGICAL_OR_RIVER_FLOOD('G'),//
+        WRN_MARINE_OR_COASTAL_FLOOD('H'),//
+        WRN_OTHER('O'),//
+        WRN_HUMANITARIAN_ACTIVITIES('R'),//
+        WRN_SIGMET('S'),//
+        WRN_TROPICAL_CYCLONE_TYPHOON_OR_HURRICANE('T'),//
+        WRN_SEVERE_THUNDERSTORM('U'),//
+        WRN_VOLCANIC_ASH_CLOUDS_SIGMET('V'), WRN_WARNINGS_AND_WEATHER_SUMMARY('W');
 
         public static WarningsDataTypeDesignatorT2 fromCode(final char code) {
             for (WarningsDataTypeDesignatorT2 t : WarningsDataTypeDesignatorT2.values()) {
@@ -234,6 +233,41 @@ public interface BulletinHeading {
             this.code = code;
         }
 
+        @Override
+        public char getCode() {
+            return code;
+        }
+    }
+
+    enum XMLDataTypeDesignatorT2 implements DataTypeDesignatorT2 {
+
+        XML_METAR('A'),//
+        XML_AERODROME_VT_SHORT('C'),//
+        XML_TROPICAL_CYCLONE_ADVISORIES('K'),//
+        XML_SPECI('P'),//
+        XML_SIGMET('S'),//
+        XML_AERODROME_VT_LONG('T'),//
+        XML_VOLCANIC_ASH_ADVISORY('U'),//
+        XML_VOLCANIC_ASH_SIGMET('V'),//
+        XML_AIRMET('W'),//
+        XML_TROPICAL_CYCLONE_SIGMET('Y');
+
+        public static XMLDataTypeDesignatorT2 fromCode(final char code) {
+            for (XMLDataTypeDesignatorT2 t : XMLDataTypeDesignatorT2.values()) {
+                if (t.getCode() == code) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown code '" + code + "'");
+        }
+
+        private final char code;
+
+        XMLDataTypeDesignatorT2(final char code) {
+            this.code = code;
+        }
+
+        @Override
         public char getCode() {
             return code;
         }

@@ -11,10 +11,9 @@ import fi.fmi.avi.JSONTestUtil;
 import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.immutable.GeoPositionImpl;
 import fi.fmi.avi.model.taf.TAF;
-import fi.fmi.avi.model.taf.TAFBulletinHeading;
-import fi.fmi.avi.model.taf.immutable.TAFBulletinHeadingImpl;
 import fi.fmi.avi.model.taf.immutable.TAFBulletinImpl;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
 
@@ -42,11 +41,12 @@ public class TAFBulletinTest {
 
         final TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
-                .setHeading(new TAFBulletinHeadingImpl.Builder().setType(TAFBulletinHeading.Type.NORMAL)//
+                .setHeading(new BulletinHeadingImpl.Builder().setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.AERODROME_VT_LONG)//
+                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
+                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
         bulletinBuilder.build();
@@ -76,11 +76,12 @@ public class TAFBulletinTest {
 
         final TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
-                .setHeading(new TAFBulletinHeadingImpl.Builder().setType(TAFBulletinHeading.Type.NORMAL)//
+                .setHeading(new BulletinHeadingImpl.Builder().setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.AERODROME_VT_SHORT)//
+                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
+                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT)//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
         bulletinBuilder.build();

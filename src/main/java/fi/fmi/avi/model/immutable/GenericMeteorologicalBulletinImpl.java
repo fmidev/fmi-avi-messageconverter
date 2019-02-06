@@ -45,13 +45,13 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
             } else {
                 return new GenericMeteorologicalBulletinImpl.Builder()//
                         .setIssueTime(value.getIssueTime())//
-                        .setHeading(GenericBulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
+                        .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .addAllMessages(value.getMessages());
             }
         }
 
         @Override
-        @JsonDeserialize(as = GenericBulletinHeadingImpl.class)
+        @JsonDeserialize(as = BulletinHeadingImpl.class)
         public Builder setHeading(final BulletinHeading heading) {
             return super.setHeading(heading);
         }

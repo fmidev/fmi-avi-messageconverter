@@ -5,7 +5,7 @@ import org.junit.Test;
 import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinHeadingImpl;
+import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 
@@ -15,11 +15,11 @@ public class SIGMETBulletinTest {
     public void testSIGMETBulletin() throws Exception {
         final SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
                 .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
-                        .setPartialTime(PartialDateTime.ofDayHourMinute(17, 7, 0))).setHeading(new SIGMETBulletinHeadingImpl.Builder()//
+                        .setPartialTime(PartialDateTime.ofDayHourMinute(17, 7, 0))).setHeading(new BulletinHeadingImpl.Builder()//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.SIGMET)
+                        .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.WRN_SIGMET)
                         .build());
 
         builder.addMessages(new SIGMETImpl.Builder()//

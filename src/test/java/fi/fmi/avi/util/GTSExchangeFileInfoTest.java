@@ -11,9 +11,7 @@ import org.junit.Test;
 
 import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
-import fi.fmi.avi.model.immutable.GenericBulletinHeadingImpl;
-import fi.fmi.avi.model.taf.TAFBulletinHeading;
-import fi.fmi.avi.model.taf.immutable.TAFBulletinHeadingImpl;
+import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 
 public class GTSExchangeFileInfoTest {
     @Test
@@ -21,13 +19,14 @@ public class GTSExchangeFileInfoTest {
         GTSExchangeFileInfo info = new GTSExchangeFileInfo.Builder().setPFlag(GTSExchangeFileInfo.GTSExchangePFlag.A)
                 .setMetadataFile(true)
                 .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.METADATA)
-                .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP)
-                .setHeading(new TAFBulletinHeadingImpl.Builder().setLocationIndicator("ABCD")
-                        .setBulletinAugmentationNumber('A')
-                        .setGeographicalDesignator("FI")
-                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.AERODROME_VT_LONG)
-                        .setType(TAFBulletinHeading.Type.CORRECTED)
-                        .setBulletinNumber(12)
+                .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP).setHeading(new BulletinHeadingImpl.Builder()//
+                        .setLocationIndicator("ABCD")//
+                        .setBulletinAugmentationNumber('A')//
+                        .setGeographicalDesignator("FI")//
+                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
+                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
+                        .setType(BulletinHeading.Type.CORRECTED)//
+                        .setBulletinNumber(12)//
                         .build())
                 .setIssueTime(PartialDateTime.ofDayHourMinute(9, 10, 0))
                 .setFreeFormPart("foobar12345_-")
@@ -40,12 +39,12 @@ public class GTSExchangeFileInfoTest {
     @Test
     public void testFileNameParser() {
         GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
-        BulletinHeading expectedHeading = new GenericBulletinHeadingImpl.Builder().setLocationIndicator("ABCD")
+        BulletinHeading expectedHeading = new BulletinHeadingImpl.Builder().setLocationIndicator("ABCD")
                 .setBulletinAugmentationNumber('A')
                 .setGeographicalDesignator("FI")
                 .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
-                .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.AERODROME_VT_LONG)
-                .setType(TAFBulletinHeading.Type.CORRECTED)
+                .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
+                .setType(BulletinHeading.Type.CORRECTED)
                 .setBulletinNumber(12)
                 .build();
 

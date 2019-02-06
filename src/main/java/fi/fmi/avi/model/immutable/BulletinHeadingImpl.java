@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -8,54 +9,64 @@ import java.util.regex.Pattern;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import fi.fmi.avi.model.BulletinHeading;
 
 @FreeBuilder
-@JsonDeserialize(builder = GenericBulletinHeadingImpl.Builder.class)
+@JsonDeserialize(builder = BulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "getDataTypeDesignatorT1ForTAC",
+@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber",
         "dataTypeDesignatorT2" })
-public abstract class GenericBulletinHeadingImpl implements BulletinHeading, Serializable {
+public abstract class BulletinHeadingImpl implements BulletinHeading, Serializable {
     private static Pattern ABBREVIATED_HEADING = Pattern.compile(
             "^(?<TT>[A-Z]{2})(?<AA>[A-Z]{2})(?<ii>[0-9]{2})" + "(?<CCCC>[A-Z]{4})(?<YY>[0-9]{2})(?<GG>[0-9]{2})(?<gg>[0-9]{2})(?<BBB>(CC|RR|AA)[A-Z])?$");
 
-    public static GenericBulletinHeadingImpl immutableCopyOf(final BulletinHeading heading) {
+    public static BulletinHeadingImpl immutableCopyOf(final BulletinHeading heading) {
         Objects.requireNonNull(heading);
-        if (heading instanceof GenericBulletinHeadingImpl) {
-            return (GenericBulletinHeadingImpl) heading;
+        if (heading instanceof BulletinHeadingImpl) {
+            return (BulletinHeadingImpl) heading;
         } else {
             return Builder.from(heading).build();
         }
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Optional<GenericBulletinHeadingImpl> immutableCopyOf(final Optional<BulletinHeading> heading) {
-        return heading.map(GenericBulletinHeadingImpl::immutableCopyOf);
+    public static Optional<BulletinHeadingImpl> immutableCopyOf(final Optional<BulletinHeading> heading) {
+        return heading.map(BulletinHeadingImpl::immutableCopyOf);
     }
+
+    @Override
+    @JsonIgnore
+    public abstract DataTypeDesignatorT1 getDataTypeDesignatorT1ForTAC();
 
     public abstract Builder toBuilder();
 
-    public static class Builder extends GenericBulletinHeadingImpl_Builder {
+    public static class Builder extends BulletinHeadingImpl_Builder {
 
         public Builder() {
             setType(Type.NORMAL);
         }
 
         public static Builder from(final BulletinHeading value) {
-            if (value instanceof GenericBulletinHeadingImpl) {
-                return ((GenericBulletinHeadingImpl) value).toBuilder();
+            if (value instanceof BulletinHeadingImpl) {
+                return ((BulletinHeadingImpl) value).toBuilder();
             } else {
-                return new GenericBulletinHeadingImpl.Builder()//
+                return new BulletinHeadingImpl.Builder()//
                         .setLocationIndicator(value.getLocationIndicator())//
                         .setGeographicalDesignator(value.getGeographicalDesignator())//
                         .setBulletinNumber(value.getBulletinNumber())//
                         .setType(value.getType())//
                         .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())//
-                        .setDataTypeDesignatorT2(value.getDataTypeDesignatorT2()).setDataTypeDesignatorT1ForTAC(value.getDataTypeDesignatorT1ForTAC());
+                        .setDataTypeDesignatorT2(value.getDataTypeDesignatorT2())//
+                        .setDataTypeDesignatorT1ForTAC(value.getDataTypeDesignatorT1ForTAC());
             }
         }
 
@@ -79,6 +90,8 @@ public abstract class GenericBulletinHeadingImpl implements BulletinHeading, Ser
                 t2 = ForecastsDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
             } else if (DataTypeDesignatorT1.WARNINGS == t1) {
                 t2 = WarningsDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
+            } else if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML == t1) {
+                t2 = XMLDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
             } else {
                 throw new IllegalArgumentException("Only forecast ('F') and warning ('W') type headings currently supported, t1 is '" + t1 + "'");
             }
@@ -121,6 +134,51 @@ public abstract class GenericBulletinHeadingImpl implements BulletinHeading, Ser
                 throw new IllegalArgumentException("Bulleting number must be between 1 and 99");
             }
             return super.setBulletinNumber(bulletinNumber);
+        }
+
+        @Override
+        @JsonDeserialize(using = DataTypeDesignatorT2Deserializer.class)
+        public Builder setDataTypeDesignatorT2(final DataTypeDesignatorT2 t2) {
+            if (t2 instanceof ForecastsDataTypeDesignatorT2) {
+                this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS);
+            } else if (t2 instanceof WarningsDataTypeDesignatorT2) {
+                this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.WARNINGS);
+            } else if (t2 instanceof XMLDataTypeDesignatorT2) {
+                this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML);
+            }
+            return super.setDataTypeDesignatorT2(t2);
+        }
+
+        static class DataTypeDesignatorT2Deserializer extends StdDeserializer<DataTypeDesignatorT2> {
+
+            DataTypeDesignatorT2Deserializer() {
+                this(null);
+            }
+
+            DataTypeDesignatorT2Deserializer(final Class<?> vc) {
+                super(vc);
+            }
+
+            @Override
+            public DataTypeDesignatorT2 deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
+                final String value = ((JsonNode) jsonParser.getCodec().readTree(jsonParser)).asText();
+                for (final ForecastsDataTypeDesignatorT2 item : ForecastsDataTypeDesignatorT2.values()) {
+                    if (item.name().equals(value)) {
+                        return item;
+                    }
+                }
+                for (final WarningsDataTypeDesignatorT2 item : WarningsDataTypeDesignatorT2.values()) {
+                    if (item.name().equals(value)) {
+                        return item;
+                    }
+                }
+                for (final XMLDataTypeDesignatorT2 item : XMLDataTypeDesignatorT2.values()) {
+                    if (item.name().equals(value)) {
+                        return item;
+                    }
+                }
+                throw new IllegalArgumentException("Invalid value '" + value + "' for DataTypeDesignatorT2");
+            }
         }
     }
 }

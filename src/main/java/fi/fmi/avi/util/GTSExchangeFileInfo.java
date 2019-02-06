@@ -16,7 +16,7 @@ import org.inferred.freebuilder.FreeBuilder;
 
 import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
-import fi.fmi.avi.model.immutable.GenericBulletinHeadingImpl;
+import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 
 @FreeBuilder
 public abstract class GTSExchangeFileInfo implements Serializable {
@@ -304,8 +304,10 @@ public abstract class GTSExchangeFileInfo implements Serializable {
             }
             String issueTime = "--" + m.group("issueDay") + "T" + m.group("issueHour") + ":" + m.group("issueMinute");
             String abbreviatedHeading =
-                    m.group("T1T2") + m.group("A1A2") + m.group("ii") + m.group("CCCC") + m.group("issueDay") + m.group("issueHour") + m.group("issueMinute")
-                            + m.group("BBB");
+                    m.group("T1T2") + m.group("A1A2") + m.group("ii") + m.group("CCCC") + m.group("issueDay") + m.group("issueHour") + m.group("issueMinute");
+            if (m.group("BBB") != null) {
+                abbreviatedHeading += m.group("BBB");
+            }
             Optional<Integer> timeStampYear = Optional.empty();
             if (!"----".equals(m.group("yyyy"))) {
                 timeStampYear = Optional.of(Integer.parseInt(m.group("yyyy")));
@@ -336,8 +338,7 @@ public abstract class GTSExchangeFileInfo implements Serializable {
                     .setFileType(GTSExchangeFileType.fromExtension(m.group("type")))
                     .setFreeFormPart(Optional.ofNullable(m.group("freeForm")))
                     .setCompressionType(Optional.ofNullable(compressionType))
-                    .setIssueTime(PartialDateTime.parse(issueTime))
-                    .setHeading(GenericBulletinHeadingImpl.Builder.from(abbreviatedHeading).build())
+                    .setIssueTime(PartialDateTime.parse(issueTime)).setHeading(BulletinHeadingImpl.Builder.from(abbreviatedHeading).build())
                     .setTimeStampYear(timeStampYear)
                     .setTimeStampMonth(timeStampMonth)
                     .setTimeStampDay(timeStampDay)

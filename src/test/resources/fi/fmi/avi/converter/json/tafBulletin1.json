@@ -7,7 +7,7 @@
     "geographicalDesignator": "FI",
     "bulletinNumber": 31,
     "type": "NORMAL",
-    "dataTypeDesignatorT2": "AERODROME_VT_LONG"
+    "dataTypeDesignatorT2": "FCT_AERODROME_VT_LONG"
   },
   "messages": [
     {

@@ -28,6 +28,7 @@ import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.CloudLayerImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
@@ -36,7 +37,6 @@ import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
-import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 import fi.fmi.avi.model.taf.TAF;
@@ -206,11 +206,13 @@ public class JSONConverterTest {
 
         final SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
                 .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
-                        .setPartialTime(PartialDateTime.ofDayHourMinute(2, 5, 0))).setHeading(new SIGMETBulletinHeadingImpl.Builder()//
+                        .setPartialTime(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
+                .setHeading(new BulletinHeadingImpl.Builder()//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.SIGMET)//
+                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.WARNINGS)
+                        .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.WRN_SIGMET)//
                         .build());
 
         builder.addMessages(new SIGMETImpl.Builder()//

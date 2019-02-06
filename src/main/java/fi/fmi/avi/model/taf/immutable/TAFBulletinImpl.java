@@ -11,9 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.BulletinHeading;
+import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
-import fi.fmi.avi.model.taf.TAFBulletinHeading;
 
 @FreeBuilder
 @JsonDeserialize(builder = TAFBulletinImpl.Builder.class)
@@ -44,7 +45,7 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
             } else {
                 return new TAFBulletinImpl.Builder()//
                         .setIssueTime(value.getIssueTime())//
-                        .setHeading(TAFBulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
+                        .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .addAllMessages(value.getMessages());
             }
         }
@@ -73,9 +74,20 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
             return super.build();
         }
 
+
         @Override
-        @JsonDeserialize(as = TAFBulletinHeadingImpl.class)
-        public Builder setHeading(final TAFBulletinHeading heading) {
+        @JsonDeserialize(as = BulletinHeadingImpl.class)
+        public Builder setHeading(final BulletinHeading heading) {
+            if (!BulletinHeading.DataTypeDesignatorT1.FORECASTS.equals(heading.getDataTypeDesignatorT1ForTAC())) {
+                throw new IllegalArgumentException(
+                        "Data type designator T1 for TAC of the bulletin heading must be " + BulletinHeading.DataTypeDesignatorT1.FORECASTS + " " + "for TAF");
+            }
+            if (!BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG.equals(heading.getDataTypeDesignatorT2())
+                    && !BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT.equals(heading.getDataTypeDesignatorT2())) {
+                throw new IllegalArgumentException(
+                        "Data type designator T2 of the bulletin heading must be either " + BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG
+                                + " or " + BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT + " for TAF");
+            }
             return super.setHeading(heading);
         }
 

@@ -7,7 +7,7 @@
     "geographicalDesignator": "FI",
     "bulletinNumber": 31,
     "type": "NORMAL",
-    "dataTypeDesignatorT2": "SIGMET"
+    "dataTypeDesignatorT2": "WRN_SIGMET"
   },
   "messages": [
     {

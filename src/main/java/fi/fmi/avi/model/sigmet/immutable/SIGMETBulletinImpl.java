@@ -11,9 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.BulletinHeading;
+import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
-import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
 
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETBulletinImpl.Builder.class)
@@ -47,14 +48,14 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
             } else {
                 return new SIGMETBulletinImpl.Builder()//
                         .setIssueTime(value.getIssueTime())//
-                        .setHeading(SIGMETBulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
+                        .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .addAllMessages(value.getMessages());
             }
         }
 
         @Override
-        @JsonDeserialize(as = SIGMETBulletinHeadingImpl.class)
-        public Builder setHeading(final SIGMETBulletinHeading heading) {
+        @JsonDeserialize(as = BulletinHeadingImpl.class)
+        public Builder setHeading(final BulletinHeading heading) {
             return super.setHeading(heading);
         }
 
