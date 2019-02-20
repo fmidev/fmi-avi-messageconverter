@@ -37,6 +37,7 @@ import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.HorizontalVisibility;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReport;
+import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReportBuilderHelper;
 import fi.fmi.avi.model.metar.ObservedClouds;
 import fi.fmi.avi.model.metar.ObservedSurfaceWind;
 import fi.fmi.avi.model.metar.RunwayState;
@@ -118,7 +119,7 @@ public abstract class METARImpl implements METAR, Serializable {
 
     public abstract Builder toBuilder();
 
-    public static class Builder extends METARImpl_Builder {
+    public static class Builder extends METARImpl_Builder implements MeteorologicalTerminalAirReport.Builder<METARImpl, Builder> {
         public Builder() {
             setTranslated(false);
             setAutomatedStation(false);
@@ -211,6 +212,19 @@ public abstract class METARImpl implements METAR, Serializable {
             final Builder retval = from((MeteorologicalTerminalAirReport) value);
             retval.setRoutineDelayed(false);
             return retval;
+        }
+
+        @Override
+        public Builder copyFrom(final MeteorologicalTerminalAirReport value) {
+            if (value instanceof METARImpl) {
+                return clear().mergeFrom((METARImpl) value);
+            }
+            MeteorologicalTerminalAirReportBuilderHelper.copyFrom(this, value);
+            if (value instanceof METAR) {
+                final METAR fromMetar = (METAR) value;
+                setRoutineDelayed(fromMetar.isRoutineDelayed());
+            }
+            return this;
         }
 
         public SPECI buildAsSPECI() {

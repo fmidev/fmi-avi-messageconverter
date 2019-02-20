@@ -147,6 +147,17 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         B mergeFrom(B template);
 
         /**
+         * Copies all property values from the given {@code MeteorologicalTerminalAirReport}.
+         * Properties specific to {@link METAR} are copied when {@code value} is an instance of {@code METAR}.
+         *
+         * @param value
+         *         copy source
+         *
+         * @return this builder
+         */
+        B copyFrom(MeteorologicalTerminalAirReport value);
+
+        /**
          * Resets the state of this builder.
          */
         B clear();
