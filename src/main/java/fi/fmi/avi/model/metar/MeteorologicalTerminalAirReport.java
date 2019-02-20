@@ -91,7 +91,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableRemarks(@Nullable List<String> remarks);
+        default B setNullableRemarks(@Nullable final List<String> remarks) {
+            if (remarks != null) {
+                return setRemarks(remarks);
+            } else {
+                return clearRemarks();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getRemarks()} is present, replaces it by
@@ -141,7 +147,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullablePermissibleUsage(@Nullable AviationCodeListUser.PermissibleUsage permissibleUsage);
+        default B setNullablePermissibleUsage(@Nullable final AviationCodeListUser.PermissibleUsage permissibleUsage) {
+            if (permissibleUsage != null) {
+                return setPermissibleUsage(permissibleUsage);
+            } else {
+                return clearPermissibleUsage();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getPermissibleUsage()} is present, replaces
@@ -191,7 +203,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullablePermissibleUsageReason(@Nullable AviationCodeListUser.PermissibleUsageReason permissibleUsageReason);
+        default B setNullablePermissibleUsageReason(@Nullable final AviationCodeListUser.PermissibleUsageReason permissibleUsageReason) {
+            if (permissibleUsageReason != null) {
+                return setPermissibleUsageReason(permissibleUsageReason);
+            } else {
+                return clearPermissibleUsageReason();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getPermissibleUsageReason()} is present,
@@ -241,7 +259,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullablePermissibleUsageSupplementary(@Nullable String permissibleUsageSupplementary);
+        default B setNullablePermissibleUsageSupplementary(@Nullable final String permissibleUsageSupplementary) {
+            if (permissibleUsageSupplementary != null) {
+                return setPermissibleUsageSupplementary(permissibleUsageSupplementary);
+            } else {
+                return clearPermissibleUsageSupplementary();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getPermissibleUsageSupplementary()} is
@@ -320,7 +344,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableTranslatedBulletinID(@Nullable String translatedBulletinID);
+        default B setNullableTranslatedBulletinID(@Nullable final String translatedBulletinID) {
+            if (translatedBulletinID != null) {
+                return setTranslatedBulletinID(translatedBulletinID);
+            } else {
+                return clearTranslatedBulletinID();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslatedBulletinID()} is present,
@@ -370,7 +400,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableTranslatedBulletinReceptionTime(@Nullable ZonedDateTime translatedBulletinReceptionTime);
+        default B setNullableTranslatedBulletinReceptionTime(@Nullable final ZonedDateTime translatedBulletinReceptionTime) {
+            if (translatedBulletinReceptionTime != null) {
+                return setTranslatedBulletinReceptionTime(translatedBulletinReceptionTime);
+            } else {
+                return clearTranslatedBulletinReceptionTime();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslatedBulletinReceptionTime()} is
@@ -421,7 +457,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableTranslationCentreDesignator(@Nullable String translationCentreDesignator);
+        default B setNullableTranslationCentreDesignator(@Nullable final String translationCentreDesignator) {
+            if (translationCentreDesignator != null) {
+                return setTranslationCentreDesignator(translationCentreDesignator);
+            } else {
+                return clearTranslationCentreDesignator();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslationCentreDesignator()} is
@@ -472,7 +514,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableTranslationCentreName(@Nullable String translationCentreName);
+        default B setNullableTranslationCentreName(@Nullable final String translationCentreName) {
+            if (translationCentreName != null) {
+                return setTranslationCentreName(translationCentreName);
+            } else {
+                return clearTranslationCentreName();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslationCentreName()} is present,
@@ -522,7 +570,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableTranslationTime(@Nullable ZonedDateTime translationTime);
+        default B setNullableTranslationTime(@Nullable final ZonedDateTime translationTime) {
+            if (translationTime != null) {
+                return setTranslationTime(translationTime);
+            } else {
+                return clearTranslationTime();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslationTime()} is present, replaces
@@ -572,7 +626,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableTranslatedTAC(@Nullable String translatedTAC);
+        default B setNullableTranslatedTAC(@Nullable final String translatedTAC) {
+            if (translatedTAC != null) {
+                return setTranslatedTAC(translatedTAC);
+            } else {
+                return clearTranslatedTAC();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslatedTAC()} is present, replaces it
@@ -751,7 +811,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableAirTemperature(@Nullable NumericMeasure airTemperature);
+        default B setNullableAirTemperature(@Nullable final NumericMeasure airTemperature) {
+            if (airTemperature != null) {
+                return setAirTemperature(airTemperature);
+            } else {
+                return clearAirTemperature();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getAirTemperature()} is present, replaces it
@@ -801,7 +867,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableDewpointTemperature(@Nullable NumericMeasure dewpointTemperature);
+        default B setNullableDewpointTemperature(@Nullable final NumericMeasure dewpointTemperature) {
+            if (dewpointTemperature != null) {
+                return setDewpointTemperature(dewpointTemperature);
+            } else {
+                return clearDewpointTemperature();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getDewpointTemperature()} is present,
@@ -851,7 +923,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableAltimeterSettingQNH(@Nullable NumericMeasure altimeterSettingQNH);
+        default B setNullableAltimeterSettingQNH(@Nullable final NumericMeasure altimeterSettingQNH) {
+            if (altimeterSettingQNH != null) {
+                return setAltimeterSettingQNH(altimeterSettingQNH);
+            } else {
+                return clearAltimeterSettingQNH();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getAltimeterSettingQNH()} is present,
@@ -901,7 +979,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableSurfaceWind(@Nullable ObservedSurfaceWind surfaceWind);
+        default B setNullableSurfaceWind(@Nullable final ObservedSurfaceWind surfaceWind) {
+            if (surfaceWind != null) {
+                return setSurfaceWind(surfaceWind);
+            } else {
+                return clearSurfaceWind();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getSurfaceWind()} is present, replaces it by
@@ -951,7 +1035,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableVisibility(@Nullable HorizontalVisibility visibility);
+        default B setNullableVisibility(@Nullable final HorizontalVisibility visibility) {
+            if (visibility != null) {
+                return setVisibility(visibility);
+            } else {
+                return clearVisibility();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getVisibility()} is present, replaces it by
@@ -1001,7 +1091,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableRunwayVisualRanges(@Nullable List<RunwayVisualRange> runwayVisualRanges);
+        default B setNullableRunwayVisualRanges(@Nullable final List<RunwayVisualRange> runwayVisualRanges) {
+            if (runwayVisualRanges != null) {
+                return setRunwayVisualRanges(runwayVisualRanges);
+            } else {
+                return clearRunwayVisualRanges();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getRunwayVisualRanges()} is present,
@@ -1051,7 +1147,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullablePresentWeather(@Nullable List<Weather> presentWeather);
+        default B setNullablePresentWeather(@Nullable final List<Weather> presentWeather) {
+            if (presentWeather != null) {
+                return setPresentWeather(presentWeather);
+            } else {
+                return clearPresentWeather();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getPresentWeather()} is present, replaces it
@@ -1101,7 +1203,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableClouds(@Nullable ObservedClouds clouds);
+        default B setNullableClouds(@Nullable final ObservedClouds clouds) {
+            if (clouds != null) {
+                return setClouds(clouds);
+            } else {
+                return clearClouds();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getClouds()} is present, replaces it by
@@ -1151,7 +1259,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableRecentWeather(@Nullable List<Weather> recentWeather);
+        default B setNullableRecentWeather(@Nullable final List<Weather> recentWeather) {
+            if (recentWeather != null) {
+                return setRecentWeather(recentWeather);
+            } else {
+                return clearRecentWeather();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getRecentWeather()} is present, replaces it
@@ -1201,7 +1315,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableWindShear(@Nullable WindShear windShear);
+        default B setNullableWindShear(@Nullable final WindShear windShear) {
+            if (windShear != null) {
+                return setWindShear(windShear);
+            } else {
+                return clearWindShear();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getWindShear()} is present, replaces it by
@@ -1251,7 +1371,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableSeaState(@Nullable SeaState seaState);
+        default B setNullableSeaState(@Nullable final SeaState seaState) {
+            if (seaState != null) {
+                return setSeaState(seaState);
+            } else {
+                return clearSeaState();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getSeaState()} is present, replaces it by
@@ -1301,7 +1427,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableRunwayStates(@Nullable List<RunwayState> runwayStates);
+        default B setNullableRunwayStates(@Nullable final List<RunwayState> runwayStates) {
+            if (runwayStates != null) {
+                return setRunwayStates(runwayStates);
+            } else {
+                return clearRunwayStates();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getRunwayStates()} is present, replaces it
@@ -1351,7 +1483,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableTrends(@Nullable List<TrendForecast> trends);
+        default B setNullableTrends(@Nullable final List<TrendForecast> trends) {
+            if (trends != null) {
+                return setTrends(trends);
+            } else {
+                return clearTrends();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getTrends()} is present, replaces it by
@@ -1401,7 +1539,13 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          *
          * @return this {@code Builder} object
          */
-        B setNullableColorState(@Nullable AviationCodeListUser.ColorState colorState);
+        default B setNullableColorState(@Nullable final AviationCodeListUser.ColorState colorState) {
+            if (colorState != null) {
+                return setColorState(colorState);
+            } else {
+                return clearColorState();
+            }
+        }
 
         /**
          * If the value to be returned by {@link MeteorologicalTerminalAirReport#getColorState()} is present, replaces it by
