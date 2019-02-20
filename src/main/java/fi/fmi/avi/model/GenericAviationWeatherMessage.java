@@ -3,7 +3,9 @@ package fi.fmi.avi.model;
 import java.util.Optional;
 
 public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
-    enum MessageType { TAF, METAR, SIGMET, GAFOR, AIRMET };
+    enum MessageType {TAF, METAR, SPECI, SIGMET, GAFOR, AIRMET, TROPICAL_CYCLONE_ADVISORY, VOLCANIC_ASH_ADVISORY}
+
+    ;
     enum Format { TAC, IWXXM };
 
     String getOriginalMessage();
