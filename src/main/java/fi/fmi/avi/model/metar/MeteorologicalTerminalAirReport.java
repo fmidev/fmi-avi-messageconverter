@@ -9,6 +9,8 @@ import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AerodromeWeatherMessage;
 import fi.fmi.avi.model.AviationCodeListUser;
@@ -59,6 +61,68 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
     Optional<List<TrendForecast>> getTrends();
 
     Optional<ColorState> getColorState();
+
+    /**
+     * Returns true if issue time, valid time and all other time references contained in this
+     * message are full ZonedDateTime instances.
+     *
+     * @return true if all time references are complete, false otherwise
+     */
+    @Override
+    @JsonIgnore
+    default boolean areAllTimeReferencesComplete() {
+        if (!this.getIssueTime().getCompleteTime().isPresent()) {
+            return false;
+        }
+        if (this.getTrends().isPresent()) {
+            for (final TrendForecast trend : this.getTrends().get()) {
+                if (trend.getPeriodOfChange().isPresent()) {
+                    if (!trend.getPeriodOfChange().get().isComplete()) {
+                        return false;
+                    }
+                } else if (trend.getInstantOfChange().isPresent()) {
+                    if (!trend.getInstantOfChange().get().getCompleteTime().isPresent()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    default boolean allAerodromeReferencesContainPosition() {
+        Aerodrome ad = this.getAerodrome();
+        if (!ad.getFieldElevationValue().isPresent()) {
+            return false;
+        }
+        if (this.getRunwayStates().isPresent()) {
+            for (final RunwayState state : this.getRunwayStates().get()) {
+                if (state.getRunwayDirection().isPresent()) {
+                    if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
+                        ad = state.getRunwayDirection().get().getAssociatedAirportHeliport().get();
+                        if (!ad.getReferencePoint().isPresent()) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.getRunwayVisualRanges().isPresent()) {
+            for (final RunwayVisualRange range : this.getRunwayVisualRanges().get()) {
+                if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
+                    ad = range.getRunwayDirection().getAssociatedAirportHeliport().get();
+                    if (!ad.getReferencePoint().isPresent()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     interface Builder<T extends MeteorologicalTerminalAirReport, B extends Builder<T, B>> {
