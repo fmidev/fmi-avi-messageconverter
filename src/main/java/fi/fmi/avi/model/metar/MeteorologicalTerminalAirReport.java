@@ -2,6 +2,7 @@ package fi.fmi.avi.model.metar;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -110,7 +111,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapRemarks(UnaryOperator<List<String>> mapper);
+        default B mapRemarks(final UnaryOperator<List<String>> mapper) {
+            return setRemarks(getRemarks().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getRemarks()} to {@link Optional#empty()
@@ -166,7 +169,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapPermissibleUsage(UnaryOperator<AviationCodeListUser.PermissibleUsage> mapper);
+        default B mapPermissibleUsage(final UnaryOperator<AviationCodeListUser.PermissibleUsage> mapper) {
+            return setPermissibleUsage(getPermissibleUsage().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getPermissibleUsage()} to {@link
@@ -222,7 +227,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapPermissibleUsageReason(UnaryOperator<AviationCodeListUser.PermissibleUsageReason> mapper);
+        default B mapPermissibleUsageReason(final UnaryOperator<AviationCodeListUser.PermissibleUsageReason> mapper) {
+            return setPermissibleUsageReason(getPermissibleUsageReason().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getPermissibleUsageReason()} to {@link
@@ -278,7 +285,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapPermissibleUsageSupplementary(UnaryOperator<String> mapper);
+        default B mapPermissibleUsageSupplementary(final UnaryOperator<String> mapper) {
+            return setPermissibleUsageSupplementary(getPermissibleUsageSupplementary().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getPermissibleUsageSupplementary()} to
@@ -322,7 +331,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws IllegalStateException
          *         if the field has not been set
          */
-        B mapTranslated(UnaryOperator<Boolean> mapper);
+        default B mapTranslated(final UnaryOperator<Boolean> mapper) {
+            Objects.requireNonNull(mapper);
+            return setTranslated(mapper.apply(isTranslated()));
+        }
 
         /**
          * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#isTranslated()}.
@@ -363,7 +375,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapTranslatedBulletinID(UnaryOperator<String> mapper);
+        default B mapTranslatedBulletinID(final UnaryOperator<String> mapper) {
+            return setTranslatedBulletinID(getTranslatedBulletinID().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslatedBulletinID()} to {@link
@@ -419,7 +433,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapTranslatedBulletinReceptionTime(UnaryOperator<ZonedDateTime> mapper);
+        default B mapTranslatedBulletinReceptionTime(final UnaryOperator<ZonedDateTime> mapper) {
+            return setTranslatedBulletinReceptionTime(getTranslatedBulletinReceptionTime().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslatedBulletinReceptionTime()} to
@@ -476,7 +492,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapTranslationCentreDesignator(UnaryOperator<String> mapper);
+        default B mapTranslationCentreDesignator(final UnaryOperator<String> mapper) {
+            return setTranslationCentreDesignator(getTranslationCentreDesignator().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslationCentreDesignator()} to
@@ -533,7 +551,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapTranslationCentreName(UnaryOperator<String> mapper);
+        default B mapTranslationCentreName(final UnaryOperator<String> mapper) {
+            return setTranslationCentreName(getTranslationCentreName().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslationCentreName()} to {@link
@@ -589,7 +609,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapTranslationTime(UnaryOperator<ZonedDateTime> mapper);
+        default B mapTranslationTime(final UnaryOperator<ZonedDateTime> mapper) {
+            return setTranslationTime(getTranslationTime().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslationTime()} to {@link
@@ -645,7 +668,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapTranslatedTAC(UnaryOperator<String> mapper);
+        default B mapTranslatedTAC(final UnaryOperator<String> mapper) {
+            return setTranslatedTAC(getTranslatedTAC().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslatedTAC()} to {@link
@@ -727,7 +753,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws IllegalStateException
          *         if the field has not been set
          */
-        B mapAerodrome(UnaryOperator<Aerodrome> mapper);
+        default B mapAerodrome(final UnaryOperator<Aerodrome> mapper) {
+            Objects.requireNonNull(mapper);
+            return setAerodrome(mapper.apply(getAerodrome()));
+        }
 
         /**
          * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getAerodrome()}.
@@ -758,7 +787,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws IllegalStateException
          *         if the field has not been set
          */
-        B mapAutomatedStation(UnaryOperator<Boolean> mapper);
+        default B mapAutomatedStation(final UnaryOperator<Boolean> mapper) {
+            Objects.requireNonNull(mapper);
+            return setAutomatedStation(mapper.apply(isAutomatedStation()));
+        }
 
         /**
          * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#isAutomatedStation()}.
@@ -786,7 +818,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws IllegalStateException
          *         if the field has not been set
          */
-        B mapStatus(UnaryOperator<MetarStatus> mapper);
+        default B mapStatus(final UnaryOperator<MetarStatus> mapper) {
+            Objects.requireNonNull(mapper);
+            return setStatus(mapper.apply(getStatus()));
+        }
 
         /**
          * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getStatus()}.
@@ -830,7 +865,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapAirTemperature(UnaryOperator<NumericMeasure> mapper);
+        default B mapAirTemperature(final UnaryOperator<NumericMeasure> mapper) {
+            return setAirTemperature(getAirTemperature().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getAirTemperature()} to {@link
@@ -886,7 +924,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapDewpointTemperature(UnaryOperator<NumericMeasure> mapper);
+        default B mapDewpointTemperature(final UnaryOperator<NumericMeasure> mapper) {
+            return setDewpointTemperature(getDewpointTemperature().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getDewpointTemperature()} to {@link
@@ -942,7 +982,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapAltimeterSettingQNH(UnaryOperator<NumericMeasure> mapper);
+        default B mapAltimeterSettingQNH(final UnaryOperator<NumericMeasure> mapper) {
+            return setAltimeterSettingQNH(getAltimeterSettingQNH().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getAltimeterSettingQNH()} to {@link
@@ -998,7 +1040,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapSurfaceWind(UnaryOperator<ObservedSurfaceWind> mapper);
+        default B mapSurfaceWind(final UnaryOperator<ObservedSurfaceWind> mapper) {
+            return setSurfaceWind(getSurfaceWind().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getSurfaceWind()} to {@link
@@ -1054,7 +1099,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapVisibility(UnaryOperator<HorizontalVisibility> mapper);
+        default B mapVisibility(final UnaryOperator<HorizontalVisibility> mapper) {
+            return setVisibility(getVisibility().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getVisibility()} to {@link
@@ -1110,7 +1158,9 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapRunwayVisualRanges(UnaryOperator<List<RunwayVisualRange>> mapper);
+        default B mapRunwayVisualRanges(final UnaryOperator<List<RunwayVisualRange>> mapper) {
+            return setRunwayVisualRanges(getRunwayVisualRanges().map(mapper));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getRunwayVisualRanges()} to {@link
@@ -1166,7 +1216,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapPresentWeather(UnaryOperator<List<Weather>> mapper);
+        default B mapPresentWeather(final UnaryOperator<List<Weather>> mapper) {
+            return setPresentWeather(getPresentWeather().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getPresentWeather()} to {@link
@@ -1222,7 +1275,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapClouds(UnaryOperator<ObservedClouds> mapper);
+        default B mapClouds(final UnaryOperator<ObservedClouds> mapper) {
+            return setClouds(getClouds().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getClouds()} to {@link Optional#empty()
@@ -1278,7 +1334,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapRecentWeather(UnaryOperator<List<Weather>> mapper);
+        default B mapRecentWeather(final UnaryOperator<List<Weather>> mapper) {
+            return setRecentWeather(getRecentWeather().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getRecentWeather()} to {@link
@@ -1334,7 +1393,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapWindShear(UnaryOperator<WindShear> mapper);
+        default B mapWindShear(final UnaryOperator<WindShear> mapper) {
+            return setWindShear(getWindShear().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getWindShear()} to {@link Optional#empty()
@@ -1390,7 +1452,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapSeaState(UnaryOperator<SeaState> mapper);
+        default B mapSeaState(final UnaryOperator<SeaState> mapper) {
+            return setSeaState(getSeaState().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getSeaState()} to {@link Optional#empty()
@@ -1446,7 +1511,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapRunwayStates(UnaryOperator<List<RunwayState>> mapper);
+        default B mapRunwayStates(final UnaryOperator<List<RunwayState>> mapper) {
+            return setRunwayStates(getRunwayStates().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getRunwayStates()} to {@link
@@ -1502,7 +1570,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapTrends(UnaryOperator<List<TrendForecast>> mapper);
+        default B mapTrends(final UnaryOperator<List<TrendForecast>> mapper) {
+            return setTrends(getTrends().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTrends()} to {@link Optional#empty()
@@ -1558,7 +1629,10 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        B mapColorState(UnaryOperator<AviationCodeListUser.ColorState> mapper);
+        default B mapColorState(final UnaryOperator<AviationCodeListUser.ColorState> mapper) {
+            return setColorState(getColorState().map(mapper));
+        }
+
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getColorState()} to {@link
