@@ -917,6 +917,39 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         B setStatus(AviationCodeListUser.MetarStatus status);
 
         /**
+         * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#isCeilingAndVisibilityOk()} by
+         * applying {@code mapper} to it and using the result.
+         *
+         * @return this {@code Builder} object
+         *
+         * @throws NullPointerException
+         *         if {@code mapper} is null or returns null
+         * @throws IllegalStateException
+         *         if the field has not been set
+         */
+        default B mapCeilingAndVisibilityOk(final UnaryOperator<Boolean> mapper) {
+            Objects.requireNonNull(mapper);
+            return setCeilingAndVisibilityOk(mapper.apply(isCeilingAndVisibilityOk()));
+        }
+
+        /**
+         * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#isCeilingAndVisibilityOk()}.
+         *
+         * @throws IllegalStateException
+         *         if the field has not been set
+         */
+        boolean isCeilingAndVisibilityOk();
+
+        /**
+         * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#isCeilingAndVisibilityOk()}.
+         *
+         * @return this {@code Builder} object
+         */
+        B setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
+
+
+
+        /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getAirTemperature()}.
          *
          * @return this {@code Builder} object
@@ -1080,7 +1113,7 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @return this {@code Builder} object
          *
          * @throws NullPointerException
-         *         if {@code altimeteisCeilingAndVisibilityOkrSettingQNH} is null
+         *         if {@code altimeteSettingQNH} is null
          */
         B setAltimeterSettingQNH(NumericMeasure altimeterSettingQNH);
 
@@ -1738,6 +1771,71 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @return this {@code Builder} object
          */
         B setColorState(Optional<? extends AviationCodeListUser.ColorState> colorState);
+
+        /**
+         * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#isSnowClosure()} by applying {@code
+         * mapper} to it and using the result.
+         *
+         * @return this {@code Builder} object
+         *
+         * @throws NullPointerException
+         *         if {@code mapper} is null or returns null
+         * @throws IllegalStateException
+         *         if the field has not been set
+         */
+        default B mapSnowClosure(final UnaryOperator<Boolean> mapper) {
+            Objects.requireNonNull(mapper);
+            return setSnowClosure(mapper.apply(isSnowClosure()));
+        }
+
+        /**
+         * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#isSnowClosure()}.
+         *
+         * @throws IllegalStateException
+         *         if the field has not been set
+         */
+        boolean isSnowClosure();
+
+        /**
+         * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#isSnowClosure()}.
+         *
+         * @return this {@code Builder} object
+         */
+        B setSnowClosure(boolean snowClosure);
+
+        /**
+         * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#isNoSignificantChanges()} by applying
+         * {@code mapper} to it and using the result.
+         *
+         * @return this {@code Builder} object
+         *
+         * @throws NullPointerException
+         *         if {@code mapper} is null or returns null
+         * @throws IllegalStateException
+         *         if the field has not been set
+         */
+        default B mapNoSignificantChanges(final UnaryOperator<Boolean> mapper) {
+            Objects.requireNonNull(mapper);
+            return setNoSignificantChanges(mapper.apply(isNoSignificantChanges()));
+        }
+
+        /**
+         * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#isNoSignificantChanges()}.
+         *
+         * @throws IllegalStateException
+         *         if the field has not been set
+         */
+        boolean isNoSignificantChanges();
+
+        /**
+         * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#isNoSignificantChanges()}.
+         *
+         * @return this {@code Builder} object
+         */
+        B setNoSignificantChanges(boolean noSignificantChanges);
+
+
+
 
     }
 

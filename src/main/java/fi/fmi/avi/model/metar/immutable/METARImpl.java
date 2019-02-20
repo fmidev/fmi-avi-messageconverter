@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -58,32 +57,17 @@ public abstract class METARImpl implements METAR, Serializable {
 
     private static final long serialVersionUID = 5959988117998705772L;
 
-    public static METARImpl immutableCopyOf(final MeteorologicalTerminalAirReport msg) {
-        requireNonNull(msg);
-        if (msg instanceof METAR) {
-            if (msg instanceof METARImpl) {
-                return (METARImpl) msg;
-            } else {
-                return Builder.from((METAR) msg).build();
-            }
-        } else if (msg instanceof SPECI) {
-            try {
-                final InvocationHandler handler = Proxy.getInvocationHandler(msg);
-                if (handler instanceof SPECIInvocationHandler) {
-                    //msg is a SPECI proxy, return the internal delegate:
-                    return ((SPECIInvocationHandler) handler).getDelegate();
-                }
-            } catch (final IllegalArgumentException iae) {
-                //NOOP: msg is not a SPECI proxy instance, fallback to regular copy
-            }
-            return Builder.from((SPECI) msg).build();
+    public static METARImpl immutableCopyOf(final METAR metar) {
+        requireNonNull(metar);
+        if (metar instanceof METARImpl) {
+            return (METARImpl) metar;
         } else {
-            throw new IllegalArgumentException("original is neither a METAR or a SPECI, cannot create a copy");
+            return Builder.from(metar).build();
         }
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Optional<METARImpl> immutableCopyOf(final Optional<MeteorologicalTerminalAirReport> metar) {
+    public static Optional<METARImpl> immutableCopyOf(final Optional<METAR> metar) {
         requireNonNull(metar);
         return metar.map(METARImpl::immutableCopyOf);
     }
@@ -129,89 +113,11 @@ public abstract class METARImpl implements METAR, Serializable {
             setNoSignificantChanges(false);
         }
 
-        private static Builder from(final MeteorologicalTerminalAirReport value) {
+        public static Builder from(final METAR value) {
             if (value instanceof METARImpl) {
                 return ((METARImpl) value).toBuilder();
-            } else if (value instanceof SPECI) {
-                try {
-                    final InvocationHandler handler = Proxy.getInvocationHandler(value);
-                    if (handler instanceof SPECIInvocationHandler) {
-                        //value is a SPECI proxy, return a Builder of the internal delegate:
-                        return ((SPECIInvocationHandler) handler).getDelegate().toBuilder();
-                    }
-                } catch (final IllegalArgumentException iae) {
-                    //NOOP, non-proxy SPECIs fallback to using the full METARImpl.Builder
-                }
             }
-            //From AviationWeatherMessage:
-            final METARImpl.Builder retval = new METARImpl.Builder()//
-                    .setIssueTime(value.getIssueTime())
-                    .setPermissibleUsage(value.getPermissibleUsage())
-                    .setPermissibleUsageReason(value.getPermissibleUsageReason())
-                    .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
-                    .setTranslated(value.isTranslated())
-                    .setTranslatedBulletinID(value.getTranslatedBulletinID())
-                    .setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime())
-                    .setTranslationCentreDesignator(value.getTranslationCentreDesignator())
-                    .setTranslationCentreName(value.getTranslationCentreName())
-                    .setTranslationTime(value.getTranslationTime())
-                    .setTranslatedTAC(value.getTranslatedTAC());
-
-            value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
-
-            //From AerodromeWeatherMessage:
-            retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()));
-
-            //From MeteorologicalTerminalAirReport:
-            retval.setAutomatedStation(value.isAutomatedStation())
-                    .setStatus(value.getStatus())//
-                    .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())//
-                    .setSnowClosure(value.isSnowClosure())///
-                    .setAirTemperature(NumericMeasureImpl.immutableCopyOf(value.getAirTemperature()))
-                    .setDewpointTemperature(NumericMeasureImpl.immutableCopyOf(value.getDewpointTemperature()))
-                    .setAltimeterSettingQNH(NumericMeasureImpl.immutableCopyOf(value.getAltimeterSettingQNH()))
-                    .setSurfaceWind(ObservedSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))
-                    .setVisibility(HorizontalVisibilityImpl.immutableCopyOf(value.getVisibility()))
-                    .setClouds(ObservedCloudsImpl.immutableCopyOf(value.getClouds()))
-                    .setWindShear(WindShearImpl.immutableCopyOf(value.getWindShear()))
-                    .setSeaState(SeaStateImpl.immutableCopyOf(value.getSeaState()))
-                    .setColorState(value.getColorState())
-                    .setNoSignificantChanges(value.isNoSignificantChanges());
-
-            value.getRunwayVisualRanges()
-                    .map(ranges -> retval.setRunwayVisualRanges(
-                            Collections.unmodifiableList(ranges.stream().map(RunwayVisualRangeImpl::immutableCopyOf).collect(Collectors.toList()))));
-
-            value.getPresentWeather()
-                    .map(weather -> retval.setPresentWeather(
-                            Collections.unmodifiableList(weather.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))));
-
-            value.getRecentWeather()
-                    .map(weather -> retval.setRecentWeather(
-                            Collections.unmodifiableList(weather.stream().map(WeatherImpl::immutableCopyOf).collect(Collectors.toList()))
-
-                    ));
-
-            value.getRunwayStates()
-                    .map(states -> retval.setRunwayStates(
-                            Collections.unmodifiableList(states.stream().map(RunwayStateImpl::immutableCopyOf).collect(Collectors.toList()))));
-
-            value.getTrends()
-                    .map(trends -> retval.setTrends(
-                            Collections.unmodifiableList(trends.stream().map(TrendForecastImpl::immutableCopyOf).collect(Collectors.toList()))));
-            return retval;
-        }
-
-        public static Builder from(final METAR value) {
-            final Builder retval = from((MeteorologicalTerminalAirReport) value);
-            retval.setRoutineDelayed(value.isRoutineDelayed());
-            return retval;
-        }
-
-        public static Builder from(final SPECI value) {
-            final Builder retval = from((MeteorologicalTerminalAirReport) value);
-            retval.setRoutineDelayed(false);
-            return retval;
+            return new METARImpl.Builder().copyFrom(value);
         }
 
         @Override
