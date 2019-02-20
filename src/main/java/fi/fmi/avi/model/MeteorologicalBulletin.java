@@ -1,24 +1,19 @@
 package fi.fmi.avi.model;
 
-import java.time.YearMonth;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-public interface MeteorologicalBulletin<T extends AviationWeatherMessage, S extends BulletinHeading> extends AviationWeatherMessageOrCollection {
+public interface MeteorologicalBulletin<T extends AviationWeatherMessage> extends AviationWeatherMessageOrCollection {
 
-    /**
-     * Returns the issue time of the bulletin.
-     * The returned {@link PartialOrCompleteTimeInstant} may or may not contain
-     * a completely resolved date time depending on which information it was
-     * created with.
-     *
-     * @return the fully resolved issue time
-     *
-     * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
-     */
-    PartialOrCompleteTimeInstant getIssueTime();
-
-    S getHeading();
+    BulletinHeading getHeading();
 
     List<T> getMessages();
+
+    Optional<ZonedDateTime> getTimeStamp();
+
+    Set<ChronoField> getTimeStampFields();
 
 }

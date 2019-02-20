@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 
 public class GTSExchangeFileInfoTest {
@@ -27,8 +28,9 @@ public class GTSExchangeFileInfoTest {
                         .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
                         .setType(BulletinHeading.Type.CORRECTED)//
                         .setBulletinNumber(12)//
+                        .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
                         .build())
-                .setIssueTime(PartialDateTime.ofDayHourMinute(9, 10, 0))
+
                 .setFreeFormPart("foobar12345_-")
                 .setTimeStamp(LocalDateTime.of(2019, Month.JANUARY, 9, 10, 5))
                 .build();
@@ -46,6 +48,7 @@ public class GTSExchangeFileInfoTest {
                 .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
                 .setType(BulletinHeading.Type.CORRECTED)
                 .setBulletinNumber(12)
+                .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
                 .build();
 
         assertTrue(GTSExchangeFileInfo.GTSExchangePFlag.A == info.getPFlag());
@@ -54,7 +57,7 @@ public class GTSExchangeFileInfoTest {
         assertTrue(info.getCompressionType().isPresent());
         assertTrue(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP == info.getCompressionType().get());
         assertEquals(expectedHeading, info.getHeading());
-        assertEquals(PartialDateTime.ofDayHourMinute(9, 10, 0), info.getIssueTime());
+
         assertTrue(info.getFreeFormPart().isPresent());
         assertEquals("foobar12345_-", info.getFreeFormPart().get());
 

@@ -1,5 +1,5 @@
 package fi.fmi.avi.model;
 
-public interface GenericMeteorologicalBulletin extends MeteorologicalBulletin<GenericAviationWeatherMessage, BulletinHeading> {
+public interface GenericMeteorologicalBulletin extends MeteorologicalBulletin<GenericAviationWeatherMessage> {
 
 }

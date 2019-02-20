@@ -19,7 +19,7 @@ import fi.fmi.avi.model.taf.TAFBulletin;
 @FreeBuilder
 @JsonDeserialize(builder = TAFBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "issueTime", "heading", "messages" })
+@JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
 public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
 
     public static TAFBulletinImpl immutableCopyOf(final TAFBulletin bulletin) {
@@ -44,17 +44,18 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
                 return ((TAFBulletinImpl) value).toBuilder();
             } else {
                 return new TAFBulletinImpl.Builder()//
-                        .setIssueTime(value.getIssueTime())//
                         .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
-                        .addAllMessages(value.getMessages());
+                        .setTimeStamp(value.getTimeStamp()).addAllMessages(value.getMessages()).addAllTimeStampFields(value.getTimeStampFields());
+
             }
         }
 
+        /*
+         //NOTE: check disabled, it seems that the length of TAF is no longer relevant in bulletins / Ilkka Rinne 27th Nov 2018
+            //check the all the TAFs are short or long consistently with the heading info
         @Override
         public TAFBulletinImpl build() {
-            //NOTE: check disabled, it seems that the length of TAF is no longer relevant in bulletins / Ilkka Rinne 27th Nov 2018
-            //check the all the TAFs are short or long consistently with the heading info
-            /*
+
             Optional<PartialOrCompleteTimePeriod> validity;
             Optional<Duration> span;
             Duration twelweHours = Duration.ofHours(12);
@@ -70,9 +71,10 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
                     }
                 }
             }
-            */
+
             return super.build();
         }
+        */
 
 
         @Override

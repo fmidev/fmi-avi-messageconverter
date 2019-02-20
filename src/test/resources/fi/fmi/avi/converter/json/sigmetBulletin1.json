@@ -1,13 +1,13 @@
 {
-  "issueTime": {
-    "partialTime": "--02T05:00"
-  },
   "heading": {
     "locationIndicator": "EFKL",
     "geographicalDesignator": "FI",
     "bulletinNumber": 31,
     "type": "NORMAL",
-    "dataTypeDesignatorT2": "WRN_SIGMET"
+    "dataTypeDesignatorT2": "WRN_SIGMET",
+    "issueTime": {
+      "partialTime": "--02T05:00"
+    }
   },
   "messages": [
     {

@@ -205,14 +205,13 @@ public class JSONConverterTest {
         is.close();
 
         final SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
-                .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
-                        .setPartialTime(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
                 .setHeading(new BulletinHeadingImpl.Builder()//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
                         .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.WARNINGS)
                         .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.WRN_SIGMET)//
+                        .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
                         .build());
 
         builder.addMessages(new SIGMETImpl.Builder()//

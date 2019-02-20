@@ -16,10 +16,12 @@ import fi.fmi.avi.model.GenericAviationWeatherMessage;
 import fi.fmi.avi.model.GenericMeteorologicalBulletin;
 
 @FreeBuilder
-@JsonDeserialize(builder = SurfaceWindImpl.Builder.class)
+@JsonDeserialize(builder = GenericMeteorologicalBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "issueTime", "heading", "messages" })
+@JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
 public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteorologicalBulletin, Serializable {
+
+    private static final long serialVersionUID = -4860727383244788466L;
 
     public static GenericMeteorologicalBulletinImpl immutableCopyOf(final GenericMeteorologicalBulletin bulletin) {
         Objects.requireNonNull(bulletin);
@@ -44,9 +46,9 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
                 return ((GenericMeteorologicalBulletinImpl) value).toBuilder();
             } else {
                 return new GenericMeteorologicalBulletinImpl.Builder()//
-                        .setIssueTime(value.getIssueTime())//
                         .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
-                        .addAllMessages(value.getMessages());
+                        .setTimeStamp(value.getTimeStamp()).addAllMessages(value.getMessages()).addAllTimeStampFields(value.getTimeStampFields());
+
             }
         }
 

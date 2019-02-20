@@ -14,12 +14,12 @@ public class SIGMETBulletinTest {
     @Test
     public void testSIGMETBulletin() throws Exception {
         final SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
-                .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
-                        .setPartialTime(PartialDateTime.ofDayHourMinute(17, 7, 0))).setHeading(new BulletinHeadingImpl.Builder()//
+                .setHeading(new BulletinHeadingImpl.Builder()//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
                         .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.WRN_SIGMET)
+                        .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(17, 7, 0)))
                         .build());
 
         builder.addMessages(new SIGMETImpl.Builder()//

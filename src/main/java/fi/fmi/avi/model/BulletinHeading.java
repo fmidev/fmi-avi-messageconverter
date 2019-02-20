@@ -1,5 +1,6 @@
 package fi.fmi.avi.model;
 
+import java.time.YearMonth;
 import java.util.Optional;
 
 public interface BulletinHeading {
@@ -86,6 +87,18 @@ public interface BulletinHeading {
      * @return the augmentation number
      */
     Optional<Integer> getBulletinAugmentationNumber();
+
+    /**
+     * Returns the issue time of the bulletin.
+     * The returned {@link PartialOrCompleteTimeInstant} may or may not contain
+     * a completely resolved date time depending on which information it was
+     * created with.
+     *
+     * @return the issue time
+     *
+     * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
+     */
+    PartialOrCompleteTimeInstant getIssueTime();
 
     enum Type {
         NORMAL(""), DELAYED("RR"), AMENDED("AA"), CORRECTED("CC");

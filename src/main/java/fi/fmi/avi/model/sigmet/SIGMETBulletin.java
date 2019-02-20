@@ -1,7 +1,6 @@
 package fi.fmi.avi.model.sigmet;
 
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.MeteorologicalBulletin;
 
-public interface SIGMETBulletin extends MeteorologicalBulletin<SIGMET, BulletinHeading> {
+public interface SIGMETBulletin extends MeteorologicalBulletin<SIGMET> {
 }

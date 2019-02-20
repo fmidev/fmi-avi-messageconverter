@@ -40,13 +40,13 @@ public class TAFBulletinTest {
                 .setTranslationTime(ZonedDateTime.now());
 
         final TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
-                .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
                 .setHeading(new BulletinHeadingImpl.Builder().setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
                         .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
                         .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
+                        .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
         bulletinBuilder.build();
@@ -75,13 +75,13 @@ public class TAFBulletinTest {
                 .setTranslationTime(ZonedDateTime.now());
 
         final TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
-                .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
                 .setHeading(new BulletinHeadingImpl.Builder().setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
                         .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
                         .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT)//
+                        .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
         bulletinBuilder.build();

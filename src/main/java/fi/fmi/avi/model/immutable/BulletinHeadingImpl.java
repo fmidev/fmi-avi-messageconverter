@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import fi.fmi.avi.model.BulletinHeading;
+import fi.fmi.avi.model.PartialDateTime;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 
 @FreeBuilder
 @JsonDeserialize(builder = BulletinHeadingImpl.Builder.class)
@@ -66,7 +68,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                         .setType(value.getType())//
                         .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())//
                         .setDataTypeDesignatorT2(value.getDataTypeDesignatorT2())//
-                        .setDataTypeDesignatorT1ForTAC(value.getDataTypeDesignatorT1ForTAC());
+                        .setDataTypeDesignatorT1ForTAC(value.getDataTypeDesignatorT1ForTAC()).setIssueTime(value.getIssueTime());
             }
         }
 
@@ -95,13 +97,15 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
             } else {
                 throw new IllegalArgumentException("Only forecast ('F') and warning ('W') type headings currently supported, t1 is '" + t1 + "'");
             }
-            return new Builder().setLocationIndicator(m.group("CCCC"))
-                    .setGeographicalDesignator(m.group("AA"))
-                    .setBulletinNumber(Integer.parseInt(m.group("ii")))
-                    .setType(type)
-                    .setBulletinAugmentationNumber(Optional.ofNullable(bulletinAugmentationNumber))
-                    .setDataTypeDesignatorT1ForTAC(t1)
-                    .setDataTypeDesignatorT2(t2);
+            String issueTime = "--" + m.group("YY") + "T" + m.group("GG") + ":" + m.group("gg");
+            return new Builder()//
+                    .setLocationIndicator(m.group("CCCC"))//
+                    .setGeographicalDesignator(m.group("AA"))//
+                    .setBulletinNumber(Integer.parseInt(m.group("ii")))//
+                    .setType(type)//
+                    .setBulletinAugmentationNumber(Optional.ofNullable(bulletinAugmentationNumber))//
+                    .setDataTypeDesignatorT1ForTAC(t1)//
+                    .setDataTypeDesignatorT2(t2).setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.parse(issueTime)));
         }
 
         @Override

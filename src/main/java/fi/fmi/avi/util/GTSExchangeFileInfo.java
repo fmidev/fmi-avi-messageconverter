@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import org.inferred.freebuilder.FreeBuilder;
 
 import fi.fmi.avi.model.BulletinHeading;
-import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 
 @FreeBuilder
@@ -38,8 +37,6 @@ public abstract class GTSExchangeFileInfo implements Serializable {
     public abstract GTSExchangePFlag getPFlag();
 
     public abstract BulletinHeading getHeading();
-
-    public abstract PartialDateTime getIssueTime();
 
     public abstract GTSExchangeFileType getFileType();
 
@@ -98,9 +95,9 @@ public abstract class GTSExchangeFileInfo implements Serializable {
         sb.append(this.getHeading().getLocationIndicator());
 
         //YYGGgg:
-        final OptionalInt dayOfMonth = this.getIssueTime().getDay();
-        final OptionalInt hourOfDay = this.getIssueTime().getHour();
-        final OptionalInt minute = this.getIssueTime().getMinute();
+        final OptionalInt dayOfMonth = this.getHeading().getIssueTime().getDay();
+        final OptionalInt hourOfDay = this.getHeading().getIssueTime().getHour();
+        final OptionalInt minute = this.getHeading().getIssueTime().getMinute();
         if (!dayOfMonth.isPresent() || !hourOfDay.isPresent() || !minute.isPresent()) {
             throw new IllegalArgumentException("Issue time must be given with day, hour and minute information");
         }
@@ -302,7 +299,6 @@ public abstract class GTSExchangeFileInfo implements Serializable {
             if (m.group("compression") != null) {
                 compressionType = GTSExchangeCompressionType.fromExtension(m.group("compression"));
             }
-            String issueTime = "--" + m.group("issueDay") + "T" + m.group("issueHour") + ":" + m.group("issueMinute");
             String abbreviatedHeading =
                     m.group("T1T2") + m.group("A1A2") + m.group("ii") + m.group("CCCC") + m.group("issueDay") + m.group("issueHour") + m.group("issueMinute");
             if (m.group("BBB") != null) {
@@ -333,17 +329,17 @@ public abstract class GTSExchangeFileInfo implements Serializable {
                 timeStampSecond = Optional.of(Integer.parseInt(m.group("ss")));
             }
 
-            return new Builder().setPFlag(GTSExchangePFlag.A)
-                    .setMetadataFile(m.group("meta") != null)
-                    .setFileType(GTSExchangeFileType.fromExtension(m.group("type")))
-                    .setFreeFormPart(Optional.ofNullable(m.group("freeForm")))
-                    .setCompressionType(Optional.ofNullable(compressionType))
-                    .setIssueTime(PartialDateTime.parse(issueTime)).setHeading(BulletinHeadingImpl.Builder.from(abbreviatedHeading).build())
-                    .setTimeStampYear(timeStampYear)
-                    .setTimeStampMonth(timeStampMonth)
-                    .setTimeStampDay(timeStampDay)
-                    .setTimeStampHour(timeStampHour)
-                    .setTimeStampMinute(timeStampMinute)
+            return new Builder().setPFlag(GTSExchangePFlag.A)//
+                    .setMetadataFile(m.group("meta") != null)//
+                    .setFileType(GTSExchangeFileType.fromExtension(m.group("type")))//
+                    .setFreeFormPart(Optional.ofNullable(m.group("freeForm")))//
+                    .setCompressionType(Optional.ofNullable(compressionType))//
+                    .setHeading(BulletinHeadingImpl.Builder.from(abbreviatedHeading).build())//
+                    .setTimeStampYear(timeStampYear)//
+                    .setTimeStampMonth(timeStampMonth)//
+                    .setTimeStampDay(timeStampDay)//
+                    .setTimeStampHour(timeStampHour)//
+                    .setTimeStampMinute(timeStampMinute)//
                     .setTimeStampSecond(timeStampSecond);
         }
 

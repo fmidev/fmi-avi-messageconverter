@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.BulletinHeading;
+import fi.fmi.avi.model.MeteorologicalBulletin;
 import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
@@ -19,12 +20,12 @@ import fi.fmi.avi.model.sigmet.SIGMETBulletin;
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "issueTime", "heading", "messages" })
+@JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
 public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable {
 
     private static final long serialVersionUID = 7742724278322130499L;
 
-    public static SIGMETBulletinImpl immutableCopyOf(final SIGMETBulletin bulletin) {
+    public static SIGMETBulletinImpl immutableCopyOf(final MeteorologicalBulletin<SIGMET> bulletin) {
         Objects.requireNonNull(bulletin);
         if (bulletin instanceof SIGMETBulletinImpl) {
             return (SIGMETBulletinImpl) bulletin;
@@ -34,7 +35,7 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Optional<SIGMETBulletinImpl> immutableCopyOf(final Optional<SIGMETBulletin> bulletin) {
+    public static Optional<SIGMETBulletinImpl> immutableCopyOf(final Optional<MeteorologicalBulletin<SIGMET>> bulletin) {
         return bulletin.map(SIGMETBulletinImpl::immutableCopyOf);
     }
 
@@ -42,14 +43,13 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
 
     public static class Builder extends SIGMETBulletinImpl_Builder {
 
-        public static Builder from(final SIGMETBulletin value) {
+        public static Builder from(final MeteorologicalBulletin<SIGMET> value) {
             if (value instanceof SIGMETBulletinImpl) {
                 return ((SIGMETBulletinImpl) value).toBuilder();
             } else {
                 return new SIGMETBulletinImpl.Builder()//
-                        .setIssueTime(value.getIssueTime())//
                         .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
-                        .addAllMessages(value.getMessages());
+                        .setTimeStamp(value.getTimeStamp()).addAllMessages(value.getMessages()).addAllTimeStampFields(value.getTimeStampFields());
             }
         }
 

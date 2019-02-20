@@ -1,13 +1,13 @@
 {
-  "issueTime": {
-    "partialTime": "--02T05:00"
-  },
   "heading": {
     "locationIndicator": "EFPP",
     "geographicalDesignator": "FI",
     "bulletinNumber": 31,
     "type": "NORMAL",
-    "dataTypeDesignatorT2": "FCT_AERODROME_VT_LONG"
+    "dataTypeDesignatorT2": "FCT_AERODROME_VT_LONG",
+    "issueTime": {
+      "partialTime": "--02T05:00"
+    }
   },
   "messages": [
     {
