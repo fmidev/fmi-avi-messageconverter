@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.PartialOrCompleteTimes;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.immutable.ObservedCloudsImpl;
 import fi.fmi.avi.model.metar.immutable.ObservedSurfaceWindImpl;
@@ -70,6 +72,40 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
         builder.setStatus(value.getStatus());
         builder.setTrends(value.getTrends().map(list -> toImmutableList(list, TrendForecastImpl::immutableCopyOf)));
     }
+
+    public static void afterSetAerodrome(final MeteorologicalTerminalAirReport.Builder<?, ?> builder, final Aerodrome aerodrome) {
+        if (builder.getRunwayStates().isPresent()) {
+            final List<RunwayState> oldStates = builder.getRunwayStates().get();
+            final List<RunwayState> newStates = new ArrayList<>(oldStates.size());
+            for (final RunwayState state : oldStates) {
+                if (state.getRunwayDirection().isPresent()) {
+                    if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
+                        final RunwayStateImpl.Builder runWayBuilder = RunwayStateImpl.immutableCopyOf(state).toBuilder();
+                        runWayBuilder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(state.getRunwayDirection().get()).toBuilder()//
+                                .setAssociatedAirportHeliport(aerodrome).build());
+
+                        newStates.add(runWayBuilder.build());
+                    }
+                }
+            }
+            builder.setRunwayStates(newStates);
+        }
+        if (builder.getRunwayVisualRanges().isPresent()) {
+            final List<RunwayVisualRange> oldRanges = builder.getRunwayVisualRanges().get();
+            final List<RunwayVisualRange> newRanges = new ArrayList<>(oldRanges.size());
+            for (final RunwayVisualRange range : oldRanges) {
+                if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
+                    final RunwayVisualRangeImpl.Builder runwayVisualBuilder = RunwayVisualRangeImpl.immutableCopyOf(range).toBuilder();
+                    runwayVisualBuilder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(runwayVisualBuilder.getRunwayDirection()).toBuilder()//
+                            .setAssociatedAirportHeliport(aerodrome)//
+                            .build());
+                    newRanges.add(runwayVisualBuilder.build());
+                }
+            }
+            builder.setRunwayVisualRanges(newRanges);
+        }
+    }
+
 
     public static List<TrendForecast> completeTrendTimes(final List<TrendForecast> trendForecasts, final ZonedDateTime reference) {
         requireNonNull(trendForecasts, "trendForecasts");

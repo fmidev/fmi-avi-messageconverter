@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +21,6 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.HorizontalVisibility;
 import fi.fmi.avi.model.metar.METAR;
@@ -65,7 +63,6 @@ public abstract class METARImpl implements METAR, Serializable {
 
     @Override
     public abstract Builder toBuilder();
-
     public static class Builder extends METARImpl_Builder implements MeteorologicalTerminalAirReport.Builder<METARImpl, Builder> {
         public Builder() {
             setTranslated(false);
@@ -115,38 +112,7 @@ public abstract class METARImpl implements METAR, Serializable {
         @JsonDeserialize(as = AerodromeImpl.class)
         public Builder setAerodrome(final Aerodrome aerodrome) {
             final Builder retval = super.setAerodrome(aerodrome);
-            if (getRunwayStates().isPresent()) {
-                final List<RunwayState> oldStates = getRunwayStates().get();
-                final List<RunwayState> newStates = new ArrayList<>(oldStates.size());
-                for (final RunwayState state : oldStates) {
-                    if (state.getRunwayDirection().isPresent()) {
-                        if (state.getRunwayDirection().get().getAssociatedAirportHeliport().isPresent()) {
-                            final RunwayStateImpl.Builder builder = RunwayStateImpl.immutableCopyOf(state).toBuilder();
-                                builder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(state.getRunwayDirection().get()).toBuilder()//
-                                        .setAssociatedAirportHeliport(aerodrome)
-                                        .build());
-
-                                newStates.add(builder.build());
-                        }
-                    }
-                }
-                setRunwayStates(newStates);
-            }
-            if (getRunwayVisualRanges().isPresent()) {
-                final List<RunwayVisualRange> oldRanges = getRunwayVisualRanges().get();
-                final List<RunwayVisualRange> newRanges = new ArrayList<>(oldRanges.size());
-                for (final RunwayVisualRange range : oldRanges) {
-                    if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
-                        final RunwayVisualRangeImpl.Builder builder = RunwayVisualRangeImpl.immutableCopyOf(range).toBuilder();
-                        builder.setRunwayDirection(
-                                RunwayDirectionImpl.immutableCopyOf(builder.getRunwayDirection()).toBuilder()//
-                                        .setAssociatedAirportHeliport(aerodrome)//
-                                        .build());
-                        newRanges.add(builder.build());
-                    }
-                }
-                setRunwayVisualRanges(newRanges);
-            }
+            MeteorologicalTerminalAirReportBuilderHelper.afterSetAerodrome(this, aerodrome);
             return retval;
         }
 
