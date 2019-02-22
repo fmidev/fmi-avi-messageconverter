@@ -3,7 +3,15 @@ package fi.fmi.avi.model.metar;
 import static fi.fmi.avi.model.taf.TAFForecastBuilderHelper.toImmutableList;
 import static java.util.Objects.requireNonNull;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.PartialOrCompleteTimes;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
@@ -61,6 +69,35 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
         builder.setSurfaceWind(ObservedSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()));
         builder.setStatus(value.getStatus());
         builder.setTrends(value.getTrends().map(list -> toImmutableList(list, TrendForecastImpl::immutableCopyOf)));
+    }
+
+    public static List<TrendForecast> completeTrendTimes(final List<TrendForecast> trendForecasts, final ZonedDateTime reference) {
+        requireNonNull(trendForecasts, "trendForecasts");
+        requireNonNull(reference, "reference");
+        if (trendForecasts.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<TrendForecast> builder = new ArrayList<>(trendForecasts.size());
+        List<PartialOrCompleteTime> times = new ArrayList<>(trendForecasts.size());
+        for (final TrendForecast forecast : trendForecasts) {
+            if (forecast.getPeriodOfChange().isPresent()) {
+                times.add(forecast.getPeriodOfChange().get());
+            } else if (forecast.getInstantOfChange().isPresent()) {
+                times.add(forecast.getInstantOfChange().get());
+            } else {
+                times.add(null);
+            }
+        }
+        times = PartialOrCompleteTimes.completeAscendingPartialTimes(times, reference);
+        for (int i = 0; i < times.size(); i++) {
+            final PartialOrCompleteTime time = times.get(i);
+            if (time instanceof PartialOrCompleteTimePeriod) {
+                builder.add(TrendForecastImpl.Builder.from(trendForecasts.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
+            } else if (time instanceof PartialOrCompleteTimeInstant) {
+                builder.add(TrendForecastImpl.Builder.from(trendForecasts.get(i)).setInstantOfChange((PartialOrCompleteTimeInstant) time).build());
+            }
+        }
+        return Collections.unmodifiableList(builder);
     }
 
 }

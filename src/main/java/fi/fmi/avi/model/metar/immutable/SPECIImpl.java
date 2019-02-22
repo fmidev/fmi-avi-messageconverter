@@ -30,8 +30,7 @@ public abstract class SPECIImpl implements MeteorologicalTerminalAirReport, Seri
         return speci.map(SPECIImpl::immutableCopyOf);
     }
 
-
-
+    @Override
     public abstract Builder toBuilder();
 
     public static class Builder extends SPECIImpl_Builder implements MeteorologicalTerminalAirReport.Builder<SPECIImpl, Builder> {

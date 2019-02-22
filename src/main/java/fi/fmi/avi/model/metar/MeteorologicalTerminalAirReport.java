@@ -1,5 +1,10 @@
 package fi.fmi.avi.model.metar;
 
+import static java.util.Objects.requireNonNull;
+
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -61,6 +66,8 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
     Optional<List<TrendForecast>> getTrends();
 
     Optional<ColorState> getColorState();
+
+    Builder<? extends MeteorologicalTerminalAirReport, ? extends Builder> toBuilder();
 
     /**
      * Returns true if issue time, valid time and all other time references contained in this
@@ -161,6 +168,33 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * Resets the state of this builder.
          */
         B clear();
+
+        default B withCompleteIssueTime(final YearMonth yearMonth) {
+            return mutateIssueTime((input) -> input.completePartialAt(yearMonth));
+        }
+
+        default B withCompleteIssueTimeNear(final ZonedDateTime reference) {
+            return mutateIssueTime((input) -> input.completePartialNear(reference));
+        }
+
+        default B withCompleteForecastTimes(final YearMonth issueYearMonth, final int issueDay, final int issueHour, final ZoneId tz)
+                throws IllegalArgumentException {
+            requireNonNull(issueYearMonth, "issueYearMonth");
+            requireNonNull(tz, "tz");
+            return withCompleteForecastTimes(
+                    ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz));
+        }
+
+        default B withCompleteForecastTimes(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return mapTrends(trends -> MeteorologicalTerminalAirReportBuilderHelper.completeTrendTimes(trends, reference));
+        }
+
+        default B withAllTimesComplete(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return withCompleteIssueTimeNear(reference)//
+                    .withCompleteForecastTimes(getIssueTimeBuilder().getCompleteTime().orElse(reference));
+        }
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getRemarks()}.

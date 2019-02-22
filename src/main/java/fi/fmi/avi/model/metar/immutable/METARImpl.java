@@ -6,13 +6,8 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,10 +19,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.PartialOrCompleteTime;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.PartialOrCompleteTimes;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
@@ -72,35 +63,7 @@ public abstract class METARImpl implements METAR, Serializable {
         return metar.map(METARImpl::immutableCopyOf);
     }
 
-    protected static List<TrendForecast> completeTrendTimes(final List<TrendForecast> trendForecasts, final ZonedDateTime reference) {
-        requireNonNull(trendForecasts, "trendForecasts");
-        requireNonNull(reference, "reference");
-        if (trendForecasts.isEmpty()) {
-            return Collections.emptyList();
-        }
-        final List<TrendForecast> builder = new ArrayList<>(trendForecasts.size());
-        List<PartialOrCompleteTime> times = new ArrayList<>(trendForecasts.size());
-        for (final TrendForecast forecast : trendForecasts) {
-            if (forecast.getPeriodOfChange().isPresent()) {
-                times.add(forecast.getPeriodOfChange().get());
-            } else if (forecast.getInstantOfChange().isPresent()) {
-                times.add(forecast.getInstantOfChange().get());
-            } else {
-                times.add(null);
-            }
-        }
-        times = PartialOrCompleteTimes.completeAscendingPartialTimes(times, reference);
-        for (int i = 0; i < times.size(); i++) {
-            final PartialOrCompleteTime time = times.get(i);
-            if (time instanceof PartialOrCompleteTimePeriod) {
-                builder.add(TrendForecastImpl.Builder.from(trendForecasts.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
-            } else if (time instanceof PartialOrCompleteTimeInstant) {
-                builder.add(TrendForecastImpl.Builder.from(trendForecasts.get(i)).setInstantOfChange((PartialOrCompleteTimeInstant) time).build());
-            }
-        }
-        return Collections.unmodifiableList(builder);
-    }
-
+    @Override
     public abstract Builder toBuilder();
 
     public static class Builder extends METARImpl_Builder implements MeteorologicalTerminalAirReport.Builder<METARImpl, Builder> {
@@ -147,32 +110,6 @@ public abstract class METARImpl implements METAR, Serializable {
             return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[] { SPECI.class }, new SPECIInvocationHandler(this.buildPartial()));
         }
 
-        public Builder withCompleteIssueTime(final YearMonth yearMonth) {
-            return mutateIssueTime((input) -> input.completePartialAt(yearMonth));
-        }
-
-        public Builder withCompleteIssueTimeNear(final ZonedDateTime reference) {
-            return mutateIssueTime((input) -> input.completePartialNear(reference));
-        }
-
-        public Builder withCompleteForecastTimes(final YearMonth issueYearMonth, final int issueDay, final int issueHour, final ZoneId tz)
-                throws IllegalArgumentException {
-            requireNonNull(issueYearMonth, "issueYearMonth");
-            requireNonNull(tz, "tz");
-            return withCompleteForecastTimes(
-                    ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz));
-        }
-
-        public Builder withCompleteForecastTimes(final ZonedDateTime reference) {
-            requireNonNull(reference, "reference");
-            return mapTrends(trends -> completeTrendTimes(trends, reference));
-        }
-
-        public Builder withAllTimesComplete(final ZonedDateTime reference) {
-            requireNonNull(reference, "reference");
-            return withCompleteIssueTimeNear(reference)//
-                    .withCompleteForecastTimes(getIssueTimeBuilder().getCompleteTime().orElse(reference));
-        }
 
         @Override
         @JsonDeserialize(as = AerodromeImpl.class)
