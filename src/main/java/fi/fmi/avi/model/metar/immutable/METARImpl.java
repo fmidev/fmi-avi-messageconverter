@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -91,6 +92,12 @@ public abstract class METARImpl implements METAR, Serializable {
                 setRoutineDelayed(fromMetar.isRoutineDelayed());
             }
             return this;
+        }
+
+        @Override
+        public Builder withCompleteForecastTimes(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return mapTrends(trends -> MeteorologicalTerminalAirReportBuilderHelper.completeTrendTimes(trends, reference));
         }
 
         public SPECI buildAsSPECI() {

@@ -130,7 +130,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         return true;
     }
 
-
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     interface Builder<T extends MeteorologicalTerminalAirReport, B extends Builder<T, B>> {
 
@@ -185,10 +184,7 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
                     ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz));
         }
 
-        default B withCompleteForecastTimes(final ZonedDateTime reference) {
-            requireNonNull(reference, "reference");
-            return mapTrends(trends -> MeteorologicalTerminalAirReportBuilderHelper.completeTrendTimes(trends, reference));
-        }
+        B withCompleteForecastTimes(ZonedDateTime reference);
 
         default B withAllTimesComplete(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
@@ -722,7 +718,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
             return setTranslationTime(getTranslationTime().map(mapper));
         }
 
-
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslationTime()} to {@link
          * Optional#empty() Optional.empty()}.
@@ -780,7 +775,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         default B mapTranslatedTAC(final UnaryOperator<String> mapper) {
             return setTranslatedTAC(getTranslatedTAC().map(mapper));
         }
-
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTranslatedTAC()} to {@link
@@ -981,8 +975,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          */
         B setCeilingAndVisibilityOk(boolean ceilingAndVisibilityOk);
 
-
-
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getAirTemperature()}.
          *
@@ -1010,7 +1002,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         default B mapAirTemperature(final UnaryOperator<NumericMeasure> mapper) {
             return setAirTemperature(getAirTemperature().map(mapper));
         }
-
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getAirTemperature()} to {@link
@@ -1186,7 +1177,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
             return setSurfaceWind(getSurfaceWind().map(mapper));
         }
 
-
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getSurfaceWind()} to {@link
          * Optional#empty() Optional.empty()}.
@@ -1244,7 +1234,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         default B mapVisibility(final UnaryOperator<HorizontalVisibility> mapper) {
             return setVisibility(getVisibility().map(mapper));
         }
-
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getVisibility()} to {@link
@@ -1362,7 +1351,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
             return setPresentWeather(getPresentWeather().map(mapper));
         }
 
-
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getPresentWeather()} to {@link
          * Optional#empty() Optional.empty()}.
@@ -1420,7 +1408,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         default B mapClouds(final UnaryOperator<ObservedClouds> mapper) {
             return setClouds(getClouds().map(mapper));
         }
-
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getClouds()} to {@link Optional#empty()
@@ -1480,7 +1467,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
             return setRecentWeather(getRecentWeather().map(mapper));
         }
 
-
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getRecentWeather()} to {@link
          * Optional#empty() Optional.empty()}.
@@ -1538,7 +1524,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         default B mapWindShear(final UnaryOperator<WindShear> mapper) {
             return setWindShear(getWindShear().map(mapper));
         }
-
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getWindShear()} to {@link Optional#empty()
@@ -1598,7 +1583,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
             return setSeaState(getSeaState().map(mapper));
         }
 
-
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getSeaState()} to {@link Optional#empty()
          * Optional.empty()}.
@@ -1656,7 +1640,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         default B mapRunwayStates(final UnaryOperator<List<RunwayState>> mapper) {
             return setRunwayStates(getRunwayStates().map(mapper));
         }
-
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getRunwayStates()} to {@link
@@ -1716,7 +1699,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
             return setTrends(getTrends().map(mapper));
         }
 
-
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getTrends()} to {@link Optional#empty()
          * Optional.empty()}.
@@ -1774,7 +1756,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
         default B mapColorState(final UnaryOperator<AviationCodeListUser.ColorState> mapper) {
             return setColorState(getColorState().map(mapper));
         }
-
 
         /**
          * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getColorState()} to {@link
@@ -1867,9 +1848,6 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
          * @return this {@code Builder} object
          */
         B setNoSignificantChanges(boolean noSignificantChanges);
-
-
-
 
     }
 

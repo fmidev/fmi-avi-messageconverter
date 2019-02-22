@@ -3,6 +3,7 @@ package fi.fmi.avi.model.metar.immutable;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +79,12 @@ public abstract class SPECIImpl implements SPECI, Serializable {
             }
             MeteorologicalTerminalAirReportBuilderHelper.copyFrom(this, value);
             return this;
+        }
+
+        @Override
+        public Builder withCompleteForecastTimes(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            return mapTrends(trends -> MeteorologicalTerminalAirReportBuilderHelper.completeTrendTimes(trends, reference));
         }
 
         @Override
