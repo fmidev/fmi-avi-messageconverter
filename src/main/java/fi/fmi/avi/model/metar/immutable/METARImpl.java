@@ -3,11 +3,7 @@ package fi.fmi.avi.model.metar.immutable;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +28,6 @@ import fi.fmi.avi.model.metar.ObservedClouds;
 import fi.fmi.avi.model.metar.ObservedSurfaceWind;
 import fi.fmi.avi.model.metar.RunwayState;
 import fi.fmi.avi.model.metar.RunwayVisualRange;
-import fi.fmi.avi.model.metar.SPECI;
 import fi.fmi.avi.model.metar.SeaState;
 import fi.fmi.avi.model.metar.TrendForecast;
 import fi.fmi.avi.model.metar.WindShear;
@@ -100,20 +95,6 @@ public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportI
         public Builder withCompleteForecastTimes(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             return mapTrends(trends -> MeteorologicalTerminalAirReportBuilderHelper.completeTrendTimes(trends, reference));
-        }
-
-        public SPECI buildAsSPECI() {
-            if (isRoutineDelayed()) {
-                throw new IllegalStateException("Routine delayed (RTD) is true, cannot build as SPECI");
-            }
-            return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[] { SPECI.class }, new SPECIInvocationHandler(this.build()));
-        }
-
-        public SPECI buildPartialAsSPECI() {
-            if (isRoutineDelayed()) {
-                throw new IllegalStateException("Routine delayed (RTD) is true, cannot build as SPECI");
-            }
-            return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[] { SPECI.class }, new SPECIInvocationHandler(this.buildPartial()));
         }
 
         @Override
@@ -201,31 +182,6 @@ public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportI
         public Builder setTrends(final List<TrendForecast> trends) {
             return super.setTrends(trends);
         }
-    }
-
-    static class SPECIInvocationHandler implements InvocationHandler {
-        private final METARImpl delegate;
-
-        SPECIInvocationHandler(final METARImpl delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            try {
-                final Method delegateMethod = METARImpl.class.getMethod(method.getName(), method.getParameterTypes());
-                return delegateMethod.invoke(delegate, args);
-            } catch (final NoSuchMethodException nsme) {
-                throw new RuntimeException("SPECI method " + method.getName() + "(" + Arrays.toString(method.getParameterTypes()) + ") not implemented by "
-                        + METARImpl.class.getSimpleName() + ", cannot delegate. Make sure that " + METARImpl.class.getCanonicalName()
-                        + " implements all SPECI methods");
-            }
-        }
-
-        METARImpl getDelegate() {
-            return delegate;
-        }
-
     }
 
 }

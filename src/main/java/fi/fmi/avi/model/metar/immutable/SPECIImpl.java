@@ -63,7 +63,11 @@ public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportI
     public static class Builder extends SPECIImpl_Builder implements MeteorologicalTerminalAirReportBuilder<SPECIImpl, Builder> {
 
         public Builder() {
-
+            setTranslated(false);
+            setAutomatedStation(false);
+            setCeilingAndVisibilityOk(false);
+            setSnowClosure(false);
+            setNoSignificantChanges(false);
         }
 
         public static Builder from(final SPECI value) {
