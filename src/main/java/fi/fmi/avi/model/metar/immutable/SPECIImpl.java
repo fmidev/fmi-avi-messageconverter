@@ -21,6 +21,7 @@ import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.HorizontalVisibility;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReport;
+import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReportBuilder;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReportBuilderHelper;
 import fi.fmi.avi.model.metar.ObservedClouds;
 import fi.fmi.avi.model.metar.ObservedSurfaceWind;
@@ -38,7 +39,7 @@ import fi.fmi.avi.model.metar.WindShear;
         "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates", "snowClosure",
         "noSignificantChanges", "trend", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class SPECIImpl implements SPECI, Serializable {
+public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportImpl implements SPECI, Serializable {
     private static final long serialVersionUID = 1918131429312289735L;
 
     public static SPECIImpl immutableCopyOf(final SPECI speci) {
@@ -59,7 +60,7 @@ public abstract class SPECIImpl implements SPECI, Serializable {
     @Override
     public abstract Builder toBuilder();
 
-    public static class Builder extends SPECIImpl_Builder implements MeteorologicalTerminalAirReport.Builder<SPECIImpl, Builder> {
+    public static class Builder extends SPECIImpl_Builder implements MeteorologicalTerminalAirReportBuilder<SPECIImpl, Builder> {
 
         public Builder() {
 

@@ -25,14 +25,14 @@ import fi.fmi.avi.model.metar.immutable.SeaStateImpl;
 import fi.fmi.avi.model.metar.immutable.TrendForecastImpl;
 
 /**
- * Helper methods for implementations of {@link MeteorologicalTerminalAirReport.Builder}.
+ * Helper methods for implementations of {@link MeteorologicalTerminalAirReportBuilder}.
  */
 public final class MeteorologicalTerminalAirReportBuilderHelper {
     public MeteorologicalTerminalAirReportBuilderHelper() {
         throw new UnsupportedOperationException();
     }
 
-    public static void copyFrom(final MeteorologicalTerminalAirReport.Builder<?, ?> builder, final MeteorologicalTerminalAirReport value) {
+    public static void copyFrom(final MeteorologicalTerminalAirReportBuilder<?, ?> builder, final MeteorologicalTerminalAirReport value) {
         requireNonNull(builder, "builder");
         requireNonNull(value, "value");
 
@@ -73,7 +73,7 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
         builder.setTrends(value.getTrends().map(list -> toImmutableList(list, TrendForecastImpl::immutableCopyOf)));
     }
 
-    public static void afterSetAerodrome(final MeteorologicalTerminalAirReport.Builder<?, ?> builder, final Aerodrome aerodrome) {
+    public static void afterSetAerodrome(final MeteorologicalTerminalAirReportBuilder<?, ?> builder, final Aerodrome aerodrome) {
         if (builder.getRunwayStates().isPresent()) {
             final List<RunwayState> oldStates = builder.getRunwayStates().get();
             final List<RunwayState> newStates = new ArrayList<>(oldStates.size());
@@ -105,7 +105,6 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
             builder.setRunwayVisualRanges(newRanges);
         }
     }
-
 
     public static List<TrendForecast> completeTrendTimes(final List<TrendForecast> trendForecasts, final ZonedDateTime reference) {
         requireNonNull(trendForecasts, "trendForecasts");

@@ -26,6 +26,7 @@ import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.HorizontalVisibility;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReport;
+import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReportBuilder;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReportBuilderHelper;
 import fi.fmi.avi.model.metar.ObservedClouds;
 import fi.fmi.avi.model.metar.ObservedSurfaceWind;
@@ -43,7 +44,7 @@ import fi.fmi.avi.model.metar.WindShear;
         "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates", "snowClosure",
         "noSignificantChanges", "trend", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class METARImpl implements METAR, Serializable {
+public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportImpl implements METAR, Serializable {
 
     private static final long serialVersionUID = 5959988117998705772L;
 
@@ -64,7 +65,8 @@ public abstract class METARImpl implements METAR, Serializable {
 
     @Override
     public abstract Builder toBuilder();
-    public static class Builder extends METARImpl_Builder implements MeteorologicalTerminalAirReport.Builder<METARImpl, Builder> {
+
+    public static class Builder extends METARImpl_Builder implements MeteorologicalTerminalAirReportBuilder<METARImpl, Builder> {
         public Builder() {
             setTranslated(false);
             setAutomatedStation(false);
@@ -113,7 +115,6 @@ public abstract class METARImpl implements METAR, Serializable {
             }
             return (SPECI) Proxy.newProxyInstance(SPECI.class.getClassLoader(), new Class[] { SPECI.class }, new SPECIInvocationHandler(this.buildPartial()));
         }
-
 
         @Override
         @JsonDeserialize(as = AerodromeImpl.class)
