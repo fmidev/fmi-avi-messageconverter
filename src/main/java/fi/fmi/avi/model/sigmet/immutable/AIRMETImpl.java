@@ -24,6 +24,7 @@ import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
+import fi.fmi.avi.model.sigmet.AirmetReference;
 import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
 import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SIGMET;
@@ -116,7 +117,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                         .setAirmetPhenomenon(value.getAirmetPhenomenon())
                         .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))
                         .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()))
-                        .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()));
+                        .setCancelledReference(AirmetReferenceImpl.immutableCopyOf(value.getCancelledReference()));
 
                 value.getAnalysisGeometries().map(an -> retval.setAnalysisGeometries(
                         (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryWithHeightImpl::immutableCopyOf).collect(Collectors.toList())))));
@@ -145,8 +146,8 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(as = SigmetReference.class)
-        public Builder setCancelledReference(final SigmetReference cancelledReference) {
+        @JsonDeserialize(as = AirmetReference.class)
+        public Builder setCancelledReference(final AirmetReference cancelledReference) {
             return super.setCancelledReference(cancelledReference);
         }
 

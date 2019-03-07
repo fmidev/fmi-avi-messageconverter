@@ -14,7 +14,7 @@ public interface AIRMET extends SIGMETAIRMET {
     Optional<AirmetWind>getWind();
     Optional<WeatherCausingVisibilityReduction>getObscuration();
 
-    Optional<SigmetReference> getCancelledReference();
+    Optional<AirmetReference> getCancelledReference();
 
     public SigmetAnalysisType getAnalysisType();
     public Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
