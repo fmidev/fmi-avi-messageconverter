@@ -17,12 +17,12 @@ public class JSONSerializationTest {
     public void testMETAR() throws IOException {
         METAR m = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("metar11.json"), METARImpl.class);
         final METARImpl.Builder mib = METARImpl.immutableCopyOf(m).toBuilder();
-        final AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()
+        final AerodromeImpl.Builder airportBuilder = AerodromeImpl.builder()
                 .setDesignator("EETN")
                 .setName("Tallinn Airport")
                 .setFieldElevationValue(40.0)
                 .setLocationIndicatorICAO("EETN")
-                .setReferencePoint(new GeoPositionImpl.Builder()
+                .setReferencePoint(GeoPositionImpl.builder()
                         .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")
                         .addCoordinates(24.8325, 59.413333)
                         .build()

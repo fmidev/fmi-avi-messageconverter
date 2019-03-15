@@ -55,7 +55,7 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
             if (value instanceof GeoPositionImpl) {
                 return ((GeoPositionImpl) value).toBuilder();
             } else {
-                return new GeoPositionImpl.Builder()//
+                return GeoPositionImpl.builder()//
                         .setCoordinateReferenceSystemId(value.getCoordinateReferenceSystemId())//
                         .addAllCoordinates(value.getCoordinates())
                         .setElevationUom(value.getElevationUom())

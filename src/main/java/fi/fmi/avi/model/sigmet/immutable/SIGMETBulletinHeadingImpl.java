@@ -48,7 +48,7 @@ public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading
             if (value instanceof SIGMETBulletinHeadingImpl) {
                 return ((SIGMETBulletinHeadingImpl) value).toBuilder();
             } else {
-                return new SIGMETBulletinHeadingImpl.Builder()//
+                return SIGMETBulletinHeadingImpl.builder()//
                         .setLocationIndicator(value.getLocationIndicator())//
                         .setGeographicalDesignator(value.getGeographicalDesignator())//
                         .setBulletinNumber(value.getBulletinNumber())//

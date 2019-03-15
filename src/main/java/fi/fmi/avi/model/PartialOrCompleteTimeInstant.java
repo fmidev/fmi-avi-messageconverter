@@ -52,17 +52,17 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
     }
 
     public static PartialOrCompleteTimeInstant of(final PartialDateTime partialDateTime) {
-        return new Builder().setPartialTime(partialDateTime).build();
+        return builder().setPartialTime(partialDateTime).build();
     }
 
     public static PartialOrCompleteTimeInstant of(final ZonedDateTime completeTime) {
-        return new Builder().setCompleteTime(completeTime).build();
+        return builder().setCompleteTime(completeTime).build();
     }
 
     public static PartialOrCompleteTimeInstant of(final PartialDateTime partialDateTime, final ZonedDateTime completeTime) {
         requireNonNull(partialDateTime, "partialDateTime");
         requireNonNull(completeTime, "completeTime");
-        return new Builder()//
+        return builder()//
                 .setPartialTime(partialDateTime)//
                 .setCompleteTime(completeTime)//
                 .build();

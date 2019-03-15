@@ -56,7 +56,7 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
             if (value instanceof RunwayDirectionImpl) {
                 return ((RunwayDirectionImpl) value).toBuilder();
             } else {
-                return new RunwayDirectionImpl.Builder()//
+                return RunwayDirectionImpl.builder()//
                         .setDesignator(value.getDesignator())//
                         .setElevationTDZMeters(value.getElevationTDZMeters())//
                         .setTrueBearing(value.getTrueBearing())//

@@ -72,7 +72,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
             if (value instanceof ObservedCloudLayerImpl) {
                 return ((ObservedCloudLayerImpl) value).toBuilder();
             } else {
-                return new ObservedCloudLayerImpl.Builder().setAmount(value.getAmount())//
+                return ObservedCloudLayerImpl.builder().setAmount(value.getAmount())//
                         .setCloudType(value.getCloudType())//
                         .setBase(NumericMeasureImpl.immutableCopyOf(value.getBase()));
             }

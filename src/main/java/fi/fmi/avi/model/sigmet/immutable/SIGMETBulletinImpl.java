@@ -50,7 +50,7 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin {
             if (value instanceof SIGMETBulletinImpl) {
                 return ((SIGMETBulletinImpl) value).toBuilder();
             } else {
-                return new SIGMETBulletinImpl.Builder()//
+                return SIGMETBulletinImpl.builder()//
                         .setIssueTime(value.getIssueTime())//
                         .setHeading(SIGMETBulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .addAllMessages(value.getMessages());

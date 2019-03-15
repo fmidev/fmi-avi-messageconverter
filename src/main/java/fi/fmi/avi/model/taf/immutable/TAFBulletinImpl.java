@@ -52,7 +52,7 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
             if (value instanceof TAFBulletinImpl) {
                 return ((TAFBulletinImpl) value).toBuilder();
             } else {
-                return new TAFBulletinImpl.Builder()//
+                return TAFBulletinImpl.builder()//
                         .setIssueTime(value.getIssueTime())//
                         .setHeading(TAFBulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .addAllMessages(value.getMessages());

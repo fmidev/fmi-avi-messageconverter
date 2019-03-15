@@ -79,7 +79,7 @@ public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportI
             if (value instanceof SPECIImpl) {
                 return ((SPECIImpl) value).toBuilder();
             }
-            return new SPECIImpl.Builder().copyFrom(value);
+            return SPECIImpl.builder().copyFrom(value);
         }
 
         @Override

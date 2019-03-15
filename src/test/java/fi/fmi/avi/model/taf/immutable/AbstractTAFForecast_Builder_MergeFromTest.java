@@ -54,7 +54,7 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
     }
 
     protected static CloudLayer newCloudLayer(final AviationCodeListUser.CloudAmount amount, final double baseFeet) {
-        return new CloudLayerImpl.Builder()//
+        return CloudLayerImpl.builder()//
                 .setAmount(amount)//
                 .setBase(NumericMeasureImpl.of(baseFeet, FEET))//
                 .build();
@@ -65,7 +65,7 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
     }
 
     protected static SurfaceWind newSurfaceWind(final double meanDirectionDegrees, final double meanSpeed) {
-        final SurfaceWindImpl.Builder builder = new SurfaceWindImpl.Builder();
+        final SurfaceWindImpl.Builder builder = SurfaceWindImpl.builder();
         final boolean variableDirection = meanDirectionDegrees == VARIABLE_WIND_DIRECTION;
         if (variableDirection) {
             builder.setVariableDirection(true);

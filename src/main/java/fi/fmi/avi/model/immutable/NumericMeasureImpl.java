@@ -29,11 +29,11 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
     }
 
     public static NumericMeasureImpl of(final Integer value, final String uom) {
-        return new Builder().setValue(value.doubleValue()).setUom(uom).build();
+        return builder().setValue(value.doubleValue()).setUom(uom).build();
     }
 
     public static NumericMeasureImpl of(final Double value, final String uom) {
-        return new Builder().setValue(value).setUom(uom).build();
+        return builder().setValue(value).setUom(uom).build();
     }
 
     public static NumericMeasureImpl immutableCopyOf(final NumericMeasure numericMeasure) {
@@ -62,7 +62,7 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
             if (value instanceof NumericMeasureImpl) {
                 return ((NumericMeasureImpl) value).toBuilder();
             } else {
-                return new NumericMeasureImpl.Builder()//
+                return NumericMeasureImpl.builder()//
                         .setUom(value.getUom())//
                         .setValue(value.getValue());
             }

@@ -58,7 +58,7 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
             if (value instanceof SurfaceWindImpl) {
                 return ((SurfaceWindImpl) value).toBuilder();
             } else {
-                return new SurfaceWindImpl.Builder()//
+                return SurfaceWindImpl.builder()//
                         .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))
                         .setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())
                         .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))

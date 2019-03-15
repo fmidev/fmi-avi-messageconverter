@@ -56,7 +56,7 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
             if (value instanceof SeaStateImpl) {
                 return ((SeaStateImpl) value).toBuilder();
             } else {
-                return new SeaStateImpl.Builder()//
+                return SeaStateImpl.builder()//
                         .setSeaSurfaceState(value.getSeaSurfaceState())//
                         .setSeaSurfaceTemperature(NumericMeasureImpl.immutableCopyOf(value.getSeaSurfaceTemperature()))//
                         .setSignificantWaveHeight(NumericMeasureImpl.immutableCopyOf(value.getSignificantWaveHeight()));

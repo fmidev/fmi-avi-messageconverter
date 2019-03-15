@@ -111,24 +111,24 @@ public class JSONConverterTest {
         final String reference = IOUtils.toString(is,"UTF-8");
         is.close();
 
-        final TAFImpl.Builder builder = new TAFImpl.Builder();
+        final TAFImpl.Builder builder = TAFImpl.builder();
         builder.setStatus(AviationCodeListUser.TAFStatus.NORMAL)
                 .setIssueTime(PartialOrCompleteTimeInstant.createIssueTime("271137Z"))
-                .setAerodrome(new AerodromeImpl.Builder().setDesignator("EFVA").build())
+                .setAerodrome(AerodromeImpl.builder().setDesignator("EFVA").build())
                 .setValidityTime(PartialOrCompleteTimePeriod.createValidityTime("2712/2812"))
-                .setBaseForecast(new TAFBaseForecastImpl.Builder()
+                .setBaseForecast(TAFBaseForecastImpl.builder()
                         .setForecastWeather(WeatherImpl.fromCodes("-RA")).setPrevailingVisibility(NumericMeasureImpl.of(8000.0, "m"))//
-                        .setSurfaceWind(new SurfaceWindImpl.Builder()
+                        .setSurfaceWind(SurfaceWindImpl.builder()
                                 .setMeanWindDirection(NumericMeasureImpl.of(140,"deg"))
                                 .setMeanWindSpeed(NumericMeasureImpl.of(15.0, "[kn_i]"))
                                 .setWindGust(NumericMeasureImpl.of(25.0, "[kn_i]"))
                                 .build())
-                        .setCloud(new CloudForecastImpl.Builder()
-                                .setLayers(Arrays.asList(new CloudLayerImpl.Builder()
+                        .setCloud(CloudForecastImpl.builder()
+                                .setLayers(Arrays.asList(CloudLayerImpl.builder()
                                         .setBase(NumericMeasureImpl.of(2000, "[ft_i]"))
                                         .setAmount(AviationCodeListUser.CloudAmount.SCT)
                                         .build(),
-                                        new CloudLayerImpl.Builder()
+                                        CloudLayerImpl.builder()
                                                 .setBase(NumericMeasureImpl.of(5000, "[ft_i]"))
                                                 .setAmount(AviationCodeListUser.CloudAmount.OVC)
                                                 .build()))
@@ -136,45 +136,45 @@ public class JSONConverterTest {
                                 )
                         .build());
         builder.setChangeForecasts(Arrays.asList(
-                new TAFChangeForecastImpl.Builder()
+                TAFChangeForecastImpl.builder()
                         .setForecastWeather(WeatherImpl.fromCodes("-RA"))
                         .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.BECOMING)
                         .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2715/2717"))
                         .setPrevailingVisibility(NumericMeasureImpl.of(5000.0, "m"))
-                        .setCloud(new CloudForecastImpl.Builder()
-                                .setLayers(Collections.singletonList(new CloudLayerImpl.Builder().setBase(NumericMeasureImpl.of(700, "[ft_i]"))
+                        .setCloud(CloudForecastImpl.builder()
+                                .setLayers(Collections.singletonList(CloudLayerImpl.builder().setBase(NumericMeasureImpl.of(700, "[ft_i]"))
                                         .setAmount(AviationCodeListUser.CloudAmount.BKN)
                                         .build()))
                                 .build()
                         )
                         .build(),
-                new TAFChangeForecastImpl.Builder()
+                TAFChangeForecastImpl.builder()
                         .setForecastWeather(WeatherImpl.fromCodes("RASN"))
                         .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.PROBABILITY_40)
                         .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2715/2720"))
                         .setPrevailingVisibility(NumericMeasureImpl.of(4000.0, "m"))
                         .build(),
-                new TAFChangeForecastImpl.Builder()
+                TAFChangeForecastImpl.builder()
                         .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.BECOMING)
                         .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2720/2722"))//
-                        .setSurfaceWind(new SurfaceWindImpl.Builder()
+                        .setSurfaceWind(SurfaceWindImpl.builder()
                                 .setMeanWindDirection(NumericMeasureImpl.of(160, "deg"))
                                 .setMeanWindSpeed(NumericMeasureImpl.of(12.0, "[kn_i]"))
                                 .build())
                         .build(),
-                new TAFChangeForecastImpl.Builder()
+                TAFChangeForecastImpl.builder()
                         .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.TEMPORARY_FLUCTUATIONS)
                         .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2720/2724"))
                         .setPrevailingVisibility(NumericMeasureImpl.of(8000.0, "m"))
                         .build(),
 
-                new TAFChangeForecastImpl.Builder()
+                TAFChangeForecastImpl.builder()
                         .setForecastWeather(WeatherImpl.fromCodes("RASN"))
                         .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.PROBABILITY_40)
                         .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTimeDHDH("2802/2806"))
                         .setPrevailingVisibility(NumericMeasureImpl.of(3000.0, "m"))
-                        .setCloud(new CloudForecastImpl.Builder()
-                                .setLayers(Collections.singletonList(new CloudLayerImpl.Builder().setBase(NumericMeasureImpl.of(400, "[ft_i]"))
+                        .setCloud(CloudForecastImpl.builder()
+                                .setLayers(Collections.singletonList(CloudLayerImpl.builder().setBase(NumericMeasureImpl.of(400, "[ft_i]"))
                                         .setAmount(AviationCodeListUser.CloudAmount.BKN)
                                         .build()))
                                 .build()
@@ -204,16 +204,16 @@ public class JSONConverterTest {
         final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
 
-        final SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
-                .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
-                        .setPartialTime(PartialDateTime.ofDayHourMinute(2, 5, 0))).setHeading(new SIGMETBulletinHeadingImpl.Builder()//
+        final SIGMETBulletinImpl.Builder builder = SIGMETBulletinImpl.builder()//
+                .setIssueTime(PartialOrCompleteTimeInstant.builder()//
+                        .setPartialTime(PartialDateTime.ofDayHourMinute(2, 5, 0))).setHeading(SIGMETBulletinHeadingImpl.builder()//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
                         .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.SIGMET)//
                         .build());
 
-        builder.addMessages(new SIGMETImpl.Builder()//
+        builder.addMessages(SIGMETImpl.builder()//
                 .setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
                         + "EFIN FINLAND FIR SEV TURB FCST AT 0740Z\n"//
                         + "S OF LINE N5953 E01931 -\n"//

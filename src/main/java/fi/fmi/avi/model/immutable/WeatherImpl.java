@@ -503,7 +503,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
             if (value instanceof WeatherImpl) {
                 return ((WeatherImpl) value).toBuilder();
             } else {
-                return new WeatherImpl.Builder()//
+                return WeatherImpl.builder()//
                         .setCode(value.getCode())//
                         .setDescription(value.getDescription());
             }

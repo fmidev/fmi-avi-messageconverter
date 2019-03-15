@@ -56,7 +56,7 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
             if (value instanceof CloudLayerImpl) {
                 return ((CloudLayerImpl) value).toBuilder();
             } else {
-                return new CloudLayerImpl.Builder()//
+                return CloudLayerImpl.builder()//
                         .setAmount(value.getAmount())//
                         .setCloudType(value.getCloudType())//
                         .setBase(NumericMeasureImpl.immutableCopyOf(value.getBase()));

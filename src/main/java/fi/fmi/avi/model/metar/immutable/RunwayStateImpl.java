@@ -68,7 +68,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
             if (value instanceof RunwayStateImpl) {
                 return ((RunwayStateImpl) value).toBuilder();
             } else {
-                return new RunwayStateImpl.Builder().setAppliedToAllRunways(value.isAppliedToAllRunways())
+                return RunwayStateImpl.builder().setAppliedToAllRunways(value.isAppliedToAllRunways())
                         .setBrakingAction(value.getBrakingAction())
                         .setCleared(value.isCleared())
                         .setContamination(value.getContamination())

@@ -55,7 +55,7 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
             if (value instanceof AerodromeImpl) {
                 return ((AerodromeImpl) value).toBuilder();
             } else {
-                return new AerodromeImpl.Builder()//
+                return AerodromeImpl.builder()//
                         .setDesignator(value.getDesignator())
                         .setDesignatorIATA(value.getDesignatorIATA())
                         .setFieldElevationValue(value.getFieldElevationValue())

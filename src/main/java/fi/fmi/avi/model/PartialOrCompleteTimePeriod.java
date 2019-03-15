@@ -41,7 +41,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     public static PartialOrCompleteTimePeriod createValidityTimeDHDH(final String partialTimePeriod) throws IllegalArgumentException {
         final Matcher matcher = DAY_HOUR_DAY_HOUR_PATTERN.matcher(partialTimePeriod);
         if (matcher.matches()) {
-            return new PartialOrCompleteTimePeriod.Builder()//
+            return PartialOrCompleteTimePeriod.builder()//
                     .setStartTime(PartialOrCompleteTimeInstant.of(
                             PartialDateTime.ofDayHour(TimePatternGroup.startDay.intValue(matcher), TimePatternGroup.startHour.intValue(matcher))))//
                     .setEndTime(PartialOrCompleteTimeInstant.of(
@@ -55,7 +55,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     public static PartialOrCompleteTimePeriod createValidityTimeDHH(final String partialTimePeriod) throws IllegalArgumentException {
         final Matcher matcher = DAY_HOUR_HOUR_PATTERN.matcher(partialTimePeriod);
         if (matcher.matches()) {
-            return new PartialOrCompleteTimePeriod.Builder()//
+            return PartialOrCompleteTimePeriod.builder()//
                     .setStartTime(PartialOrCompleteTimeInstant.of(
                             PartialDateTime.ofDayHour(TimePatternGroup.day.intValue(matcher), TimePatternGroup.startHour.intValue(matcher))))//
                     .setEndTime(PartialOrCompleteTimeInstant.of(

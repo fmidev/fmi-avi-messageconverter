@@ -12,17 +12,17 @@ import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 public class SIGMETBulletinTest {
 
     @Test
-    public void testSIGMETBulletin() throws Exception {
-        final SIGMETBulletinImpl.Builder builder = new SIGMETBulletinImpl.Builder()//
-                .setIssueTime(new PartialOrCompleteTimeInstant.Builder()//
-                        .setPartialTime(PartialDateTime.ofDayHourMinute(17, 7, 0))).setHeading(new SIGMETBulletinHeadingImpl.Builder()//
+    public void testSIGMETBulletin() {
+        final SIGMETBulletinImpl.Builder builder = SIGMETBulletinImpl.builder()//
+                .setIssueTime(PartialOrCompleteTimeInstant.builder()//
+                        .setPartialTime(PartialDateTime.ofDayHourMinute(17, 7, 0))).setHeading(SIGMETBulletinHeadingImpl.builder()//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
                         .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.SIGMET)
                         .build());
 
-        builder.addMessages(new SIGMETImpl.Builder()//
+        builder.addMessages(SIGMETImpl.builder()//
                 .setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
                         + "EFIN FINLAND FIR SEV TURB FCST AT 0740Z\n"//
                         + "S OF LINE N5953 E01931 -\n"//

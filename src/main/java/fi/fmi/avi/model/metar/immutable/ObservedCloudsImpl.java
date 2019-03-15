@@ -65,7 +65,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
             if (value instanceof ObservedCloudsImpl) {
                 return ((ObservedCloudsImpl) value).toBuilder();
             } else {
-                final ObservedCloudsImpl.Builder retval = new ObservedCloudsImpl.Builder()//
+                final ObservedCloudsImpl.Builder retval = ObservedCloudsImpl.builder()//
                         .setNoCloudsDetectedByAutoSystem(value.isNoCloudsDetectedByAutoSystem())
                         .setNoSignificantCloud(value.isNoSignificantCloud())
                         .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));

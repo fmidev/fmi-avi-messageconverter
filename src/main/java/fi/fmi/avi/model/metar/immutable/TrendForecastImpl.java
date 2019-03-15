@@ -68,7 +68,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
             if (value instanceof TrendForecastImpl) {
                 return ((TrendForecastImpl) value).toBuilder();
             } else {
-                final Builder retval = new TrendForecastImpl.Builder()//
+                final Builder retval = TrendForecastImpl.builder()//
                         .setPeriodOfChange(value.getPeriodOfChange())
                         .setInstantOfChange(value.getInstantOfChange())
                         .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())

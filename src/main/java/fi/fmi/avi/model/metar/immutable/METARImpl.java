@@ -81,7 +81,7 @@ public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportI
             if (value instanceof METARImpl) {
                 return ((METARImpl) value).toBuilder();
             }
-            return new METARImpl.Builder().copyFrom(value);
+            return METARImpl.builder().copyFrom(value);
         }
 
         @Override

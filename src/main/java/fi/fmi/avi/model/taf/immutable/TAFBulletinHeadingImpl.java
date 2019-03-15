@@ -50,7 +50,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Seri
             if (value instanceof TAFBulletinHeadingImpl) {
                 return ((TAFBulletinHeadingImpl) value).toBuilder();
             } else {
-                return new TAFBulletinHeadingImpl.Builder()//
+                return TAFBulletinHeadingImpl.builder()//
                         .setLocationIndicator(value.getLocationIndicator())//
                         .setGeographicalDesignator(value.getGeographicalDesignator())//
                         .setBulletinNumber(value.getBulletinNumber())//

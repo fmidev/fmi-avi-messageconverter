@@ -61,7 +61,7 @@ public abstract class WindShearImpl implements WindShear, Serializable {
             if (value instanceof WindShearImpl) {
                 return ((WindShearImpl) value).toBuilder();
             } else {
-                Builder retval = new WindShearImpl.Builder()//
+                Builder retval = WindShearImpl.builder()//
                         .setAppliedToAllRunways(value.isAppliedToAllRunways());
 
                 value.getRunwayDirections()

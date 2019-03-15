@@ -67,7 +67,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
             if (value instanceof ObservedSurfaceWindImpl) {
                 return ((ObservedSurfaceWindImpl) value).toBuilder();
             } else {
-                return new ObservedSurfaceWindImpl.Builder()//
+                return ObservedSurfaceWindImpl.builder()//
                         .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
                         .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))//
                         .setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())

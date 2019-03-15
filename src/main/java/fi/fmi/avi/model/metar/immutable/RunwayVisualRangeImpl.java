@@ -70,7 +70,7 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
             if (value instanceof RunwayVisualRangeImpl) {
                 return ((RunwayVisualRangeImpl) value).toBuilder();
             } else {
-                return new RunwayVisualRangeImpl.Builder()//
+                return RunwayVisualRangeImpl.builder()//
                         .setMeanRVR(NumericMeasureImpl.immutableCopyOf(value.getMeanRVR()))
                         .setMeanRVROperator(value.getMeanRVROperator())
                         .setPastTendency(value.getPastTendency())

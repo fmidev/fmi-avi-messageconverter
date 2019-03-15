@@ -57,7 +57,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
             if (value instanceof HorizontalVisibilityImpl) {
                 return ((HorizontalVisibilityImpl) value).toBuilder();
             } else {
-                return new HorizontalVisibilityImpl.Builder().setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
+                return HorizontalVisibilityImpl.builder().setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
                         .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
                         .setMinimumVisibility(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibility()))
                         .setMinimumVisibilityDirection(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibilityDirection()));
