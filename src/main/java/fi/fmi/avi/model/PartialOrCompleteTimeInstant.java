@@ -31,6 +31,10 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
     private static final long serialVersionUID = -3820077096763961462L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static PartialOrCompleteTimeInstant createIssueTime(final String partialDateTime) {
         return of(PartialDateTime.parseTACString(partialDateTime, PartialField.MINUTE));
     }
@@ -142,6 +146,8 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
     public abstract Builder toBuilder();
 
     public static class Builder extends PartialOrCompleteTimeInstant_Builder {
+
+        @Deprecated
         public Builder() {
         }
 

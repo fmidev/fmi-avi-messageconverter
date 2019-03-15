@@ -25,6 +25,10 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
 
     private static final long serialVersionUID = -1854059197765450606L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static SurfaceWindImpl immutableCopyOf(final SurfaceWind surfaceWind) {
         Objects.requireNonNull(surfaceWind);
         if (surfaceWind instanceof SurfaceWindImpl) {
@@ -45,6 +49,11 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
     @SuppressWarnings("EmptyMethod")
     public static class Builder extends SurfaceWindImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+            setVariableDirection(false);
+        }
+
         public static Builder from(final SurfaceWind value) {
             if (value instanceof SurfaceWindImpl) {
                 return ((SurfaceWindImpl) value).toBuilder();
@@ -57,10 +66,6 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
                         .setWindGustOperator(value.getWindGustOperator())
                         .setVariableDirection(value.isVariableDirection());
             }
-        }
-
-        public Builder() {
-            setVariableDirection(false);
         }
 
         @Override

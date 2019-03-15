@@ -24,6 +24,10 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
 
     private static final long serialVersionUID = 7783515832011053005L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static SIGMETImpl immutableCopyOf(final SIGMET sigmet) {
         requireNonNull(sigmet);
         if (sigmet instanceof SIGMETImpl) {
@@ -55,6 +59,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
 
     public static class Builder extends SIGMETImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setTranslated(false);
         }

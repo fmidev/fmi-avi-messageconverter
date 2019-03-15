@@ -31,6 +31,10 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
 
     private static final long serialVersionUID = -6578295705372073484L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static ObservedCloudsImpl immutableCopyOf(final ObservedClouds observedClouds) {
         Objects.requireNonNull(observedClouds);
         if (observedClouds instanceof ObservedCloudsImpl) {
@@ -50,6 +54,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
 
     public static class Builder extends ObservedCloudsImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setNoCloudsDetectedByAutoSystem(false);
             setNoSignificantCloud(false);

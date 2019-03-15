@@ -21,6 +21,10 @@ import fi.fmi.avi.model.metar.ObservedCloudLayer;
         "heightUnobservableByAutoSystem", "cloudTypeUnobservableByAutoSystem" })
 public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.ObservedCloudLayer {
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static ObservedCloudLayerImpl immutableCopyOf(final CloudLayer layer) {
         Objects.requireNonNull(layer);
         if (layer instanceof ObservedCloudLayerImpl) {
@@ -42,6 +46,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
 
     public static class Builder extends ObservedCloudLayerImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setAmountNotDetectedByAutoSystem(false);
             setAmountUnobservableByAutoSystem(false);

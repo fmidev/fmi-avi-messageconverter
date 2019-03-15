@@ -25,6 +25,10 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
 
     private static final long serialVersionUID = -5003174214648821010L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static RunwayDirectionImpl immutableCopyOf(final RunwayDirection runwayDirection) {
         Objects.requireNonNull(runwayDirection);
         if (runwayDirection instanceof RunwayDirectionImpl) {
@@ -43,6 +47,10 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
     public abstract Builder toBuilder();
 
     public static class Builder extends RunwayDirectionImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final RunwayDirection value) {
             if (value instanceof RunwayDirectionImpl) {

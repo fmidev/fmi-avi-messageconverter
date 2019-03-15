@@ -21,6 +21,12 @@ import fi.fmi.avi.model.taf.TAFBulletinHeading;
 @JsonPropertyOrder({ "issueTime", "heading", "messages" })
 public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
 
+    private static final long serialVersionUID = 8584221872062469463L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static TAFBulletinImpl immutableCopyOf(final TAFBulletin bulletin) {
         Objects.requireNonNull(bulletin);
         if (bulletin instanceof TAFBulletinImpl) {
@@ -37,6 +43,10 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
     public abstract Builder toBuilder();
 
     public static class Builder extends TAFBulletinImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final TAFBulletin value) {
             if (value instanceof TAFBulletinImpl) {

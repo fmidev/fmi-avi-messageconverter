@@ -34,6 +34,10 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
             "^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
     private static final long serialVersionUID = 875078230227696812L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static PartialOrCompleteTimePeriod createValidityTimeDHDH(final String partialTimePeriod) throws IllegalArgumentException {
         final Matcher matcher = DAY_HOUR_DAY_HOUR_PATTERN.matcher(partialTimePeriod);
         if (matcher.matches()) {
@@ -135,6 +139,11 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     }
 
     public static class Builder extends PartialOrCompleteTimePeriod_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
+
         public Builder setTrendTimeGroupToken(final String token) {
             requireNonNull(token, "token");
             final String kind = token.substring(0, Math.min(2, token.length()));

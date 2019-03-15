@@ -371,6 +371,12 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
 
     @FreeBuilder
     abstract static class TestTAFForecast implements TAFForecast {
+
+        @Override
+        public  TAFForecast.Builder<? extends TAFForecast, ? extends TAFForecast.Builder> toBuilder() {
+            return null;
+        }
+
         public static class Builder extends AbstractTAFForecast_Builder_MergeFromTest_TestTAFForecast_Builder {
         }
     }

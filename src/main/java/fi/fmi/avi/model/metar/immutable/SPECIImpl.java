@@ -42,6 +42,10 @@ import fi.fmi.avi.model.metar.WindShear;
 public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportImpl implements SPECI, Serializable {
     private static final long serialVersionUID = 1918131429312289735L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static SPECIImpl immutableCopyOf(final SPECI speci) {
         requireNonNull(speci);
         if (speci instanceof SPECIImpl) {
@@ -62,6 +66,7 @@ public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportI
 
     public static class Builder extends SPECIImpl_Builder implements MeteorologicalTerminalAirReportBuilder<SPECIImpl, Builder> {
 
+        @Deprecated
         public Builder() {
             setTranslated(false);
             setAutomatedStation(false);

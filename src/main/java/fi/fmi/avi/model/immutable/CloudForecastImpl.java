@@ -28,6 +28,10 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
 
     private static final long serialVersionUID = -8501483321135680561L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static CloudForecastImpl immutableCopyOf(final CloudForecast cloudForecast) {
         Objects.requireNonNull(cloudForecast);
         if (cloudForecast instanceof CloudForecastImpl) {
@@ -47,6 +51,7 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
 
     public static class Builder extends CloudForecastImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setVerticalVisibilityMissing(false);
             setNoSignificantCloud(false);

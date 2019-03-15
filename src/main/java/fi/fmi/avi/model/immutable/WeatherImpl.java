@@ -459,6 +459,10 @@ public abstract class WeatherImpl implements Weather, Serializable {
         WEATHER_CODES = Collections.unmodifiableMap(_WEATHER_CODES);
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static WeatherImpl immutableCopyOf(final Weather weather) {
         Objects.requireNonNull(weather);
         if (weather instanceof WeatherImpl) {
@@ -490,6 +494,11 @@ public abstract class WeatherImpl implements Weather, Serializable {
     public abstract Builder toBuilder();
 
     public static class Builder extends WeatherImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
+
         public static Builder from(final Weather value) {
             if (value instanceof WeatherImpl) {
                 return ((WeatherImpl) value).toBuilder();

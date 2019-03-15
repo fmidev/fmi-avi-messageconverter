@@ -26,6 +26,10 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
 
     private static final long serialVersionUID = 5189785512501203996L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static HorizontalVisibilityImpl immutableCopyOf(final HorizontalVisibility horizontalVisibility) {
         Objects.requireNonNull(horizontalVisibility);
         if (horizontalVisibility instanceof HorizontalVisibilityImpl) {
@@ -44,6 +48,10 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
     public abstract Builder toBuilder();
 
     public static class Builder extends HorizontalVisibilityImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final HorizontalVisibility value) {
             if (value instanceof HorizontalVisibilityImpl) {

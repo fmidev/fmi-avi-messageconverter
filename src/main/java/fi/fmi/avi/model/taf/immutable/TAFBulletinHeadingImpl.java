@@ -18,6 +18,12 @@ import fi.fmi.avi.model.taf.TAFBulletinHeading;
 @JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "dataTypeDesignatorT2" })
 public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Serializable {
 
+    private static final long serialVersionUID = -1749468229580332656L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static TAFBulletinHeadingImpl immutableCopyOf(final TAFBulletinHeading heading) {
         Objects.requireNonNull(heading);
         if (heading instanceof TAFBulletinHeadingImpl) {
@@ -35,6 +41,7 @@ public abstract class TAFBulletinHeadingImpl implements TAFBulletinHeading, Seri
 
     public static class Builder extends TAFBulletinHeadingImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setType(Type.NORMAL);
         }

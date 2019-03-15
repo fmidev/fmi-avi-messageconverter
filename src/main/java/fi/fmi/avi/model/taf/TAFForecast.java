@@ -32,6 +32,8 @@ public interface TAFForecast extends AviationCodeListUser {
 
     Optional<CloudForecast> getCloud();
 
+    TAFForecast.Builder<? extends TAFForecast, ? extends TAFForecast.Builder> toBuilder();
+
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     interface Builder<T extends TAFForecast, B extends Builder<T, B>> {
         /**

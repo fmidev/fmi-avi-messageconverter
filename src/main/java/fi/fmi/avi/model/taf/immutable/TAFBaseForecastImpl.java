@@ -36,6 +36,10 @@ import fi.fmi.avi.model.taf.TAFForecastBuilderHelper;
 public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializable {
     private static final long serialVersionUID = -4188299349543187396L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static TAFBaseForecastImpl immutableCopyOf(final TAFBaseForecast baseForecast) {
         requireNonNull(baseForecast);
         if (baseForecast instanceof TAFBaseForecastImpl) {
@@ -54,6 +58,7 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
 
     public static class Builder extends TAFBaseForecastImpl_Builder implements TAFForecast.Builder<TAFBaseForecastImpl, Builder> {
 
+        @Deprecated
         public Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);

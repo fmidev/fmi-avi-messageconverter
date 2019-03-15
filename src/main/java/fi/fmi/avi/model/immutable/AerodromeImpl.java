@@ -25,6 +25,10 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
     private static final long serialVersionUID = -6822087279546133445L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static AerodromeImpl immutableCopyOf(final Aerodrome aerodrome) {
         Objects.requireNonNull(aerodrome);
         if (aerodrome instanceof AerodromeImpl) {
@@ -42,6 +46,10 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
     public abstract Builder toBuilder();
 
     public static class Builder extends AerodromeImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final Aerodrome value) {
             if (value instanceof AerodromeImpl) {

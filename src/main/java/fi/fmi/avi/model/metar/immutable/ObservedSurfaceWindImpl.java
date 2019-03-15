@@ -27,6 +27,10 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
 
     private static final long serialVersionUID = 5086615958779121088L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static ObservedSurfaceWindImpl immutableCopyOf(final ObservedSurfaceWind observedSurfaceWind) {
         Objects.requireNonNull(observedSurfaceWind);
         if (observedSurfaceWind instanceof ObservedSurfaceWindImpl) {
@@ -46,6 +50,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
 
     public static class Builder extends ObservedSurfaceWindImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setVariableDirection(false);
         }

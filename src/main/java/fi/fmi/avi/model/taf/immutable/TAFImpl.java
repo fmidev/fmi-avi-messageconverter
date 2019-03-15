@@ -49,6 +49,10 @@ public abstract class TAFImpl implements TAF, Serializable {
 
     private static final long serialVersionUID = -449932311496894566L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static TAFImpl immutableCopyOf(final TAF taf) {
         requireNonNull(taf);
         if (taf instanceof TAFImpl) {
@@ -113,6 +117,7 @@ public abstract class TAFImpl implements TAF, Serializable {
 
     public static class Builder extends TAFImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setStatus(TAFStatus.NORMAL);
             setTranslated(false);

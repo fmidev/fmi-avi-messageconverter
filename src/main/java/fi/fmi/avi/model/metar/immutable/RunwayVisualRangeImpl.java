@@ -30,6 +30,10 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
 
     private static final long serialVersionUID = 6512555668623334989L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static List<RunwayVisualRange> copyOfList(final List<RunwayVisualRange> runwayVisualRanges) {
         return null;
     }
@@ -57,6 +61,10 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
     public abstract Builder toBuilder();
 
     public static class Builder extends RunwayVisualRangeImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final RunwayVisualRange value) {
             if (value instanceof RunwayVisualRangeImpl) {

@@ -24,6 +24,10 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
 
     private static final long serialVersionUID = 8955711992731295488L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static NumericMeasureImpl of(final Integer value, final String uom) {
         return new Builder().setValue(value.doubleValue()).setUom(uom).build();
     }
@@ -49,6 +53,10 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
     public abstract Builder toBuilder();
 
     public static class Builder extends NumericMeasureImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final NumericMeasure value) {
             if (value instanceof NumericMeasureImpl) {

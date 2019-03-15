@@ -17,6 +17,10 @@ import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
 @JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber", "dataTypeDesignatorT2" })
 public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading {
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static SIGMETBulletinHeadingImpl immutableCopyOf(final SIGMETBulletinHeading heading) {
         Objects.requireNonNull(heading);
         if (heading instanceof SIGMETBulletinHeadingImpl) {
@@ -35,6 +39,7 @@ public abstract class SIGMETBulletinHeadingImpl implements SIGMETBulletinHeading
 
     public static class Builder extends SIGMETBulletinHeadingImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setType(Type.NORMAL);
         }

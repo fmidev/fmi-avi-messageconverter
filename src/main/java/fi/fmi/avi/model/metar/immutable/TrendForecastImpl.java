@@ -36,6 +36,10 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
 
     private static final long serialVersionUID = 6616569232494572943L;
 
+    public static Builder builder(){
+        return new Builder();
+    }
+
     public static TrendForecastImpl immutableCopyOf(final TrendForecast trendForecast) {
         Objects.requireNonNull(trendForecast);
         if (trendForecast instanceof TrendForecastImpl) {
@@ -54,6 +58,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
 
     public static class Builder extends TrendForecastImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);

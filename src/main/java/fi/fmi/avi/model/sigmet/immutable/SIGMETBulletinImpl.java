@@ -20,6 +20,10 @@ import fi.fmi.avi.model.sigmet.SIGMETBulletinHeading;
 @JsonPropertyOrder({ "issueTime", "heading", "messages" })
 public abstract class SIGMETBulletinImpl implements SIGMETBulletin {
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static SIGMETBulletinImpl immutableCopyOf(final SIGMETBulletin bulletin) {
         Objects.requireNonNull(bulletin);
         if (bulletin instanceof SIGMETBulletinImpl) {
@@ -37,6 +41,10 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin {
     public abstract Builder toBuilder();
 
     public static class Builder extends SIGMETBulletinImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final SIGMETBulletin value) {
             if (value instanceof SIGMETBulletinImpl) {
