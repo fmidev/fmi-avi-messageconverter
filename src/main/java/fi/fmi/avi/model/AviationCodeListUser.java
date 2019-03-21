@@ -427,8 +427,9 @@ public interface AviationCodeListUser {
         }
     }
     
-    enum PermissibleUsage {OPERATIONAL, NON_OPERATIONAL}
+    enum PermissibleUsage { OPERATIONAL, NON_OPERATIONAL}
     
-    enum PermissibleUsageReason {TEST, EXERCISE}
+    enum PermissibleUsageReason { TEST, EXERCISE}
 
+    enum MessageType { TAF, METAR, SPECI, SIGMET, GAFOR, AIRMET, TROPICAL_CYCLONE_ADVISORY, VOLCANIC_ASH_ADVISORY, BULLETIN}
 }

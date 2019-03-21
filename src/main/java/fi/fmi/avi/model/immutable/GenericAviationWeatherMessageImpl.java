@@ -41,8 +41,10 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
     @Override
     @JsonIgnore
     public boolean areAllTimeReferencesComplete() {
-        if (!this.getIssueTime().getCompleteTime().isPresent()) {
-            return false;
+        if (this.getIssueTime().isPresent()) {
+            if (!this.getIssueTime().get().getCompleteTime().isPresent()) {
+                return false;
+            }
         }
         if (this.getValidityTime().isPresent()) {
             if (!this.getValidityTime().get().isComplete()) {
@@ -59,7 +61,7 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
                 return ((GenericAviationWeatherMessageImpl) value).toBuilder();
             } else {
                 //From AviationWeatherMessage:
-                GenericAviationWeatherMessageImpl.Builder retval = new GenericAviationWeatherMessageImpl.Builder()//
+                final GenericAviationWeatherMessageImpl.Builder retval = new GenericAviationWeatherMessageImpl.Builder()//
                         .setPermissibleUsage(value.getPermissibleUsage())//
                         .setPermissibleUsageReason(value.getPermissibleUsageReason())//
                         .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())//
