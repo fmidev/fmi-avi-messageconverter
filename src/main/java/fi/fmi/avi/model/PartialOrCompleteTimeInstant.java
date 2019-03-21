@@ -147,6 +147,9 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
         @Override
         public PartialOrCompleteTimeInstant build() {
+            if (!this.getPartialTime().isPresent() && !this.getCompleteTime().isPresent()){
+                throw new IllegalStateException("Either complete or partial time must be given");
+            }
             getPartialTime().ifPresent(partialTime -> //
                     getCompleteTime().ifPresent(completeTime -> {
                         if (!partialTime.representsStrict(completeTime)) {
