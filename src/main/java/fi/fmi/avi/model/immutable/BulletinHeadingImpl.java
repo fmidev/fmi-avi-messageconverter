@@ -28,7 +28,7 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 @JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber",
         "dataTypeDesignatorT2" })
 public abstract class BulletinHeadingImpl implements BulletinHeading, Serializable {
-    private static Pattern ABBREVIATED_HEADING = Pattern.compile(
+    private static final Pattern ABBREVIATED_HEADING = Pattern.compile(
             "^(?<TT>[A-Z]{2})(?<AA>[A-Z]{2})(?<ii>[0-9]{2})" + "(?<CCCC>[A-Z]{4})(?<YY>[0-9]{2})(?<GG>[0-9]{2})(?<gg>[0-9]{2})(?<BBB>(CC|RR|AA)[A-Z])?$");
 
     public static BulletinHeadingImpl immutableCopyOf(final BulletinHeading heading) {
