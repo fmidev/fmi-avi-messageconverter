@@ -99,7 +99,7 @@ public class JSONConverter {
         return new SIGMETJSONSerializer();
     }
 
-    @Bean
+    @Bean(name = "airmetJSONSerializer")
     public AviMessageSpecificConverter<AIRMET, String> airmetJSONSerializer() {
         return new AIRMETJSONSerializer();
     }

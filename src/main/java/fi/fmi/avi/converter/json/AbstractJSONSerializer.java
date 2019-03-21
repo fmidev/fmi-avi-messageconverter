@@ -31,6 +31,7 @@ public abstract class AbstractJSONSerializer {
      * @return the result of the conversion
      */
     protected ConversionResult<String> doConvertMessage(AviationWeatherMessage input, ConversionHints hints) {
+        System.err.println("SERIALIZING an AIRMET");
         ConversionResult<String> result = new ConversionResult<>();
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());

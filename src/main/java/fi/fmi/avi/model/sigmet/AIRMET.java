@@ -12,7 +12,8 @@ public interface AIRMET extends SIGMETAIRMET {
     AeronauticalAirmetWeatherPhenomenon getAirmetPhenomenon();
     Optional<AirmetCloudLevels>getCloudLevels();
     Optional<AirmetWind>getWind();
-    Optional<WeatherCausingVisibilityReduction>getObscuration();
+    Optional<List<WeatherCausingVisibilityReduction>>getObscuration();
+    Optional<NumericMeasure>getVisibility();
 
     Optional<AirmetReference> getCancelledReference();
 

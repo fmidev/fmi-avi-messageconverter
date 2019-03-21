@@ -54,6 +54,7 @@ public class JSONAirmetConverterTest {
     @Autowired
     private AviMessageConverter converter;
 
+    @Test
     public void testAIRMETParsing() throws Exception {
         InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
         Objects.requireNonNull(is);

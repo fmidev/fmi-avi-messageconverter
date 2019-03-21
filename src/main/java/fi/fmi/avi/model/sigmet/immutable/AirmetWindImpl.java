@@ -47,8 +47,8 @@ public abstract class AirmetWindImpl implements AirmetWind, Serializable {
                 return ((AirmetWindImpl) value).toBuilder();
             } else {
                 return new AirmetWindImpl.Builder()//
-                        .setSpeed(value.getSpeed())
-                        .setDirection(value.getDirection());
+                        .setSpeed(NumericMeasureImpl.immutableCopyOf(value.getSpeed()))
+                        .setDirection(NumericMeasureImpl.immutableCopyOf(value.getDirection()));
             }
         }
 

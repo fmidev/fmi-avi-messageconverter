@@ -25,11 +25,8 @@ import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
 import fi.fmi.avi.model.sigmet.AirmetReference;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
+import fi.fmi.avi.model.sigmet.AirmetWind;
 import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SigmetReference;
-import fi.fmi.avi.model.sigmet.WSSIGMET;
 
 @FreeBuilder
 @JsonDeserialize(builder = AIRMETImpl.Builder.class)
@@ -110,6 +107,11 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                 //From AirmetSigmet
                 retval.setAirspace(AirspaceImpl.immutableCopyOf(value.getAirspace()));
 
+                retval.setVisibility(NumericMeasureImpl.immutableCopyOf(value.getVisibility()));
+                retval.setObscuration(value.getObscuration());
+                retval.setCloudLevels(AirmetCloudLevelsImpl.immutableCopyOf(value.getCloudLevels()));
+                retval.setWind(AirmetWindImpl.immutableCopyOf(value.getWind()));
+
                 //From Sigmet
                 retval.setStatus(value.getStatus())
                         .setSequenceNumber(value.getSequenceNumber())
@@ -121,7 +123,6 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
 
                 value.getAnalysisGeometries().map(an -> retval.setAnalysisGeometries(
                         (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryWithHeightImpl::immutableCopyOf).collect(Collectors.toList())))));
-
 
                 return retval;
             }
@@ -174,5 +175,13 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setMovingDirection(NumericMeasure direction) { return super.setMovingDirection(direction);}
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setVisibility(NumericMeasure visibility) { return super.setVisibility(visibility);}
+
+        @Override
+        @JsonDeserialize(as = AirmetWindImpl.class)
+        public Builder setWind(AirmetWind windInfo) { return super.setWind(AirmetWindImpl.immutableCopyOf(windInfo));}
     }
 }

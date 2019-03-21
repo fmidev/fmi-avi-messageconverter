@@ -52,6 +52,7 @@ public interface AviationCodeListUser {
             + "RELATED TO AIRMET INFORMATION";
     String CODELIST_AIRMET_EVOLVING_CONDITION_COLLECTION_ANALYSIS = "http://codes.wmo.int/49-2/observation-type/iwxxm/2"
             + ".1/AIRMETEvolvingConditionCollectionAnalysis";
+    String CODELIST_VALUE_WEATHERCAUSINGVISIBILITYREDUCTION = "http://codes.wmo.int/49.2/WeatherCausingVisibilityReduction";
 
     enum MetarStatus {
         NORMAL(0), CORRECTION(1), MISSING(2);
@@ -556,7 +557,7 @@ public interface AviationCodeListUser {
             return this.text;
         }
 
-        public AeronauticalSignificantWeatherPhenomenon fromString(String phen) {
+        public static AeronauticalSignificantWeatherPhenomenon fromString(String phen) {
             for (AeronauticalSignificantWeatherPhenomenon ph : AeronauticalSignificantWeatherPhenomenon.values()) {
                 if (ph.getText().equals(phen)) {
                     return ph;
@@ -634,7 +635,7 @@ public interface AviationCodeListUser {
             this.description=description;
         }
 
-        public WeatherCausingVisibilityReduction fromString(String weather) {
+        public static WeatherCausingVisibilityReduction fromString(String weather) {
             for (WeatherCausingVisibilityReduction ph : WeatherCausingVisibilityReduction.values()) {
                 if (ph.getText().equals(weather)) {
                     return ph;
