@@ -177,6 +177,11 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_TRANSLATION_TIME_SKIP = "SKIP";
 
     /**
+     * The ID of the containing bulletin used in message metadata
+     */
+    public static final Key KEY_BULLETIN_ID;
+
+    /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
      */
     public static final ConversionHints METAR;
@@ -229,6 +234,8 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
         //Values not fixed: the actual time to use may be given as value
         KEY_TRANSLATION_TIME = new KeyImpl(8, "Set the translation time when converting. If the value is an instance of ZonedDateTime, the value is used as translation time");
+
+        KEY_BULLETIN_ID = new KeyImpl(9, "Set the containing bulletin ID when converting from a bulletin format not containing the ID in itself");
 
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
