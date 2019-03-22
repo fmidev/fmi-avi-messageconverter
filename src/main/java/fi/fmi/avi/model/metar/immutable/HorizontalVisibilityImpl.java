@@ -26,6 +26,10 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
 
     private static final long serialVersionUID = 5189785512501203996L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static HorizontalVisibilityImpl immutableCopyOf(final HorizontalVisibility horizontalVisibility) {
         Objects.requireNonNull(horizontalVisibility);
         if (horizontalVisibility instanceof HorizontalVisibilityImpl) {
@@ -45,11 +49,15 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
 
     public static class Builder extends HorizontalVisibilityImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+        }
+
         public static Builder from(final HorizontalVisibility value) {
             if (value instanceof HorizontalVisibilityImpl) {
                 return ((HorizontalVisibilityImpl) value).toBuilder();
             } else {
-                return new HorizontalVisibilityImpl.Builder().setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
+                return HorizontalVisibilityImpl.builder().setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
                         .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
                         .setMinimumVisibility(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibility()))
                         .setMinimumVisibilityDirection(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibilityDirection()));

@@ -43,6 +43,10 @@ public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportI
 
     private static final long serialVersionUID = 5959988117998705772L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static METARImpl immutableCopyOf(final METAR metar) {
         requireNonNull(metar);
         if (metar instanceof METARImpl) {
@@ -62,6 +66,8 @@ public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportI
     public abstract Builder toBuilder();
 
     public static class Builder extends METARImpl_Builder implements MeteorologicalTerminalAirReportBuilder<METARImpl, Builder> {
+
+        @Deprecated
         public Builder() {
             setTranslated(false);
             setAutomatedStation(false);
@@ -75,7 +81,7 @@ public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportI
             if (value instanceof METARImpl) {
                 return ((METARImpl) value).toBuilder();
             }
-            return new METARImpl.Builder().copyFrom(value);
+            return METARImpl.builder().copyFrom(value);
         }
 
         @Override

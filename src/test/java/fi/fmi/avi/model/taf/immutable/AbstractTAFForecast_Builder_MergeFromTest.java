@@ -42,19 +42,19 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
     }
 
     protected static CloudForecast newCloudForecast(final CloudLayer... cloudLayers) {
-        return new CloudForecastImpl.Builder()//
+        return CloudForecastImpl.builder()//
                 .setLayers(Collections.unmodifiableList(Arrays.asList(cloudLayers)))//
                 .build();
     }
 
     protected static CloudForecast newCloudForecast(final double verticalVisibilityFeet) {
-        return new CloudForecastImpl.Builder()//
+        return CloudForecastImpl.builder()//
                 .setVerticalVisibility(NumericMeasureImpl.of(verticalVisibilityFeet, FEET))//
                 .build();
     }
 
     protected static CloudLayer newCloudLayer(final AviationCodeListUser.CloudAmount amount, final double baseFeet) {
-        return new CloudLayerImpl.Builder()//
+        return CloudLayerImpl.builder()//
                 .setAmount(amount)//
                 .setBase(NumericMeasureImpl.of(baseFeet, FEET))//
                 .build();
@@ -65,7 +65,7 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
     }
 
     protected static SurfaceWind newSurfaceWind(final double meanDirectionDegrees, final double meanSpeed) {
-        final SurfaceWindImpl.Builder builder = new SurfaceWindImpl.Builder();
+        final SurfaceWindImpl.Builder builder = SurfaceWindImpl.builder();
         final boolean variableDirection = meanDirectionDegrees == VARIABLE_WIND_DIRECTION;
         if (variableDirection) {
             builder.setVariableDirection(true);

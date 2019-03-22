@@ -30,6 +30,10 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
 
     private static final long serialVersionUID = 5824760002670364242L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static RunwayStateImpl immutableCopyOf(final RunwayState runwayState) {
         Objects.requireNonNull(runwayState);
         if (runwayState instanceof RunwayStateImpl) {
@@ -49,11 +53,22 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
 
     public static class Builder extends RunwayStateImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+            setAppliedToAllRunways(false);
+            setEstimatedSurfaceFrictionUnreliable(false);
+            setRepetition(false);
+            setDepthNotMeasurable(false);
+            setDepthInsignificant(false);
+            setRunwayNotOperational(false);
+            setCleared(false);
+        }
+
         public static Builder from(final RunwayState value) {
             if (value instanceof RunwayStateImpl) {
                 return ((RunwayStateImpl) value).toBuilder();
             } else {
-                return new RunwayStateImpl.Builder().setAppliedToAllRunways(value.isAppliedToAllRunways())
+                return RunwayStateImpl.builder().setAppliedToAllRunways(value.isAppliedToAllRunways())
                         .setBrakingAction(value.getBrakingAction())
                         .setCleared(value.isCleared())
                         .setContamination(value.getContamination())
@@ -65,16 +80,6 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
                         .setEstimatedSurfaceFriction(value.getEstimatedSurfaceFriction())
                         .setRepetition(value.isRepetition());
             }
-        }
-
-        public Builder() {
-            setAppliedToAllRunways(false);
-            setEstimatedSurfaceFrictionUnreliable(false);
-            setRepetition(false);
-            setDepthNotMeasurable(false);
-            setDepthInsignificant(false);
-            setRunwayNotOperational(false);
-            setCleared(false);
         }
         @Override
         @JsonDeserialize(as = RunwayDirectionImpl.class)

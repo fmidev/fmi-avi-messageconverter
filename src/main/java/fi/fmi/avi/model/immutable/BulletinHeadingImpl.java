@@ -31,6 +31,10 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
     private static final Pattern ABBREVIATED_HEADING = Pattern.compile(
             "^(?<TT>[A-Z]{2})(?<AA>[A-Z]{2})(?<ii>[0-9]{2})" + "(?<CCCC>[A-Z]{4})(?<YY>[0-9]{2})(?<GG>[0-9]{2})(?<gg>[0-9]{2})(?<BBB>(CC|RR|AA)[A-Z])?$");
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static BulletinHeadingImpl immutableCopyOf(final BulletinHeading heading) {
         Objects.requireNonNull(heading);
         if (heading instanceof BulletinHeadingImpl) {
@@ -53,6 +57,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
 
     public static class Builder extends BulletinHeadingImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setType(Type.NORMAL);
         }

@@ -36,6 +36,10 @@ public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serial
 
     private static final long serialVersionUID = -4546515627257056285L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static TAFChangeForecastImpl immutableCopyOf(final TAFChangeForecast changeForecast) {
         requireNonNull(changeForecast);
         if (changeForecast instanceof TAFChangeForecastImpl) {
@@ -54,6 +58,7 @@ public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serial
 
     public static class Builder extends TAFChangeForecastImpl_Builder implements TAFForecast.Builder<TAFChangeForecastImpl, Builder> {
 
+        @Deprecated
         public Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);

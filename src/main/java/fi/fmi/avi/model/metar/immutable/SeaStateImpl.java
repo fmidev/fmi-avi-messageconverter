@@ -25,6 +25,10 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
 
     private static final long serialVersionUID = -2776254118856198495L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static SeaStateImpl immutableCopyOf(final SeaState seaState) {
         Objects.requireNonNull(seaState);
         if (seaState instanceof SeaStateImpl) {
@@ -44,11 +48,15 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
 
     public static class Builder extends SeaStateImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+        }
+
         public static Builder from(final SeaState value) {
             if (value instanceof SeaStateImpl) {
                 return ((SeaStateImpl) value).toBuilder();
             } else {
-                return new SeaStateImpl.Builder()//
+                return SeaStateImpl.builder()//
                         .setSeaSurfaceState(value.getSeaSurfaceState())//
                         .setSeaSurfaceTemperature(NumericMeasureImpl.immutableCopyOf(value.getSeaSurfaceTemperature()))//
                         .setSignificantWaveHeight(NumericMeasureImpl.immutableCopyOf(value.getSignificantWaveHeight()));

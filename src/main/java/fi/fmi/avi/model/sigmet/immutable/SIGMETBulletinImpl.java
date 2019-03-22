@@ -25,7 +25,11 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
 
     private static final long serialVersionUID = 7742724278322130499L;
 
-    public static SIGMETBulletinImpl immutableCopyOf(final MeteorologicalBulletin<SIGMET> bulletin) {
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static SIGMETBulletinImpl immutableCopyOf(final SIGMETBulletin bulletin) {
         Objects.requireNonNull(bulletin);
         if (bulletin instanceof SIGMETBulletinImpl) {
             return (SIGMETBulletinImpl) bulletin;
@@ -35,21 +39,28 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Optional<SIGMETBulletinImpl> immutableCopyOf(final Optional<MeteorologicalBulletin<SIGMET>> bulletin) {
+    public static Optional<SIGMETBulletinImpl> immutableCopyOf(final Optional<SIGMETBulletin> bulletin) {
         return bulletin.map(SIGMETBulletinImpl::immutableCopyOf);
     }
+
 
     public abstract Builder toBuilder();
 
     public static class Builder extends SIGMETBulletinImpl_Builder {
 
-        public static Builder from(final MeteorologicalBulletin<SIGMET> value) {
+        @Deprecated
+        public Builder() {
+        }
+
+        public static Builder from(final SIGMETBulletin value) {
             if (value instanceof SIGMETBulletinImpl) {
                 return ((SIGMETBulletinImpl) value).toBuilder();
             } else {
-                return new SIGMETBulletinImpl.Builder()//
+                return SIGMETBulletinImpl.builder()//
                         .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
-                        .setTimeStamp(value.getTimeStamp()).addAllMessages(value.getMessages()).addAllTimeStampFields(value.getTimeStampFields());
+                        .setTimeStamp(value.getTimeStamp())//
+                        .addAllMessages(value.getMessages())//
+                        .addAllTimeStampFields(value.getTimeStampFields());
             }
         }
 

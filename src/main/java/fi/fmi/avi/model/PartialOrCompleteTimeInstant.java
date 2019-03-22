@@ -31,6 +31,10 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
     private static final long serialVersionUID = -3820077096763961462L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static PartialOrCompleteTimeInstant createIssueTime(final String partialDateTime) {
         return of(PartialDateTime.parseTACString(partialDateTime, PartialField.MINUTE));
     }
@@ -48,17 +52,17 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
     }
 
     public static PartialOrCompleteTimeInstant of(final PartialDateTime partialDateTime) {
-        return new Builder().setPartialTime(partialDateTime).build();
+        return builder().setPartialTime(partialDateTime).build();
     }
 
     public static PartialOrCompleteTimeInstant of(final ZonedDateTime completeTime) {
-        return new Builder().setCompleteTime(completeTime).build();
+        return builder().setCompleteTime(completeTime).build();
     }
 
     public static PartialOrCompleteTimeInstant of(final PartialDateTime partialDateTime, final ZonedDateTime completeTime) {
         requireNonNull(partialDateTime, "partialDateTime");
         requireNonNull(completeTime, "completeTime");
-        return new Builder()//
+        return builder()//
                 .setPartialTime(partialDateTime)//
                 .setCompleteTime(completeTime)//
                 .build();
@@ -142,6 +146,8 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
     public abstract Builder toBuilder();
 
     public static class Builder extends PartialOrCompleteTimeInstant_Builder {
+
+        @Deprecated
         public Builder() {
         }
 

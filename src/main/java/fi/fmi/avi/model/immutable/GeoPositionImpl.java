@@ -24,6 +24,10 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
 
     private static final long serialVersionUID = -69857237712526561L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static GeoPositionImpl immutableCopyOf(final GeoPosition geoPosition) {
         Objects.requireNonNull(geoPosition);
         if (geoPosition instanceof GeoPositionImpl) {
@@ -43,11 +47,15 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
 
     public static class Builder extends GeoPositionImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+        }
+
         public static Builder from(final GeoPosition value) {
             if (value instanceof GeoPositionImpl) {
                 return ((GeoPositionImpl) value).toBuilder();
             } else {
-                return new GeoPositionImpl.Builder()//
+                return GeoPositionImpl.builder()//
                         .setCoordinateReferenceSystemId(value.getCoordinateReferenceSystemId())//
                         .addAllCoordinates(value.getCoordinates())
                         .setElevationUom(value.getElevationUom())

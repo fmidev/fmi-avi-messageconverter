@@ -30,6 +30,10 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
 
     private static final long serialVersionUID = 6512555668623334989L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static List<RunwayVisualRange> copyOfList(final List<RunwayVisualRange> runwayVisualRanges) {
         return null;
     }
@@ -58,11 +62,15 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
 
     public static class Builder extends RunwayVisualRangeImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+        }
+
         public static Builder from(final RunwayVisualRange value) {
             if (value instanceof RunwayVisualRangeImpl) {
                 return ((RunwayVisualRangeImpl) value).toBuilder();
             } else {
-                return new RunwayVisualRangeImpl.Builder()//
+                return RunwayVisualRangeImpl.builder()//
                         .setMeanRVR(NumericMeasureImpl.immutableCopyOf(value.getMeanRVR()))
                         .setMeanRVROperator(value.getMeanRVROperator())
                         .setPastTendency(value.getPastTendency())

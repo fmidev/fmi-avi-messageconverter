@@ -25,7 +25,7 @@ public class METARTimeReferencesTest {
 
     @Test
     public void testIssueTimeCompletion() {
-        final METAR msg = new METARImpl.Builder()//
+        final METAR msg = METARImpl.builder()//
                 .setIssueTime(PartialOrCompleteTimeInstant.createIssueTime("311004Z"))//
                 .withCompleteIssueTime(YearMonth.of(2017, Month.DECEMBER))//
                 .buildPartial();
@@ -42,8 +42,8 @@ public class METARTimeReferencesTest {
     @Test
     public void testTrendValidTimeCompletion() {
         final List<TrendForecast> changeForecasts = new ArrayList<>();
-        changeForecasts.add(new TrendForecastImpl.Builder()//
-                .setPeriodOfChange(new PartialOrCompleteTimePeriod.Builder()//
+        changeForecasts.add(TrendForecastImpl.builder()//
+                .setPeriodOfChange(PartialOrCompleteTimePeriod.builder()//
                         .setTrendTimeGroupToken("FM1130")//
                         .setTrendTimeGroupToken("TL1300")//
                         .build())//
@@ -51,20 +51,20 @@ public class METARTimeReferencesTest {
                 .setChangeIndicator(AviationCodeListUser.TrendForecastChangeIndicator.TEMPORARY_FLUCTUATIONS)//
                 .setNoSignificantWeather(true)//
                 .build());
-        changeForecasts.add(new TrendForecastImpl.Builder()//
-                .setPeriodOfChange(new PartialOrCompleteTimePeriod.Builder().setTrendTimeGroupToken("TL0900").build())//
+        changeForecasts.add(TrendForecastImpl.builder()//
+                .setPeriodOfChange(PartialOrCompleteTimePeriod.builder().setTrendTimeGroupToken("TL0900").build())//
                 .setCeilingAndVisibilityOk(true)//
                 .setChangeIndicator(AviationCodeListUser.TrendForecastChangeIndicator.TEMPORARY_FLUCTUATIONS)//
                 .setNoSignificantWeather(true)//
                 .build());
-        changeForecasts.add(new TrendForecastImpl.Builder()//
-                .setInstantOfChange(new PartialOrCompleteTimeInstant.Builder().setTrendTimeGroupToken("AT1200").build())//
+        changeForecasts.add(TrendForecastImpl.builder()//
+                .setInstantOfChange(PartialOrCompleteTimeInstant.builder().setTrendTimeGroupToken("AT1200").build())//
                 .setCeilingAndVisibilityOk(true)//
                 .setChangeIndicator(AviationCodeListUser.TrendForecastChangeIndicator.TEMPORARY_FLUCTUATIONS)//
                 .setNoSignificantWeather(true)//
                 .build());
 
-        final METAR msg = new METARImpl.Builder()//
+        final METAR msg = METARImpl.builder()//
                 .setTrends(changeForecasts)//
                 .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 10, ZoneId.of("Z"))//
                 .buildPartial();

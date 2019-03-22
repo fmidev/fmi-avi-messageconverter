@@ -24,6 +24,10 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
 
     private static final long serialVersionUID = 7312850983219439091L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static ObservedCloudLayerImpl immutableCopyOf(final CloudLayer layer) {
         Objects.requireNonNull(layer);
         if (layer instanceof ObservedCloudLayerImpl) {
@@ -45,6 +49,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
 
     public static class Builder extends ObservedCloudLayerImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setAmountNotDetectedByAutoSystem(false);
             setAmountUnobservableByAutoSystem(false);
@@ -70,7 +75,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
             if (value instanceof ObservedCloudLayerImpl) {
                 return ((ObservedCloudLayerImpl) value).toBuilder();
             } else {
-                return new ObservedCloudLayerImpl.Builder().setAmount(value.getAmount())//
+                return ObservedCloudLayerImpl.builder().setAmount(value.getAmount())//
                         .setCloudType(value.getCloudType())//
                         .setBase(NumericMeasureImpl.immutableCopyOf(value.getBase()));
             }

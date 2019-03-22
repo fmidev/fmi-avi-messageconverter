@@ -22,12 +22,12 @@ public class TAFBulletinTest {
     @Test
     public void testTAFBulletinLengthConsistentLong() throws Exception {
         final TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
-        final AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()//
+        final AerodromeImpl.Builder airportBuilder = AerodromeImpl.builder()//
                 .setDesignator("EETN")//
                 .setName("Vaasa Airport")//
                 .setFieldElevationValue(19.0)//
                 .setLocationIndicatorICAO("EFVA")//
-                .setReferencePoint(new GeoPositionImpl.Builder()//
+                .setReferencePoint(GeoPositionImpl.builder()//
                         .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")//
                         .addCoordinates(21.762199401855, 63.050701141357)//
                         .setElevationValue(19.0)//
@@ -39,8 +39,9 @@ public class TAFBulletinTest {
                 .withCompleteForecastTimes(YearMonth.of(2017, 7), 27, 11, ZoneId.of("Z"))//
                 .setTranslationTime(ZonedDateTime.now());
 
-        final TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
-                .setHeading(new BulletinHeadingImpl.Builder().setType(BulletinHeading.Type.NORMAL)//
+        final TAFBulletinImpl.Builder bulletinBuilder = TAFBulletinImpl.builder()//
+                .setHeading(BulletinHeadingImpl.builder()//
+                        .setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
@@ -57,12 +58,12 @@ public class TAFBulletinTest {
     @Test(expected = IllegalStateException.class)
     public void testTAFBulletinLengthInconsistentLong() throws Exception {
         final TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
-        final AerodromeImpl.Builder airportBuilder = new AerodromeImpl.Builder()//
+        final AerodromeImpl.Builder airportBuilder = AerodromeImpl.builder()//
                 .setDesignator("EETN")//
                 .setName("Vaasa Airport")//
                 .setFieldElevationValue(19.0)//
                 .setLocationIndicatorICAO("EFVA")//
-                .setReferencePoint(new GeoPositionImpl.Builder()//
+                .setReferencePoint(GeoPositionImpl.builder()//
                         .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")//
                         .addCoordinates(21.762199401855, 63.050701141357)//
                         .setElevationValue(19.0)//
@@ -74,8 +75,9 @@ public class TAFBulletinTest {
                 .withCompleteForecastTimes(YearMonth.of(2017, 7), 27, 11, ZoneId.of("Z"))//
                 .setTranslationTime(ZonedDateTime.now());
 
-        final TAFBulletinImpl.Builder bulletinBuilder = new TAFBulletinImpl.Builder()//
-                .setHeading(new BulletinHeadingImpl.Builder().setType(BulletinHeading.Type.NORMAL)//
+        final TAFBulletinImpl.Builder bulletinBuilder = TAFBulletinImpl.builder()//
+                .setHeading(BulletinHeadingImpl.builder()//
+                        .setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//

@@ -14,7 +14,7 @@ import junitparams.JUnitParamsRunner;
 public class TAFBaseForecastImpl_Builder_MergeFromTest extends AbstractTAFForecast_Builder_MergeFromTest<TAFBaseForecastImpl, TAFBaseForecastImpl.Builder> {
     @Override
     protected TAFBaseForecastImpl.Builder newBuilder() {
-        return new TAFBaseForecastImpl.Builder();
+        return TAFBaseForecastImpl.builder();
     }
 
     @Override
@@ -30,11 +30,11 @@ public class TAFBaseForecastImpl_Builder_MergeFromTest extends AbstractTAFForeca
     @Override
     protected TAFBaseForecastImpl.Builder populateOptionalSpecializedValues(final TAFBaseForecastImpl.Builder builder) {
         return builder//
-                .setTemperatures(Collections.singletonList(new TAFAirTemperatureForecastImpl.Builder()//
+                .setTemperatures(Collections.singletonList(TAFAirTemperatureForecastImpl.builder()//
                         .setMinTemperature(NumericMeasureImpl.of(0.0, DEGREES_CELSIUS))//
-                        .setMinTemperatureTime(new PartialOrCompleteTimeInstant.Builder().setCompleteTime(ZonedDateTime.now()).build())//
+                        .setMinTemperatureTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.now()).build())//
                         .setMaxTemperature(NumericMeasureImpl.of(0.0, DEGREES_CELSIUS))//
-                        .setMaxTemperatureTime(new PartialOrCompleteTimeInstant.Builder().setCompleteTime(ZonedDateTime.now()).build())//
+                        .setMaxTemperatureTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.now()).build())//
                         .build()));
     }
 

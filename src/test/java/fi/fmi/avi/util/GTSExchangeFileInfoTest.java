@@ -20,7 +20,7 @@ public class GTSExchangeFileInfoTest {
         GTSExchangeFileInfo info = new GTSExchangeFileInfo.Builder().setPFlag(GTSExchangeFileInfo.GTSExchangePFlag.A)
                 .setMetadataFile(true)
                 .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.METADATA)
-                .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP).setHeading(new BulletinHeadingImpl.Builder()//
+                .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP).setHeading(BulletinHeadingImpl.builder()//
                         .setLocationIndicator("ABCD")//
                         .setBulletinAugmentationNumber('A')//
                         .setGeographicalDesignator("FI")//
@@ -41,7 +41,7 @@ public class GTSExchangeFileInfoTest {
     @Test
     public void testFileNameParser() {
         GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
-        BulletinHeading expectedHeading = new BulletinHeadingImpl.Builder().setLocationIndicator("ABCD")
+        BulletinHeading expectedHeading = BulletinHeadingImpl.builder().setLocationIndicator("ABCD")
                 .setBulletinAugmentationNumber('A')
                 .setGeographicalDesignator("FI")
                 .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
