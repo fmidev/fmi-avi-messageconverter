@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.taf.immutable;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import org.junit.runner.RunWith;
@@ -31,9 +32,9 @@ public class TAFBaseForecastImpl_Builder_MergeFromTest extends AbstractTAFForeca
         return builder//
                 .setTemperatures(Collections.singletonList(new TAFAirTemperatureForecastImpl.Builder()//
                         .setMinTemperature(NumericMeasureImpl.of(0.0, DEGREES_CELSIUS))//
-                        .setMinTemperatureTime(new PartialOrCompleteTimeInstant.Builder().build())//
+                        .setMinTemperatureTime(new PartialOrCompleteTimeInstant.Builder().setCompleteTime(ZonedDateTime.now()).build())//
                         .setMaxTemperature(NumericMeasureImpl.of(0.0, DEGREES_CELSIUS))//
-                        .setMaxTemperatureTime(new PartialOrCompleteTimeInstant.Builder().build())//
+                        .setMaxTemperatureTime(new PartialOrCompleteTimeInstant.Builder().setCompleteTime(ZonedDateTime.now()).build())//
                         .build()));
     }
 
