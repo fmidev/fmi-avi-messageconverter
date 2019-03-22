@@ -52,4 +52,5 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
 
     Optional<ColorState> getColorState();
 
+    MeteorologicalTerminalAirReportBuilder<? extends MeteorologicalTerminalAirReport, ? extends MeteorologicalTerminalAirReportBuilder> toBuilder();
 }
