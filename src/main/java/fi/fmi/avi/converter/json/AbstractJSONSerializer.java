@@ -41,7 +41,7 @@ public abstract class AbstractJSONSerializer {
             result.setConvertedMessage(sw.toString());
             result.setStatus(ConversionResult.Status.SUCCESS);
         } catch (final IOException e) {
-            result.addIssue(new ConversionIssue(ConversionIssue.Severity.ERROR, ConversionIssue.Type.OTHER,"Error in serializing to JSON", e));
+            result.addIssue(new ConversionIssue(ConversionIssue.Severity.ERROR, ConversionIssue.Type.OTHER, "Error in serializing to JSON", e));
             result.setStatus(ConversionResult.Status.FAIL);
         }
         return result;
