@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionSpecification;
+import fi.fmi.avi.converter.json.GenericMeteorologicalBulletinJSONParser;
+import fi.fmi.avi.converter.json.GenericMeteorologicalBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.METARJSONParser;
 import fi.fmi.avi.converter.json.METARJSONSerializer;
 import fi.fmi.avi.converter.json.SIGMETBulletinJSONParser;
@@ -15,6 +17,7 @@ import fi.fmi.avi.converter.json.TAFBulletinJSONParser;
 import fi.fmi.avi.converter.json.TAFBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.TAFJSONParser;
 import fi.fmi.avi.converter.json.TAFJSONSerializer;
+import fi.fmi.avi.model.GenericMeteorologicalBulletin;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
@@ -58,6 +61,14 @@ public class JSONConverter {
     public static final ConversionSpecification<SIGMETBulletin, String> SIGMET_BULLETIN_POJO_TO_JSON_STRING = new ConversionSpecification<>(
             SIGMETBulletin.class, String.class, null, "SIGMETBulletin, fmi-avi-messageconverter JSON");
 
+
+    /**
+     * Pre-configured spec for {@link GenericMeteorologicalBulletin} to fmi-avi-messageconverter JSON GenericMeteorologicalBulletin document String.
+     */
+    public static final ConversionSpecification<GenericMeteorologicalBulletin, String> GENERIC_METEOROLOGICAL_BULLETIN_POJO_TO_JSON_STRING = new
+            ConversionSpecification<>(
+            GenericMeteorologicalBulletin.class, String.class, null, "GenericMeteorologicalBulletin, fmi-avi-messageconverter JSON");
+
     /**
      * Pre-configured spec for fmi-avi-messageconverter JSON TAF document String to {@link TAF}.
      */
@@ -90,6 +101,13 @@ public class JSONConverter {
             SIGMETBulletin.class, "SIGMETBulletin, fmi-avi-messageconverter JSON", null);
 
 
+    /**
+     * Pre-configured spec for fmi-avi-messageconverter JSON GenericMeteorologicalBulletin document String to
+     * {@link fi.fmi.avi.model.GenericMeteorologicalBulletin}.
+     */
+    public static final ConversionSpecification<String, GenericMeteorologicalBulletin> JSON_STRING_TO_GENERIC_BULLETIN_POJO = new ConversionSpecification<>(String.class,
+            GenericMeteorologicalBulletin.class, "GenericMeteorologicalBulletin, fmi-avi-messageconverter JSON", null);
+
     @Bean
     public AviMessageSpecificConverter<METAR, String> metarJSONSerializer() {
         return new METARJSONSerializer();
@@ -108,6 +126,11 @@ public class JSONConverter {
     @Bean
     public AviMessageSpecificConverter<SIGMETBulletin, String> sigmetBulletinJSONSerializer() {
         return new SIGMETBulletinJSONSerializer();
+    }
+
+    @Bean
+    public AviMessageSpecificConverter<GenericMeteorologicalBulletin, String> genericBulletinJSONSerializer() {
+        return new GenericMeteorologicalBulletinJSONSerializer();
     }
 
     @Bean
@@ -139,5 +162,11 @@ public class JSONConverter {
     public AviMessageSpecificConverter<String, SIGMETBulletin> sigmetBulletinJSONParser() {
         return new SIGMETBulletinJSONParser();
     }
+
+    @Bean
+    public AviMessageSpecificConverter<String, GenericMeteorologicalBulletin> genericBulletinJSONParser() {
+        return new GenericMeteorologicalBulletinJSONParser();
+    }
+
 
 }
