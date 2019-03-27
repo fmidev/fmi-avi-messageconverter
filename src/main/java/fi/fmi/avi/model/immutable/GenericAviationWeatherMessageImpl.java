@@ -12,14 +12,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
 
 @FreeBuilder
-@JsonDeserialize(builder = SurfaceWindImpl.Builder.class)
+@JsonDeserialize(builder = GenericAviationWeatherMessageImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"originalMessage", "messageType", "messageFormat", "issueTime",
-        "validityTime", "targetAerodrome"})
+@JsonPropertyOrder({ "messageType", "messageFormat", "originalMessage",
+        "issueTime", "validityTime", "targetAerodrome"})
 public abstract class GenericAviationWeatherMessageImpl implements GenericAviationWeatherMessage, Serializable {
+
+    private static final long serialVersionUID = 2232603779482075673L;
 
     public static GenericAviationWeatherMessageImpl immutableCopyOf(final GenericAviationWeatherMessage message) {
         Objects.requireNonNull(message);
@@ -54,6 +57,7 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
         return true;
     }
 
+
     public static class Builder extends GenericAviationWeatherMessageImpl_Builder {
 
         public static Builder from(final GenericAviationWeatherMessage value) {
@@ -84,6 +88,12 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
 
                 return retval;
             }
+        }
+
+        @Override
+        @JsonDeserialize(as = AerodromeImpl.class)
+        public Builder setTargetAerodrome(final Aerodrome aerodrome) {
+            return super.setTargetAerodrome(aerodrome);
         }
     }
 }

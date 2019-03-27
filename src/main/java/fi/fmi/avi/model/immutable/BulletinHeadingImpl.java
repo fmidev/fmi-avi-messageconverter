@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 import org.inferred.freebuilder.FreeBuilder;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonParser;
@@ -25,11 +24,12 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 @FreeBuilder
 @JsonDeserialize(builder = BulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "locationIndicator", "geographicalDesignator", "bulletinNumber", "type", "bulletinAugmentationNumber",
-        "dataTypeDesignatorT2" })
+@JsonPropertyOrder({ "geographicalDesignator", "locationIndicator", "bulletinNumber",  "bulletinAugmentationNumber",
+        "issueTime", "type", "dataTypeDesignatorT1ForTAC", "dataTypeDesignatorT2" })
 public abstract class BulletinHeadingImpl implements BulletinHeading, Serializable {
     private static final Pattern ABBREVIATED_HEADING = Pattern.compile(
             "^(?<TT>[A-Z]{2})(?<AA>[A-Z]{2})(?<ii>[0-9]{2})" + "(?<CCCC>[A-Z]{4})(?<YY>[0-9]{2})(?<GG>[0-9]{2})(?<gg>[0-9]{2})(?<BBB>(CC|RR|AA)[A-Z])?$");
+    private static final long serialVersionUID = -7537001968102122857L;
 
     public static Builder builder() {
         return new Builder();
@@ -49,10 +49,11 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         return heading.map(BulletinHeadingImpl::immutableCopyOf);
     }
 
+    /*
     @Override
     @JsonIgnore
     public abstract DataTypeDesignatorT1 getDataTypeDesignatorT1ForTAC();
-
+    */
     public abstract Builder toBuilder();
 
     public static class Builder extends BulletinHeadingImpl_Builder {

@@ -3,6 +3,8 @@ package fi.fmi.avi.model;
 import java.time.YearMonth;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public interface BulletinHeading {
 
     /**
@@ -22,6 +24,7 @@ public interface BulletinHeading {
      *
      * @return
      */
+    @JsonIgnore
     default DataTypeDesignatorT1 getDataTypeDesignatorT1ForXML() {
         return DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML;
     }
@@ -32,6 +35,7 @@ public interface BulletinHeading {
      *
      * @return
      */
+    @JsonIgnore
     default String getDataTypeDesignatorsForTAC() {
         return "" + getDataTypeDesignatorT1ForTAC().getCode() + getDataTypeDesignatorT2().getCode();
     }
@@ -40,6 +44,7 @@ public interface BulletinHeading {
      *
      * @return
      */
+    @JsonIgnore
     default String getDataTypeDesignatorsForXML() {
         return "" + getDataTypeDesignatorT1ForXML().getCode() + getDataTypeDesignatorT2().getCode();
     }
@@ -48,6 +53,7 @@ public interface BulletinHeading {
      *
      * @return
      */
+    @JsonIgnore
     default String getDataDesignatorsForTAC() {
         return "" + getDataTypeDesignatorsForTAC() + getGeographicalDesignator() + String.format("%02d", getBulletinNumber());
     }
@@ -56,6 +62,7 @@ public interface BulletinHeading {
      *
      * @return
      */
+    @JsonIgnore
     default String getDataDesignatorsForXML() {
         return "" + getDataTypeDesignatorsForXML() + getGeographicalDesignator() + String.format("%02d", getBulletinNumber());
     }
