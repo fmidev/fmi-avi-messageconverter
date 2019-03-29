@@ -432,4 +432,73 @@ public interface AviationCodeListUser {
     enum PermissibleUsageReason { TEST, EXERCISE }
 
     enum MessageType { TAF, METAR, SPECI, SIGMET, GAFOR, AIRMET, TROPICAL_CYCLONE_ADVISORY, VOLCANIC_ASH_ADVISORY, BULLETIN, GENERIC }
+
+    //From: http://codes.wmo.int/49-2/SigWxPhenomena
+    enum AeronauticalSignificantWeatherPhenomenon {
+        EMBD_TS("EMBD_TS"),
+        EMBD_TSGR("EMBD_TSGR"),
+        FRQ_TS("FRQ_TS"),
+        FRQ_TSGR("FRQ_TSGR"),
+        HVY_DS("HVY_DS"),
+        HVY_SS("HVY_SS"),
+        OBSC_TS("OBSC_TS"),
+        OBSC_TSGR("OBSC_TSGR"),
+        RDOACT_CLD("RDOACT_CLD"),
+        SEV_ICE("SEV_ICE"),
+        SEV_ICE_FZRA("SEV_ICE_FZRA"),
+        SEV_MTW("SEV_MTW"),
+        SEV_TURB("SEV_TURB"),
+        SQL_TS("SQL_TS"),
+        SQL_TSGR("SQL_TSGR"),
+        TC("TC"),
+        VA("VA");
+
+        private String text;
+
+        AeronauticalSignificantWeatherPhenomenon(final String phen){
+            this.text=phen;
+        }
+
+        public String getText(){
+            return this.text;
+        }
+
+        public AeronauticalSignificantWeatherPhenomenon fromString(String phen) {
+            for (AeronauticalSignificantWeatherPhenomenon ph: AeronauticalSignificantWeatherPhenomenon.values()) {
+                if (ph.getText().equals(phen)){
+                    return ph;
+                }
+            }
+            return null;
+        }
+
+    }
+
+    enum SigmetReportStatus {
+        NORMAL(0), CANCELLATION(1);
+
+        public static SigmetReportStatus fromInt(final int code) {
+            switch (code) {
+                case 0: return NORMAL;
+                case 1: return CANCELLATION;
+                default: throw new IllegalArgumentException("No value for code " + code);
+            }
+        }
+
+        private final int code;
+
+        SigmetReportStatus(final int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return this.code;
+        }
+    }
+
+    enum SigmetEvolvingConditionCollectionTimeIndicatorType {
+        OBSERVATION,
+        FORECAST
+    }
+
 }

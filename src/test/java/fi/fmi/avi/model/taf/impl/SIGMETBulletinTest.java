@@ -28,7 +28,7 @@ public class SIGMETBulletinTest {
                         + "S OF LINE N5953 E01931 -\n"//
                         + "N6001 E02312 - N6008 E02606 - N6008\n"//
                         + "E02628 FL220-340 MOV N 15KT\n"//
-                        + "WKN=").setTranslated(false).build());
+                        + "WKN=").setTranslated(false).buildPartial());
         builder.build();
     }
 }

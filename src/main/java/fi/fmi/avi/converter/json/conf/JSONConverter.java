@@ -46,8 +46,8 @@ public class JSONConverter {
     /**
      * Pre-configured spec for {@link SIGMET} to fmi-avi-messageconverter JSON SIGMET document String.
      */
-    public static final ConversionSpecification<SIGMET, String> SIGMET_POJO_TO_JSON_STRING = new ConversionSpecification<>(SIGMET.class, String.class, null,
-            "SIGMET (TAC-passthrough), fmi-avi-messageconverter JSON");
+    public static final ConversionSpecification<SIGMET, String> SIGMET_POJO_TO_JSON_STRING = new ConversionSpecification<>(SIGMET.class, String.class,
+            null, "SIGMET, fmi-avi-messageconverter JSON");
 
     /**
      * Pre-configured spec for {@link TAFBulletin} to fmi-avi-messageconverter JSON TAFBulletin document String.
@@ -86,7 +86,7 @@ public class JSONConverter {
      * Pre-configured spec for fmi-avi-messageconverter JSON SIGMET document String to {@link METAR}.
      */
     public static final ConversionSpecification<String, SIGMET> JSON_STRING_TO_SIGMET_POJO = new ConversionSpecification<>(String.class, SIGMET.class,
-            "SIGMET (TAC-passthrough), fmi-avi-messageconverter JSON", null);
+            "SIGMET, fmi-avi-messageconverter JSON", null);
 
     /**
      * Pre-configured spec for fmi-avi-messageconverter JSON TAFBulletin document String to {@link TAFBulletin}.
