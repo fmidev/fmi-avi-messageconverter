@@ -19,7 +19,7 @@ public abstract class AbstractMeteorologicalTerminalAirReportImpl implements Met
     @Override
     @JsonIgnore
     public boolean areAllTimeReferencesComplete() {
-        if (!this.getIssueTime().getCompleteTime().isPresent()) {
+        if (!this.getIssueTime().isPresent() || !this.getIssueTime().get().getCompleteTime().isPresent()) {
             return false;
         }
         if (this.getTrends().isPresent()) {
