@@ -1,5 +1,6 @@
 package fi.fmi.avi.model;
 
+import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -99,5 +100,22 @@ public interface AviationWeatherMessage extends AviationWeatherMessageOrCollecti
      * @return true if all time references are complete, false otherwise
      */
     boolean areAllTimeReferencesComplete();
+
+
+    /**
+     * Returns the issue time of the message.
+     * The returned {@link PartialOrCompleteTimeInstant} may or may not contain
+     * a completely resolved date time depending on which information it was
+     * created with.
+     *
+     * Note: For valid AviationWeatherMessages the issue time is an important field and
+     * should exist in most cases. This field is optional to allow handling
+     * of incomplete messages without the issue time information.
+     *
+     * @return the fully resolved issue time
+     *
+     * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
+     */
+    Optional<PartialOrCompleteTimeInstant> getIssueTime();
 
 }

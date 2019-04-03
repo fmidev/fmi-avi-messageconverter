@@ -11,8 +11,6 @@ public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
 
     Format getMessageFormat();
 
-    Optional<PartialOrCompleteTimeInstant> getIssueTime();
-
     Optional<PartialOrCompleteTimePeriod> getValidityTime();
 
     Optional<Aerodrome> getTargetAerodrome();
