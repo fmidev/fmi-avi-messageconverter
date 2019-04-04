@@ -44,10 +44,14 @@ import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
+import fi.fmi.avi.model.sigmet.VAInfo;
 import fi.fmi.avi.model.sigmet.VASIGMET;
+import fi.fmi.avi.model.sigmet.WSVASIGMET;
 import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.sigmet.immutable.VAInfoImpl;
 import fi.fmi.avi.model.sigmet.immutable.VASIGMETImpl;
+import fi.fmi.avi.model.sigmet.immutable.WSVASIGMETImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONVASigmetTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -56,13 +60,13 @@ public class JSONVASigmetConverterTest {
     @Autowired
     private AviMessageConverter converter;
 
- //   @Test
+    @Test
     public void testSIGMETParsing() throws Exception {
         InputStream is = JSONVASigmetConverterTest.class.getResourceAsStream("vasigmet1.json");
         Objects.requireNonNull(is);
         String input = IOUtils.toString(is,"UTF-8");
         is.close();
-        ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        ConversionResult<WSVASIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         for (ConversionIssue iss:result.getConversionIssues()){
             System.err.println("  ISS:"+iss.getMessage()+" "+iss.getCause());
         }
@@ -84,7 +88,7 @@ public class JSONVASigmetConverterTest {
         String reference = IOUtils.toString(is,"UTF-8");
         is.close();
 
-        VASIGMETImpl.Builder builder = new VASIGMETImpl.Builder();
+        WSVASIGMETImpl.Builder builder = new WSVASIGMETImpl.Builder();
 
         UnitPropertyGroup mwo=new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
         UnitPropertyGroup fir=new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build();
@@ -116,11 +120,14 @@ public class JSONVASigmetConverterTest {
         validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
         VolcanoDescriptionImpl.Builder volcanoBuilder=new VolcanoDescriptionImpl.Builder();
-        GeoPositionImpl.Builder gpBuilder = new GeoPositionImpl.Builder();
-        gpBuilder.setCoordinates(new Double[] { 52.0, 5.2 });
+        GeoPositionImpl.Builder gpBuilder = GeoPositionImpl.builder();
+        gpBuilder.addAllCoordinates(Arrays.stream(new Double[] { 52.0, 5.2 }));
         gpBuilder.setCoordinateReferenceSystemId("EPSG:4326");
         volcanoBuilder.setVolcanoPosition(gpBuilder.build());
         volcanoBuilder.setVolcanoName("GRIMSVOTN");
+
+        VAInfoImpl.Builder vaInfoBuilder= new VAInfoImpl.Builder();
+        vaInfoBuilder.setVolcano(volcanoBuilder.build());
 
         builder.setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
                 .setMeteorologicalWatchOffice(mwo)
@@ -137,19 +144,19 @@ public class JSONVASigmetConverterTest {
                 .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 .setAnalysisGeometries(Arrays.asList(geomBuilder.build()))
                 .setForecastGeometries(Arrays.asList(fpGeomBuilder.build()))
-                .setVolcano(volcanoBuilder.build());
+                .setVAInfo(vaInfoBuilder.build());
 
-        VASIGMET vaSigmet=builder.build();
+        WSVASIGMET vaSigmet=builder.build();
 
         ConversionResult<String> result = converter.convertMessage(vaSigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
         System.err.println("Converted: "+result.getConvertedMessage().get());
 
-        VASIGMET refVaSigmet=om.readValue(reference, VASIGMETImpl.class);
+        WSVASIGMET refVaSigmet=om.readValue(reference, WSVASIGMETImpl.class);
         System.err.println("refVaSigmet: "+refVaSigmet);
 
-        VASIGMET newVaSigmet = om.readValue(result.getConvertedMessage().get(), VASIGMETImpl.class);
+        WSVASIGMET newVaSigmet = om.readValue(result.getConvertedMessage().get(), WSVASIGMETImpl.class);
 
         JsonNode refTree = om.readTree(reference);
         JsonNode newTree = om.readTree(result.getConvertedMessage().get());

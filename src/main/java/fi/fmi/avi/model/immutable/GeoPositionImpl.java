@@ -22,6 +22,12 @@ import fi.fmi.avi.model.GeoPosition;
 @JsonPropertyOrder({"coordinateReferenceSystemId", "coordinates", "elevationValue", "elevationUom"})
 public abstract class GeoPositionImpl implements GeoPosition, Serializable {
 
+    private static final long serialVersionUID = -69857237712526561L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static GeoPositionImpl immutableCopyOf(final GeoPosition geoPosition) {
         Objects.requireNonNull(geoPosition);
         if (geoPosition instanceof GeoPositionImpl) {
@@ -31,6 +37,7 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<GeoPositionImpl> immutableCopyOf(final Optional<GeoPosition> geoPosition) {
         Objects.requireNonNull(geoPosition);
         return geoPosition.map(GeoPositionImpl::immutableCopyOf);
@@ -40,13 +47,17 @@ public abstract class GeoPositionImpl implements GeoPosition, Serializable {
 
     public static class Builder extends GeoPositionImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+        }
+
         public static Builder from(final GeoPosition value) {
             if (value instanceof GeoPositionImpl) {
                 return ((GeoPositionImpl) value).toBuilder();
             } else {
-                return new GeoPositionImpl.Builder()//
-                        .setCoordinateReferenceSystemId(value.getCoordinateReferenceSystemId())
-                        .setCoordinates(value.getCoordinates())
+                return GeoPositionImpl.builder()//
+                        .setCoordinateReferenceSystemId(value.getCoordinateReferenceSystemId())//
+                        .addAllCoordinates(value.getCoordinates())
                         .setElevationUom(value.getElevationUom())
                         .setElevationValue(value.getElevationValue());
             }

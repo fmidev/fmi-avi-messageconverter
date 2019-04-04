@@ -24,6 +24,12 @@ import fi.fmi.avi.model.metar.HorizontalVisibility;
 @JsonPropertyOrder({"prevailingVisibility", "prevailingVisibilityOperator", "minimumVisibility", "minimumVisibilityDirection"})
 public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, Serializable {
 
+    private static final long serialVersionUID = 5189785512501203996L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static HorizontalVisibilityImpl immutableCopyOf(final HorizontalVisibility horizontalVisibility) {
         Objects.requireNonNull(horizontalVisibility);
         if (horizontalVisibility instanceof HorizontalVisibilityImpl) {
@@ -33,6 +39,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<HorizontalVisibilityImpl> immutableCopyOf(final Optional<HorizontalVisibility> horizontalVisibility) {
         Objects.requireNonNull(horizontalVisibility);
         return horizontalVisibility.map(HorizontalVisibilityImpl::immutableCopyOf);
@@ -42,11 +49,15 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
 
     public static class Builder extends HorizontalVisibilityImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+        }
+
         public static Builder from(final HorizontalVisibility value) {
             if (value instanceof HorizontalVisibilityImpl) {
                 return ((HorizontalVisibilityImpl) value).toBuilder();
             } else {
-                return new HorizontalVisibilityImpl.Builder().setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
+                return HorizontalVisibilityImpl.builder().setPrevailingVisibility(NumericMeasureImpl.immutableCopyOf(value.getPrevailingVisibility()))
                         .setPrevailingVisibilityOperator(value.getPrevailingVisibilityOperator())
                         .setMinimumVisibility(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibility()))
                         .setMinimumVisibilityDirection(NumericMeasureImpl.immutableCopyOf(value.getMinimumVisibilityDirection()));

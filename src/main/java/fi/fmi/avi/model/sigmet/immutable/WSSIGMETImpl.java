@@ -34,11 +34,15 @@ import fi.fmi.avi.model.sigmet.WSSIGMET;
 @JsonDeserialize(builder = WSSIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "airspace",
-        "analysisGeometries", "forecastGeometries",
+        "analysisGeometries", "forecastGeometries", "vaInfo",
         "movingSpeed", "movingDirection",
         "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class WSSIGMETImpl implements SIGMET, Serializable {
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static WSSIGMETImpl immutableCopyOf(final WSSIGMET sigmet) {
         Objects.requireNonNull(sigmet);

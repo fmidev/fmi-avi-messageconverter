@@ -1,13 +1,12 @@
-package fi.fmi.avi.model.metar;
+package fi.fmi.avi.model;
 
 import java.util.Optional;
 
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.NumericMeasure;
+public interface SurfaceWind extends AviationCodeListUser {
 
-public interface TrendForecastSurfaceWind extends AviationCodeListUser {
+    boolean isVariableDirection();
 
-    NumericMeasure getMeanWindDirection();
+    Optional<NumericMeasure> getMeanWindDirection();
 
     NumericMeasure getMeanWindSpeed();
 
@@ -16,4 +15,5 @@ public interface TrendForecastSurfaceWind extends AviationCodeListUser {
     Optional<NumericMeasure> getWindGust();
 
     Optional<RelationalOperator> getWindGustOperator();
+
 }

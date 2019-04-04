@@ -18,7 +18,7 @@ public class METARJSONSerializer extends AbstractJSONSerializer implements AviMe
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<String> convertMessage(METAR input, ConversionHints hints) {
+    public ConversionResult<String> convertMessage(final METAR input, final ConversionHints hints) {
         return doConvertMessage(input, hints);
     }
 }

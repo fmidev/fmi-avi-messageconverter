@@ -19,7 +19,7 @@ public class TAFJSONParser extends AbstractJSONParser implements AviMessageSpeci
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<TAF> convertMessage(String input, ConversionHints hints) {
+    public ConversionResult<TAF> convertMessage(final String input, final ConversionHints hints) {
         return doConvertMessage(input, TAF.class, TAFImpl.class, hints);
     }
 }

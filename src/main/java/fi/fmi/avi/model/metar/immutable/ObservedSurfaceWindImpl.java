@@ -25,6 +25,12 @@ import fi.fmi.avi.model.metar.ObservedSurfaceWind;
         "windGustOperator", "extremeClockwiseWindDirection", "extremeCounterClockwiseWindDirection"})
 public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Serializable {
 
+    private static final long serialVersionUID = 5086615958779121088L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static ObservedSurfaceWindImpl immutableCopyOf(final ObservedSurfaceWind observedSurfaceWind) {
         Objects.requireNonNull(observedSurfaceWind);
         if (observedSurfaceWind instanceof ObservedSurfaceWindImpl) {
@@ -34,6 +40,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<ObservedSurfaceWindImpl> immutableCopyOf(final Optional<ObservedSurfaceWind> observedSurfaceWind) {
         Objects.requireNonNull(observedSurfaceWind);
         return observedSurfaceWind.map(ObservedSurfaceWindImpl::immutableCopyOf);
@@ -43,6 +50,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
 
     public static class Builder extends ObservedSurfaceWindImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setVariableDirection(false);
         }
@@ -59,7 +67,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
             if (value instanceof ObservedSurfaceWindImpl) {
                 return ((ObservedSurfaceWindImpl) value).toBuilder();
             } else {
-                return new ObservedSurfaceWindImpl.Builder()//
+                return ObservedSurfaceWindImpl.builder()//
                         .setMeanWindDirection(NumericMeasureImpl.immutableCopyOf(value.getMeanWindDirection()))
                         .setMeanWindSpeed(NumericMeasureImpl.immutableCopyOf(value.getMeanWindSpeed()))//
                         .setMeanWindSpeedOperator(value.getMeanWindSpeedOperator())

@@ -7,7 +7,7 @@ import fi.fmi.avi.model.NumericMeasure;
 
 public interface SeaState extends AviationCodeListUser {
 
-    NumericMeasure getSeaSurfaceTemperature();
+    Optional<NumericMeasure> getSeaSurfaceTemperature();
 
     Optional<NumericMeasure> getSignificantWaveHeight();
 

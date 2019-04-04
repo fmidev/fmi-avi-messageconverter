@@ -23,6 +23,12 @@ import fi.fmi.avi.model.GeoPosition;
 @JsonPropertyOrder({"designator", "name", "locationIndicatorICAO", "fieldElevation", "referencePoint"})
 public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
+    private static final long serialVersionUID = -6822087279546133445L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static AerodromeImpl immutableCopyOf(final Aerodrome aerodrome) {
         Objects.requireNonNull(aerodrome);
         if (aerodrome instanceof AerodromeImpl) {
@@ -32,6 +38,7 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<AerodromeImpl> immutableCopyOf(final Optional<Aerodrome> aerodrome) {
         return aerodrome.map(AerodromeImpl::immutableCopyOf);
     }
@@ -40,11 +47,15 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
     public static class Builder extends AerodromeImpl_Builder {
 
+        @Deprecated
+        public Builder() {
+        }
+
         public static Builder from(final Aerodrome value) {
             if (value instanceof AerodromeImpl) {
                 return ((AerodromeImpl) value).toBuilder();
             } else {
-                return new AerodromeImpl.Builder()//
+                return AerodromeImpl.builder()//
                         .setDesignator(value.getDesignator())
                         .setDesignatorIATA(value.getDesignatorIATA())
                         .setFieldElevationValue(value.getFieldElevationValue())

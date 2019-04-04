@@ -28,6 +28,8 @@ public interface SIGMET extends SIGMETAIRMET {
 
     public Optional<Boolean> getNoVaExpected(); //Only applicable to ForecastPositionAnalysis
 
+    Optional<VAInfo> getVAInfo(); //If this is present this is a VASigmet
+
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     interface Builder<T extends SIGMET, B extends Builder<T, B>> {
         /**

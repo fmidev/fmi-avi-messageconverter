@@ -15,13 +15,14 @@ import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.CloudLayer;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.SurfaceWind;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.CloudLayerImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.taf.TAFForecast;
-import fi.fmi.avi.model.taf.TAFSurfaceWind;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import junitparams.converters.Nullable;
@@ -41,19 +42,19 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
     }
 
     protected static CloudForecast newCloudForecast(final CloudLayer... cloudLayers) {
-        return new CloudForecastImpl.Builder()//
+        return CloudForecastImpl.builder()//
                 .setLayers(Collections.unmodifiableList(Arrays.asList(cloudLayers)))//
                 .build();
     }
 
     protected static CloudForecast newCloudForecast(final double verticalVisibilityFeet) {
-        return new CloudForecastImpl.Builder()//
+        return CloudForecastImpl.builder()//
                 .setVerticalVisibility(NumericMeasureImpl.of(verticalVisibilityFeet, FEET))//
                 .build();
     }
 
     protected static CloudLayer newCloudLayer(final AviationCodeListUser.CloudAmount amount, final double baseFeet) {
-        return new CloudLayerImpl.Builder()//
+        return CloudLayerImpl.builder()//
                 .setAmount(amount)//
                 .setBase(NumericMeasureImpl.of(baseFeet, FEET))//
                 .build();
@@ -63,8 +64,8 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
         return WeatherImpl.fromCodes(code).get(0);
     }
 
-    protected static TAFSurfaceWind newSurfaceWind(final double meanDirectionDegrees, final double meanSpeed) {
-        final TAFSurfaceWindImpl.Builder builder = new TAFSurfaceWindImpl.Builder();
+    protected static SurfaceWind newSurfaceWind(final double meanDirectionDegrees, final double meanSpeed) {
+        final SurfaceWindImpl.Builder builder = SurfaceWindImpl.builder();
         final boolean variableDirection = meanDirectionDegrees == VARIABLE_WIND_DIRECTION;
         if (variableDirection) {
             builder.setVariableDirection(true);

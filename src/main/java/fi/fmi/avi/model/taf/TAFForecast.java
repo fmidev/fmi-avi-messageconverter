@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.SurfaceWind;
 import fi.fmi.avi.model.Weather;
 
 /**
@@ -23,7 +24,7 @@ public interface TAFForecast extends AviationCodeListUser {
 
     Optional<AviationCodeListUser.RelationalOperator> getPrevailingVisibilityOperator();
 
-    Optional<TAFSurfaceWind> getSurfaceWind();
+    Optional<SurfaceWind> getSurfaceWind();
 
     Optional<List<Weather>> getForecastWeather();
 
@@ -257,14 +258,14 @@ public interface TAFForecast extends AviationCodeListUser {
          * @throws NullPointerException
          *         if {@code surfaceWind} is null
          */
-        B setSurfaceWind(TAFSurfaceWind surfaceWind);
+        B setSurfaceWind(SurfaceWind surfaceWind);
 
         /**
          * Sets the value to be returned by {@link TAFForecast#getSurfaceWind()}.
          *
          * @return this {@code Builder} object
          */
-        default B setNullableSurfaceWind(@Nullable final TAFSurfaceWind surfaceWind) {
+        default B setNullableSurfaceWind(@Nullable final SurfaceWind surfaceWind) {
             if (surfaceWind != null) {
                 return setSurfaceWind(surfaceWind);
             } else {
@@ -283,7 +284,7 @@ public interface TAFForecast extends AviationCodeListUser {
          * @throws NullPointerException
          *         if {@code mapper} is null
          */
-        default B mapSurfaceWind(final UnaryOperator<TAFSurfaceWind> mapper) {
+        default B mapSurfaceWind(final UnaryOperator<SurfaceWind> mapper) {
             return setSurfaceWind(getSurfaceWind().map(mapper));
         }
 
@@ -298,14 +299,14 @@ public interface TAFForecast extends AviationCodeListUser {
         /**
          * Returns the value that will be returned by {@link TAFForecast#getSurfaceWind()}.
          */
-        Optional<TAFSurfaceWind> getSurfaceWind();
+        Optional<SurfaceWind> getSurfaceWind();
 
         /**
          * Sets the value to be returned by {@link TAFForecast#getSurfaceWind()}.
          *
          * @return this {@code Builder} object
          */
-        default B setSurfaceWind(final Optional<? extends TAFSurfaceWind> surfaceWind) {
+        default B setSurfaceWind(final Optional<? extends SurfaceWind> surfaceWind) {
             if (surfaceWind.isPresent()) {
                 return setSurfaceWind(surfaceWind.get());
             } else {

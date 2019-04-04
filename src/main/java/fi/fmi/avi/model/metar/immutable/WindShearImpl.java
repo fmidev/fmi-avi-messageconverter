@@ -28,6 +28,12 @@ import fi.fmi.avi.model.metar.WindShear;
 @JsonPropertyOrder({"runwayDirections", "appliedToAllRunways"})
 public abstract class WindShearImpl implements WindShear, Serializable {
 
+    private static final long serialVersionUID = 3197842360756947787L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static WindShearImpl immutableCopyOf(final WindShear windShear) {
         Objects.requireNonNull(windShear);
         if (windShear instanceof WindShearImpl) {
@@ -46,6 +52,7 @@ public abstract class WindShearImpl implements WindShear, Serializable {
 
     public static class Builder extends WindShearImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setAppliedToAllRunways(false);
         }
@@ -54,7 +61,7 @@ public abstract class WindShearImpl implements WindShear, Serializable {
             if (value instanceof WindShearImpl) {
                 return ((WindShearImpl) value).toBuilder();
             } else {
-                Builder retval = new WindShearImpl.Builder()//
+                Builder retval = WindShearImpl.builder()//
                         .setAppliedToAllRunways(value.isAppliedToAllRunways());
 
                 value.getRunwayDirections()

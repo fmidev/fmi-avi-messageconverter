@@ -8,6 +8,7 @@ import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.SurfaceWind;
 import fi.fmi.avi.model.Weather;
 
 public interface TrendForecast extends AviationCodeListUser {
@@ -24,7 +25,7 @@ public interface TrendForecast extends AviationCodeListUser {
 
     Optional<RelationalOperator> getPrevailingVisibilityOperator();
 
-    Optional<TrendForecastSurfaceWind> getSurfaceWind();
+    Optional<SurfaceWind> getSurfaceWind();
 
     Optional<List<Weather>> getForecastWeather();
 

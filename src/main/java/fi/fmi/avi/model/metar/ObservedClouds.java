@@ -34,10 +34,19 @@ public interface ObservedClouds extends AviationCodeListUser {
     boolean isVerticalVisibilityUnobservableByAutoSystem();
 
     /**
-     * @return
+     * Returns the vertical visibility if set. Only one of {@link #getLayers()} or {@link #getVerticalVisibility()}
+     * can be present at the same time.
+     *
+     * @return the vertical visibility
      */
     Optional<NumericMeasure> getVerticalVisibility();
 
+    /**
+     * Returns the list of cloud layers if set. Only one of {@link #getLayers()} or {@link #getVerticalVisibility()}
+     * can be present at the same time.
+     *
+     * @return the layer list
+     */
     Optional<List<ObservedCloudLayer>> getLayers();
 
 }

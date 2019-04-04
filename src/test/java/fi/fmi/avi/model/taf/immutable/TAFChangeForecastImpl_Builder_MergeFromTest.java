@@ -7,7 +7,7 @@ public class TAFChangeForecastImpl_Builder_MergeFromTest
         extends AbstractTAFForecast_Builder_MergeFromTest<TAFChangeForecastImpl, TAFChangeForecastImpl.Builder> {
     @Override
     protected TAFChangeForecastImpl.Builder newBuilder() {
-        return new TAFChangeForecastImpl.Builder()//
+        return TAFChangeForecastImpl.builder()//
                 .setChangeIndicator(AviationCodeListUser.TAFChangeIndicator.TEMPORARY_FLUCTUATIONS)//
                 .setPeriodOfChange(PartialOrCompleteTimePeriod.createValidityTime("0100/0200"));
 

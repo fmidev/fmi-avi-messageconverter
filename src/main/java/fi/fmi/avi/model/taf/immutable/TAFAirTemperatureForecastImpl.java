@@ -24,6 +24,12 @@ import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 @JsonPropertyOrder({"maxTemperature", "maxTemperatureTime", "minTemperature", "minTemperatureTime"})
 public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast, Serializable {
 
+    private static final long serialVersionUID = 4723016643452217407L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static TAFAirTemperatureForecastImpl immutableCopyOf(final TAFAirTemperatureForecast airTemperatureForecast) {
         Objects.requireNonNull(airTemperatureForecast);
         if (airTemperatureForecast instanceof TAFAirTemperatureForecastImpl) {
@@ -41,6 +47,10 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
     public abstract Builder toBuilder();
 
     public static class Builder extends TAFAirTemperatureForecastImpl_Builder {
+
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final TAFAirTemperatureForecast value) {
             if (value instanceof TAFAirTemperatureForecastImpl) {

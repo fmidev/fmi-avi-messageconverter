@@ -7,7 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
-import fi.fmi.avi.model.sigmet.SIGMET;
+import fi.fmi.avi.model.sigmet.WSVASIGMET;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,10 +29,10 @@ public class JSONSigmetTestConfiguration {
     }
 
     @Autowired
-    private AviMessageSpecificConverter<SIGMET, String> sigmetJSONSerializer;
+    private AviMessageSpecificConverter<WSVASIGMET, String> sigmetJSONSerializer;
 
     @Autowired
-    private AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser;
+    private AviMessageSpecificConverter<String, WSVASIGMET> sigmetJSONParser;
 
     @Bean
     public AviMessageConverter aviMessageConverter() {

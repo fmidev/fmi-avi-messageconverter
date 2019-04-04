@@ -1,0 +1,243 @@
+{
+  "heading": {
+    "locationIndicator": "EFKL",
+    "geographicalDesignator": "FI",
+    "bulletinNumber": 31,
+    "type": "NORMAL",
+    "dataTypeDesignatorT2": "WRN_SIGMET",
+    "issueTime": {
+      "partialTime": "--02T05:00"
+    }
+  },
+  "messages": [
+    {
+      "status": "NORMAL",
+      "issuingAirTrafficServicesUnit": {
+        "name": "AMSTERDAM FIR",
+        "type": "FIR",
+        "designator": "EHAA"
+      },
+      "meteorologicalWatchOffice": {
+        "name": "De Bilt",
+        "type": "MWO",
+        "designator": "EHDB"
+      },
+      "sequenceNumber": "1",
+      "issueTime": {
+        "completeTime": "2017-08-27T11:30:00Z"
+      },
+      "airspace": {
+        "designator":"EHAA",
+        "name":"AMSTERDAM",
+        "type":"FIR"
+      },
+      "validityPeriod": {
+        "startTime": {
+          "completeTime": "2017-08-27T11:30:00Z"
+        },
+        "endTime": {
+          "completeTime": "2017-08-27T18:00:00Z"
+        }
+      },
+      "sigmetPhenomenon": "EMBD_TS",
+      "permissibleUsage":"NON_OPERATIONAL",
+      "permissibleUsageReason":"EXERCISE",
+      "analysisType": "OBSERVATION",
+      "intensityChange": "NO_CHANGE",
+      "analysisGeometries": [
+        {
+          "time": {
+            "completeTime": "2017-08-27T12:00:00Z"
+          },
+          "lowerLimit": {
+            "value": 10.0,
+            "uom": "FL"
+          },
+          "upperLimit": {
+            "value": 35.0,
+            "uom": "FL"
+          },
+          "approximateLocation": false,
+          "geometry": {
+            "geoGeometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    5.0,
+                    52.0
+                  ],
+                  [
+                    6.0,
+                    53.0
+                  ],
+                  [
+                    4.0,
+                    54.0
+                  ],
+                  [
+                    5.0,
+                    52.0
+                  ]
+                ]
+              ]
+            }
+          }
+        }
+      ],
+      "forecastGeometries":[{
+        "time":  {
+          "completeTime": "2017-08-27T18:00:00Z"
+        },
+        "approximateLocation": false,
+        "geometry": {
+          "geoGeometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  5.0,
+                  53.0
+                ],
+                [
+                  6.0,
+                  54.0
+                ],
+                [
+                  4.0,
+                  55.0
+                ],
+                [
+                  5.0,
+                  53.0
+                ]
+              ]
+            ]
+          }
+        }
+      }
+      ],
+      "translated": true
+    },
+    {
+      "status": "NORMAL",
+      "issuingAirTrafficServicesUnit": {
+        "name": "AMSTERDAM",
+        "type": "FIR",
+        "designator": "EHAA"
+      },
+      "meteorologicalWatchOffice": {
+        "name": "De Bilt",
+        "type": "MWO",
+        "designator": "EHDB"
+      },
+      "sequenceNumber": "1",
+      "issueTime": {
+        "completeTime": "2017-08-27T11:30:00Z"
+      },
+      "validityPeriod": {
+        "startTime": {
+          "completeTime": "2017-08-27T11:30:00Z"
+        },
+        "endTime": {
+          "completeTime": "2017-08-27T18:00:00Z"
+        }
+      },
+      "airspace": {
+        "designator": "EHAA",
+        "name": "AMSTERDAM",
+        "type": "FIR"
+      },
+      "sigmetPhenomenon": "EMBD_TS",
+      "permissibleUsage":"NON_OPERATIONAL",
+      "permissibleUsageReason":"EXERCISE",
+      "analysisType": "OBSERVATION",
+      "intensityChange": "NO_CHANGE",
+      "analysisGeometries": [
+        {
+          "time": {
+            "completeTime": "2017-08-27T12:00:00Z"
+          },
+          "lowerLimit": {
+            "value": 10.0,
+            "uom": "FL"
+          },
+          "upperLimit": {
+            "value": 35.0,
+            "uom": "FL"
+          },
+          "approximateLocation": false,
+          "geometry": {
+            "geoGeometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    5.0,
+                    52.0
+                  ],
+                  [
+                    6.0,
+                    53.0
+                  ],
+                  [
+                    4.0,
+                    54.0
+                  ],
+                  [
+                    5.0,
+                    52.0
+                  ]
+                ]
+              ]
+            }
+          }
+        }
+      ],
+      "forecastGeometries":[{
+        "time":  {
+          "completeTime": "2017-08-27T18:00:00Z"
+        },
+        "approximateLocation": false,
+        "geometry": {
+          "geoGeometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  5.0,
+                  53.0
+                ],
+                [
+                  6.0,
+                  54.0
+                ],
+                [
+                  4.0,
+                  55.0
+                ],
+                [
+                  5.0,
+                  53.0
+                ]
+              ]
+            ]
+          }
+        }
+      }
+      ],
+      "VAInfo": {
+        "volcano": {
+          "volcanoPosition": {
+            "coordinateReferenceSystemId": "EPSG:4326",
+            "coordinates": [
+              52.0,
+              5.2
+            ]
+          },
+          "volcanoName": "GRIMSVOTN"
+        }
+      }
+    }
+  ]
+}

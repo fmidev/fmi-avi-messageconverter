@@ -16,7 +16,9 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalQueries;
 import java.time.temporal.TemporalUnit;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
@@ -67,6 +69,8 @@ public final class PartialDateTime implements Serializable {
      */
     public static final int MIDNIGHT_0_HOUR = 0;
     static final int MIDNIGHT_MINUTE = 0;
+
+    public static final Set<PartialField> ALL_FIELDS = new HashSet<>(Arrays.asList(PartialField.values()));
 
     private static final long serialVersionUID = -1367240702836282527L;
 

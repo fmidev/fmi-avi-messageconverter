@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionIssue;
 import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.model.AviationWeatherMessage;
+import fi.fmi.avi.model.AviationWeatherMessageOrCollection;
 
 /**
  * Common functionality for all JSON parsers.
@@ -35,19 +35,18 @@ public abstract class AbstractJSONParser {
      * @return result of the conversion
      */
     @SuppressWarnings("unchecked")
-    protected <T extends AviationWeatherMessage> ConversionResult<T> doConvertMessage(String input, Class<T> clz, Class<?> implClz, ConversionHints hints) {
-        ConversionResult<T> result = new ConversionResult<>();
-        ObjectMapper om = new ObjectMapper();
+    protected <T extends AviationWeatherMessageOrCollection> ConversionResult<T> doConvertMessage(final String input, final Class<T> clz,
+            final Class<? extends T> implClz, final ConversionHints hints) {
+        final ConversionResult<T> result = new ConversionResult<>();
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
         om.registerModule(new JtsModule());
         try {
-            Object o = om.readValue(input, implClz);
-            if (clz.isAssignableFrom(implClz)) {
-                result.setConvertedMessage((T) o);
-            }
+            final Object o = om.readValue(input, implClz);
+            result.setConvertedMessage((T) o);
             result.setStatus(ConversionResult.Status.SUCCESS);
-        } catch (IOException e) {
+        } catch (final Exception e) {
             result.addIssue(new ConversionIssue(ConversionIssue.Severity.ERROR, ConversionIssue.Type.OTHER, "Error parsing JSON", e));
             result.setStatus(ConversionResult.Status.FAIL);
         }

@@ -12,7 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionIssue;
 import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.model.AviationWeatherMessage;
+import fi.fmi.avi.model.AviationWeatherMessageOrCollection;
 
 /**
  * Common functionality for all JSON serializers.
@@ -30,21 +30,20 @@ public abstract class AbstractJSONSerializer {
      *
      * @return the result of the conversion
      */
-    protected ConversionResult<String> doConvertMessage(AviationWeatherMessage input, ConversionHints hints) {
-        System.err.println("SERIALIZING an AIRMET");
-        ConversionResult<String> result = new ConversionResult<>();
-        ObjectMapper om = new ObjectMapper();
+    protected ConversionResult<String> doConvertMessage(final AviationWeatherMessageOrCollection input, final ConversionHints hints) {
+        final ConversionResult<String> result = new ConversionResult<>();
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
         om.registerModule(new JtsModule());
-        ObjectWriter writer = om.writerWithDefaultPrettyPrinter();
-        StringWriter sw = new StringWriter();
+        final ObjectWriter writer = om.writerWithDefaultPrettyPrinter();
+        final StringWriter sw = new StringWriter();
         try {
             writer.writeValue(sw, input);
             result.setConvertedMessage(sw.toString());
             result.setStatus(ConversionResult.Status.SUCCESS);
-        } catch (IOException e) {
-            result.addIssue(new ConversionIssue(ConversionIssue.Severity.ERROR, ConversionIssue.Type.OTHER,"Error in serializing to JSON", e));
+        } catch (final IOException e) {
+            result.addIssue(new ConversionIssue(ConversionIssue.Severity.ERROR, ConversionIssue.Type.OTHER, "Error in serializing to JSON", e));
             result.setStatus(ConversionResult.Status.FAIL);
         }
         return result;

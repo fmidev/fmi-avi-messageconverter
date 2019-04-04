@@ -47,6 +47,12 @@ import fi.fmi.avi.model.taf.TAFReference;
         "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class TAFImpl implements TAF, Serializable {
 
+    private static final long serialVersionUID = -449932311496894566L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static TAFImpl immutableCopyOf(final TAF taf) {
         requireNonNull(taf);
         if (taf instanceof TAFImpl) {
@@ -82,10 +88,10 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
         if (this.getBaseForecast().isPresent()) {
             if (this.getBaseForecast().get().getTemperatures().isPresent()) {
-                List<TAFAirTemperatureForecast> airTemps = this.getBaseForecast().get().getTemperatures().get();
-                for (TAFAirTemperatureForecast airTemp : airTemps) {
-                    PartialOrCompleteTimeInstant minTime = airTemp.getMinTemperatureTime();
-                    PartialOrCompleteTimeInstant maxTime = airTemp.getMaxTemperatureTime();
+                final List<TAFAirTemperatureForecast> airTemps = this.getBaseForecast().get().getTemperatures().get();
+                for (final TAFAirTemperatureForecast airTemp : airTemps) {
+                    final PartialOrCompleteTimeInstant minTime = airTemp.getMinTemperatureTime();
+                    final PartialOrCompleteTimeInstant maxTime = airTemp.getMaxTemperatureTime();
                     if (!minTime.getCompleteTime().isPresent() || !maxTime.getCompleteTime().isPresent()) {
                         return false;
                     }
@@ -94,7 +100,7 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         if (this.getChangeForecasts().isPresent()) {
-            for (TAFChangeForecast changeForecast : this.getChangeForecasts().get()) {
+            for (final TAFChangeForecast changeForecast : this.getChangeForecasts().get()) {
                 if (!changeForecast.getPeriodOfChange().isComplete()) {
                     return false;
                 }
@@ -111,6 +117,7 @@ public abstract class TAFImpl implements TAF, Serializable {
 
     public static class Builder extends TAFImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setStatus(TAFStatus.NORMAL);
             setTranslated(false);
@@ -121,8 +128,7 @@ public abstract class TAFImpl implements TAF, Serializable {
                 return ((TAFImpl) value).toBuilder();
             } else {
                 //From AviationWeatherMessage:
-                Builder retval = new Builder()//
-                        .setIssueTime(value.getIssueTime())
+                final Builder retval = new Builder()//
                         .setPermissibleUsage(value.getPermissibleUsage())
                         .setPermissibleUsageReason(value.getPermissibleUsageReason())
                         .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
@@ -137,7 +143,8 @@ public abstract class TAFImpl implements TAF, Serializable {
                 value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
 
                 //From AerodromeWeatherMessage:
-                retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()));
+                retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))
+                    .setIssueTime(value.getIssueTime());
 
                 //From TAF:
                 retval.setStatus(value.getStatus())
@@ -267,10 +274,10 @@ public abstract class TAFImpl implements TAF, Serializable {
         @Override
         @JsonDeserialize(as = TAFReferenceImpl.class)
         public Builder setReferredReport(final TAFReference referredReport) {
-            Builder retval = super.setReferredReport(referredReport);
-            Aerodrome ref = referredReport.getAerodrome();
+            final Builder retval = super.setReferredReport(referredReport);
+            final Aerodrome ref = referredReport.getAerodrome();
             try {
-                Aerodrome base = this.getAerodrome();
+                final Aerodrome base = this.getAerodrome();
                 if (ref != null) {
                     if (base != null) {
                         if (!base.equals(ref)) {
@@ -279,7 +286,7 @@ public abstract class TAFImpl implements TAF, Serializable {
                     }
                     this.setAerodrome(AerodromeImpl.immutableCopyOf(ref));
                 }
-            } catch (IllegalStateException ise) {
+            } catch (final IllegalStateException ise) {
                 //No aerodrome set, do not ask
                 this.setAerodrome(AerodromeImpl.immutableCopyOf(ref));
             }

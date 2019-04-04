@@ -18,16 +18,23 @@ import fi.fmi.avi.model.NumericMeasure;
 
 @FreeBuilder
 @JsonDeserialize(builder = NumericMeasureImpl.Builder.class)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.ALWAYS)
+//TODO @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"value", "uom"})
 public abstract class NumericMeasureImpl implements NumericMeasure, Serializable {
 
+    private static final long serialVersionUID = 8955711992731295488L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static NumericMeasureImpl of(final Integer value, final String uom) {
-        return new Builder().setValue(value.doubleValue()).setUom(uom).build();
+        return builder().setValue(value.doubleValue()).setUom(uom).build();
     }
 
     public static NumericMeasureImpl of(final Double value, final String uom) {
-        return new Builder().setValue(value).setUom(uom).build();
+        return builder().setValue(value).setUom(uom).build();
     }
 
     public static NumericMeasureImpl immutableCopyOf(final NumericMeasure numericMeasure) {
@@ -39,6 +46,7 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<NumericMeasureImpl> immutableCopyOf(final Optional<NumericMeasure> numericMeasure) {
         return numericMeasure.map(NumericMeasureImpl::immutableCopyOf);
     }
@@ -47,15 +55,15 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
 
     public static class Builder extends NumericMeasureImpl_Builder {
 
+        @Deprecated
         public Builder() {
-          this.setValue(0.);
         }
 
         public static Builder from(final NumericMeasure value) {
             if (value instanceof NumericMeasureImpl) {
                 return ((NumericMeasureImpl) value).toBuilder();
             } else {
-                return new NumericMeasureImpl.Builder()//
+                return NumericMeasureImpl.builder()//
                         .setUom(value.getUom())//
                         .setValue(value.getValue());
             }

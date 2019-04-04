@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.metar.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,7 +20,13 @@ import fi.fmi.avi.model.metar.ObservedCloudLayer;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "amount", "base", "cloudType", "amountNotDetectedByAutoSystem", "amountUnobservableByAutoSystem", "heightNotDetectedByAutoSystem",
         "heightUnobservableByAutoSystem", "cloudTypeUnobservableByAutoSystem" })
-public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.ObservedCloudLayer {
+public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.ObservedCloudLayer, Serializable {
+
+    private static final long serialVersionUID = 7312850983219439091L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static ObservedCloudLayerImpl immutableCopyOf(final CloudLayer layer) {
         Objects.requireNonNull(layer);
@@ -32,6 +39,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<ObservedCloudLayerImpl> immutableCopyOf(final Optional<CloudLayer> layer) {
         Objects.requireNonNull(layer);
         return layer.map(ObservedCloudLayerImpl::immutableCopyOf);
@@ -41,6 +49,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
 
     public static class Builder extends ObservedCloudLayerImpl_Builder {
 
+        @Deprecated
         public Builder() {
             setAmountNotDetectedByAutoSystem(false);
             setAmountUnobservableByAutoSystem(false);
@@ -66,7 +75,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
             if (value instanceof ObservedCloudLayerImpl) {
                 return ((ObservedCloudLayerImpl) value).toBuilder();
             } else {
-                return new ObservedCloudLayerImpl.Builder().setAmount(value.getAmount())//
+                return ObservedCloudLayerImpl.builder().setAmount(value.getAmount())//
                         .setCloudType(value.getCloudType())//
                         .setBase(NumericMeasureImpl.immutableCopyOf(value.getBase()));
             }

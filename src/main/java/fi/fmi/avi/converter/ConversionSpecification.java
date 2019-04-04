@@ -92,14 +92,14 @@ public class ConversionSpecification<S, T> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ConversionSpecification<?,?> other = (ConversionSpecification<?,?>) obj;
+        final ConversionSpecification<?,?> other = (ConversionSpecification<?,?>) obj;
         if (inputClass == null) {
             if (other.inputClass != null)
                 return false;
@@ -116,17 +116,13 @@ public class ConversionSpecification<S, T> {
         } else if (!inputSpecifier.equals(other.inputSpecifier))
             return false;
         if (outputSpecifier == null) {
-            if (other.outputSpecifier != null) {
-                return false;
-            }
-        } else if (!outputSpecifier.equals(other.outputSpecifier)) {
-            return false;
-        }
-        return true;
+            return other.outputSpecifier == null;
+        } else
+            return outputSpecifier.equals(other.outputSpecifier);
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (this.inputClass != null) {
             sb.append(inputClass.getSimpleName());
         }

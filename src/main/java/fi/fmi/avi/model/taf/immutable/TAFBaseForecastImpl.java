@@ -14,15 +14,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.SurfaceWind;
 import fi.fmi.avi.model.Weather;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 import fi.fmi.avi.model.taf.TAFBaseForecast;
 import fi.fmi.avi.model.taf.TAFForecast;
 import fi.fmi.avi.model.taf.TAFForecastBuilderHelper;
-import fi.fmi.avi.model.taf.TAFSurfaceWind;
 
 /**
  * Created by rinne on 18/04/2018.
@@ -34,6 +35,10 @@ import fi.fmi.avi.model.taf.TAFSurfaceWind;
         "cloud", "temperatures" })
 public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializable {
     private static final long serialVersionUID = -4188299349543187396L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static TAFBaseForecastImpl immutableCopyOf(final TAFBaseForecast baseForecast) {
         requireNonNull(baseForecast);
@@ -53,6 +58,7 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
 
     public static class Builder extends TAFBaseForecastImpl_Builder implements TAFForecast.Builder<TAFBaseForecastImpl, Builder> {
 
+        @Deprecated
         public Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);
@@ -98,8 +104,8 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
         }
 
         @Override
-        @JsonDeserialize(as = TAFSurfaceWindImpl.class)
-        public Builder setSurfaceWind(final TAFSurfaceWind surfaceWind) {
+        @JsonDeserialize(as = SurfaceWindImpl.class)
+        public Builder setSurfaceWind(final SurfaceWind surfaceWind) {
             return super.setSurfaceWind(surfaceWind);
         }
 

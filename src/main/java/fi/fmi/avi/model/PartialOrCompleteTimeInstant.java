@@ -29,6 +29,12 @@ import fi.fmi.avi.model.PartialDateTime.PartialField;
 @JsonPropertyOrder({ "completeTime", "partialTime", "partialTimePattern" })
 public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime {
 
+    private static final long serialVersionUID = -3820077096763961462L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static PartialOrCompleteTimeInstant createIssueTime(final String partialDateTime) {
         return of(PartialDateTime.parseTACString(partialDateTime, PartialField.MINUTE));
     }
@@ -46,17 +52,17 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
     }
 
     public static PartialOrCompleteTimeInstant of(final PartialDateTime partialDateTime) {
-        return new Builder().setPartialTime(partialDateTime).build();
+        return builder().setPartialTime(partialDateTime).build();
     }
 
     public static PartialOrCompleteTimeInstant of(final ZonedDateTime completeTime) {
-        return new Builder().setCompleteTime(completeTime).build();
+        return builder().setCompleteTime(completeTime).build();
     }
 
     public static PartialOrCompleteTimeInstant of(final PartialDateTime partialDateTime, final ZonedDateTime completeTime) {
         requireNonNull(partialDateTime, "partialDateTime");
         requireNonNull(completeTime, "completeTime");
-        return new Builder()//
+        return builder()//
                 .setPartialTime(partialDateTime)//
                 .setCompleteTime(completeTime)//
                 .build();
@@ -140,13 +146,23 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
     public abstract Builder toBuilder();
 
     public static class Builder extends PartialOrCompleteTimeInstant_Builder {
+
+        @Deprecated
         public Builder() {
+        }
+
+        @Override
+        public PartialOrCompleteTimeInstant build() {
+            if (!this.getPartialTime().isPresent() && !this.getCompleteTime().isPresent()){
+                throw new IllegalStateException("Either complete or partial time must be given");
+            }
             getPartialTime().ifPresent(partialTime -> //
                     getCompleteTime().ifPresent(completeTime -> {
                         if (!partialTime.representsStrict(completeTime)) {
                             throw new IllegalStateException(String.format("completeTime %s does not represent partialTime %s", completeTime, partialTime));
                         }
                     }));
+            return super.build();
         }
 
         public Builder setTrendTimeGroupToken(final String token) {
