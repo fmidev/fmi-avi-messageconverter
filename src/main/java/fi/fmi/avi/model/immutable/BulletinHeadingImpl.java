@@ -100,8 +100,12 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                 t2 = WarningsDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
             } else if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML == t1) {
                 t2 = XMLDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
+            } else if (DataTypeDesignatorT1.UPPER_AIR_DATA == t1) {
+                t2 = UpperAirDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
             } else {
-                throw new IllegalArgumentException("Only forecast ('F') and warning ('W') type headings currently supported, t1 is '" + t1 + "'");
+                throw new IllegalArgumentException("Only forecast ('F') and warning ('W'), XML('L') and upper-air ('U') type headings currently supported, t1 "
+                        + "is "
+                        + "'" + t1 + "'");
             }
             String issueTime = "--" + m.group("YY") + "T" + m.group("GG") + ":" + m.group("gg");
             return new Builder()//
@@ -155,6 +159,8 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                 this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.WARNINGS);
             } else if (t2 instanceof XMLDataTypeDesignatorT2) {
                 this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML);
+            } else if (t2 instanceof UpperAirDataTypeDesignatorT2) {
+                this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.UPPER_AIR_DATA);
             }
             return super.setDataTypeDesignatorT2(t2);
         }
@@ -183,6 +189,11 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                     }
                 }
                 for (final XMLDataTypeDesignatorT2 item : XMLDataTypeDesignatorT2.values()) {
+                    if (item.name().equals(value)) {
+                        return item;
+                    }
+                }
+                for (final UpperAirDataTypeDesignatorT2 item : UpperAirDataTypeDesignatorT2.values()) {
                     if (item.name().equals(value)) {
                         return item;
                     }

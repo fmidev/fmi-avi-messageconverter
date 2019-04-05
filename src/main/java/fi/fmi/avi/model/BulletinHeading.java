@@ -293,6 +293,47 @@ public interface BulletinHeading {
         }
     }
 
+    enum UpperAirDataTypeDesignatorT2 implements DataTypeDesignatorT2 {
+        UA_AIRCRAFT_REPORT_CODAR_AIREP('A'),//
+        UA_AIRCRAFT_REPORT_AMDAR('D'),//
+        UA_PRESSURE_TEMPERATURE_HUMIDITY_WIND_PART_D('E'),//
+        UA_PRESSURE_TEMPERATURE_HUMIDITY_WIND_PARTS_C_D('F'),//
+        UA_WIND_PART_B('G'),//
+        UA_WIND_PART_C('H'),//
+        UA_WIND_PARTS_A_B('I'),//
+        UA_PRESSURE_TEMPERATURE_HUMIDITY_WIND_PART_B('K'),//
+        UA_PRESSURE_TEMPERATURE_HUMIDITY_WIND_PART_C('L'),//
+        UA_ROCKETSONDE_REPORT('N'),//
+        UA_WIND_PART_A('P'),//
+        UA_WIND_PART_D('Q'),//
+        UA_AIRCRAFT_REPORT_RECCO('R'),//
+        UA_PRESSURE_TEMPERATURE_HUMIDITY_WIND_PART_A('S'),//
+        UA_AIRCRAFT_REPORT_CODAR('T'),//
+        UA_MISCELLANEOUS('X'),//
+        UA_WIND_PARTS_C_D('Y'),//
+        UA_PRESSURE_TEMPERATURE_HUMIDITY_WIND_PARTS_A_B_C_D('Z');
+
+        public static UpperAirDataTypeDesignatorT2 fromCode(final char code) {
+            for (UpperAirDataTypeDesignatorT2 t : UpperAirDataTypeDesignatorT2.values()) {
+                if (t.getCode() == code) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown code '" + code + "'");
+        }
+
+        private final char code;
+
+        UpperAirDataTypeDesignatorT2(final char code) {
+            this.code = code;
+        }
+
+        @Override
+        public char getCode() {
+            return code;
+        }
+    }
+
     interface DataTypeDesignatorT2 {
         char getCode();
     }
