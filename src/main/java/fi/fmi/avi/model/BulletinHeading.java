@@ -191,6 +191,7 @@ public interface BulletinHeading {
         FCT_TROPICAL_CYCLONE_ADVISORIES('K'),//
         FCT_LOCAL_OR_AREA('L'),//
         FCT_TEMPERATURE_EXTREMES('M'),//
+        FCT_SPACE_WEATHER('N'),//
         FCT_GUIDANCE('O'),//
         FCT_PUBLIC('P'),//
         FCT_OTHER_SHIPPING('Q'),//
