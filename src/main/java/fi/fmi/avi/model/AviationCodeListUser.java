@@ -431,8 +431,6 @@ public interface AviationCodeListUser {
     
     enum PermissibleUsageReason { TEST, EXERCISE }
 
-    enum MessageType { TAF, METAR, SPECI, SIGMET, GAFOR, AIRMET, TROPICAL_CYCLONE_ADVISORY, VOLCANIC_ASH_ADVISORY, BULLETIN, GENERIC }
-
     //From: http://codes.wmo.int/49-2/SigWxPhenomena
     enum AeronauticalSignificantWeatherPhenomenon {
         EMBD_TS("EMBD_TS"),
@@ -501,4 +499,6 @@ public interface AviationCodeListUser {
         FORECAST
     }
 
+    enum MessageType { TAF, METAR, SPECI, SIGMET, GAFOR, AIRMET, TROPICAL_CYCLONE_ADVISORY, VOLCANIC_ASH_ADVISORY, BULLETIN, GENERIC, LOW_WIND, WX_WARNING,
+        SPECIAL_AIR_REPORT, WXREP, SPACE_WEATHER_ADVISORY }
 }

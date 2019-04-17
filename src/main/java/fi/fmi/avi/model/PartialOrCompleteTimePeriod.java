@@ -31,7 +31,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
 
     private static final Pattern DAY_HOUR_HOUR_PATTERN = Pattern.compile("^(?<day>[0-9]{2})(?<startHour>[0-9]{2})(?<endHour>[0-9]{2})$");
     private static final Pattern DAY_HOUR_DAY_HOUR_PATTERN = Pattern.compile(
-            "^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})/(?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
+            "^(?<startDay>[0-9]{2})(?<startHour>[0-9]{2})[/-](?<endDay>[0-9]{2})(?<endHour>[0-9]{2})$");
     private static final long serialVersionUID = 875078230227696812L;
 
     public static Builder builder() {
