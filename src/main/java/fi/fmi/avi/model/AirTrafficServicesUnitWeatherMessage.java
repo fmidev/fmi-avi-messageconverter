@@ -13,7 +13,7 @@ public interface AirTrafficServicesUnitWeatherMessage extends AviationWeatherMes
      *
      * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
      */
-    PartialOrCompleteTimeInstant getIssueTime();
+
     public UnitPropertyGroup getIssuingAirTrafficServicesUnit();
     public UnitPropertyGroup getMeteorologicalWatchOffice();
 }
