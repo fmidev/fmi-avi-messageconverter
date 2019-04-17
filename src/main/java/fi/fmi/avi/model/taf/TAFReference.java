@@ -16,7 +16,7 @@ public interface TAFReference {
 
     Optional<PartialOrCompleteTimeInstant> getIssueTime();
 
-    PartialOrCompleteTimePeriod getValidityTime();
+    Optional<PartialOrCompleteTimePeriod> getValidityTime();
 
     Optional<TAF.TAFStatus> getStatus();
 

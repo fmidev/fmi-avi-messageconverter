@@ -243,7 +243,7 @@ public abstract class TAFImpl implements TAF, Serializable {
 
         private Builder completeReferredReport(final ZonedDateTime reference) {
             return mapReferredReport(referredReport -> TAFReferenceImpl.Builder.from(referredReport)//
-                    .mutateValidityTime(builder -> builder.completePartialEndingNear(reference))//
+                    .setValidityTime(PartialOrCompleteTimePeriod.builder().completePartialEndingNear(reference).build())//
                     .build());
         }
 
