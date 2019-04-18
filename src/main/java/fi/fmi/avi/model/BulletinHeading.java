@@ -201,7 +201,8 @@ public interface BulletinHeading {
         FCT_UPPER_AIR('U'),//
         FCT_VOLCANIC_ASH_ADVISORIES('V'),//
         FCT_WINTER_SPORTS('W'),//
-        FCT_MISCELLANEOUS('X'), FCT_SHIPPING_AREA('Z');
+        FCT_MISCELLANEOUS('X'),//
+        FCT_SHIPPING_AREA('Z');
 
         public static ForecastsDataTypeDesignatorT2 fromCode(final char code) {
             for (ForecastsDataTypeDesignatorT2 t : ForecastsDataTypeDesignatorT2.values()) {
@@ -237,7 +238,8 @@ public interface BulletinHeading {
         WRN_SIGMET('S'),//
         WRN_TROPICAL_CYCLONE_TYPHOON_OR_HURRICANE('T'),//
         WRN_SEVERE_THUNDERSTORM('U'),//
-        WRN_VOLCANIC_ASH_CLOUDS_SIGMET('V'), WRN_WARNINGS_AND_WEATHER_SUMMARY('W');
+        WRN_VOLCANIC_ASH_CLOUDS_SIGMET('V'),//
+        WRN_WARNINGS_AND_WEATHER_SUMMARY('W');
 
         public static WarningsDataTypeDesignatorT2 fromCode(final char code) {
             for (WarningsDataTypeDesignatorT2 t : WarningsDataTypeDesignatorT2.values()) {
