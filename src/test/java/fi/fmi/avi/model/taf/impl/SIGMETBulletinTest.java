@@ -8,8 +8,7 @@ import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSSIGMETImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSVASIGMETImpl;
+import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 
 public class SIGMETBulletinTest {
 
@@ -25,7 +24,7 @@ public class SIGMETBulletinTest {
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(17, 7, 0)))
                         .build());
 
-        builder.addMessages(WSVASIGMETImpl.builder()//
+        builder.addMessages(SIGMETImpl.builder()//
                 .setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
                         + "EFIN FINLAND FIR SEV TURB FCST AT 0740Z\n"//
                         + "S OF LINE N5953 E01931 -\n"//

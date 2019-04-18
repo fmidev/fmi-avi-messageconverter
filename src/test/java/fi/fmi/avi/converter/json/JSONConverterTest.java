@@ -37,10 +37,8 @@ import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
-import fi.fmi.avi.model.sigmet.WSVASIGMET;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETBulletinImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSSIGMETImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSVASIGMETImpl;
+import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 import fi.fmi.avi.model.taf.immutable.TAFBaseForecastImpl;
@@ -81,7 +79,7 @@ public class JSONConverterTest {
         Objects.requireNonNull(is);
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        final ConversionResult<WSVASIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
     }
 
@@ -205,7 +203,7 @@ public class JSONConverterTest {
         Objects.requireNonNull(is);
         final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
-        final ConversionResult<WSVASIGMET> result = converter.convertMessage(reference, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        final ConversionResult<SIGMET> result = converter.convertMessage(reference, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
 
         final SIGMETBulletinImpl.Builder builder = SIGMETBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//
@@ -217,7 +215,7 @@ public class JSONConverterTest {
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
                         .build());
 
-        builder.addMessages(WSVASIGMETImpl.Builder.from(result.getConvertedMessage().get())
+        builder.addMessages(SIGMETImpl.Builder.from(result.getConvertedMessage().get())
                 .setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
                         + "EFIN FINLAND FIR SEV TURB FCST AT 0740Z\n"//
                         + "S OF LINE N5953 E01931 -\n"//

@@ -20,20 +20,17 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
-import fi.fmi.avi.model.VolcanoDescription;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
 import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
 import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SIGMETDeserializer;
 import fi.fmi.avi.model.sigmet.SigmetReference;
-import fi.fmi.avi.model.sigmet.VASIGMET;
+import fi.fmi.avi.model.sigmet.VAInfo;
 
 @FreeBuilder
-@JsonDeserialize(builder = VASIGMETImpl.Builder.class)
+@JsonDeserialize(builder = SIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "airspace",
         "analysisGeometries", "forecastGeometries",
@@ -41,20 +38,24 @@ import fi.fmi.avi.model.sigmet.VASIGMET;
         "volcano", "noVolcanicAshExpected", "volcanicAshMovedToFIR",
         "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class VASIGMETImpl implements VASIGMET, Serializable {
+public abstract class SIGMETImpl implements SIGMET, Serializable {
 
-    public static VASIGMETImpl immutableCopyOf(final VASIGMET sigmet) {
+    public static SIGMETImpl immutableCopyOf(final SIGMET sigmet) {
         Objects.requireNonNull(sigmet);
-        if (sigmet instanceof VASIGMETImpl) {
-            return (VASIGMETImpl) sigmet;
+        if (sigmet instanceof SIGMETImpl) {
+            return (SIGMETImpl) sigmet;
         } else {
             return Builder.from(sigmet).build();
         }
     }
 
-    public static Optional<VASIGMETImpl> immutableCopyOf(final Optional<VASIGMET> sigmet) {
+    public static Optional<SIGMETImpl> immutableCopyOf(final Optional<SIGMET> sigmet) {
         Objects.requireNonNull(sigmet);
-        return sigmet.map(VASIGMETImpl::immutableCopyOf);
+        return sigmet.map(SIGMETImpl::immutableCopyOf);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public abstract Builder toBuilder();
@@ -85,15 +86,15 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
         return true;
     }
 
-    public static class Builder extends VASIGMETImpl_Builder {
+    public static class Builder extends SIGMETImpl_Builder {
 
         public Builder() {
           this.setTranslated(false);
         }
 
         public static Builder from(final SIGMET value) {
-            if (value instanceof VASIGMETImpl) {
-                return ((VASIGMETImpl) value).toBuilder();
+            if (value instanceof SIGMETImpl) {
+                return ((SIGMETImpl) value).toBuilder();
             } else {
                 //From AviationWeatherMessage
                 Builder retval = new Builder()//
@@ -134,14 +135,15 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
                 value.getForecastGeometries().map(an -> retval.setForecastGeometries(
                         (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryImpl::immutableCopyOf).collect(Collectors.toList())))));
 
-                if (value instanceof VASIGMET) {
+                retval.setVAInfo(value.getVAInfo());
+ /*               if (value instanceof VASIGMET) {
                     //From VASigmet
                     VASIGMET va=(VASIGMET)value;
                     retval.setVolcano(VolcanoDescriptionImpl.immutableCopyOf((va.getVolcano())));
                     if (va.getNoVolcanicAshExpected().isPresent()) retval.setNoVolcanicAshExpected(va.getNoVolcanicAshExpected().get());
                     if (va.getVolcanicAshMovedToFIR().isPresent()) retval.setVolcanicAshMovedToFIR(va.getVolcanicAshMovedToFIR().get());
                 }
-
+*/
                 return retval;
             }
         }
@@ -197,23 +199,23 @@ public abstract class VASIGMETImpl implements VASIGMET, Serializable {
         public Builder setMovingDirection(NumericMeasure direction) { return super.setMovingDirection(direction);}
 
         @Override
-        @JsonDeserialize(as= VolcanoDescriptionImpl.class)
-        public Builder setVolcano(final VolcanoDescription volcano) { return super.setVolcano(volcano);}
-
-        @Override
-        public Builder setNoVolcanicAshExpected(boolean noVolcanicAshExpected) { return super.setNoVolcanicAshExpected(noVolcanicAshExpected);}
-
- /*       @Override
-        public Builder setTranslated(boolean translated) {
-            return super.setTranslated(translated);
-        }
-*/
-        @Override
-        @JsonDeserialize(as = UnitPropertyGroupImpl.class)
-        public Builder setVolcanicAshMovedToFIR(final UnitPropertyGroup issuingAirTrafficServicesUnit) {
-            return super.setVolcanicAshMovedToFIR(issuingAirTrafficServicesUnit);
+        @JsonDeserialize(as = VAInfoImpl.class)
+        public Builder setVAInfo(final VAInfo vaInfo) {
+            return super.setVAInfo(vaInfo);
         }
 
+/*        @Override
+        @JsonDeserialize(as = VAInfoImpl.class)
+        public Builder setVAInfo(final Optional<? extends VAInfo> vaInfo) {
+            return super.setVAInfo(vaInfo);
+        }*/
+
+
+        /*       @Override
+               public Builder setTranslated(boolean translated) {
+                   return super.setTranslated(translated);
+               }
+       */
         @Override
         @JsonDeserialize( as = AirspaceImpl.class)
         public Builder setAirspace(Airspace airspace) { return super.setAirspace(airspace);}

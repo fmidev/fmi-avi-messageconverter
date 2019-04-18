@@ -3,12 +3,12 @@ package fi.fmi.avi.converter.json;
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.model.sigmet.WSVASIGMET;
+import fi.fmi.avi.model.sigmet.SIGMET;
 
 /**
  * A simple wrapper to specialize the {@link AbstractJSONSerializer} for METAR.
  */
-public class SIGMETJSONSerializer extends AbstractJSONSerializer implements AviMessageSpecificConverter<WSVASIGMET, String> {
+public class SIGMETJSONSerializer extends AbstractJSONSerializer implements AviMessageSpecificConverter<SIGMET, String> {
 
     /**
      * Converts a SIGMET object to JSON
@@ -21,7 +21,7 @@ public class SIGMETJSONSerializer extends AbstractJSONSerializer implements AviM
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<String> convertMessage(final WSVASIGMET input, final ConversionHints hints) {
+    public ConversionResult<String> convertMessage(final SIGMET input, final ConversionHints hints) {
         return doConvertMessage(input, hints);
     }
 }

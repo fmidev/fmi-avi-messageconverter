@@ -12,11 +12,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.BulletinHeading;
-import fi.fmi.avi.model.MeteorologicalBulletin;
 import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
-import fi.fmi.avi.model.sigmet.WSVASIGMET;
 
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETBulletinImpl.Builder.class)
@@ -72,9 +70,9 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
         }
 
         @Override
-        @JsonDeserialize(contentAs = WSVASIGMETImpl.class)
+        @JsonDeserialize(contentAs = SIGMETImpl.class)
         @JsonProperty("messages")
-        public Builder addMessages(final WSVASIGMET... messages) {
+        public Builder addMessages(final SIGMET... messages) {
             return super.addMessages(messages);
         }
     }

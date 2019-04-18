@@ -4,9 +4,7 @@ import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.model.sigmet.AIRMET;
-import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSSIGMETImpl;
 
 /**
  * A simple wrapper to specialize {@link AbstractJSONParser} for SIGMET.

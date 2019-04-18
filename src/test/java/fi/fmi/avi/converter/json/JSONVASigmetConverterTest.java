@@ -3,7 +3,6 @@ package fi.fmi.avi.converter.json;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -44,14 +43,10 @@ import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
-import fi.fmi.avi.model.sigmet.VAInfo;
-import fi.fmi.avi.model.sigmet.VASIGMET;
-import fi.fmi.avi.model.sigmet.WSVASIGMET;
 import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.VAInfoImpl;
-import fi.fmi.avi.model.sigmet.immutable.VASIGMETImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSVASIGMETImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONVASigmetTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -66,7 +61,7 @@ public class JSONVASigmetConverterTest {
         Objects.requireNonNull(is);
         String input = IOUtils.toString(is,"UTF-8");
         is.close();
-        ConversionResult<WSVASIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         for (ConversionIssue iss:result.getConversionIssues()){
             System.err.println("  ISS:"+iss.getMessage()+" "+iss.getCause());
         }
@@ -88,7 +83,7 @@ public class JSONVASigmetConverterTest {
         String reference = IOUtils.toString(is,"UTF-8");
         is.close();
 
-        WSVASIGMETImpl.Builder builder = new WSVASIGMETImpl.Builder();
+        SIGMETImpl.Builder builder = new SIGMETImpl.Builder();
 
         UnitPropertyGroup mwo=new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
         UnitPropertyGroup fir=new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build();
@@ -146,17 +141,17 @@ public class JSONVASigmetConverterTest {
                 .setForecastGeometries(Arrays.asList(fpGeomBuilder.build()))
                 .setVAInfo(vaInfoBuilder.build());
 
-        WSVASIGMET vaSigmet=builder.build();
+        SIGMET vaSigmet=builder.build();
 
         ConversionResult<String> result = converter.convertMessage(vaSigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
         System.err.println("Converted: "+result.getConvertedMessage().get());
 
-        WSVASIGMET refVaSigmet=om.readValue(reference, WSVASIGMETImpl.class);
+        SIGMET refVaSigmet=om.readValue(reference, SIGMETImpl.class);
         System.err.println("refVaSigmet: "+refVaSigmet);
 
-        WSVASIGMET newVaSigmet = om.readValue(result.getConvertedMessage().get(), WSVASIGMETImpl.class);
+        SIGMET newVaSigmet = om.readValue(result.getConvertedMessage().get(), SIGMETImpl.class);
 
         JsonNode refTree = om.readTree(reference);
         JsonNode newTree = om.readTree(result.getConvertedMessage().get());

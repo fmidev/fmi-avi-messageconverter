@@ -11,7 +11,6 @@ import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
-import fi.fmi.avi.model.sigmet.WSVASIGMET;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 
@@ -26,7 +25,7 @@ public class JSONTestConfiguration {
     private AviMessageSpecificConverter<METAR, String> metarJSONSerializer;
 
     @Autowired
-    private AviMessageSpecificConverter<WSVASIGMET, String> sigmetJSONSerializer;
+    private AviMessageSpecificConverter<SIGMET, String> sigmetJSONSerializer;
 
     @Autowired
     private AviMessageSpecificConverter<TAFBulletin, String> tafBulletinJSONSerializer;
@@ -41,7 +40,7 @@ public class JSONTestConfiguration {
     private AviMessageSpecificConverter<String, METAR> metarJSONParser;
 
     @Autowired
-    private AviMessageSpecificConverter<String, WSVASIGMET> sigmetJSONParser;
+    private AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser;
 
     @Autowired
     private AviMessageSpecificConverter<String, TAFBulletin> tafBulletinJSONParser;

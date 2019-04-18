@@ -11,7 +11,6 @@ import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.TacOrGeoGeometry;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
@@ -20,7 +19,6 @@ import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
-import fi.fmi.avi.model.sigmet.WSSIGMET;
 
 import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
@@ -76,7 +74,7 @@ public class SigmetTest {
         Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
 
-        WSSIGMETImpl.Builder sm=new WSSIGMETImpl.Builder()
+        SIGMETImpl.Builder sm=new SIGMETImpl.Builder()
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T14:00:00Z")))
                 .setIssuingAirTrafficServicesUnit(new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAM", "FIR").build())
                 .setMeteorologicalWatchOffice(new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())

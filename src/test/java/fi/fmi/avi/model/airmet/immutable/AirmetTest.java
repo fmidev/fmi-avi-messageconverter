@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
 
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
@@ -26,17 +24,12 @@ import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
-import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
 import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.AirmetCloudLevelsImpl;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSSIGMETImpl;
 
 public class AirmetTest {
 
@@ -68,7 +61,7 @@ public class AirmetTest {
         AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon airmetPhenomenon= AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.BKN_CLD;
 
         AirmetCloudLevelsImpl.Builder levels = new AirmetCloudLevelsImpl.Builder()
-                .setCloudBottom(NumericMeasureImpl.of(0, "SFC"))
+                .setCloudBase(NumericMeasureImpl.of(0, "SFC"))
                 .setCloudTop(NumericMeasureImpl.of(7000, "[ft_i]"));
 
         Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
@@ -111,6 +104,6 @@ public class AirmetTest {
         assert(smNode.get("status").asText().equals("NORMAL"));
 
         AIRMET readBackAirmet=om.readValue(json, AIRMETImpl.class);
-        System.err.println("bottom: "+readBackAirmet.getCloudLevels().get().getCloudBottom().getValue());
+        System.err.println("bottom: "+readBackAirmet.getCloudLevels().get().getCloudBase().getValue());
     }
 }

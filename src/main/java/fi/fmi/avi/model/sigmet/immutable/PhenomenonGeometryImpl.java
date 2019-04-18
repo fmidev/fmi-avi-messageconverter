@@ -39,14 +39,17 @@ import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
                 if (value instanceof PhenomenonGeometryImpl) {
                     return ((PhenomenonGeometryImpl) value).toBuilder();
                 } else {
-                    return new Builder();
+                    return new Builder()
+                            .setGeometry(value.getGeometry())
+                            .setTime(value.getTime())
+                            .setApproximateLocation(value.getApproximateLocation());
 
                 }
             }
             @Override
             @JsonDeserialize(as= TacOrGeoGeometryImpl.class)
             public Builder setGeometry(TacOrGeoGeometry geom) {
-                return super.setGeometry(geom);
+                return super.setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(geom));
             }
         }
     }

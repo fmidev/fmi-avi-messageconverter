@@ -14,8 +14,7 @@ import fi.fmi.avi.model.immutable.*;
 import fi.fmi.avi.model.sigmet.*;
 import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSSIGMETImpl;
-import fi.fmi.avi.model.sigmet.immutable.WSVASIGMETImpl;
+import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +25,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -49,7 +47,7 @@ public class JSONSigmetConverterTest {
         Objects.requireNonNull(is);
         String input = IOUtils.toString(is,"UTF-8");
         is.close();
-        ConversionResult<WSVASIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         System.err.println("SM:"+result.getStatus()+" ==>");
         System.err.println("==>"+result.getConvertedMessage().get().getSequenceNumber());
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
@@ -69,7 +67,7 @@ public class JSONSigmetConverterTest {
         String reference = IOUtils.toString(is,"UTF-8");
         is.close();
 
-        WSVASIGMETImpl.Builder builder = new WSVASIGMETImpl.Builder();
+        SIGMETImpl.Builder builder = new SIGMETImpl.Builder();
 
         UnitPropertyGroup mwo=new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
         UnitPropertyGroup fir=new UnitPropertyGroupImpl.Builder().setPropertyGroup( "AMSTERDAM FIR", "EHAA", "FIR").build();
@@ -117,7 +115,7 @@ public class JSONSigmetConverterTest {
                 .setForecastGeometries(Arrays.asList(fpGeomBuilder.build())
                 );
 
-        WSVASIGMET sigmet=builder.build();
+        SIGMET sigmet=builder.build();
         ConversionResult<String> result = converter.convertMessage(sigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());

@@ -42,7 +42,14 @@ import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
                 if (value instanceof PhenomenonGeometryWithHeightImpl) {
                     return ((PhenomenonGeometryWithHeightImpl) value).toBuilder();
                 } else {
-                    return new Builder();
+                    return new Builder()
+                            .setLowerLimit(value.getLowerLimit())
+                            .setUpperLimit(value.getUpperLimit())
+                            .setLowerLimitOperator(value.getLowerLimitOperator())
+                            .setUpperLimitOperator(value.getUpperLimitOperator())
+                            .setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(value.getGeometry()))
+                            .setApproximateLocation(value.getApproximateLocation())
+                            .setTime(value.getTime());
                 }
             }
 
@@ -61,7 +68,7 @@ import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
             @Override
             @JsonDeserialize(as= TacOrGeoGeometryImpl.class)
             public Builder setGeometry(TacOrGeoGeometry geom) {
-                return super.setGeometry(geom);
+                return super.setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(geom));
             }
         }
 }
