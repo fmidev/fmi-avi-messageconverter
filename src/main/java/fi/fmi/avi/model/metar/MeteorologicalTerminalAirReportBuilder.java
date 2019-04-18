@@ -9,7 +9,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
@@ -59,11 +58,11 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
     B clear();
 
     default B withCompleteIssueTime(final YearMonth yearMonth) {
-        return mutateIssueTime((input) -> input.completePartialAt(yearMonth));
+        return mapIssueTime((input) -> input.toBuilder().completePartialAt(yearMonth).build());
     }
 
     default B withCompleteIssueTimeNear(final ZonedDateTime reference) {
-        return mutateIssueTime((input) -> input.completePartialNear(reference));
+        return mapIssueTime((input) -> input.toBuilder().completePartialNear(reference).build());
     }
 
     default B withCompleteForecastTimes(final YearMonth issueYearMonth, final int issueDay, final int issueHour, final ZoneId tz)
@@ -77,8 +76,12 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
 
     default B withAllTimesComplete(final ZonedDateTime reference) {
         requireNonNull(reference, "reference");
+        ZonedDateTime forecastReference = reference;
+        if (getIssueTime().isPresent() && getIssueTime().get().getCompleteTime().isPresent()) {
+            forecastReference = getIssueTime().get().getCompleteTime().get();
+        }
         return withCompleteIssueTimeNear(reference)//
-                .withCompleteForecastTimes(getIssueTimeBuilder().getCompleteTime().orElse(reference));
+                .withCompleteForecastTimes(forecastReference);
     }
 
     /**
@@ -709,30 +712,50 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
      * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
      *
      * @return this {@code Builder} object
-     *
-     * @throws NullPointerException
-     *         if {@code builder} is null
      */
-    B setIssueTime(PartialOrCompleteTimeInstant.Builder builder);
+    B setIssueTime(Optional<? extends PartialOrCompleteTimeInstant> issueTime);
 
     /**
-     * Applies {@code mutator} to the builder for the value that will be returned by {@link
-     * MeteorologicalTerminalAirReport#getIssueTime()}.
-     *
-     * <p>This method mutates the builder in-place. {@code mutator} is a void consumer, so any value
-     * returned from a lambda will be ignored.
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
      *
      * @return this {@code Builder} object
-     *
-     * @throws NullPointerException
-     *         if {@code mutator} is null
      */
-    B mutateIssueTime(Consumer<PartialOrCompleteTimeInstant.Builder> mutator);
+    default B setNullableIssueTime(@Nullable PartialOrCompleteTimeInstant issueTime){
+        if (issueTime != null) {
+            return setIssueTime(issueTime);
+        } else {
+            return clearIssueTime();
+        }
+    }
+
 
     /**
-     * Returns a builder for the value that will be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     * If the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} is present, replaces it by
+     * applying {@code mapper} to it and using the result.
+     *
+     * <p>If the result is null, clears the value.
+     *
+     * @return this {@code Builder} object
+     * @throws NullPointerException if {@code mapper} is null
      */
-    PartialOrCompleteTimeInstant.Builder getIssueTimeBuilder();
+    default B mapIssueTime(UnaryOperator<PartialOrCompleteTimeInstant> mapper){
+        Objects.requireNonNull(mapper);
+        return setIssueTime(getIssueTime().map(mapper));
+    }
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} to {@link Optional#empty()
+     * Optional.empty()}.
+     *
+     * @return this {@code Builder} object
+     */
+    B clearIssueTime();
+
+
+    /**
+     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     */
+    Optional<PartialOrCompleteTimeInstant> getIssueTime();
 
     /**
      * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#getAerodrome()} by applying {@code

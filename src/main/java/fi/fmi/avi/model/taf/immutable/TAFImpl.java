@@ -78,7 +78,7 @@ public abstract class TAFImpl implements TAF, Serializable {
     @Override
     @JsonIgnore
     public boolean areAllTimeReferencesComplete() {
-        if (!this.getIssueTime().getCompleteTime().isPresent()) {
+        if (!this.getIssueTime().isPresent() || !this.getIssueTime().get().getCompleteTime().isPresent()) {
             return false;
         }
         if (this.getValidityTime().isPresent()) {
@@ -160,11 +160,11 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         public Builder withCompleteIssueTime(final YearMonth yearMonth) {
-            return mutateIssueTime((input) -> input.completePartialAt(yearMonth));
+            return mapIssueTime((input) -> input.toBuilder().completePartialAt(yearMonth).build());
         }
 
         public Builder withCompleteIssueTimeNear(final ZonedDateTime reference) {
-            return mutateIssueTime((input) -> input.completePartialNear(reference));
+            return mapIssueTime((input) -> input.toBuilder().completePartialNear(reference).build());
         }
 
         public Builder withCompleteForecastTimes(final YearMonth issueYearMonth, final int issueDay, final int issueHour, final ZoneId tz) {
@@ -249,8 +249,12 @@ public abstract class TAFImpl implements TAF, Serializable {
 
         public Builder withAllTimesComplete(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
+            ZonedDateTime forecastReference = reference;
+            if (getIssueTime().isPresent() && getIssueTime().get().getCompleteTime().isPresent()) {
+                forecastReference = getIssueTime().get().getCompleteTime().get();
+            }
             return withCompleteIssueTimeNear(reference)//
-                    .withCompleteForecastTimes(getIssueTimeBuilder().getCompleteTime().orElse(reference));
+                    .withCompleteForecastTimes(forecastReference);
         }
 
         @Override

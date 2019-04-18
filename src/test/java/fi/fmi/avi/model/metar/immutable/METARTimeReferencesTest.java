@@ -29,13 +29,14 @@ public class METARTimeReferencesTest {
                 .setIssueTime(PartialOrCompleteTimeInstant.createIssueTime("311004Z"))//
                 .withCompleteIssueTime(YearMonth.of(2017, Month.DECEMBER))//
                 .buildPartial();
-
-        assertEquals(Optional.of(PartialDateTime.parse("--31T10:04Z")), msg.getIssueTime().getPartialTime());
-        final PartialOrCompleteTimeInstant it = msg.getIssueTime();
+        assertTrue(msg.getIssueTime().isPresent());
+        assertEquals(Optional.of(PartialDateTime.parse("--31T10:04Z")), msg.getIssueTime().get().getPartialTime());
+        final Optional<PartialOrCompleteTimeInstant> it = msg.getIssueTime();
 
         final ZonedDateTime toMatch = ZonedDateTime.of(2017, 12, 31, 10, 4, 0, 0, ZoneId.of("Z"));
-        assertFalse(it.isMidnight24h());
-        assertEquals(Optional.of(toMatch), it.getCompleteTime());
+        assertTrue(it.isPresent());
+        assertFalse(it.get().isMidnight24h());
+        assertEquals(Optional.of(toMatch), it.get().getCompleteTime());
 
     }
 

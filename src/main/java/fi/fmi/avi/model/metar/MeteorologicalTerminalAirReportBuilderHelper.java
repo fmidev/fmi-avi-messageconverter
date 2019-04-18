@@ -50,7 +50,7 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
         builder.setRemarks(value.getRemarks());
 
         //From AerodromeWeatherMessage:
-        builder.setIssueTime(PartialOrCompleteTimeInstant.Builder.from((value.getIssueTime())));
+        builder.setIssueTime(value.getIssueTime().map(issueTime -> PartialOrCompleteTimeInstant.Builder.from(issueTime).build()));
         builder.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()));
 
         //From MeteorologicalTerminalAirReport:
