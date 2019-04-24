@@ -1,6 +1,7 @@
 package fi.fmi.avi.converter.json;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class JSONAirmetConverterTest {
         ConversionResult<AIRMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_AIRMET_POJO, ConversionHints.EMPTY);
         System.err.println("SM:"+result.getStatus()+" ==>");
         System.err.println("==>"+result.getConvertedMessage().get().getSequenceNumber());
-        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
 
@@ -159,9 +160,6 @@ public class JSONAirmetConverterTest {
         ZonedDateTime now=ZonedDateTime.now();
         System.err.println("now: "+now+" "+convertedAirmet.getIssueTime());
         assertEquals("constructed and parsed tree not equal", airmet, convertedAirmet);
- //       BufferedReader refReader = new BufferedReader(new StringReader(reference));
- //       BufferedReader resultReader = new BufferedReader(new StringReader(result.getConvertedMessage().get()));
-//        assertEquals("Strings do not match", reference, result.getConvertedMessage().get());
 
     }
 }
