@@ -337,6 +337,51 @@ public interface BulletinHeading {
         }
     }
 
+    enum SurfaceDataTypeDesignatorT2 implements DataTypeDesignatorT2 {
+        SD_AVIATION_ROUTINE_REPORTS('A'),//
+        SD_RADAR_REPORTS_A('B'),//
+        SD_RADAR_REPORTS_B('C'),//
+        SD_RADAR_REPORTS_AB('D'),//
+        SD_SEISMIC_DATA('E'),//
+        SD_ATMOSPHERICS_REPORTS('F'),//
+        SD_RADIOLOGICAL_DATA_REPORT('G'),//
+        SD_SDP_STATIONS_REPORTS('H'),//
+        SD_INTERMEDIATE_SYNOPTIC_HOUR('I'),//
+        SD_MAIN_SYNOPTIC_HOUR('M'),//
+        SD_NON_STANDARD_SYNOPTIC_HOUR('N'),//
+        SD_OCEANOGRAPHIC_DATA('O'),//
+        SD_SPECIAL_AVIATION_WEATHER_REPORTS('P'),//
+        SD_HYDROLOGICAL_RIVER_REPORTS('R'),//
+        SD_DRIFTING_BUOY_REPORTS('S'),//
+        SD_SEA_ICE_REPORTS('T'),//
+        SD_SNOW_DEPTH_REPORTS('U'),//
+        SD_LAKE_ICE_REPORTS('V'),//
+        SD_WAVE_INFORMATION('W'),//
+        SD_MISCELLANEOUS('X'),//
+        SD_SEISMIC_WAVEFORM_DATA('Y'),//
+        SD_SEA_LEVEÖ_DEEP_OCEAN_TSUNAMI_DATA('Z');
+
+        public static SurfaceDataTypeDesignatorT2  fromCode(final char code) {
+            for (SurfaceDataTypeDesignatorT2  t : SurfaceDataTypeDesignatorT2 .values()) {
+                if (t.getCode() == code) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown code '" + code + "'");
+        }
+
+        private final char code;
+
+        SurfaceDataTypeDesignatorT2 (final char code) {
+            this.code = code;
+        }
+
+        @Override
+        public char getCode() {
+            return code;
+        }
+    }
+
     interface DataTypeDesignatorT2 {
         char getCode();
     }

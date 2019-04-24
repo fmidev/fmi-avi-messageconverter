@@ -102,10 +102,11 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                 t2 = XMLDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
             } else if (DataTypeDesignatorT1.UPPER_AIR_DATA == t1) {
                 t2 = UpperAirDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
+            } else if (DataTypeDesignatorT1.SURFACE_DATA == t1) {
+                t2 = SurfaceDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
             } else {
-                throw new IllegalArgumentException("Only forecast ('F') and warning ('W'), XML('L') and upper-air ('U') type headings currently supported, t1 "
-                        + "is "
-                        + "'" + t1 + "'");
+                throw new IllegalArgumentException("Only forecast ('F') , warning ('W'), XML('L'), upper-air ('U') and surface data ('S') type headings "
+                        + "currently supported, t1 is '" + t1 + "'");
             }
             String issueTime = "--" + m.group("YY") + "T" + m.group("GG") + ":" + m.group("gg");
             return new Builder()//
