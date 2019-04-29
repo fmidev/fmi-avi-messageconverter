@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import fi.fmi.avi.model.AviationCodeListUser;
 
 /**
  * ConversionHints provides lexing, parsing and serializing related
@@ -42,31 +43,37 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
     /**
      * Message type METAR
+     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#METAR} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_METAR = "METAR";
 
     /**
      * Message type TAF
+     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#TAF} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_TAF = "TAF";
 
     /**
      * Message type SPECI
+     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#SPECI} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_SPECI = "SPECI";
 
     /**
      * Message type SIGMET
+     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#SIGMET} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_SIGMET = "SIGMET";
 
     /**
      * Message type AIRMET
+     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#AIRMET} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_AIRMET = "AIRMET";
 
     /**
      * Message type ARS
+     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#SPECIAL_AIR_REPORT} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_ARS = "ARS";
 
@@ -219,8 +226,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final ConversionHints EMPTY;
 
     static {
-        KEY_MESSAGE_TYPE = new KeyImpl(1, "Aviation message type hint", VALUE_MESSAGE_TYPE_METAR, VALUE_MESSAGE_TYPE_SPECI, VALUE_MESSAGE_TYPE_TAF,
-                VALUE_MESSAGE_TYPE_SIGMET, VALUE_MESSAGE_TYPE_AIRMET, VALUE_MESSAGE_TYPE_ARS);
+        KEY_MESSAGE_TYPE = new KeyImpl(1, "Aviation message type hint");
         KEY_PARSING_MODE = new KeyImpl(3, "Parsing mode hint", VALUE_PARSING_MODE_STRICT, VALUE_PARSING_MODE_ALLOW_MISSING, VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS, VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
         KEY_VALIDTIME_FORMAT = new KeyImpl(4, "Valid time format preference", VALUE_VALIDTIME_FORMAT_PREFER_SHORT, VALUE_VALIDTIME_FORMAT_PREFER_LONG);
         KEY_TIMEZONE_ID_POLICY = new KeyImpl(5, "Controls whether the UTZ indicator 'Z' is required/created when not strictly mandated",
@@ -237,11 +243,11 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
         KEY_BULLETIN_ID = new KeyImpl(9, "Set the containing bulletin ID when converting from a bulletin format not containing the ID in itself");
 
-        METAR = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
-        TAF = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
-        SPECI = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SPECI);
-        SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SIGMET);
-        ARS = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_ARS);
+        METAR = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.METAR);
+        TAF = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.TAF);
+        SPECI = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.SPECI);
+        SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.SIGMET);
+        ARS = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.SPECIAL_AIR_REPORT);
 
         STRICT_PARSING = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
         ALLOW_ERRORS = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
