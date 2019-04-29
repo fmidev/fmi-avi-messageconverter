@@ -50,6 +50,19 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         return heading.map(BulletinHeadingImpl::immutableCopyOf);
     }
 
+    /**
+     *
+     * Tries to determine the intended message type from the bulletin heading.
+     *
+     * Not detected due to unambiguous use in practice:
+     *    * UA: could be either SPECIAL_AIR_REPORT or WXREP
+     *    * UX: could be LOW_WIND or some other misc upper-air data
+     *    * WX: could be WX_WRNG or some other misc warning
+     *    * FX: could be LOW_WIND or some other misc forecast
+     *    * FV: could be either VOLCANIC_ASH_ADVISORY or SIGMET
+     *
+     * @return The message type, if one can be unambiguously determined
+     */
     @Override
     public Optional<AviationCodeListUser.MessageType> getExpectedContainedMessageType() {
         AviationCodeListUser.MessageType retval = null;
@@ -64,12 +77,16 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                 case FCT_SPACE_WEATHER:
                     retval = AviationCodeListUser.MessageType.SPACE_WEATHER_ADVISORY;
                     break;
+                    /*
                 case FCT_VOLCANIC_ASH_ADVISORIES:
                     retval = AviationCodeListUser.MessageType.VOLCANIC_ASH_ADVISORY;
                     break;
+                    */
                 case FCT_TROPICAL_CYCLONE_ADVISORIES:
                     retval = AviationCodeListUser.MessageType.TROPICAL_CYCLONE_ADVISORY;
                     break;
+                case FCT_UPPER_AIR_WINDS_AND_TEMPERATURES:
+                    retval = AviationCodeListUser.MessageType.GAFOR;
             }
         } else if (DataTypeDesignatorT1.WARNINGS == t1) {
             switch ((WarningsDataTypeDesignatorT2)t2) {
@@ -109,12 +126,14 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                     retval = AviationCodeListUser.MessageType.TROPICAL_CYCLONE_ADVISORY;
                     break;
             }
-        } else if (DataTypeDesignatorT1.UPPER_AIR_DATA == t1) {
+        } /*
+        else if (DataTypeDesignatorT1.UPPER_AIR_DATA == t1) {
             switch ((UpperAirDataTypeDesignatorT2)t2) {
                 case UA_AIRCRAFT_REPORT_CODAR_AIREP:
+                    retval = AviationCodeListUser.MessageType.SPECIAL_AIR_REPORT;
                     retval = AviationCodeListUser.MessageType.WXREP;
             }
-        } else if (DataTypeDesignatorT1.SURFACE_DATA == t1) {
+        } */else if (DataTypeDesignatorT1.SURFACE_DATA == t1) {
             switch ((SurfaceDataTypeDesignatorT2)t2) {
                 case SD_AVIATION_ROUTINE_REPORTS:
                     retval = AviationCodeListUser.MessageType.METAR;
