@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
+import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
@@ -49,11 +50,83 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         return heading.map(BulletinHeadingImpl::immutableCopyOf);
     }
 
-    /*
     @Override
-    @JsonIgnore
-    public abstract DataTypeDesignatorT1 getDataTypeDesignatorT1ForTAC();
-    */
+    public Optional<AviationCodeListUser.MessageType> getExpectedContainedMessageType() {
+        AviationCodeListUser.MessageType retval = null;
+        DataTypeDesignatorT1 t1 = this.getDataTypeDesignatorT1ForTAC();
+        DataTypeDesignatorT2 t2 = this.getDataTypeDesignatorT2();
+        if (DataTypeDesignatorT1.FORECASTS == t1) {
+            switch ((ForecastsDataTypeDesignatorT2)t2) {
+                case FCT_AERODROME_VT_LONG:
+                case FCT_AERODROME_VT_SHORT:
+                    retval = AviationCodeListUser.MessageType.TAF;
+                    break;
+                case FCT_SPACE_WEATHER:
+                    retval = AviationCodeListUser.MessageType.SPACE_WEATHER_ADVISORY;
+                    break;
+                case FCT_VOLCANIC_ASH_ADVISORIES:
+                    retval = AviationCodeListUser.MessageType.VOLCANIC_ASH_ADVISORY;
+                    break;
+                case FCT_TROPICAL_CYCLONE_ADVISORIES:
+                    retval = AviationCodeListUser.MessageType.TROPICAL_CYCLONE_ADVISORY;
+                    break;
+            }
+        } else if (DataTypeDesignatorT1.WARNINGS == t1) {
+            switch ((WarningsDataTypeDesignatorT2)t2) {
+                case WRN_SIGMET:
+                case WRN_TROPICAL_CYCLONE_SIGMET:
+                case WRN_VOLCANIC_ASH_CLOUDS_SIGMET:
+                    retval = AviationCodeListUser.MessageType.SIGMET;
+                    break;
+                case WRN_AIRMET:
+                    retval = AviationCodeListUser.MessageType.AIRMET;
+                    break;
+            }
+        } else if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML == t1) {
+            switch ((XMLDataTypeDesignatorT2)t2) {
+                case XML_METAR:
+                    retval = AviationCodeListUser.MessageType.METAR;
+                    break;
+                case XML_SPECI:
+                    retval = AviationCodeListUser.MessageType.SPECI;
+                    break;
+                case XML_AIRMET:
+                    retval = AviationCodeListUser.MessageType.AIRMET;
+                    break;
+                case XML_SIGMET:
+                case XML_VOLCANIC_ASH_SIGMET:
+                case XML_TROPICAL_CYCLONE_SIGMET:
+                    retval = AviationCodeListUser.MessageType.SIGMET;
+                    break;
+                case XML_AERODROME_VT_LONG:
+                case XML_AERODROME_VT_SHORT:
+                    retval = AviationCodeListUser.MessageType.TAF;
+                    break;
+                case XML_VOLCANIC_ASH_ADVISORY:
+                    retval = AviationCodeListUser.MessageType.VOLCANIC_ASH_ADVISORY;
+                    break;
+                case XML_TROPICAL_CYCLONE_ADVISORIES:
+                    retval = AviationCodeListUser.MessageType.TROPICAL_CYCLONE_ADVISORY;
+                    break;
+            }
+        } else if (DataTypeDesignatorT1.UPPER_AIR_DATA == t1) {
+            switch ((UpperAirDataTypeDesignatorT2)t2) {
+                case UA_AIRCRAFT_REPORT_CODAR_AIREP:
+                    retval = AviationCodeListUser.MessageType.WXREP;
+            }
+        } else if (DataTypeDesignatorT1.SURFACE_DATA == t1) {
+            switch ((SurfaceDataTypeDesignatorT2)t2) {
+                case SD_AVIATION_ROUTINE_REPORTS:
+                    retval = AviationCodeListUser.MessageType.METAR;
+                    break;
+                case SD_SPECIAL_AVIATION_WEATHER_REPORTS:
+                    retval = AviationCodeListUser.MessageType.SPECI;
+
+            }
+        }
+        return Optional.ofNullable(retval);
+    }
+
     public abstract Builder toBuilder();
 
     public static class Builder extends BulletinHeadingImpl_Builder {

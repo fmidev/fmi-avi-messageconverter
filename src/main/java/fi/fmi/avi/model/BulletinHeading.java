@@ -359,7 +359,7 @@ public interface BulletinHeading {
         SD_WAVE_INFORMATION('W'),//
         SD_MISCELLANEOUS('X'),//
         SD_SEISMIC_WAVEFORM_DATA('Y'),//
-        SD_SEA_LEVEÖ_DEEP_OCEAN_TSUNAMI_DATA('Z');
+        SD_SEA_LEVEL_DEEP_OCEAN_TSUNAMI_DATA('Z');
 
         public static SurfaceDataTypeDesignatorT2  fromCode(final char code) {
             for (SurfaceDataTypeDesignatorT2  t : SurfaceDataTypeDesignatorT2 .values()) {
@@ -381,6 +381,8 @@ public interface BulletinHeading {
             return code;
         }
     }
+
+    Optional<AviationCodeListUser.MessageType> getExpectedContainedMessageType();
 
     interface DataTypeDesignatorT2 {
         char getCode();
