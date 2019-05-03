@@ -188,6 +188,9 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
      */
     public static final Key KEY_BULLETIN_ID;
 
+    public static final Key KEY_CONTAINED_MESSAGE_TYPE;
+
+
     /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
      */
@@ -242,6 +245,8 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         KEY_TRANSLATION_TIME = new KeyImpl(8, "Set the translation time when converting. If the value is an instance of ZonedDateTime, the value is used as translation time");
 
         KEY_BULLETIN_ID = new KeyImpl(9, "Set the containing bulletin ID when converting from a bulletin format not containing the ID in itself");
+
+        KEY_CONTAINED_MESSAGE_TYPE = new KeyImpl( 10, "Hint for the message type contained within a container, such as bulletin");
 
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.TAF);
