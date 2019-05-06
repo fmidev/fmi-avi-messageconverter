@@ -46,7 +46,7 @@ the conversion is straight-forward:
 ```java
 String tac = "TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=";
 ConversionResult<TAF> result = converter.convertMessage(tac,TACConverter.TAC_TO_TAF_POJO);
- if (ConversionResult.Status.SUCCESS = result.getStatus()) {
+ if (ConversionResult.Status.SUCCESS == result.getStatus()) {
    Optional<TAF> pojo = result.getConvertedMessage();}
 ```
 
