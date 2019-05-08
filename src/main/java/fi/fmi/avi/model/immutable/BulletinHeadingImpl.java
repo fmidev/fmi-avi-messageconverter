@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -17,10 +16,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
+import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.BulletinHeading;
-import fi.fmi.avi.model.PartialDateTime;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.util.BulletinHeadingDecoder;
 
 @FreeBuilder
 @JsonDeserialize(builder = BulletinHeadingImpl.Builder.class)
@@ -171,44 +170,8 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         }
 
         public static Builder from(final String abbreviatedHeading) {
-            Matcher m = ABBREVIATED_HEADING.matcher(abbreviatedHeading);
-            if (!m.matches()) {
-                throw new IllegalArgumentException(
-                        "String '" + abbreviatedHeading + "' does not match the Abbreviated heading format " + "'T1T2A1A2iiCCCCYYGGgg[BBB]' as defined in "
-                                + "WMO-No. 386 Manual on the Global Telecommunication System, 2015 edition (updated 2017)");
-            }
-            final String bbb = m.group("BBB");
-            BulletinHeading.Type type = Type.NORMAL;
-            Integer bulletinAugmentationNumber = null;
-            if (bbb != null) {
-                type = Type.fromCode(bbb.substring(0, 2));
-                bulletinAugmentationNumber = bbb.charAt(2) - 'A' + 1;
-            }
-            DataTypeDesignatorT2 t2 = null;
-            final DataTypeDesignatorT1 t1 = DataTypeDesignatorT1.fromCode(m.group("TT").charAt(0));
-            if (DataTypeDesignatorT1.FORECASTS == t1) {
-                t2 = ForecastsDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
-            } else if (DataTypeDesignatorT1.WARNINGS == t1) {
-                t2 = WarningsDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
-            } else if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML == t1) {
-                t2 = XMLDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
-            } else if (DataTypeDesignatorT1.UPPER_AIR_DATA == t1) {
-                t2 = UpperAirDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
-            } else if (DataTypeDesignatorT1.SURFACE_DATA == t1) {
-                t2 = SurfaceDataTypeDesignatorT2.fromCode(m.group("TT").charAt(1));
-            } else {
-                throw new IllegalArgumentException("Only forecast ('F') , warning ('W'), XML('L'), upper-air ('U') and surface data ('S') type headings "
-                        + "currently supported, t1 is '" + t1 + "'");
-            }
-            String issueTime = "--" + m.group("YY") + "T" + m.group("GG") + ":" + m.group("gg");
-            return new Builder()//
-                    .setLocationIndicator(m.group("CCCC"))//
-                    .setGeographicalDesignator(m.group("AA"))//
-                    .setBulletinNumber(Integer.parseInt(m.group("ii")))//
-                    .setType(type)//
-                    .setBulletinAugmentationNumber(Optional.ofNullable(bulletinAugmentationNumber))//
-                    .setDataTypeDesignatorT1ForTAC(t1)//
-                    .setDataTypeDesignatorT2(t2).setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.parse(issueTime)));
+            return BulletinHeadingImpl.Builder.from(BulletinHeadingDecoder.decode(abbreviatedHeading, new ConversionHints(ConversionHints
+                    .KEY_BULLETIN_HEADING_SPACING, ConversionHints.VALUE_BULLETIN_HEADING_SPACING_NONE)));
         }
 
         @Override

@@ -191,6 +191,12 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_CONTAINED_MESSAGE_TYPE;
 
 
+    public static final Key KEY_BULLETIN_HEADING_SPACING;
+
+    public static final Object VALUE_BULLETIN_HEADING_SPACING_NONE = "NONE";
+
+    public static final Object VALUE_BULLETIN_HEADING_SPACING_SPACE = "SPACE";
+
     /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
      */
@@ -248,6 +254,9 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
         KEY_CONTAINED_MESSAGE_TYPE = new KeyImpl( 10, "Hint for the message type contained within a container, such as bulletin");
 
+        KEY_BULLETIN_HEADING_SPACING = new KeyImpl(11, "Controls how the abbreviated bulletin heading are spaced", VALUE_BULLETIN_HEADING_SPACING_NONE,
+                VALUE_BULLETIN_HEADING_SPACING_SPACE);
+        
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.TAF);
         SPECI = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.SPECI);
