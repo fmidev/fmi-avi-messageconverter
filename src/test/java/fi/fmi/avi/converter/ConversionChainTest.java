@@ -55,7 +55,7 @@ public class ConversionChainTest {
                 .convertMessage(input, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
-        assertTrue(result.getConvertedMessage().get().contains("\"name\" : \"Foo\""));
+        assertTrue(result.getConvertedMessage().get().contains("\"name\" : \"Tallinn Airport\""));
     }
 
     @Test
