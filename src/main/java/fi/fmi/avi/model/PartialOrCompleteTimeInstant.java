@@ -153,7 +153,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
         @Override
         public PartialOrCompleteTimeInstant build() {
-            if (!this.getPartialTime().isPresent() && !this.getCompleteTime().isPresent()){
+            if (!this.getPartialTime().isPresent() && !this.getCompleteTime().isPresent()) {
                 throw new IllegalStateException("Either complete or partial time must be given");
             }
             getPartialTime().ifPresent(partialTime -> //
@@ -205,7 +205,13 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
         public Builder completePartial(final Function<PartialDateTime, ZonedDateTime> completion) {
             requireNonNull(completion, "completion");
-            return setCompleteTime(getPartialTime().map(completion));
+            if (getPartialTime().isPresent()) {
+                return setCompleteTime(completion.apply(getPartialTime().get()));
+            } else if (getCompleteTime().isPresent()) {
+                return mapCompleteTime(completeTime -> completion.apply(PartialDateTime.ofDayHourMinuteZone(completeTime, false)));
+            } else {
+                throw new IllegalStateException("Neither of partialTime or completeTime is present");
+            }
         }
     }
 }
