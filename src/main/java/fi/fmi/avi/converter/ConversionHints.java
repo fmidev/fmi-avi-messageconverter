@@ -184,18 +184,58 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_TRANSLATION_TIME_SKIP = "SKIP";
 
     /**
-     * The ID of the containing bulletin used in message metadata
+     * The ID of the containing bulletin used in message metadata.
      */
     public static final Key KEY_BULLETIN_ID;
 
+    /**
+     * Type of the message contained within a collection.
+     */
     public static final Key KEY_CONTAINED_MESSAGE_TYPE;
 
-
+    /**
+     * How the spacing should be used in encoding/decoding bulletin heading fields.
+     */
     public static final Key KEY_BULLETIN_HEADING_SPACING;
 
+    /**
+     * The heading fields should be concatenated with no spacing.
+     */
     public static final Object VALUE_BULLETIN_HEADING_SPACING_NONE = "NONE";
 
+    /**
+     * The heading fields should be joined with single space characters.
+     */
     public static final Object VALUE_BULLETIN_HEADING_SPACING_SPACE = "SPACE";
+
+    /**
+     * How the TAC TAF valid time field is matched with TAF POJO validityTime or referredReport/validityTime fields.
+     */
+    public static final Key KEY_TAF_REFERENCE_POLICY;
+
+    /**
+     * When parsing and serializing AMD, COR or CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC TAF message.
+     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     */
+    public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD = "USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD";
+
+    /**
+     * When parsing and serializing COR or CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC message.
+     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     */
+    public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL = "USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL";
+
+    /**
+     * When parsing and serializing CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC message.
+     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     */
+    public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_CNL = "USE_REFERRED_REPORT_VALID_TIME_FOR_CNL";
+
+    /**
+     * validityTime of the TAF object should always be matched with the valid time of the TAC TAF message regardless of the message type.
+     */
+    public static final Object VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY = "USE_OWN_VALID_TIME_ONLY";
+
 
     /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
@@ -256,6 +296,12 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
 
         KEY_BULLETIN_HEADING_SPACING = new KeyImpl(11, "Controls how the abbreviated bulletin heading are spaced", VALUE_BULLETIN_HEADING_SPACING_NONE,
                 VALUE_BULLETIN_HEADING_SPACING_SPACE);
+
+        KEY_TAF_REFERENCE_POLICY = new KeyImpl(12, "Controls how the valid time is interpreted and handled with TAF messages",
+                VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY,//
+                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_CNL,//
+                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL,//
+                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD);
         
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.TAF);
