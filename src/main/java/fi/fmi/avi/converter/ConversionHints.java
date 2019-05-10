@@ -347,7 +347,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
      * @param init
      *         the map of key-values
      */
-    public ConversionHints(final Map<Object, ?> init) {
+    public ConversionHints(final Map<? super Key, ?> init) {
         this(init, true);
     }
 
@@ -359,7 +359,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
      * @param modifiable
      *         true if hints can be modified, false if not
      */
-    public ConversionHints(final Map<Object, ?> init, final boolean modifiable) {
+    public ConversionHints(final Map<? super Key, ?> init, final boolean modifiable) {
         if (init != null) {
             this.modifiable = true;
             putAll(init);
@@ -382,6 +382,13 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         modifiable = false;
     }
 
+    public static ConversionHints immutableCopyOf(final Map<? super Key, ?> hints) {
+        return hints instanceof ConversionHints && !((ConversionHints) hints).modifiable ? (ConversionHints) hints : new ConversionHints(hints, false);
+    }
+
+    public static ConversionHints modifiableCopyOf(final Map<? super Key, ?> hints) {
+        return new ConversionHints(hints, true);
+    }
 
     @Override
     public int size() {
