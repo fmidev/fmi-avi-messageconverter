@@ -15,8 +15,6 @@ public class BulletinHeadingEncoder {
         }
         final StringBuilder sb = new StringBuilder();
         sb.append(input.getDataDesignatorsForTAC());
-        sb.append(input.getGeographicalDesignator());
-        sb.append(String.format("%02d", input.getBulletinNumber()));
         if (useSpaces) {
             sb.append(' ');
         }
