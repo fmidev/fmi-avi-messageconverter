@@ -33,7 +33,7 @@ import fi.fmi.avi.model.AviationCodeListUser;
  *
  * @author Ilkka Rinne / Spatineo 2017
  */
-public class ConversionHints implements Map<Object, Object>, Cloneable {
+public final class ConversionHints implements Map<Object, Object>, Cloneable {
 
     /**
      * Key for explicitly specifying the Aviation weather message type.
