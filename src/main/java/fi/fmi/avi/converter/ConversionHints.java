@@ -426,10 +426,11 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
      * @param modifiable true if hints can be modified, false if not
      */
     public ConversionHints(final Map<Object, ?> init, final boolean modifiable) {
-        this.modifiable = modifiable;
         if (init != null) {
+            this.modifiable = true;
             putAll(init);
         }
+        this.modifiable = modifiable;
     }
 
 
