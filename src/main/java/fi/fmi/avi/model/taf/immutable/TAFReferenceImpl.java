@@ -1,7 +1,8 @@
 package fi.fmi.avi.model.taf.immutable;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFReference;
 
 /**
@@ -20,7 +22,7 @@ import fi.fmi.avi.model.taf.TAFReference;
 @FreeBuilder
 @JsonDeserialize(builder = TAFReferenceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"status", "aerodrome", "issueTime", "validityTime"})
+@JsonPropertyOrder({ "status", "aerodrome", "issueTime", "validityTime" })
 public abstract class TAFReferenceImpl implements TAFReference, Serializable {
 
     private static final long serialVersionUID = 8909829850430522942L;
@@ -30,7 +32,7 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
     }
 
     public static TAFReferenceImpl immutableCopyOf(final TAFReference tafReference) {
-        Objects.requireNonNull(tafReference);
+        requireNonNull(tafReference);
         if (tafReference instanceof TAFReferenceImpl) {
             return (TAFReferenceImpl) tafReference;
         } else {
@@ -40,7 +42,7 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<TAFReferenceImpl> immutableCopyOf(final Optional<TAFReference> tafReference) {
-        Objects.requireNonNull(tafReference);
+        requireNonNull(tafReference);
         return tafReference.map(TAFReferenceImpl::immutableCopyOf);
     }
 
@@ -56,12 +58,30 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
             if (value instanceof TAFReferenceImpl) {
                 return ((TAFReferenceImpl) value).toBuilder();
             } else {
-                return new Builder()//
+                return builder()//
                         .setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))
                         .setStatus(value.getStatus())
                         .setIssueTime(value.getIssueTime())
                         .setValidityTime(value.getValidityTime());
             }
+        }
+
+        public static Builder from(final TAF taf) {
+            requireNonNull(taf, "taf");
+            return builder()//
+                    .setAerodrome(taf.getAerodrome())//
+                    .setStatus(taf.getStatus())//
+                    .setIssueTime(taf.getIssueTime())//
+                    .setValidityTime(taf.getValidityTime());
+        }
+
+        public static Builder from(final TAFImpl.Builder taf) {
+            requireNonNull(taf, "taf");
+            return builder()//
+                    .setAerodrome(taf.getAerodrome())//
+                    .setStatus(taf.getStatus())//
+                    .setIssueTime(taf.getIssueTime())//
+                    .setValidityTime(taf.getValidityTime());
         }
 
         @Override
