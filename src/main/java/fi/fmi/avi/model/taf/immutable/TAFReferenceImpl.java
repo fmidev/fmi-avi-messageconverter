@@ -69,7 +69,7 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
         public static Builder from(final TAF taf) {
             requireNonNull(taf, "taf");
             return builder()//
-                    .setAerodrome(taf.getAerodrome())//
+                    .setAerodrome(AerodromeImpl.immutableCopyOf(taf.getAerodrome()))//
                     .setStatus(taf.getStatus())//
                     .setIssueTime(taf.getIssueTime())//
                     .setValidityTime(taf.getValidityTime());
@@ -78,7 +78,7 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
         public static Builder from(final TAFImpl.Builder taf) {
             requireNonNull(taf, "taf");
             return builder()//
-                    .setAerodrome(taf.getAerodrome())//
+                    .setAerodrome(AerodromeImpl.immutableCopyOf(taf.getAerodrome()))//
                     .setStatus(taf.getStatus())//
                     .setIssueTime(taf.getIssueTime())//
                     .setValidityTime(taf.getValidityTime());
