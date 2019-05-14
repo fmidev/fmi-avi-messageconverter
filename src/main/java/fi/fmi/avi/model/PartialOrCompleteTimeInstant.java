@@ -156,12 +156,6 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             if (!this.getPartialTime().isPresent() && !this.getCompleteTime().isPresent()) {
                 throw new IllegalStateException("Either complete or partial time must be given");
             }
-            getPartialTime().ifPresent(partialTime -> //
-                    getCompleteTime().ifPresent(completeTime -> {
-                        if (!partialTime.representsStrict(completeTime)) {
-                            throw new IllegalStateException(String.format("completeTime %s does not represent partialTime %s", completeTime, partialTime));
-                        }
-                    }));
             return super.build();
         }
 
@@ -212,6 +206,55 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             } else {
                 throw new IllegalStateException("Neither of partialTime or completeTime is present");
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         * If {@link #getCompleteTime() completeTime} exists and differs from provided {@code partialTime}, {@code completeTime}
+         * will be adjusted to nearest instant representing provided {@code partialTime}.
+         *
+         * @param partialTime
+         *         {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         *
+         * @throws NullPointerException
+         *         {@inheritDoc}
+         */
+        @Override
+        public Builder setPartialTime(final PartialDateTime partialTime) {
+            super.setPartialTime(partialTime);
+            getCompleteTime().ifPresent(completeTime -> {
+                if (!partialTime.representsStrict(completeTime)) {
+                    super.setCompleteTime(partialTime.toZonedDateTimeNear(completeTime));
+                }
+            });
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         * If {@link #getPartialTime() partialTime} exists and differs from provided {@code completeTime}, present fields and zone of {@code partialTime} will
+         * be set to values of {@code completeTime}.
+         *
+         * @param completeTime
+         *         {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         *
+         * @throws NullPointerException
+         *         {@inheritDoc}
+         */
+        @Override
+        public Builder setCompleteTime(final ZonedDateTime completeTime) {
+            super.setCompleteTime(completeTime);
+            getPartialTime().ifPresent(partialTime -> {
+                if (!partialTime.representsStrict(completeTime)) {
+                    super.setPartialTime(PartialDateTime.of(completeTime, partialTime.getPresentFields(), partialTime.getZone().isPresent(),
+                            partialTime.isMidnight24h() ? PartialDateTime.MIDNIGHT_24_HOUR : PartialDateTime.MIDNIGHT_24_HOUR));
+                }
+            });
+            return this;
         }
     }
 }
