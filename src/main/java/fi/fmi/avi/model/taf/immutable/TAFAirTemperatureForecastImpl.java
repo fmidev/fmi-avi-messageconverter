@@ -1,12 +1,12 @@
 package fi.fmi.avi.model.taf.immutable;
 
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -21,7 +21,7 @@ import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 @FreeBuilder
 @JsonDeserialize(builder = TAFAirTemperatureForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"maxTemperature", "maxTemperatureTime", "minTemperature", "minTemperatureTime"})
+@JsonPropertyOrder({ "maxTemperature", "maxTemperatureTime", "minTemperature", "minTemperatureTime" })
 public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperatureForecast, Serializable {
 
     private static final long serialVersionUID = 4723016643452217407L;
@@ -44,6 +44,12 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
         return airTemperatureForecast.map(TAFAirTemperatureForecastImpl::immutableCopyOf);
     }
 
+    @Override
+    @JsonIgnore
+    public boolean areAllTimeReferencesComplete() {
+        return getMinTemperatureTime().getCompleteTime().isPresent() && getMaxTemperatureTime().getCompleteTime().isPresent();
+    }
+
     public abstract Builder toBuilder();
 
     public static class Builder extends TAFAirTemperatureForecastImpl_Builder {
@@ -56,7 +62,7 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
             if (value instanceof TAFAirTemperatureForecastImpl) {
                 return ((TAFAirTemperatureForecastImpl) value).toBuilder();
             } else {
-                return new Builder()//
+                return builder()//
                         .setMaxTemperature(NumericMeasureImpl.immutableCopyOf(value.getMaxTemperature()))
                         .setMinTemperature(NumericMeasureImpl.immutableCopyOf(value.getMinTemperature()))
                         .setMaxTemperatureTime(value.getMaxTemperatureTime())

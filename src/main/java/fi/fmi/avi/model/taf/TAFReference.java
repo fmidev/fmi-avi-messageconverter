@@ -20,4 +20,10 @@ public interface TAFReference {
 
     Optional<TAF.TAFStatus> getStatus();
 
+    /**
+     * Returns true if issue time and valid time references contained in this message are full ZonedDateTime instances.
+     *
+     * @return true if all time references are complete, false otherwise
+     */
+    boolean areAllTimeReferencesComplete();
 }
