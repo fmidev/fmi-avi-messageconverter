@@ -23,6 +23,10 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
 
     private static final long serialVersionUID = -4860727383244788466L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static GenericMeteorologicalBulletinImpl immutableCopyOf(final GenericMeteorologicalBulletin bulletin) {
         Objects.requireNonNull(bulletin);
         if (bulletin instanceof GenericMeteorologicalBulletinImpl) {
@@ -40,12 +44,15 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
     public abstract Builder toBuilder();
 
     public static class Builder extends GenericMeteorologicalBulletinImpl_Builder {
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final GenericMeteorologicalBulletin value) {
             if (value instanceof GenericMeteorologicalBulletinImpl) {
                 return ((GenericMeteorologicalBulletinImpl) value).toBuilder();
             } else {
-                return new GenericMeteorologicalBulletinImpl.Builder()//
+                return builder()//
                         .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .setTimeStamp(value.getTimeStamp()).addAllMessages(value.getMessages()).addAllTimeStampFields(value.getTimeStampFields());
 
