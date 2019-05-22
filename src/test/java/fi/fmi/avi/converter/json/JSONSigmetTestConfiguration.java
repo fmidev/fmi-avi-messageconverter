@@ -1,6 +1,5 @@
 package fi.fmi.avi.converter.json;
 
-import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -24,7 +23,6 @@ public class JSONSigmetTestConfiguration {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
-        om.registerModule(new JtsModule());
         return om;
     }
 

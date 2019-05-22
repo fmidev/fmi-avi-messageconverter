@@ -5,11 +5,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
-import org.locationtech.jts.geom.Geometry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.Geometry;
+import fi.fmi.avi.model.PointGeometry;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
 @FreeBuilder
@@ -47,13 +48,7 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
                 }
             }
 
-/*
-            @Override
-            @JsonDeserialize(as=G)
-            public Builder setGeoGeometry(Geometry geom) {
-                return super.setGeoGeometry(geom);
-            }
-*/
         }
+
     }
 
