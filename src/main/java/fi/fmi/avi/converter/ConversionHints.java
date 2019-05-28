@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.MessageType;
 
 /**
  * ConversionHints provides lexing, parsing and serializing related
@@ -43,42 +43,42 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Message type METAR.
      *
-     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#METAR} as the value instead
+     * @deprecated use {@link MessageType#METAR} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_METAR = "METAR";
 
     /**
      * Message type TAF.
      *
-     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#TAF} as the value instead
+     * @deprecated use {@link MessageType#TAF} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_TAF = "TAF";
 
     /**
      * Message type SPECI.
      *
-     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#SPECI} as the value instead
+     * @deprecated use {@link MessageType#SPECI} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_SPECI = "SPECI";
 
     /**
      * Message type SIGMET.
      *
-     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#SIGMET} as the value instead
+     * @deprecated use {@link MessageType#SIGMET} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_SIGMET = "SIGMET";
 
     /**
      * Message type AIRMET.
      *
-     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#AIRMET} as the value instead
+     * @deprecated use {@link MessageType#AIRMET} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_AIRMET = "AIRMET";
 
     /**
      * Message type ARS.
      *
-     * @deprecated use {@link fi.fmi.avi.model.AviationCodeListUser.MessageType#SPECIAL_AIR_REPORT} as the value instead
+     * @deprecated use {@link MessageType#SPECIAL_AIR_REPORT} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_ARS = "ARS";
 
@@ -242,29 +242,29 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY = "USE_OWN_VALID_TIME_ONLY";
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}.
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#METAR}.
      */
     public static final ConversionHints METAR;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_TAF}.
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#TAF}.
      */
     public static final ConversionHints TAF;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_SPECI}.
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPECI}.
      */
     public static final ConversionHints SPECI;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_SIGMET}.
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SIGMET}.
      */
     public static final ConversionHints SIGMET;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_ARS}.
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPECIAL_AIR_REPORT}.
      */
-    public static final ConversionHints ARS;
+    public static final ConversionHints SPECIAL_AIR_REPORT;
 
     /**
      * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value {@link ConversionHints#VALUE_PARSING_MODE_STRICT}.
@@ -309,11 +309,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
                 VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL,//
                 VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD);
 
-        METAR = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.METAR);
-        TAF = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.TAF);
-        SPECI = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.SPECI);
-        SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.SIGMET);
-        ARS = new ConversionHints(KEY_MESSAGE_TYPE, AviationCodeListUser.MessageType.SPECIAL_AIR_REPORT);
+        METAR = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.METAR);
+        TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
+        SPECI = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPECI);
+        SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SIGMET);
+        SPECIAL_AIR_REPORT = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPECIAL_AIR_REPORT);
 
         STRICT_PARSING = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
         ALLOW_ERRORS = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);

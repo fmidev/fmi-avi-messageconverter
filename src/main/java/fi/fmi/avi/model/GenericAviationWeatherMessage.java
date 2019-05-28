@@ -7,7 +7,7 @@ public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
 
     String getOriginalMessage();
 
-    Optional<AviationCodeListUser.MessageType> getMessageType();
+    Optional<MessageType> getMessageType();
 
     Format getMessageFormat();
 

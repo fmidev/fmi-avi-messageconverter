@@ -382,7 +382,7 @@ public interface BulletinHeading {
         }
     }
 
-    Optional<AviationCodeListUser.MessageType> getExpectedContainedMessageType();
+    Optional<MessageType> getExpectedContainedMessageType();
 
     interface DataTypeDesignatorT2 {
         char getCode();
