@@ -15,13 +15,11 @@ public interface BulletinHeading {
     Type getType();
 
     /**
-     *
      * @return
      */
     DataTypeDesignatorT1 getDataTypeDesignatorT1ForTAC();
 
     /**
-     *
      * @return
      */
     @JsonIgnore
@@ -32,7 +30,6 @@ public interface BulletinHeading {
     DataTypeDesignatorT2 getDataTypeDesignatorT2();
 
     /**
-     *
      * @return
      */
     @JsonIgnore
@@ -41,7 +38,6 @@ public interface BulletinHeading {
     }
 
     /**
-     *
      * @return
      */
     @JsonIgnore
@@ -50,7 +46,6 @@ public interface BulletinHeading {
     }
 
     /**
-     *
      * @return
      */
     @JsonIgnore
@@ -59,7 +54,6 @@ public interface BulletinHeading {
     }
 
     /**
-     *
      * @return
      */
     @JsonIgnore
@@ -107,22 +101,24 @@ public interface BulletinHeading {
      */
     PartialOrCompleteTimeInstant getIssueTime();
 
+    Optional<MessageType> getExpectedContainedMessageType();
+
     enum Type {
         NORMAL(""), DELAYED("RR"), AMENDED("AA"), CORRECTED("CC");
 
+        private final String prefix;
+
+        Type(final String prefix) {
+            this.prefix = prefix;
+        }
+
         public static Type fromCode(final String code) {
-            for (Type t : Type.values()) {
+            for (final Type t : Type.values()) {
                 if (t.getPrefix().equals(code)) {
                     return t;
                 }
             }
             throw new IllegalArgumentException("Unknown prefix '" + code + "'");
-        }
-
-        private String prefix;
-
-        Type(final String prefix) {
-            this.prefix = prefix;
         }
 
         public String getPrefix() {
@@ -133,37 +129,52 @@ public interface BulletinHeading {
     /**
      * WMO No.386 Manual on GTS 2015 rev 2017
      */
-    enum DataTypeDesignatorT1 {
-        ANALYSES('A'),//
+    enum DataTypeDesignatorT1 {ANALYSES('A'),//
         ADDRESSED_MESSAGE('B'),//
         CLIMATIC_DATA('C'),//
         GRID_POINT_INFORMATION_GRID_1('D'),//
         SATELLITE_IMAGERY('E'),//
-        FORECASTS('F'),//
+        FORECASTS('F') {
+            @Override
+            public BulletinHeading.ForecastsDataTypeDesignatorT2 t2FromCode(final char t2Code) {
+                return BulletinHeading.ForecastsDataTypeDesignatorT2.fromCode(t2Code);
+            }
+        },//
         GRID_POINT_INFORMATION_GRID_2('G'),//
         GRID_POINT_INFORMATION_GRIB('H'),//
         OBSERVATIONAL_DATA_BINARY_BUFR('I'),//
         FORECAST_INFORMATION_BINARY_BUFR('J'),//
         CREX('K'),//
-        AVIATION_INFORMATION_IN_XML('L'),//
+        AVIATION_INFORMATION_IN_XML('L') {
+            @Override
+            public BulletinHeading.XMLDataTypeDesignatorT2 t2FromCode(final char t2Code) {
+                return BulletinHeading.XMLDataTypeDesignatorT2.fromCode(t2Code);
+            }
+        },//
         NOTICES('N'),//
         OCEANOGRAPHIC_INFORMATION_GRIB('O'),//
         PICTORIAL_INFORMATION_BINARY('P'),//
         PICTORIAL_INFORMATION_REGIONAL_BINARY('Q'),//
-        SURFACE_DATA('S'),//
-        SATELLITE_DATA('T'),//
-        UPPER_AIR_DATA('U'),//
-        NATIONAL_DATA('V'),//
-        WARNINGS('W');
-
-        public static DataTypeDesignatorT1 fromCode(final char code) {
-            for (DataTypeDesignatorT1 t : DataTypeDesignatorT1.values()) {
-                if (t.getCode() == code) {
-                    return t;
-                }
+        SURFACE_DATA('S') {
+            @Override
+            public BulletinHeading.SurfaceDataTypeDesignatorT2 t2FromCode(final char t2Code) {
+                return BulletinHeading.SurfaceDataTypeDesignatorT2.fromCode(t2Code);
             }
-            throw new IllegalArgumentException("Unknown code '" + code + "'");
-        }
+        },//
+        SATELLITE_DATA('T'),//
+        UPPER_AIR_DATA('U') {
+            @Override
+            public BulletinHeading.UpperAirDataTypeDesignatorT2 t2FromCode(final char t2Code) {
+                return BulletinHeading.UpperAirDataTypeDesignatorT2.fromCode(t2Code);
+            }
+        },//
+        NATIONAL_DATA('V'),//
+        WARNINGS('W') {
+            @Override
+            public BulletinHeading.WarningsDataTypeDesignatorT2 t2FromCode(final char t2Code) {
+                return BulletinHeading.WarningsDataTypeDesignatorT2.fromCode(t2Code);
+            }
+        };
 
         private final char code;
 
@@ -171,10 +182,24 @@ public interface BulletinHeading {
             this.code = code;
         }
 
+        public static DataTypeDesignatorT1 fromCode(final char code) {
+            for (final DataTypeDesignatorT1 t : DataTypeDesignatorT1.values()) {
+                if (t.getCode() == code) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown code '" + code + "'");
+        }
+
         public char getCode() {
             return code;
         }
-    }
+
+        public DataTypeDesignatorT2 t2FromCode(final char t2Code) {
+            throw new IllegalArgumentException(
+                    "Only forecast ('F') , warning ('W'), XML('L'), upper-air ('U') and surface data ('S') type headings currently supported; " //
+                            + "t1 is '" + this + "' ('" + getCode() + "')");
+        }}
 
     enum ForecastsDataTypeDesignatorT2 implements DataTypeDesignatorT2 {
 
@@ -204,19 +229,19 @@ public interface BulletinHeading {
         FCT_MISCELLANEOUS('X'),//
         FCT_SHIPPING_AREA('Z');
 
+        private final char code;
+
+        ForecastsDataTypeDesignatorT2(final char code) {
+            this.code = code;
+        }
+
         public static ForecastsDataTypeDesignatorT2 fromCode(final char code) {
-            for (ForecastsDataTypeDesignatorT2 t : ForecastsDataTypeDesignatorT2.values()) {
+            for (final ForecastsDataTypeDesignatorT2 t : ForecastsDataTypeDesignatorT2.values()) {
                 if (t.getCode() == code) {
                     return t;
                 }
             }
             throw new IllegalArgumentException("Unknown code '" + code + "'");
-        }
-
-        private final char code;
-
-        ForecastsDataTypeDesignatorT2(final char code) {
-            this.code = code;
         }
 
         @Override
@@ -241,19 +266,19 @@ public interface BulletinHeading {
         WRN_VOLCANIC_ASH_CLOUDS_SIGMET('V'),//
         WRN_WARNINGS_AND_WEATHER_SUMMARY('W');
 
+        private final char code;
+
+        WarningsDataTypeDesignatorT2(final char code) {
+            this.code = code;
+        }
+
         public static WarningsDataTypeDesignatorT2 fromCode(final char code) {
-            for (WarningsDataTypeDesignatorT2 t : WarningsDataTypeDesignatorT2.values()) {
+            for (final WarningsDataTypeDesignatorT2 t : WarningsDataTypeDesignatorT2.values()) {
                 if (t.getCode() == code) {
                     return t;
                 }
             }
             throw new IllegalArgumentException("Unknown code '" + code + "'");
-        }
-
-        private final char code;
-
-        WarningsDataTypeDesignatorT2(final char code) {
-            this.code = code;
         }
 
         @Override
@@ -275,19 +300,19 @@ public interface BulletinHeading {
         XML_AIRMET('W'),//
         XML_TROPICAL_CYCLONE_SIGMET('Y');
 
+        private final char code;
+
+        XMLDataTypeDesignatorT2(final char code) {
+            this.code = code;
+        }
+
         public static XMLDataTypeDesignatorT2 fromCode(final char code) {
-            for (XMLDataTypeDesignatorT2 t : XMLDataTypeDesignatorT2.values()) {
+            for (final XMLDataTypeDesignatorT2 t : XMLDataTypeDesignatorT2.values()) {
                 if (t.getCode() == code) {
                     return t;
                 }
             }
             throw new IllegalArgumentException("Unknown code '" + code + "'");
-        }
-
-        private final char code;
-
-        XMLDataTypeDesignatorT2(final char code) {
-            this.code = code;
         }
 
         @Override
@@ -316,19 +341,19 @@ public interface BulletinHeading {
         UA_WIND_PARTS_C_D('Y'),//
         UA_PRESSURE_TEMPERATURE_HUMIDITY_WIND_PARTS_A_B_C_D('Z');
 
+        private final char code;
+
+        UpperAirDataTypeDesignatorT2(final char code) {
+            this.code = code;
+        }
+
         public static UpperAirDataTypeDesignatorT2 fromCode(final char code) {
-            for (UpperAirDataTypeDesignatorT2 t : UpperAirDataTypeDesignatorT2.values()) {
+            for (final UpperAirDataTypeDesignatorT2 t : UpperAirDataTypeDesignatorT2.values()) {
                 if (t.getCode() == code) {
                     return t;
                 }
             }
             throw new IllegalArgumentException("Unknown code '" + code + "'");
-        }
-
-        private final char code;
-
-        UpperAirDataTypeDesignatorT2(final char code) {
-            this.code = code;
         }
 
         @Override
@@ -361,8 +386,14 @@ public interface BulletinHeading {
         SD_SEISMIC_WAVEFORM_DATA('Y'),//
         SD_SEA_LEVEL_DEEP_OCEAN_TSUNAMI_DATA('Z');
 
-        public static SurfaceDataTypeDesignatorT2  fromCode(final char code) {
-            for (SurfaceDataTypeDesignatorT2  t : SurfaceDataTypeDesignatorT2 .values()) {
+        private final char code;
+
+        SurfaceDataTypeDesignatorT2(final char code) {
+            this.code = code;
+        }
+
+        public static SurfaceDataTypeDesignatorT2 fromCode(final char code) {
+            for (final SurfaceDataTypeDesignatorT2 t : SurfaceDataTypeDesignatorT2.values()) {
                 if (t.getCode() == code) {
                     return t;
                 }
@@ -370,19 +401,11 @@ public interface BulletinHeading {
             throw new IllegalArgumentException("Unknown code '" + code + "'");
         }
 
-        private final char code;
-
-        SurfaceDataTypeDesignatorT2 (final char code) {
-            this.code = code;
-        }
-
         @Override
         public char getCode() {
             return code;
         }
     }
-
-    Optional<MessageType> getExpectedContainedMessageType();
 
     interface DataTypeDesignatorT2 {
         char getCode();
