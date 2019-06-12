@@ -20,11 +20,12 @@ import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 @FreeBuilder
 public abstract class GTSExchangeFileInfo implements Serializable {
 
-    private static final Set<TimeStampField> DEFAULT_TIME_FIELDS = new HashSet<>(Arrays.asList(TimeStampField.YEAR,//
-            TimeStampField.MONTH,//
-            TimeStampField.DAY,//
-            TimeStampField.HOUR,//
-            TimeStampField.MINUTE));
+    private static final Set<TimeStampField> DEFAULT_TIME_FIELDS = new HashSet<>(Arrays.asList(TimeStampField.YEAR, //
+            TimeStampField.MONTH, //
+            TimeStampField.DAY, //
+            TimeStampField.HOUR, //
+            TimeStampField.MINUTE, //
+            TimeStampField.SECOND));
     private static final long serialVersionUID = -3155603027188089668L;
     //A_T1T2A1A2iiCCCCYYGGgg[BBB]_C_CCCC_yyyyMMddhhmmss[_freeformat].type[.compression]
     private static final Pattern P_FLAG_A_PATTERN = Pattern.compile("^A(?<meta>M)?_" + "(?<T1T2>[A-Z]{2})(?<A1A2>[A-Z]{2})(?<ii>[0-9]{2})(?<CCCC>[A-Z]{4})"
@@ -232,19 +233,19 @@ public abstract class GTSExchangeFileInfo implements Serializable {
         PDF("pdf"), //
         XML("xml");
 
+        private final String extension;
+
+        GTSExchangeFileType(final String extension) {
+            this.extension = extension;
+        }
+
         public static GTSExchangeFileType fromExtension(final String code) {
-            for (GTSExchangeFileType t : GTSExchangeFileType.values()) {
+            for (final GTSExchangeFileType t : GTSExchangeFileType.values()) {
                 if (t.getExtension().equals(code)) {
                     return t;
                 }
             }
             throw new IllegalArgumentException("Unknown extension '" + code + "'");
-        }
-
-        private final String extension;
-
-        GTSExchangeFileType(final String extension) {
-            this.extension = extension;
         }
 
         public String getExtension() {
@@ -259,19 +260,19 @@ public abstract class GTSExchangeFileInfo implements Serializable {
         BZIP2("bz2"), //
         XZ("xz");
 
+        private final String extension;
+
+        GTSExchangeCompressionType(final String extension) {
+            this.extension = extension;
+        }
+
         public static GTSExchangeCompressionType fromExtension(final String code) {
-            for (GTSExchangeCompressionType t : GTSExchangeCompressionType.values()) {
+            for (final GTSExchangeCompressionType t : GTSExchangeCompressionType.values()) {
                 if (t.getExtension().equals(code)) {
                     return t;
                 }
             }
             throw new IllegalArgumentException("Unknown extension '" + code + "'");
-        }
-
-        private final String extension;
-
-        GTSExchangeCompressionType(final String extension) {
-            this.extension = extension;
         }
 
         public String getExtension() {

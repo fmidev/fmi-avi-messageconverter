@@ -17,7 +17,7 @@ import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 public class GTSExchangeFileInfoTest {
     @Test
     public void testFileNameGenerator() {
-        GTSExchangeFileInfo info = new GTSExchangeFileInfo.Builder().setPFlag(GTSExchangeFileInfo.GTSExchangePFlag.A)
+        final GTSExchangeFileInfo info = new GTSExchangeFileInfo.Builder().setPFlag(GTSExchangeFileInfo.GTSExchangePFlag.A)
                 .setMetadataFile(true)
                 .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.METADATA)
                 .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP).setHeading(BulletinHeadingImpl.builder()//
@@ -35,13 +35,13 @@ public class GTSExchangeFileInfoTest {
                 .setTimeStamp(LocalDateTime.of(2019, Month.JANUARY, 9, 10, 5))
                 .build();
 
-        assertEquals("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz", info.toGTSExchangeFileName());
+        assertEquals("AM_FTFI12ABCD091000CCA_C_ABCD_20190109100500_foobar12345_-.met.gz", info.toGTSExchangeFileName());
     }
 
     @Test
     public void testFileNameParser() {
-        GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
-        BulletinHeading expectedHeading = BulletinHeadingImpl.builder().setLocationIndicator("ABCD")
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
+        final BulletinHeading expectedHeading = BulletinHeadingImpl.builder().setLocationIndicator("ABCD")
                 .setBulletinAugmentationNumber('A')
                 .setGeographicalDesignator("FI")
                 .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
