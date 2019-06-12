@@ -69,7 +69,7 @@ public class MessageType {
             this(null);
         }
 
-        public Serializer(Class<MessageType> vc) {
+        public Serializer(final Class<MessageType> vc) {
             super(vc);
         }
 
@@ -79,7 +79,4 @@ public class MessageType {
             jsonGenerator.writeString(messageType.name);
         }
     }
-
-    /*
-    LOW_WIND, WX_WARNING, WXREP,
-    */}
+}
