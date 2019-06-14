@@ -1,6 +1,7 @@
 package fi.fmi.avi.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,7 +15,10 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 @JsonDeserialize(using = MessageType.Deserializer.class)
 @JsonSerialize(using = MessageType.Serializer.class)
-public class MessageType {
+public class MessageType implements Serializable {
+
+    private static final long serialVersionUID = 8491210385030779165L;
+
     public static final MessageType TAF = new MessageType("TAF");
     public static final MessageType METAR = new MessageType("METAR");
     public static final MessageType SPECI = new MessageType("SPECI");
