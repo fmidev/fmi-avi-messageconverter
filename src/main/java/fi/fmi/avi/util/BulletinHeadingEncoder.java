@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.OptionalInt;
 
 import fi.fmi.avi.converter.ConversionHints;
-import fi.fmi.avi.model.BulletinHeading;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
 
 public class BulletinHeadingEncoder {
 

@@ -3,8 +3,8 @@ package fi.fmi.avi.converter.json;
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.model.GenericMeteorologicalBulletin;
-import fi.fmi.avi.model.immutable.GenericMeteorologicalBulletinImpl;
+import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
+import fi.fmi.avi.model.bulletin.immutable.GenericMeteorologicalBulletinImpl;
 
 /**
  * A simple wrapper to specialize the {@link AbstractJSONParser} for TAFBulletin.

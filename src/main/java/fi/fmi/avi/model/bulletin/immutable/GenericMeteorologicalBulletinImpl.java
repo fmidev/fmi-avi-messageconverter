@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.immutable;
+package fi.fmi.avi.model.bulletin.immutable;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,9 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
-import fi.fmi.avi.model.GenericMeteorologicalBulletin;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
+import fi.fmi.avi.model.immutable.GenericAviationWeatherMessageImpl;
 
 @FreeBuilder
 @JsonDeserialize(builder = GenericMeteorologicalBulletinImpl.Builder.class)

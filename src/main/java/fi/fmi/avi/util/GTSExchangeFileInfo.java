@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
 
 import org.inferred.freebuilder.FreeBuilder;
 
-import fi.fmi.avi.model.BulletinHeading;
-import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
 @FreeBuilder
 public abstract class GTSExchangeFileInfo implements Serializable {
