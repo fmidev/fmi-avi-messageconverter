@@ -49,6 +49,10 @@ public class MessageType {
         return name.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return name();
+    }
     static class Deserializer extends StdDeserializer<MessageType> {
         public Deserializer() {
             this(null);

@@ -5,10 +5,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fi.fmi.avi.converter.ConversionHints;
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
 public class BulletinHeadingDecoder {
     private static final Pattern ABBREVIATED_HEADING = Pattern.compile(
@@ -28,8 +30,8 @@ public class BulletinHeadingDecoder {
             type = BulletinHeading.Type.fromCode(bbb.substring(0, 2));
             bulletinAugmentationNumber = bbb.charAt(2) - 'A' + 1;
         }
-        final BulletinHeading.DataTypeDesignatorT1 t1 = BulletinHeading.DataTypeDesignatorT1.fromCode(m.group("TT").charAt(0));
-        final BulletinHeading.DataTypeDesignatorT2 t2 = t1.t2FromCode(m.group("TT").charAt(1));
+        DataTypeDesignatorT1 t1 = DataTypeDesignatorT1.fromCode(m.group("TT").charAt(0));
+        final DataTypeDesignatorT2 t2 = t1.t2FromCode(m.group("TT").charAt(1)).orElse(new DataTypeDesignatorT2(m.group("TT").charAt(1)));
         final String issueTime = "--" + m.group("YY") + "T" + m.group("GG") + ":" + m.group("gg");
         return BulletinHeadingImpl.builder()//
                 .setLocationIndicator(m.group("CCCC"))//

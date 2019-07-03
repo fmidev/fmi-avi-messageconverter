@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
+import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
@@ -34,6 +35,9 @@ public class JSONTestConfiguration {
     private AviMessageSpecificConverter<SIGMETBulletin, String> sigmetBulletinJSONSerializer;
 
     @Autowired
+    private AviMessageSpecificConverter<GenericMeteorologicalBulletin, String> genericBulletinJSONSerializer;
+
+    @Autowired
     private AviMessageSpecificConverter<String, TAF> tafJSONParser;
 
     @Autowired
@@ -48,6 +52,9 @@ public class JSONTestConfiguration {
     @Autowired
     private AviMessageSpecificConverter<String, SIGMETBulletin> sigmetBulletinJSONParser;
 
+    @Autowired
+    private AviMessageSpecificConverter<String, GenericMeteorologicalBulletin> genericBulletinJSONParser;
+
     @Bean
     public AviMessageConverter aviMessageConverter() {
         final AviMessageConverter p = new AviMessageConverter();
@@ -56,12 +63,14 @@ public class JSONTestConfiguration {
         p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_SIGMET_POJO, sigmetJSONParser);
         p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_TAF_BULLETIN_POJO, tafBulletinJSONParser);
         p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_SIGMET_BULLETIN_POJO, sigmetBulletinJSONParser);
+        p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_GENERIC_BULLETIN_POJO, genericBulletinJSONParser);
 
         p.setMessageSpecificConverter(JSONConverter.TAF_POJO_TO_JSON_STRING, tafJSONSerializer);
         p.setMessageSpecificConverter(JSONConverter.METAR_POJO_TO_JSON_STRING, metarJSONSerializer);
         p.setMessageSpecificConverter(JSONConverter.SIGMET_POJO_TO_JSON_STRING, sigmetJSONSerializer);
         p.setMessageSpecificConverter(JSONConverter.TAF_BULLETIN_POJO_TO_JSON_STRING, tafBulletinJSONSerializer);
         p.setMessageSpecificConverter(JSONConverter.SIGMET_BULLETIN_POJO_TO_JSON_STRING, sigmetBulletinJSONSerializer);
+        p.setMessageSpecificConverter(JSONConverter.GENERIC_METEOROLOGICAL_BULLETIN_POJO_TO_JSON_STRING, genericBulletinJSONSerializer);
         return p;
     }
 

@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.immutable;
+package fi.fmi.avi.model.bulletin.immutable;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,8 +17,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import fi.fmi.avi.converter.ConversionHints;
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.MessageType;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.util.BulletinHeadingDecoder;
 
 @FreeBuilder
@@ -64,85 +66,12 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
      */
     @Override
     public Optional<MessageType> getExpectedContainedMessageType() {
-        MessageType retval = null;
-        DataTypeDesignatorT1 t1 = this.getDataTypeDesignatorT1ForTAC();
-        DataTypeDesignatorT2 t2 = this.getDataTypeDesignatorT2();
-        if (DataTypeDesignatorT1.FORECASTS == t1) {
-            switch ((ForecastsDataTypeDesignatorT2)t2) {
-                case FCT_AERODROME_VT_LONG:
-                case FCT_AERODROME_VT_SHORT:
-                    retval = MessageType.TAF;
-                    break;
-                case FCT_SPACE_WEATHER:
-                    retval = MessageType.SPACE_WEATHER_ADVISORY;
-                    break;
-                    /*
-                case FCT_VOLCANIC_ASH_ADVISORIES:
-                    retval = AviationCodeListUser.MessageType.VOLCANIC_ASH_ADVISORY;
-                    break;
-                    */
-                case FCT_TROPICAL_CYCLONE_ADVISORIES:
-                    retval = MessageType.TROPICAL_CYCLONE_ADVISORY;
-                    break;
-                case FCT_UPPER_AIR_WINDS_AND_TEMPERATURES:
-                    retval = new MessageType("GAFOR");
-            }
-        } else if (DataTypeDesignatorT1.WARNINGS == t1) {
-            switch ((WarningsDataTypeDesignatorT2)t2) {
-                case WRN_SIGMET:
-                case WRN_TROPICAL_CYCLONE_SIGMET:
-                case WRN_VOLCANIC_ASH_CLOUDS_SIGMET:
-                    retval = MessageType.SIGMET;
-                    break;
-                case WRN_AIRMET:
-                    retval = MessageType.AIRMET;
-                    break;
-            }
-        } else if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML == t1) {
-            switch ((XMLDataTypeDesignatorT2)t2) {
-                case XML_METAR:
-                    retval = MessageType.METAR;
-                    break;
-                case XML_SPECI:
-                    retval = MessageType.SPECI;
-                    break;
-                case XML_AIRMET:
-                    retval = MessageType.AIRMET;
-                    break;
-                case XML_SIGMET:
-                case XML_VOLCANIC_ASH_SIGMET:
-                case XML_TROPICAL_CYCLONE_SIGMET:
-                    retval = MessageType.SIGMET;
-                    break;
-                case XML_AERODROME_VT_LONG:
-                case XML_AERODROME_VT_SHORT:
-                    retval = MessageType.TAF;
-                    break;
-                case XML_VOLCANIC_ASH_ADVISORY:
-                    retval = MessageType.VOLCANIC_ASH_ADVISORY;
-                    break;
-                case XML_TROPICAL_CYCLONE_ADVISORIES:
-                    retval = MessageType.TROPICAL_CYCLONE_ADVISORY;
-                    break;
-            }
-        } /*
-        else if (DataTypeDesignatorT1.UPPER_AIR_DATA == t1) {
-            switch ((UpperAirDataTypeDesignatorT2)t2) {
-                case UA_AIRCRAFT_REPORT_CODAR_AIREP:
-                    retval = AviationCodeListUser.MessageType.SPECIAL_AIR_REPORT;
-                    retval = AviationCodeListUser.MessageType.WXREP;
-            }
-        } */else if (DataTypeDesignatorT1.SURFACE_DATA == t1) {
-            switch ((SurfaceDataTypeDesignatorT2)t2) {
-                case SD_AVIATION_ROUTINE_REPORTS:
-                    retval = MessageType.METAR;
-                    break;
-                case SD_SPECIAL_AVIATION_WEATHER_REPORTS:
-                    retval = MessageType.SPECI;
-
-            }
+        final fi.fmi.avi.model.bulletin.DataTypeDesignatorT2 t2 = this.getDataTypeDesignatorT2();
+        if (t2 != null) {
+            return t2.getExpectedMessageType();
+        } else {
+            return Optional.empty();
         }
-        return Optional.ofNullable(retval);
     }
 
     public abstract Builder toBuilder();
@@ -165,7 +94,8 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                         .setType(value.getType())//
                         .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())//
                         .setDataTypeDesignatorT2(value.getDataTypeDesignatorT2())//
-                        .setDataTypeDesignatorT1ForTAC(value.getDataTypeDesignatorT1ForTAC()).setIssueTime(value.getIssueTime());
+                        .setDataTypeDesignatorT1ForTAC(value.getDataTypeDesignatorT1ForTAC())//
+                        .setIssueTime(value.getIssueTime());
             }
         }
 
@@ -208,20 +138,39 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
 
         @Override
         @JsonDeserialize(using = DataTypeDesignatorT2Deserializer.class)
-        public Builder setDataTypeDesignatorT2(final DataTypeDesignatorT2 t2) {
-            if (t2 instanceof ForecastsDataTypeDesignatorT2) {
-                this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS);
-            } else if (t2 instanceof WarningsDataTypeDesignatorT2) {
-                this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.WARNINGS);
-            } else if (t2 instanceof XMLDataTypeDesignatorT2) {
-                this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML);
-            } else if (t2 instanceof UpperAirDataTypeDesignatorT2) {
-                this.setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.UPPER_AIR_DATA);
-            }
+        public Builder setDataTypeDesignatorT2(final fi.fmi.avi.model.bulletin.DataTypeDesignatorT2 t2) {
+            final Optional<DataTypeDesignatorT1> t1 = t2.getT1();
+            t1.ifPresent(this::setDataTypeDesignatorT1ForTAC);
             return super.setDataTypeDesignatorT2(t2);
         }
 
-        static class DataTypeDesignatorT2Deserializer extends StdDeserializer<DataTypeDesignatorT2> {
+        @Override
+        @JsonDeserialize(using = DataTypeDesignatorT1Deserializer.class)
+        public Builder setDataTypeDesignatorT1ForTAC(final DataTypeDesignatorT1 t1) {
+            return super.setDataTypeDesignatorT1ForTAC(t1);
+        }
+
+        static class DataTypeDesignatorT1Deserializer extends StdDeserializer<fi.fmi.avi.model.bulletin
+                .DataTypeDesignatorT1> {
+
+            DataTypeDesignatorT1Deserializer() {
+                this(null);
+            }
+
+            DataTypeDesignatorT1Deserializer(final Class<?> vc) {
+                super(vc);
+            }
+
+            @Override
+            public fi.fmi.avi.model.bulletin
+                    .DataTypeDesignatorT1 deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
+                final String value = ((JsonNode) jsonParser.getCodec().readTree(jsonParser)).asText();
+                return DataTypeDesignatorT1.fromName(value);
+            }
+        }
+
+        static class DataTypeDesignatorT2Deserializer extends StdDeserializer<fi.fmi.avi.model.bulletin
+                .DataTypeDesignatorT2> {
 
             DataTypeDesignatorT2Deserializer() {
                 this(null);
@@ -234,27 +183,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
             @Override
             public DataTypeDesignatorT2 deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
                 final String value = ((JsonNode) jsonParser.getCodec().readTree(jsonParser)).asText();
-                for (final ForecastsDataTypeDesignatorT2 item : ForecastsDataTypeDesignatorT2.values()) {
-                    if (item.name().equals(value)) {
-                        return item;
-                    }
-                }
-                for (final WarningsDataTypeDesignatorT2 item : WarningsDataTypeDesignatorT2.values()) {
-                    if (item.name().equals(value)) {
-                        return item;
-                    }
-                }
-                for (final XMLDataTypeDesignatorT2 item : XMLDataTypeDesignatorT2.values()) {
-                    if (item.name().equals(value)) {
-                        return item;
-                    }
-                }
-                for (final UpperAirDataTypeDesignatorT2 item : UpperAirDataTypeDesignatorT2.values()) {
-                    if (item.name().equals(value)) {
-                        return item;
-                    }
-                }
-                throw new IllegalArgumentException("Invalid value '" + value + "' for DataTypeDesignatorT2");
+                return DataTypeDesignatorT2.fromName(value);
             }
         }
     }

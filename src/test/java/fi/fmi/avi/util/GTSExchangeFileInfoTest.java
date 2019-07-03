@@ -9,10 +9,12 @@ import java.time.Month;
 
 import org.junit.Test;
 
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
 public class GTSExchangeFileInfoTest {
     @Test
@@ -24,8 +26,8 @@ public class GTSExchangeFileInfoTest {
                         .setLocationIndicator("ABCD")//
                         .setBulletinAugmentationNumber('A')//
                         .setGeographicalDesignator("FI")//
-                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
-                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
+                        .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
+                        .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
                         .setType(BulletinHeading.Type.CORRECTED)//
                         .setBulletinNumber(12)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
@@ -44,8 +46,8 @@ public class GTSExchangeFileInfoTest {
         BulletinHeading expectedHeading = BulletinHeadingImpl.builder().setLocationIndicator("ABCD")
                 .setBulletinAugmentationNumber('A')
                 .setGeographicalDesignator("FI")
-                .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
-                .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
+                .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
+                .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
                 .setType(BulletinHeading.Type.CORRECTED)
                 .setBulletinNumber(12)
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))

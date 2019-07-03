@@ -23,12 +23,14 @@ import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
+import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
-import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
 import fi.fmi.avi.model.immutable.CloudLayerImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
@@ -100,6 +102,26 @@ public class JSONConverterTest {
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
         final ConversionResult<SIGMETBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_BULLETIN_POJO, ConversionHints.EMPTY);
+        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+    }
+
+    @Test
+    public void testGenericBulletinParsing() throws Exception {
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("generic-bulletin1.json");
+        Objects.requireNonNull(is);
+        final String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        final ConversionResult<GenericMeteorologicalBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_GENERIC_BULLETIN_POJO, ConversionHints.EMPTY);
+        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+    }
+
+    @Test
+    public void testGenericCustomBulletinParsing() throws Exception {
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("custom-bulletin1.json");
+        Objects.requireNonNull(is);
+        final String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        final ConversionResult<GenericMeteorologicalBulletin> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_GENERIC_BULLETIN_POJO, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
     }
 
@@ -209,8 +231,8 @@ public class JSONConverterTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.WARNINGS)
-                        .setDataTypeDesignatorT2(BulletinHeading.WarningsDataTypeDesignatorT2.WRN_SIGMET)//
+                        .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.WARNINGS)
+                        .setDataTypeDesignatorT2(DataTypeDesignatorT2.WarningsDataTypeDesignatorT2.WRN_SIGMET)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
                         .build());
 
