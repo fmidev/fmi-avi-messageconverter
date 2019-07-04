@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.bulletin.immutable;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,17 +9,12 @@ import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.model.MessageType;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
-import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.util.BulletinHeadingDecoder;
 
 @FreeBuilder
@@ -137,7 +131,6 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         }
 
         @Override
-        @JsonDeserialize(using = DataTypeDesignatorT2Deserializer.class)
         public Builder setDataTypeDesignatorT2(final fi.fmi.avi.model.bulletin.DataTypeDesignatorT2 t2) {
             final Optional<DataTypeDesignatorT1> t1 = t2.getT1();
             t1.ifPresent(this::setDataTypeDesignatorT1ForTAC);
@@ -145,46 +138,12 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         }
 
         @Override
-        @JsonDeserialize(using = DataTypeDesignatorT1Deserializer.class)
         public Builder setDataTypeDesignatorT1ForTAC(final DataTypeDesignatorT1 t1) {
             return super.setDataTypeDesignatorT1ForTAC(t1);
         }
 
-        static class DataTypeDesignatorT1Deserializer extends StdDeserializer<fi.fmi.avi.model.bulletin
-                .DataTypeDesignatorT1> {
 
-            DataTypeDesignatorT1Deserializer() {
-                this(null);
-            }
 
-            DataTypeDesignatorT1Deserializer(final Class<?> vc) {
-                super(vc);
-            }
 
-            @Override
-            public fi.fmi.avi.model.bulletin
-                    .DataTypeDesignatorT1 deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
-                final String value = ((JsonNode) jsonParser.getCodec().readTree(jsonParser)).asText();
-                return DataTypeDesignatorT1.fromName(value);
-            }
-        }
-
-        static class DataTypeDesignatorT2Deserializer extends StdDeserializer<fi.fmi.avi.model.bulletin
-                .DataTypeDesignatorT2> {
-
-            DataTypeDesignatorT2Deserializer() {
-                this(null);
-            }
-
-            DataTypeDesignatorT2Deserializer(final Class<?> vc) {
-                super(vc);
-            }
-
-            @Override
-            public DataTypeDesignatorT2 deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
-                final String value = ((JsonNode) jsonParser.getCodec().readTree(jsonParser)).asText();
-                return DataTypeDesignatorT2.fromName(value);
-            }
-        }
     }
 }

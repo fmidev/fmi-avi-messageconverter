@@ -104,6 +104,7 @@ public interface BulletinHeading {
      */
     PartialOrCompleteTimeInstant getIssueTime();
 
+    @JsonIgnore
     Optional<MessageType> getExpectedContainedMessageType();
 
     enum Type {

@@ -1,13 +1,26 @@
 package fi.fmi.avi.model.bulletin;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+
 import fi.fmi.avi.model.MessageType;
 
+@JsonSerialize(using = DataTypeDesignatorT2.DataTypeDesignatorT2Serializer.class)
+@JsonDeserialize(using = DataTypeDesignatorT2.DataTypeDesignatorT2Deserializer.class)
 public class DataTypeDesignatorT2 implements DataTypeDesignator {
     protected static final Map<DataTypeDesignatorT2, MessageType> t2ToContainedMessageType = new HashMap<>();
 
@@ -327,5 +340,39 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
             return mapping.getDesignatorName(this.code());
         }
 
+    }
+
+    static class DataTypeDesignatorT2Deserializer extends StdDeserializer<DataTypeDesignatorT2> {
+
+        DataTypeDesignatorT2Deserializer() {
+            this(null);
+        }
+
+        DataTypeDesignatorT2Deserializer(final Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public DataTypeDesignatorT2 deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
+            final String value = ((JsonNode) jsonParser.getCodec().readTree(jsonParser)).asText();
+            return DataTypeDesignatorT2.fromName(value);
+        }
+    }
+
+    static class DataTypeDesignatorT2Serializer extends StdSerializer<DataTypeDesignatorT2> {
+
+        public DataTypeDesignatorT2Serializer() {
+            this(null);
+        }
+
+        public DataTypeDesignatorT2Serializer(final Class<DataTypeDesignatorT2> vc) {
+            super(vc);
+        }
+
+        @Override
+        public void serialize(final DataTypeDesignatorT2 designator, final JsonGenerator jsonGenerator, final SerializerProvider serializerProvider)
+                throws IOException {
+            jsonGenerator.writeString(designator.name());
+        }
     }
 }
