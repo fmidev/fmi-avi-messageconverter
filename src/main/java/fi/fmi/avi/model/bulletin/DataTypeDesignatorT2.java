@@ -2,9 +2,9 @@ package fi.fmi.avi.model.bulletin;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +23,7 @@ import fi.fmi.avi.model.MessageType;
 @JsonSerialize(using = DataTypeDesignatorT2.DataTypeDesignatorT2Serializer.class)
 @JsonDeserialize(using = DataTypeDesignatorT2.DataTypeDesignatorT2Deserializer.class)
 public class DataTypeDesignatorT2 implements DataTypeDesignator, Serializable {
-    protected static final Map<DataTypeDesignatorT2, MessageType> t2ToContainedMessageType = new HashMap<>();
+    protected static final Map<DataTypeDesignatorT2, MessageType> t2ToContainedMessageType = new ConcurrentHashMap<>();
 
     private static final Pattern EXTENSION_NAME_PATTERN = Pattern.compile("^EXTENSION_(?<code>[a-zA-Z])$");
 
