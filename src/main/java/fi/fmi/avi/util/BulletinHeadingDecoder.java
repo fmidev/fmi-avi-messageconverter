@@ -30,8 +30,11 @@ public class BulletinHeadingDecoder {
             type = BulletinHeading.Type.fromCode(bbb.substring(0, 2));
             bulletinAugmentationNumber = bbb.charAt(2) - 'A' + 1;
         }
-        DataTypeDesignatorT1 t1 = DataTypeDesignatorT1.fromCode(m.group("TT").charAt(0));
-        final DataTypeDesignatorT2 t2 = t1.t2FromCode(m.group("TT").charAt(1)).orElse(new DataTypeDesignatorT2(m.group("TT").charAt(1)));
+        final DataTypeDesignatorT1 t1 = DataTypeDesignatorT1.fromCode(m.group("TT").charAt(0));
+        final char t2Code = m.group("TT").charAt(1);
+        final DataTypeDesignatorT2 t2 = t1.t2FromCode(t2Code)
+                .map(designator -> (DataTypeDesignatorT2) designator)
+                .orElse(DataTypeDesignatorT2.fromExtensionCode(t2Code));
         final String issueTime = "--" + m.group("YY") + "T" + m.group("GG") + ":" + m.group("gg");
         return BulletinHeadingImpl.builder()//
                 .setLocationIndicator(m.group("CCCC"))//

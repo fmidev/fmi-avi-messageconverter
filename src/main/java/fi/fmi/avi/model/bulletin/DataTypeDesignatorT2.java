@@ -24,33 +24,38 @@ import fi.fmi.avi.model.MessageType;
 public class DataTypeDesignatorT2 implements DataTypeDesignator {
     protected static final Map<DataTypeDesignatorT2, MessageType> t2ToContainedMessageType = new HashMap<>();
 
-    public static DataTypeDesignatorT2 fromName(final String name) {
-        final Matcher m = Pattern.compile("^EXTENSION_(?<code>[a-zA-Z])$").matcher(name);
-        DataTypeDesignatorT2 designator;
+    private static final Pattern EXTENSION_NAME_PATTERN = Pattern.compile("^EXTENSION_(?<code>[a-zA-Z])$");
+
+    private final char code;
+
+    protected DataTypeDesignatorT2(final char code) {
+        this.code = code;
+    }
+
+    public static Optional<? extends DataTypeDesignatorT2> fromName(final String name) {
+        final Matcher m = EXTENSION_NAME_PATTERN.matcher(name);
         if (m.matches()) {
-            designator = new DataTypeDesignatorT2(m.group("code").charAt(0));
-        } else {
-            designator = DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.fromName(name);
-            if (designator == null) {
-                designator = DataTypeDesignatorT2.WarningsDataTypeDesignatorT2.fromName(name);
-            }
-            if (designator == null) {
-                designator = DataTypeDesignatorT2.XMLDataTypeDesignatorT2.fromName(name);
-            }
-            if (designator == null) {
-                designator = DataTypeDesignatorT2.UpperAirDataTypeDesignatorT2.fromName(name);
-            }
-            if (designator == null) {
-                designator = DataTypeDesignatorT2.SurfaceDataTypeDesignatorT2.fromName(name);
-            }
+            return Optional.of(new DataTypeDesignatorT2(m.group("code").charAt(0)));
+        }
+        Optional<? extends DataTypeDesignatorT2> designator;
+        designator = DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.fromName(name);
+        if (!designator.isPresent()) {
+            designator = DataTypeDesignatorT2.WarningsDataTypeDesignatorT2.fromName(name);
+        }
+        if (!designator.isPresent()) {
+            designator = DataTypeDesignatorT2.XMLDataTypeDesignatorT2.fromName(name);
+        }
+        if (!designator.isPresent()) {
+            designator = DataTypeDesignatorT2.UpperAirDataTypeDesignatorT2.fromName(name);
+        }
+        if (!designator.isPresent()) {
+            designator = DataTypeDesignatorT2.SurfaceDataTypeDesignatorT2.fromName(name);
         }
         return designator;
     }
 
-    private final char code;
-
-    public DataTypeDesignatorT2(final char code) {
-        this.code = code;
+    public static DataTypeDesignatorT2 fromExtensionCode(final char code) {
+        return new DataTypeDesignatorT2(code);
     }
 
     public Optional<DataTypeDesignatorT1> getT1() {
@@ -76,9 +81,11 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof DataTypeDesignatorT2) {
-            return this.name().equals(((DataTypeDesignatorT2)o).name());
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj instanceof DataTypeDesignatorT2) {
+            return this.name().equals(((DataTypeDesignatorT2) obj).name());
         } else {
             return false;
         }
@@ -109,23 +116,24 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
         public static final UpperAirDataTypeDesignatorT2 UA_WIND_PARTS_C_D = new UpperAirDataTypeDesignatorT2('Y');
         public static final UpperAirDataTypeDesignatorT2 UA_PRESSURE_TEMPERATURE_HUMIDITY_WIND_PARTS_A_B_C_D = new UpperAirDataTypeDesignatorT2('Z');
 
-        private static final AutoReflectionDataTypeDesignatorMapping<UpperAirDataTypeDesignatorT2> mapping = new AutoReflectionDataTypeDesignatorMapping<>(UpperAirDataTypeDesignatorT2.class);
-
-        public static UpperAirDataTypeDesignatorT2 fromCode(final char code) {
-            return mapping.getDesignatorByCode(code);
-        }
-
-        public static UpperAirDataTypeDesignatorT2 fromName(final String name) {
-            return mapping.getDesignatorByName(name);
-        }
+        private static final AutoReflectionDataTypeDesignatorMapping<UpperAirDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
+                UpperAirDataTypeDesignatorT2.class);
 
         UpperAirDataTypeDesignatorT2(final char code) {
             super(code);
         }
 
+        public static Optional<UpperAirDataTypeDesignatorT2> fromCode(final char code) {
+            return MAPPING.getOptionalDesignatorByCode(code);
+        }
+
+        public static Optional<UpperAirDataTypeDesignatorT2> fromName(final String name) {
+            return MAPPING.getOptionalDesignatorByName(name);
+        }
+
         @Override
         public String name() {
-            return mapping.getDesignatorName(this.code());
+            return MAPPING.getDesignatorName(this.code());
         }
     }
 
@@ -141,15 +149,8 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
         public static final XMLDataTypeDesignatorT2 XML_AIRMET = new XMLDataTypeDesignatorT2('W');
         public static final XMLDataTypeDesignatorT2 XML_TROPICAL_CYCLONE_SIGMET = new XMLDataTypeDesignatorT2('Y');
 
-        private static final AutoReflectionDataTypeDesignatorMapping<XMLDataTypeDesignatorT2> mapping = new AutoReflectionDataTypeDesignatorMapping<>(XMLDataTypeDesignatorT2.class);
-
-        public static XMLDataTypeDesignatorT2 fromCode(final char code) {
-            return mapping.getDesignatorByCode(code);
-        }
-
-        public static XMLDataTypeDesignatorT2 fromName(final String name) {
-            return mapping.getDesignatorByName(name);
-        }
+        private static final AutoReflectionDataTypeDesignatorMapping<XMLDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
+                XMLDataTypeDesignatorT2.class);
 
         static {
             t2ToContainedMessageType.put(XML_METAR, MessageType.METAR);
@@ -164,9 +165,16 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
             t2ToContainedMessageType.put(XML_TROPICAL_CYCLONE_ADVISORIES, MessageType.VOLCANIC_ASH_ADVISORY);
         }
 
-
         XMLDataTypeDesignatorT2(final char code) {
             super(code);
+        }
+
+        public static Optional<XMLDataTypeDesignatorT2> fromCode(final char code) {
+            return MAPPING.getOptionalDesignatorByCode(code);
+        }
+
+        public static Optional<XMLDataTypeDesignatorT2> fromName(final String name) {
+            return MAPPING.getOptionalDesignatorByName(name);
         }
 
         @Override
@@ -176,7 +184,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         @Override
         public String name() {
-            return mapping.getDesignatorName(this.code());
+            return MAPPING.getDesignatorName(this.code());
         }
     }
 
@@ -195,15 +203,8 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
         public static final WarningsDataTypeDesignatorT2 WRN_VOLCANIC_ASH_CLOUDS_SIGMET = new WarningsDataTypeDesignatorT2('V');
         public static final WarningsDataTypeDesignatorT2 WRN_WARNINGS_AND_WEATHER_SUMMARY = new WarningsDataTypeDesignatorT2('W');
 
-        private static final AutoReflectionDataTypeDesignatorMapping<WarningsDataTypeDesignatorT2> mapping = new AutoReflectionDataTypeDesignatorMapping<>(WarningsDataTypeDesignatorT2.class);
-
-        public static WarningsDataTypeDesignatorT2 fromCode(final char code) {
-            return mapping.getDesignatorByCode(code);
-        }
-
-        public static WarningsDataTypeDesignatorT2 fromName(final String name) {
-            return mapping.getDesignatorByName(name);
-        }
+        private static final AutoReflectionDataTypeDesignatorMapping<WarningsDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
+                WarningsDataTypeDesignatorT2.class);
 
         static {
             t2ToContainedMessageType.put(WRN_SIGMET, MessageType.SIGMET);
@@ -216,6 +217,14 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
             super(code);
         }
 
+        public static Optional<WarningsDataTypeDesignatorT2> fromCode(final char code) {
+            return MAPPING.getOptionalDesignatorByCode(code);
+        }
+
+        public static Optional<WarningsDataTypeDesignatorT2> fromName(final String name) {
+            return MAPPING.getOptionalDesignatorByName(name);
+        }
+
         @Override
         public Optional<DataTypeDesignatorT1> getT1() {
             return Optional.of(DataTypeDesignatorT1.WARNINGS);
@@ -223,7 +232,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         @Override
         public String name() {
-            return mapping.getDesignatorName(this.code());
+            return MAPPING.getDesignatorName(this.code());
         }
     }
 
@@ -254,15 +263,8 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
         public static final ForecastsDataTypeDesignatorT2 FCT_MISCELLANEOUS = new ForecastsDataTypeDesignatorT2('X');
         public static final ForecastsDataTypeDesignatorT2 FCT_SHIPPING_AREA = new ForecastsDataTypeDesignatorT2('Z');
 
-        private static final AutoReflectionDataTypeDesignatorMapping<ForecastsDataTypeDesignatorT2> mapping = new AutoReflectionDataTypeDesignatorMapping<>(ForecastsDataTypeDesignatorT2.class);
-
-        public static ForecastsDataTypeDesignatorT2 fromCode(final char code) {
-            return mapping.getDesignatorByCode(code);
-        }
-
-        public static ForecastsDataTypeDesignatorT2 fromName(final String name) {
-            return mapping.getDesignatorByName(name);
-        }
+        private static final AutoReflectionDataTypeDesignatorMapping<ForecastsDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
+                ForecastsDataTypeDesignatorT2.class);
 
         static {
             t2ToContainedMessageType.put(FCT_AERODROME_VT_LONG, MessageType.TAF);
@@ -275,6 +277,15 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
         ForecastsDataTypeDesignatorT2(final char code) {
             super(code);
         }
+
+        public static Optional<ForecastsDataTypeDesignatorT2> fromCode(final char code) {
+            return MAPPING.getOptionalDesignatorByCode(code);
+        }
+
+        public static Optional<ForecastsDataTypeDesignatorT2> fromName(final String name) {
+            return MAPPING.getOptionalDesignatorByName(name);
+        }
+
         @Override
         public Optional<DataTypeDesignatorT1> getT1() {
             return Optional.of(DataTypeDesignatorT1.FORECASTS);
@@ -282,7 +293,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         @Override
         public String name() {
-            return mapping.getDesignatorName(this.code());
+            return MAPPING.getDesignatorName(this.code());
         }
     }
 
@@ -310,24 +321,24 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
         public static final SurfaceDataTypeDesignatorT2 SD_SEISMIC_WAVEFORM_DATA = new SurfaceDataTypeDesignatorT2('Y');
         public static final SurfaceDataTypeDesignatorT2 SD_SEA_LEVEL_DEEP_OCEAN_TSUNAMI_DATA = new SurfaceDataTypeDesignatorT2('Z');
 
-        private static final AutoReflectionDataTypeDesignatorMapping<SurfaceDataTypeDesignatorT2> mapping = new AutoReflectionDataTypeDesignatorMapping<>(SurfaceDataTypeDesignatorT2.class);
-
-        public static SurfaceDataTypeDesignatorT2 fromCode(final char code) {
-            return mapping.getDesignatorByCode(code);
-        }
-
-        public static SurfaceDataTypeDesignatorT2 fromName(final String name) {
-            return mapping.getDesignatorByName(name);
-        }
+        private static final AutoReflectionDataTypeDesignatorMapping<SurfaceDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
+                SurfaceDataTypeDesignatorT2.class);
 
         static {
             t2ToContainedMessageType.put(SD_AVIATION_ROUTINE_REPORTS, MessageType.METAR);
             t2ToContainedMessageType.put(SD_SPECIAL_AVIATION_WEATHER_REPORTS, MessageType.SPECI);
         }
 
-
         SurfaceDataTypeDesignatorT2(final char code) {
             super(code);
+        }
+
+        public static Optional<SurfaceDataTypeDesignatorT2> fromCode(final char code) {
+            return MAPPING.getOptionalDesignatorByCode(code);
+        }
+
+        public static Optional<SurfaceDataTypeDesignatorT2> fromName(final String name) {
+            return MAPPING.getOptionalDesignatorByName(name);
         }
 
         @Override
@@ -337,7 +348,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         @Override
         public String name() {
-            return mapping.getDesignatorName(this.code());
+            return MAPPING.getDesignatorName(this.code());
         }
 
     }
@@ -355,17 +366,17 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
         @Override
         public DataTypeDesignatorT2 deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext) throws IOException {
             final String value = ((JsonNode) jsonParser.getCodec().readTree(jsonParser)).asText();
-            return DataTypeDesignatorT2.fromName(value);
+            return DataTypeDesignatorT2.fromName(value).orElse(null);
         }
     }
 
     static class DataTypeDesignatorT2Serializer extends StdSerializer<DataTypeDesignatorT2> {
 
-        public DataTypeDesignatorT2Serializer() {
+        DataTypeDesignatorT2Serializer() {
             this(null);
         }
 
-        public DataTypeDesignatorT2Serializer(final Class<DataTypeDesignatorT2> vc) {
+        DataTypeDesignatorT2Serializer(final Class<DataTypeDesignatorT2> vc) {
             super(vc);
         }
 
