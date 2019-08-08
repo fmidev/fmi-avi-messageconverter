@@ -8,10 +8,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import fi.fmi.avi.JSONTestUtil;
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
-import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.immutable.GeoPositionImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.immutable.TAFBulletinImpl;
@@ -45,8 +47,8 @@ public class TAFBulletinTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
-                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
+                        .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
+                        .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());
@@ -81,8 +83,8 @@ public class TAFBulletinTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
-                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT)//
+                        .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
+                        .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
                         .build());
         bulletinBuilder.addMessages(tafBuilder.build());

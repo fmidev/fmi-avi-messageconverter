@@ -18,6 +18,11 @@ public interface TAFAirTemperatureForecast extends AviationCodeListUser {
 
     PartialOrCompleteTimeInstant getMinTemperatureTime();
 
-
+    /**
+     * Returns true if min and max temperature time references contained in this message are full ZonedDateTime instances.
+     *
+     * @return true if all time references are complete, false otherwise
+     */
+    boolean areAllTimeReferencesComplete();
 
 }

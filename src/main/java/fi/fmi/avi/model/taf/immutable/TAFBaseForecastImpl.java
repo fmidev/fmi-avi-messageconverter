@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -52,6 +53,20 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
     public static Optional<TAFBaseForecastImpl> immutableCopyOf(final Optional<TAFBaseForecast> baseForecast) {
         requireNonNull(baseForecast);
         return baseForecast.map(TAFBaseForecastImpl::immutableCopyOf);
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean areAllTimeReferencesComplete() {
+        if (!getTemperatures().isPresent()) {
+            return true;
+        }
+        for (final TAFAirTemperatureForecast temperatureForecast : getTemperatures().get()) {
+            if (!temperatureForecast.areAllTimeReferencesComplete()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public abstract Builder toBuilder();

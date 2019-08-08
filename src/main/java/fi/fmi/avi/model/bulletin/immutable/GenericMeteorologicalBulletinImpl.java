@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.immutable;
+package fi.fmi.avi.model.bulletin.immutable;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,9 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
-import fi.fmi.avi.model.GenericMeteorologicalBulletin;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
+import fi.fmi.avi.model.immutable.GenericAviationWeatherMessageImpl;
 
 @FreeBuilder
 @JsonDeserialize(builder = GenericMeteorologicalBulletinImpl.Builder.class)
@@ -22,6 +23,10 @@ import fi.fmi.avi.model.GenericMeteorologicalBulletin;
 public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteorologicalBulletin, Serializable {
 
     private static final long serialVersionUID = -4860727383244788466L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static GenericMeteorologicalBulletinImpl immutableCopyOf(final GenericMeteorologicalBulletin bulletin) {
         Objects.requireNonNull(bulletin);
@@ -40,12 +45,15 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
     public abstract Builder toBuilder();
 
     public static class Builder extends GenericMeteorologicalBulletinImpl_Builder {
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final GenericMeteorologicalBulletin value) {
             if (value instanceof GenericMeteorologicalBulletinImpl) {
                 return ((GenericMeteorologicalBulletinImpl) value).toBuilder();
             } else {
-                return new GenericMeteorologicalBulletinImpl.Builder()//
+                return builder()//
                         .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
                         .setTimeStamp(value.getTimeStamp()).addAllMessages(value.getMessages()).addAllTimeStampFields(value.getTimeStampFields());
 

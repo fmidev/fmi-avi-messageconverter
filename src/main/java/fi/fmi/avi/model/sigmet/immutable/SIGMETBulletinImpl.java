@@ -11,9 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.BulletinHeading;
-import fi.fmi.avi.model.MeteorologicalBulletin;
-import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
 

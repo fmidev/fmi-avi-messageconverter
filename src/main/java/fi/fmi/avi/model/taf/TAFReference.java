@@ -16,8 +16,14 @@ public interface TAFReference {
 
     Optional<PartialOrCompleteTimeInstant> getIssueTime();
 
-    PartialOrCompleteTimePeriod getValidityTime();
+    Optional<PartialOrCompleteTimePeriod> getValidityTime();
 
     Optional<TAF.TAFStatus> getStatus();
 
+    /**
+     * Returns true if issue time and valid time references contained in this message are full ZonedDateTime instances.
+     *
+     * @return true if all time references are complete, false otherwise
+     */
+    boolean areAllTimeReferencesComplete();
 }

@@ -3,10 +3,10 @@ package fi.fmi.avi.converter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import fi.fmi.avi.model.MessageType;
 
 /**
  * ConversionHints provides lexing, parsing and serializing related
@@ -33,7 +33,7 @@ import java.util.Set;
  *
  * @author Ilkka Rinne / Spatineo 2017
  */
-public class ConversionHints implements Map<Object, Object>, Cloneable {
+public final class ConversionHints implements Map<Object, Object>, Cloneable {
 
     /**
      * Key for explicitly specifying the Aviation weather message type.
@@ -41,37 +41,49 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_MESSAGE_TYPE;
 
     /**
-     * Message type METAR
+     * Message type METAR.
+     *
+     * @deprecated use {@link MessageType#METAR} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_METAR = "METAR";
 
     /**
-     * Message type TAF
+     * Message type TAF.
+     *
+     * @deprecated use {@link MessageType#TAF} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_TAF = "TAF";
 
     /**
-     * Message type SPECI
+     * Message type SPECI.
+     *
+     * @deprecated use {@link MessageType#SPECI} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_SPECI = "SPECI";
 
     /**
-     * Message type SIGMET
+     * Message type SIGMET.
+     *
+     * @deprecated use {@link MessageType#SIGMET} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_SIGMET = "SIGMET";
 
     /**
-     * Message type AIRMET
+     * Message type AIRMET.
+     *
+     * @deprecated use {@link MessageType#AIRMET} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_AIRMET = "AIRMET";
 
     /**
-     * Message type ARS
+     * Message type ARS.
+     *
+     * @deprecated use {@link MessageType#SPECIAL_AIR_REPORT} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_ARS = "ARS";
 
     /**
-     * Key for asking for more strict or loose processing of the provided input
+     * Key for asking for more strict or loose processing of the provided input.
      */
     public static final Key KEY_PARSING_MODE;
 
@@ -130,19 +142,19 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
      * Silently ignore the missing timezone ID or leave it out when allowed, but not required by the specification.
      */
     public static final Object VALUE_TIMEZONE_ID_POLICY_LOOSE = "LOOSE";
-    
+
     /**
-     * Serialization policy
+     * Serialization policy.
      */
     public static final Key KEY_SERIALIZATION_POLICY;
-    
+
     /**
-     * Create 16th edition annex III (July 2007)
+     * Create 16th edition annex III (July 2007).
      */
     public static final Object VALUE_SERIALIZATION_POLICY_ANNEX3_16TH = "ANNEX3_16TH";
 
     /**
-     * Controlling the allowed weather code values
+     * Controlling the allowed weather code values.
      */
     public static final Key KEY_WEATHER_CODES;
 
@@ -162,7 +174,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_WEATHER_CODES_ALLOW_ANY = "ALLOW ANY";
 
     /**
-     * Controlling of automatically setting the translation time field of the created POJOs
+     * Controlling of automatically setting the translation time field of the created POJOs.
      */
     public static final Key KEY_TRANSLATION_TIME;
 
@@ -177,152 +189,136 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_TRANSLATION_TIME_SKIP = "SKIP";
 
     /**
-     * The ID of the containing bulletin used in message metadata
+     * The ID of the containing bulletin used in message metadata.
      */
     public static final Key KEY_BULLETIN_ID;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_METAR}
+     * Type of the message contained within a collection.
+     */
+    public static final Key KEY_CONTAINED_MESSAGE_TYPE;
+
+    /**
+     * How the spacing should be used in encoding/decoding bulletin heading fields.
+     */
+    public static final Key KEY_BULLETIN_HEADING_SPACING;
+
+    /**
+     * The heading fields should be concatenated with no spacing.
+     */
+    public static final Object VALUE_BULLETIN_HEADING_SPACING_NONE = "NONE";
+
+    /**
+     * The heading fields should be joined with single space characters.
+     */
+    public static final Object VALUE_BULLETIN_HEADING_SPACING_SPACE = "SPACE";
+
+    /**
+     * How the TAC TAF valid time field is matched with TAF POJO validityTime or referredReport/validityTime fields.
+     */
+    public static final Key KEY_TAF_REFERENCE_POLICY;
+
+    /**
+     * When parsing and serializing AMD, COR or CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC TAF message.
+     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     */
+    public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD = "USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD";
+
+    /**
+     * When parsing and serializing COR or CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC message.
+     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     */
+    public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL = "USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL";
+
+    /**
+     * When parsing and serializing CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC message.
+     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     */
+    public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_CNL = "USE_REFERRED_REPORT_VALID_TIME_FOR_CNL";
+
+    /**
+     * validityTime of the TAF object should always be matched with the valid time of the TAC TAF message regardless of the message type.
+     */
+    public static final Object VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY = "USE_OWN_VALID_TIME_ONLY";
+
+    /**
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#METAR}.
      */
     public static final ConversionHints METAR;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_TAF}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#TAF}.
      */
     public static final ConversionHints TAF;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_SPECI}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPECI}.
      */
     public static final ConversionHints SPECI;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_SIGMET}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SIGMET}.
      */
     public static final ConversionHints SIGMET;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_ARS}
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPECIAL_AIR_REPORT}.
      */
-    public static final ConversionHints ARS;
+    public static final ConversionHints SPECIAL_AIR_REPORT;
 
     /**
-     * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value {@link ConversionHints#VALUE_PARSING_MODE_STRICT}
+     * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value {@link ConversionHints#VALUE_PARSING_MODE_STRICT}.
      */
     public static final ConversionHints STRICT_PARSING;
 
     /**
-     * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value {@link ConversionHints#VALUE_PARSING_MODE_ALLOW_ANY_ERRORS}
+     * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value
+     * {@link ConversionHints#VALUE_PARSING_MODE_ALLOW_ANY_ERRORS}.
      */
     public static final ConversionHints ALLOW_ERRORS;
 
     public static final ConversionHints EMPTY;
 
     static {
-        KEY_MESSAGE_TYPE = new KeyImpl(1, "Aviation message type hint", VALUE_MESSAGE_TYPE_METAR, VALUE_MESSAGE_TYPE_SPECI, VALUE_MESSAGE_TYPE_TAF,
-                VALUE_MESSAGE_TYPE_SIGMET, VALUE_MESSAGE_TYPE_AIRMET, VALUE_MESSAGE_TYPE_ARS);
-        KEY_PARSING_MODE = new KeyImpl(3, "Parsing mode hint", VALUE_PARSING_MODE_STRICT, VALUE_PARSING_MODE_ALLOW_MISSING, VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS, VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
+        KEY_MESSAGE_TYPE = new KeyImpl(1, "Aviation message type hint");
+        KEY_PARSING_MODE = new KeyImpl(3, "Parsing mode hint", VALUE_PARSING_MODE_STRICT, VALUE_PARSING_MODE_ALLOW_MISSING,
+                VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS, VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
         KEY_VALIDTIME_FORMAT = new KeyImpl(4, "Valid time format preference", VALUE_VALIDTIME_FORMAT_PREFER_SHORT, VALUE_VALIDTIME_FORMAT_PREFER_LONG);
         KEY_TIMEZONE_ID_POLICY = new KeyImpl(5, "Controls whether the UTZ indicator 'Z' is required/created when not strictly mandated",
                 VALUE_TIMEZONE_ID_POLICY_LOOSE, VALUE_TIMEZONE_ID_POLICY_STRICT);
 
-        KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags",
-        		VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
+        KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags", VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
 
         KEY_WEATHER_CODES = new KeyImpl(7, "Control the checks on the used weather codes", VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678,
                 VALUE_WEATHER_CODES_STRICT_WMO_4678, VALUE_WEATHER_CODES_ALLOW_ANY);
 
         //Values not fixed: the actual time to use may be given as value
-        KEY_TRANSLATION_TIME = new KeyImpl(8, "Set the translation time when converting. If the value is an instance of ZonedDateTime, the value is used as translation time");
+        KEY_TRANSLATION_TIME = new KeyImpl(8,
+                "Set the translation time when converting. If the value is an instance of ZonedDateTime, the value is used as translation time");
 
         KEY_BULLETIN_ID = new KeyImpl(9, "Set the containing bulletin ID when converting from a bulletin format not containing the ID in itself");
 
-        METAR = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_METAR);
-        TAF = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_TAF);
-        SPECI = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SPECI);
-        SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_SIGMET);
-        ARS = new ConversionHints(KEY_MESSAGE_TYPE, VALUE_MESSAGE_TYPE_ARS);
+        KEY_CONTAINED_MESSAGE_TYPE = new KeyImpl(10, "Hint for the message type contained within a container, such as bulletin");
+
+        KEY_BULLETIN_HEADING_SPACING = new KeyImpl(11, "Controls how the abbreviated bulletin heading are spaced", VALUE_BULLETIN_HEADING_SPACING_NONE,
+                VALUE_BULLETIN_HEADING_SPACING_SPACE);
+
+        KEY_TAF_REFERENCE_POLICY = new KeyImpl(12, "Controls how the valid time is interpreted and handled with TAF messages",
+                VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY,//
+                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_CNL,//
+                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL,//
+                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD);
+
+        METAR = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.METAR);
+        TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
+        SPECI = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPECI);
+        SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SIGMET);
+        SPECIAL_AIR_REPORT = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPECIAL_AIR_REPORT);
 
         STRICT_PARSING = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
         ALLOW_ERRORS = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
 
         EMPTY = new ConversionHints(false);
-    }
-
-    /**
-     * Key for a specific hint. The {@link ConversionHints#put} methods only accept key-value pairs
-     * where the {@link #isCompatibleValue(Object)} returns true for the given value.
-     */
-    public abstract static class Key {
-        private final int key;
-
-        protected Key(final int privateKey) {
-            this.key = privateKey;
-        }
-
-        /**
-         * Check if using the <code>value</code> with this Key makes sense.
-         *
-         * @param value value to check
-         * @return true if the value is one of the allowed ones, false otherwise
-         */
-        public abstract boolean isCompatibleValue(Object value);
-
-        /**
-         * Overridden to force using {@link System#identityHashCode(Object)} for all
-         * Key implementations.
-         *
-         * @return the hashcode
-         */
-        public final int hashCode() {
-            return System.identityHashCode(this);
-        }
-
-        /**
-         * Overridden to force using Object (hashCode) equality for all
-         * Key implementations.
-         * */
-        public final boolean equals(final Object other) {
-            return this == other;
-        }
-
-        protected final int intKey() {
-            return this.key;
-        }
-    }
-
-    private static final class KeyImpl extends Key {
-        final String description;
-        final Object[] fixedOptions;
-
-        KeyImpl(final int privateKey, final String description, final Object... option) {
-            super(privateKey);
-            this.description = description;
-            this.fixedOptions = option;
-        }
-
-        KeyImpl(final int privateKey, final String description) {
-            this(privateKey, description, (Object[]) null);
-        }
-
-        @Override
-        public boolean isCompatibleValue(final Object value) {
-            boolean retval = true;
-            if (this.fixedOptions != null) {
-                retval = false;
-                for (int i = 0; i < this.fixedOptions.length; i++) {
-                    if (value == this.fixedOptions[i]) {
-                        retval = true;
-                        break;
-                    }
-                }
-            }
-            return retval;
-        }
-
-        public String toString() {
-            return this.description;
-        }
     }
 
     private HashMap<Object, Object> hintMap = new HashMap<>();
@@ -338,7 +334,8 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ConversionHints with controlled modifiability.
      *
-     * @param modifiable set true to create a modifiable hints instance
+     * @param modifiable
+     *         set true to create a modifiable hints instance
      */
     public ConversionHints(final boolean modifiable) {
         this(null, modifiable);
@@ -347,34 +344,37 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ConversionHints with the given key-value pairs.
      *
-     * @param init the map of key-values
+     * @param init
+     *         the map of key-values
      */
-    public ConversionHints(final Map<Object, ?> init) {
+    public ConversionHints(final Map<? super Key, ?> init) {
         this(init, true);
     }
 
     /**
      * Creates ParsingHints with the given key-value pairs and controlled modifiability.
      *
-     * @param init the map of key-values
-     * @param modifiable true if hints can be modified, false if not
+     * @param init
+     *         the map of key-values
+     * @param modifiable
+     *         true if hints can be modified, false if not
      */
-    public ConversionHints(final Map<Object, ?> init, final boolean modifiable) {
-        this.modifiable = modifiable;
+    public ConversionHints(final Map<? super Key, ?> init, final boolean modifiable) {
         if (init != null) {
+            this.modifiable = true;
             putAll(init);
         }
+        this.modifiable = modifiable;
     }
-
-
-
 
     /**
      * Creates a ParsingHints with only a single key-value pair.
      * The result is unmodifiable.
      *
-     * @param key the key
-     * @param value the value for the key
+     * @param key
+     *         the key
+     * @param value
+     *         the value for the key
      */
     public ConversionHints(final Key key, final Object value) {
         this(null, true);
@@ -382,12 +382,18 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
         modifiable = false;
     }
 
+    public static ConversionHints immutableCopyOf(final Map<? super Key, ?> hints) {
+        return hints instanceof ConversionHints && !((ConversionHints) hints).modifiable ? (ConversionHints) hints : new ConversionHints(hints, false);
+    }
+
+    public static ConversionHints modifiableCopyOf(final Map<? super Key, ?> hints) {
+        return new ConversionHints(hints, true);
+    }
 
     @Override
     public int size() {
         return this.hintMap.size();
     }
-
 
     @Override
     public boolean isEmpty() {
@@ -463,10 +469,9 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     @Override
     public void putAll(final Map<?, ?> m) {
         checkModifiable();
-        final Iterator<?> iterator = m.keySet().iterator();
-        while (iterator.hasNext()) {
-            final Key key = (Key) iterator.next();
-            if (!key.isCompatibleValue(m.get(key))) {
+        for (final Entry<?, ?> entry : m.entrySet()) {
+            final Key key = (Key) entry.getKey();
+            if (!key.isCompatibleValue(entry.getValue())) {
                 throw new IllegalArgumentException();
             }
         }
@@ -508,7 +513,7 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     public Object clone() {
         try {
             final ConversionHints copy = (ConversionHints) super.clone();
-            copy.hintMap = new HashMap<Object, Object>(hintMap);
+            copy.hintMap = new HashMap<>(hintMap);
             copy.modifiable = this.modifiable;
             return copy;
         } catch (final CloneNotSupportedException e) {
@@ -523,6 +528,84 @@ public class ConversionHints implements Map<Object, Object>, Cloneable {
     private void checkModifiable() throws UnsupportedOperationException {
         if (!this.modifiable) {
             throw new UnsupportedOperationException("This ConversionHints instance is unmodifiable");
+        }
+    }
+
+    /**
+     * Key for a specific hint. The {@link ConversionHints#put} methods only accept key-value pairs
+     * where the {@link #isCompatibleValue(Object)} returns true for the given value.
+     */
+    public abstract static class Key {
+        private final int key;
+
+        protected Key(final int privateKey) {
+            this.key = privateKey;
+        }
+
+        /**
+         * Check if using the <code>value</code> with this Key makes sense.
+         *
+         * @param value
+         *         value to check
+         *
+         * @return true if the value is one of the allowed ones, false otherwise
+         */
+        public abstract boolean isCompatibleValue(Object value);
+
+        /**
+         * Overridden to force using {@link System#identityHashCode(Object)} for all
+         * Key implementations.
+         *
+         * @return the hashcode
+         */
+        public final int hashCode() {
+            return System.identityHashCode(this);
+        }
+
+        /**
+         * Overridden to force using Object (hashCode) equality for all
+         * Key implementations.
+         */
+        public final boolean equals(final Object other) {
+            return this == other;
+        }
+
+        protected final int intKey() {
+            return this.key;
+        }
+    }
+
+    private static final class KeyImpl extends Key {
+        final String description;
+        final Object[] fixedOptions;
+
+        KeyImpl(final int privateKey, final String description, final Object... option) {
+            super(privateKey);
+            this.description = description;
+            this.fixedOptions = option;
+        }
+
+        KeyImpl(final int privateKey, final String description) {
+            this(privateKey, description, (Object[]) null);
+        }
+
+        @Override
+        public boolean isCompatibleValue(final Object value) {
+            boolean retval = true;
+            if (this.fixedOptions != null) {
+                retval = false;
+                for (final Object fixedOption : this.fixedOptions) {
+                    if (value == fixedOption) {
+                        retval = true;
+                        break;
+                    }
+                }
+            }
+            return retval;
+        }
+
+        public String toString() {
+            return this.description;
         }
     }
 

@@ -78,27 +78,12 @@ public abstract class TAFImpl implements TAF, Serializable {
     @Override
     @JsonIgnore
     public boolean areAllTimeReferencesComplete() {
-        if (!this.getIssueTime().isPresent() || !this.getIssueTime().get().getCompleteTime().isPresent()) {
+        if (getIssueTime().isPresent() && !getIssueTime().get().getCompleteTime().isPresent() //
+                || getValidityTime().isPresent() && !getValidityTime().get().isComplete() //
+                || getBaseForecast().isPresent() && !getBaseForecast().get().areAllTimeReferencesComplete() //
+                || getReferredReport().isPresent() && !getReferredReport().get().areAllTimeReferencesComplete()) {
             return false;
         }
-        if (this.getValidityTime().isPresent()) {
-            if (!this.getValidityTime().get().isComplete()) {
-                return false;
-            }
-        }
-        if (this.getBaseForecast().isPresent()) {
-            if (this.getBaseForecast().get().getTemperatures().isPresent()) {
-                final List<TAFAirTemperatureForecast> airTemps = this.getBaseForecast().get().getTemperatures().get();
-                for (final TAFAirTemperatureForecast airTemp : airTemps) {
-                    final PartialOrCompleteTimeInstant minTime = airTemp.getMinTemperatureTime();
-                    final PartialOrCompleteTimeInstant maxTime = airTemp.getMaxTemperatureTime();
-                    if (!minTime.getCompleteTime().isPresent() || !maxTime.getCompleteTime().isPresent()) {
-                        return false;
-                    }
-                }
-            }
-        }
-
         if (this.getChangeForecasts().isPresent()) {
             for (final TAFChangeForecast changeForecast : this.getChangeForecasts().get()) {
                 if (!changeForecast.getPeriodOfChange().isComplete()) {
@@ -128,7 +113,7 @@ public abstract class TAFImpl implements TAF, Serializable {
                 return ((TAFImpl) value).toBuilder();
             } else {
                 //From AviationWeatherMessage:
-                final Builder retval = new Builder()//
+                final Builder retval = builder()//
                         .setPermissibleUsage(value.getPermissibleUsage())
                         .setPermissibleUsageReason(value.getPermissibleUsageReason())
                         .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
@@ -143,8 +128,8 @@ public abstract class TAFImpl implements TAF, Serializable {
                 value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
 
                 //From AerodromeWeatherMessage:
-                retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))
-                    .setIssueTime(value.getIssueTime());
+                retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))//
+                        .setIssueTime(value.getIssueTime());
 
                 //From TAF:
                 retval.setStatus(value.getStatus())
@@ -160,14 +145,18 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         public Builder withCompleteIssueTime(final YearMonth yearMonth) {
+            requireNonNull(yearMonth, "yearMonth");
             return mapIssueTime((input) -> input.toBuilder().completePartialAt(yearMonth).build());
         }
 
         public Builder withCompleteIssueTimeNear(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
             return mapIssueTime((input) -> input.toBuilder().completePartialNear(reference).build());
         }
 
         public Builder withCompleteForecastTimes(final YearMonth issueYearMonth, final int issueDay, final int issueHour, final ZoneId tz) {
+            requireNonNull(issueYearMonth, "issueYearMonth");
+            requireNonNull(tz, "tz");
             return withCompleteForecastTimes(
                     ZonedDateTime.of(LocalDateTime.of(issueYearMonth.getYear(), issueYearMonth.getMonth(), issueDay, issueHour, 0), tz));
         }
@@ -183,16 +172,17 @@ public abstract class TAFImpl implements TAF, Serializable {
                     .flatMap(PartialOrCompleteTimePeriod::getEndTime)//
                     .flatMap(PartialOrCompleteTimeInstant::getCompleteTime)//
                     .orElse(LocalDateTime.MAX.atZone(reference.getZone()));
-            return completeAirTemperatureForecast(reference, validityStart, validityEnd)//
-                    .completeChangeForecastPeriods(reference, validityStart, validityEnd)//
-                    .completeReferredReport(reference);
+            completeAirTemperatureForecast(reference, validityStart, validityEnd);
+            completeChangeForecastPeriods(reference, validityStart, validityEnd);
+            completeReferredReport(reference, validityEnd);
+            return this;
         }
 
-        private Builder completeValidityTime(final ZonedDateTime reference) {
-            return mapValidityTime(validityTime -> validityTime.toBuilder().completePartialStartingNear(reference).build());
+        private void completeValidityTime(final ZonedDateTime reference) {
+            mapValidityTime(validityTime -> validityTime.toBuilder().completePartialStartingNear(reference).build());
         }
 
-        private Builder completeAirTemperatureForecast(final ZonedDateTime reference, final ZonedDateTime validityStart, final ZonedDateTime validityEnd) {
+        private void completeAirTemperatureForecast(final ZonedDateTime reference, final ZonedDateTime validityStart, final ZonedDateTime validityEnd) {
             if (getBaseForecast().isPresent() && getBaseForecast().get().getTemperatures().isPresent()) {
                 final List<TAFAirTemperatureForecast> temperatureForecasts = new ArrayList<>();
                 final Function<PartialDateTime, ZonedDateTime> completion = partial -> toZonedDateTimeSatisfyingConditionOrNear(
@@ -205,10 +195,9 @@ public abstract class TAFImpl implements TAF, Serializable {
                 }
                 mapBaseForecast(fct -> TAFBaseForecastImpl.Builder.from(fct).setTemperatures(Collections.unmodifiableList(temperatureForecasts)).build());
             }
-            return this;
         }
 
-        private Builder completeChangeForecastPeriods(final ZonedDateTime reference, final ZonedDateTime validityStart, final ZonedDateTime validityEnd) {
+        private void completeChangeForecastPeriods(final ZonedDateTime reference, final ZonedDateTime validityStart, final ZonedDateTime validityEnd) {
             if (getChangeForecasts().isPresent() && !getChangeForecasts().get().isEmpty()) {
                 final List<TAFChangeForecast> changeForecasts = getChangeForecasts().get();
                 final Iterable<PartialOrCompleteTimePeriod> partialTimes = changeForecasts.stream().map(TAFChangeForecast::getPeriodOfChange)::iterator;
@@ -222,7 +211,6 @@ public abstract class TAFImpl implements TAF, Serializable {
                 }
                 setChangeForecasts(Collections.unmodifiableList(completedForecasts));
             }
-            return this;
         }
 
         private BiFunction<PartialDateTime, ZonedDateTime, ZonedDateTime> toZonedDateTimeSatisfyingConditionOrNear(
@@ -241,20 +229,24 @@ public abstract class TAFImpl implements TAF, Serializable {
             };
         }
 
-        private Builder completeReferredReport(final ZonedDateTime reference) {
-            return mapReferredReport(referredReport -> TAFReferenceImpl.Builder.from(referredReport)//
-                    .mutateValidityTime(builder -> builder.completePartialEndingNear(reference))//
-                    .build());
+        private void completeReferredReport(final ZonedDateTime reference, final ZonedDateTime validityEnd) {
+            mapReferredReport(referredReport -> {
+                final TAFReferenceImpl.Builder builder = TAFReferenceImpl.Builder.from(referredReport);
+                if (validityEnd.toLocalDateTime().equals(LocalDateTime.MAX)) {
+                    builder.withAllTimesComplete(reference);
+                } else {
+                    builder.withAllTimesCompleteFromValidityEnd(validityEnd);
+                }
+                return builder.build();
+            });
         }
 
         public Builder withAllTimesComplete(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
-            ZonedDateTime forecastReference = reference;
-            if (getIssueTime().isPresent() && getIssueTime().get().getCompleteTime().isPresent()) {
-                forecastReference = getIssueTime().get().getCompleteTime().get();
-            }
-            return withCompleteIssueTimeNear(reference)//
-                    .withCompleteForecastTimes(forecastReference);
+            withCompleteIssueTimeNear(reference);
+            return withCompleteForecastTimes(getIssueTime()//
+                    .flatMap(PartialOrCompleteTimeInstant::getCompleteTime)//
+                    .orElse(reference));
         }
 
         @Override

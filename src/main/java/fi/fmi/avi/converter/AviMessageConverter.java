@@ -103,6 +103,10 @@ public class AviMessageConverter {
         return this.converters.containsKey(spec);
     }
 
+    public <U, Z> AviMessageSpecificConverter<U, Z> getConverter(final ConversionSpecification<U, Z> spec) {
+        return (AviMessageSpecificConverter<U, Z>) this.converters.get(spec);
+    }
+
     /**
      * Returns all the {@link ConversionSpecification}s supported by this
      * AviMessageConverter implementation.
@@ -112,4 +116,5 @@ public class AviMessageConverter {
     public Set<ConversionSpecification<?, ?>> getSupportedSpecifications() {
         return this.converters.keySet();
     }
+
 }
