@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.bulletin;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +18,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 @JsonSerialize(using = DataTypeDesignatorT1.DataTypeDesignatorT1Serializer.class)
 @JsonDeserialize(using = DataTypeDesignatorT1.DataTypeDesignatorT1Deserializer.class)
-public class DataTypeDesignatorT1 implements DataTypeDesignator {
+public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
 
     /**
      * From WMO No.386 Manual on GTS 2015 rev 2017
@@ -70,6 +71,8 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator {
 
     private static final AutoReflectionDataTypeDesignatorMapping<DataTypeDesignatorT1> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
             DataTypeDesignatorT1.class);
+
+    private static final long serialVersionUID = 2361752791417789348L;
 
     private final char code;
 

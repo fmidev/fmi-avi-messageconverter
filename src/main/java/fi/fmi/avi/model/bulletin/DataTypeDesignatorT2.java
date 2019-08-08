@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.bulletin;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,10 +22,12 @@ import fi.fmi.avi.model.MessageType;
 
 @JsonSerialize(using = DataTypeDesignatorT2.DataTypeDesignatorT2Serializer.class)
 @JsonDeserialize(using = DataTypeDesignatorT2.DataTypeDesignatorT2Deserializer.class)
-public class DataTypeDesignatorT2 implements DataTypeDesignator {
+public class DataTypeDesignatorT2 implements DataTypeDesignator, Serializable {
     protected static final Map<DataTypeDesignatorT2, MessageType> t2ToContainedMessageType = new HashMap<>();
 
     private static final Pattern EXTENSION_NAME_PATTERN = Pattern.compile("^EXTENSION_(?<code>[a-zA-Z])$");
+
+    private static final long serialVersionUID = 5492380470706522224L;
 
     private final char code;
 
@@ -118,6 +121,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         private static final AutoReflectionDataTypeDesignatorMapping<UpperAirDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
                 UpperAirDataTypeDesignatorT2.class);
+        private static final long serialVersionUID = 3870643237305080972L;
 
         UpperAirDataTypeDesignatorT2(final char code) {
             super(code);
@@ -151,6 +155,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         private static final AutoReflectionDataTypeDesignatorMapping<XMLDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
                 XMLDataTypeDesignatorT2.class);
+        private static final long serialVersionUID = 6197268641225074694L;
 
         static {
             t2ToContainedMessageType.put(XML_METAR, MessageType.METAR);
@@ -205,6 +210,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         private static final AutoReflectionDataTypeDesignatorMapping<WarningsDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
                 WarningsDataTypeDesignatorT2.class);
+        private static final long serialVersionUID = 8733308234963221653L;
 
         static {
             t2ToContainedMessageType.put(WRN_SIGMET, MessageType.SIGMET);
@@ -265,6 +271,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         private static final AutoReflectionDataTypeDesignatorMapping<ForecastsDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
                 ForecastsDataTypeDesignatorT2.class);
+        private static final long serialVersionUID = -4899702578953215799L;
 
         static {
             t2ToContainedMessageType.put(FCT_AERODROME_VT_LONG, MessageType.TAF);
@@ -323,6 +330,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator {
 
         private static final AutoReflectionDataTypeDesignatorMapping<SurfaceDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
                 SurfaceDataTypeDesignatorT2.class);
+        private static final long serialVersionUID = -3981564185243783935L;
 
         static {
             t2ToContainedMessageType.put(SD_AVIATION_ROUTINE_REPORTS, MessageType.METAR);
