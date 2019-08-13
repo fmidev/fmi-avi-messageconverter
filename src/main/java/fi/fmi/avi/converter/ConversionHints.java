@@ -241,6 +241,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      */
     public static final Object VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY = "USE_OWN_VALID_TIME_ONLY";
 
+    public static final Key KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION;
+
     /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#METAR}.
      */
@@ -308,6 +310,9 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
                 VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_CNL,//
                 VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL,//
                 VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD);
+
+        KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION = new KeyImpl(13,
+                "Bulletin heading BBB indicator extension. The value is a function that will " + "be used to convert freeform strings to valid BBB indicators");
 
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
