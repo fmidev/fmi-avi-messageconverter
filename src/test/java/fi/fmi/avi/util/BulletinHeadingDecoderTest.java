@@ -3,10 +3,12 @@ package fi.fmi.avi.util;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
-import java.util.function.Function;
 
-import org.junit.BeforeClass;
+import javax.annotation.Nullable;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import com.google.common.collect.ImmutableMap;
@@ -50,41 +52,57 @@ public class BulletinHeadingDecoderTest {
     private static final Map<String, String> AUGMENTATION_INDICATOR_REPLACEMENTS = ImmutableMap.of("COR", "CCA", "RTD", "RRA", "AMD", "AAA");
     private static final ConversionHints EXTENDED_AUGMENTATION_IDENTIFIERS = new ConversionHints();
 
-    @BeforeClass
-    public static void setUp() {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    static {
         EXTENDED_AUGMENTATION_IDENTIFIERS.put(ConversionHints.KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION,
-                (Function<String, String>) key -> AUGMENTATION_INDICATOR_REPLACEMENTS.getOrDefault(key, key));
+                (BulletinHeadingIndicatorInterpreter) key -> AUGMENTATION_INDICATOR_REPLACEMENTS.getOrDefault(key, key));
     }
 
     @Test
     @Parameters
-    public void decode_bulletin_headings(final String input, final BulletinHeading expected, final ConversionHints conversionHints) {
+    public void decode_bulletin_headings(final String input, final BulletinHeading expected, final ConversionHints conversionHints,
+            @Nullable final Class<Throwable> expectedException) {
+        if (expectedException != null) {
+            thrown.expect(expectedException);
+        }
         assertEquals(BulletinHeadingDecoder.decode(input, conversionHints), expected);
     }
 
     public Object parametersForDecode_bulletin_headings() {
         return new Object[] {//
-                new Object[] { "FTFI31 EFLK 250200", TAF_BULLETIN_HEADING, ConversionHints.EMPTY },//
+                new Object[] { "FTFI31 EFLK 250200", TAF_BULLETIN_HEADING, ConversionHints.EMPTY, null },//
                 new Object[] { "FCFI31 EFLK 250200 AAB", TAF_BULLETIN_HEADING.toBuilder()
                         .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT)
                         .setType(BulletinHeading.Type.AMENDED)
-                        .setBulletinAugmentationNumber(2).build(), ConversionHints.EMPTY },//
+                        .setBulletinAugmentationNumber(2).build(), ConversionHints.EMPTY, null },//
                 new Object[] { "FTFI31 EFLK 250200 CCC",
                         TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.CORRECTED).setBulletinAugmentationNumber(3).build(),
-                        ConversionHints.EMPTY },//
+                        ConversionHints.EMPTY, null },//
                 new Object[] { "FTFI32 AAAA 250200 RRA", TAF_BULLETIN_HEADING.toBuilder()
                         .setType(BulletinHeading.Type.DELAYED)
-                        .setBulletinAugmentationNumber(1)
-                        .setBulletinNumber(32)
-                        .setLocationIndicator("AAAA").build(), ConversionHints.EMPTY },//
+                        .setBulletinAugmentationNumber(1).setBulletinNumber(32).setLocationIndicator("AAAA").build(), ConversionHints.EMPTY, null },//
                 // Extended augmentation indicators
-                new Object[] { "FTFI31 EFLK 250200 BLAH",
-                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.CORRECTED).setBulletinAugmentationNumber(3).build(),
-                        EXTENDED_AUGMENTATION_IDENTIFIERS },//
+                new Object[] { "FTFI31 EFLK 250200 COR",
+                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.CORRECTED).setBulletinAugmentationNumber(1).build(),
+                        EXTENDED_AUGMENTATION_IDENTIFIERS, null },//
+                new Object[] { "FTFI31 EFLK 250200 RTD",
+                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.DELAYED).setBulletinAugmentationNumber(1).build(),
+                        EXTENDED_AUGMENTATION_IDENTIFIERS, null },//
+                new Object[] { "FTFI31 EFLK 250200 AMD",
+                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.AMENDED).setBulletinAugmentationNumber(1).build(),
+                        EXTENDED_AUGMENTATION_IDENTIFIERS, null },//
+                new Object[] { "FTFI31 EFLK 250200 INVALID",
+                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.AMENDED).setBulletinAugmentationNumber(1).build(),
+                        EXTENDED_AUGMENTATION_IDENTIFIERS, IllegalArgumentException.class },//
+                new Object[] { "FTFI31 EFLK 250200 RTD",
+                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.AMENDED).setBulletinAugmentationNumber(1).build(), ConversionHints.EMPTY,
+                        IllegalArgumentException.class },//
                 // SIGMETs
-                new Object[] { "WSFI31 EFLK 231008", SIGMET_BULLETIN_HEADING, ConversionHints.EMPTY },
+                new Object[] { "WSFI31 EFLK 231008", SIGMET_BULLETIN_HEADING, ConversionHints.EMPTY, null },
                 new Object[] { "WSFI32 AAAA 231008", SIGMET_BULLETIN_HEADING.toBuilder().setBulletinNumber(32).setLocationIndicator("AAAA").build(),
-                        ConversionHints.EMPTY } };
+                        ConversionHints.EMPTY, null } };
     }
 
 }
