@@ -97,7 +97,7 @@ public class BulletinHeadingDecoderTest {
                         TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.AMENDED).setBulletinAugmentationNumber(1).build(),
                         EXTENDED_AUGMENTATION_IDENTIFIERS, IllegalArgumentException.class },//
                 new Object[] { "FTFI31 EFLK 250200 RTD",
-                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.AMENDED).setBulletinAugmentationNumber(1).build(), ConversionHints.EMPTY,
+                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.DELAYED).setBulletinAugmentationNumber(1).build(), ConversionHints.EMPTY,
                         IllegalArgumentException.class },//
                 // SIGMETs
                 new Object[] { "WSFI31 EFLK 231008", SIGMET_BULLETIN_HEADING, ConversionHints.EMPTY, null },
