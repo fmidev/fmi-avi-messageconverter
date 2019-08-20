@@ -39,7 +39,12 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
     public static final DataTypeDesignatorT1 OBSERVATIONAL_DATA_BINARY_BUFR = new DataTypeDesignatorT1('I');
     public static final DataTypeDesignatorT1 FORECAST_INFORMATION_BINARY_BUFR = new DataTypeDesignatorT1('J');
     public static final DataTypeDesignatorT1 CREX = new DataTypeDesignatorT1('K');
-    public static final DataTypeDesignatorT1 AVIATION_INFORMATION_IN_XML = new DataTypeDesignatorT1('L');
+    public static final DataTypeDesignatorT1 AVIATION_INFORMATION_IN_XML = new DataTypeDesignatorT1('L') {
+        @Override
+        public Optional<? extends DataTypeDesignatorT2> t2FromCode(final char t2Code) {
+            return DataTypeDesignatorT2.XMLDataTypeDesignatorT2.fromCode(t2Code);
+        }
+    };
     public static final DataTypeDesignatorT1 NOTICES = new DataTypeDesignatorT1('N');
     public static final DataTypeDesignatorT1 OCEANOGRAPHIC_INFORMATION_GRIB = new DataTypeDesignatorT1('O');
     public static final DataTypeDesignatorT1 PICTORIAL_INFORMATION_BINARY = new DataTypeDesignatorT1('P');
