@@ -20,7 +20,7 @@ import fi.fmi.avi.model.GeoPosition;
 @FreeBuilder
 @JsonDeserialize(builder = AerodromeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"designator", "name", "locationIndicatorICAO", "fieldElevation", "referencePoint"})
+@JsonPropertyOrder({ "designator", "name", "locationIndicatorICAO", "fieldElevationValue", "fieldElevationUom", "referencePoint" })
 public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
     private static final long serialVersionUID = -6822087279546133445L;
@@ -59,6 +59,7 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
                         .setDesignator(value.getDesignator())
                         .setDesignatorIATA(value.getDesignatorIATA())
                         .setFieldElevationValue(value.getFieldElevationValue())
+                        .setFieldElevationUom(value.getFieldElevationUom())
                         .setLocationIndicatorICAO(value.getLocationIndicatorICAO())
                         .setName(value.getName())
                         .setReferencePoint(GeoPositionImpl.immutableCopyOf(value.getReferencePoint()));
