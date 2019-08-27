@@ -1,5 +1,7 @@
 package fi.fmi.avi.model;
 
+import java.util.List;
+
 public interface PointGeometry extends Geometry {
-    Double[] getPoint();
+    List<Double> getPoint();
 }

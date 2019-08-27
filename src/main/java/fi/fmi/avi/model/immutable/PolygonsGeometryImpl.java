@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -52,9 +53,9 @@ public abstract class PolygonsGeometryImpl implements PolygonsGeometry {
         }
 
 
-        @Override
-        public final Builder setPolygons(final Double[][][]points){
-            return super.setPolygons(points);
+ //       @Override
+        public final Builder setPolygons(final List<List<List<Double>>>polygons){
+            return super.addAllPolygons(polygons);
         }
     }
 }

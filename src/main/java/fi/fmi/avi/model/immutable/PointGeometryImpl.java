@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -53,10 +54,12 @@ public abstract class PointGeometryImpl implements PointGeometry {
             }
         }
 
-        @Override
+ //       @Override
         @JsonDeserialize(contentAs=Double.class)
-        public final Builder setPoint(Double[] point) {
-            return super.setPoint(point);
+        public final Builder setPoint(List<Double> point) {
+            return super.addAllPoint(point);
         }
+
+
     }
 }
