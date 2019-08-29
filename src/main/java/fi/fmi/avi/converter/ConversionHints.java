@@ -248,6 +248,16 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY = "USE_OWN_VALID_TIME_ONLY";
 
     /**
+     * Controls how whitespace characters are handled when serializing TAC bulletin messages.
+     */
+    public static final Key KEY_WHITE_SPACE_PASSTHROUGH;
+
+    /**
+     * Enable whitespace character passthrough. This allows messages to contain newline and other whitespace characters in TAC serialized bulletins.
+     */
+    public static final Object VALUE_WHITE_SPACE_PASSTHROUGH_ENABLE = "ENABLE_WHITE_SPACE_PASSTHROUGH";
+
+    /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#METAR}.
      */
     public static final ConversionHints METAR;
@@ -326,6 +336,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
                 return "Bulletin heading BBB indicator extension. The value will be used to convert freeform strings to valid BBB indicators";
             }
         };
+
+        KEY_WHITE_SPACE_PASSTHROUGH = new KeyImpl(14, "Controls message white space serialization in TAC bulletins", VALUE_WHITE_SPACE_PASSTHROUGH_ENABLE);
 
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
