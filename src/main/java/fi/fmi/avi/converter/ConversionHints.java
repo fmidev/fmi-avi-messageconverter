@@ -250,12 +250,17 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Controls how whitespace characters are handled when serializing TAC bulletin messages.
      */
-    public static final Key KEY_WHITE_SPACE_PASSTHROUGH;
+    public static final Key KEY_WHITESPACE_SERIALIZATION_MODE;
 
     /**
-     * Enable whitespace character passthrough. This allows messages to contain newline and other whitespace characters in TAC serialized bulletins.
+     * Trim and replace consecutive whitespace characters with a single space. This is the default behaviour.
      */
-    public static final Object VALUE_WHITE_SPACE_PASSTHROUGH_ENABLE = "ENABLE_WHITE_SPACE_PASSTHROUGH";
+    public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM = "WHITESPACE_SERIALIZATION_TRIM";
+
+    /**
+     * Whitespace character passthrough. This allows messages to contain newline and other whitespace characters in TAC serialized bulletins.
+     */
+    public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH = "WHITESPACE_SERIALIZATION_PASSTHROUGH";
 
     /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#METAR}.
@@ -337,7 +342,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
             }
         };
 
-        KEY_WHITE_SPACE_PASSTHROUGH = new KeyImpl(14, "Controls message white space serialization in TAC bulletins", VALUE_WHITE_SPACE_PASSTHROUGH_ENABLE);
+        KEY_WHITESPACE_SERIALIZATION_MODE = new KeyImpl(14, "Controls message white space serialization in TAC bulletins",
+                VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM, VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH);
 
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
