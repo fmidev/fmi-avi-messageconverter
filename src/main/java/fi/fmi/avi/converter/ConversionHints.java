@@ -7,28 +7,29 @@ import java.util.Map;
 import java.util.Set;
 
 import fi.fmi.avi.model.MessageType;
+import fi.fmi.avi.util.BulletinHeadingIndicatorInterpreter;
 
 /**
  * ConversionHints provides lexing, parsing and serializing related
  * implementation hints for aviation weather message processing operations.
- *
+ * <p>
  * Note that since these keys and values are <i>hints</i>, there is
  * no requirement that a given implementation supports all possible
  * choices indicated below or that it can respond to requests to
  * modify its functionality.
- *
+ * <p>
  * Implementations are free to ignore the hints completely, but should
  * try to use an implementation option that is as close as possible
  * to the request.
- *
+ * <p>
  * The keys used to control the hints are all special values that
  * subclass the associated {@link ConversionHints.Key} class.
- *
+ * <p>
  * Many common hints are expressed below as static constants in this
  * class, but the list is not meant to be exhaustive.
  * Other hints may be created by other packages by defining new objects
  * which subclass the {@code Key} class and defining the associated values.
- *
+ * <p>
  * This class is heavily influenced by {@link java.awt.RenderingHints}
  *
  * @author Ilkka Rinne / Spatineo 2017
@@ -214,6 +215,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_BULLETIN_HEADING_SPACING_SPACE = "SPACE";
 
     /**
+     * Extended interpretations for bulletin heading augmentation indicator (BBB). The value has to be of type {@link BulletinHeadingIndicatorInterpreter}.
+     */
+    public static final Key KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION;
+
+    /**
      * How the TAC TAF valid time field is matched with TAF POJO validityTime or referredReport/validityTime fields.
      */
     public static final Key KEY_TAF_REFERENCE_POLICY;
@@ -240,6 +246,21 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      * validityTime of the TAF object should always be matched with the valid time of the TAC TAF message regardless of the message type.
      */
     public static final Object VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY = "USE_OWN_VALID_TIME_ONLY";
+
+    /**
+     * Controls how whitespace characters are handled when serializing TAC bulletin messages.
+     */
+    public static final Key KEY_WHITESPACE_SERIALIZATION_MODE;
+
+    /**
+     * Trim and replace consecutive whitespace characters with a single space. This is the default behaviour.
+     */
+    public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM = "WHITESPACE_SERIALIZATION_TRIM";
+
+    /**
+     * Whitespace character passthrough. This allows messages to contain newline and other whitespace characters in TAC serialized bulletins.
+     */
+    public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH = "WHITESPACE_SERIALIZATION_PASSTHROUGH";
 
     /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#METAR}.
@@ -309,6 +330,21 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
                 VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL,//
                 VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD);
 
+        KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION = new Key(13) {
+            @Override
+            public boolean isCompatibleValue(final Object value) {
+                return value instanceof BulletinHeadingIndicatorInterpreter;
+            }
+
+            @Override
+            public String toString() {
+                return "Bulletin heading BBB indicator extension. The value will be used to convert freeform strings to valid BBB indicators";
+            }
+        };
+
+        KEY_WHITESPACE_SERIALIZATION_MODE = new KeyImpl(14, "Controls message white space serialization in TAC bulletins",
+                VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM, VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH);
+
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
         SPECI = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPECI);
@@ -334,8 +370,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ConversionHints with controlled modifiability.
      *
-     * @param modifiable
-     *         set true to create a modifiable hints instance
+     * @param modifiable set true to create a modifiable hints instance
      */
     public ConversionHints(final boolean modifiable) {
         this(null, modifiable);
@@ -344,8 +379,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ConversionHints with the given key-value pairs.
      *
-     * @param init
-     *         the map of key-values
+     * @param init the map of key-values
      */
     public ConversionHints(final Map<? super Key, ?> init) {
         this(init, true);
@@ -354,10 +388,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ParsingHints with the given key-value pairs and controlled modifiability.
      *
-     * @param init
-     *         the map of key-values
-     * @param modifiable
-     *         true if hints can be modified, false if not
+     * @param init       the map of key-values
+     * @param modifiable true if hints can be modified, false if not
      */
     public ConversionHints(final Map<? super Key, ?> init, final boolean modifiable) {
         if (init != null) {
@@ -371,10 +403,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      * Creates a ParsingHints with only a single key-value pair.
      * The result is unmodifiable.
      *
-     * @param key
-     *         the key
-     * @param value
-     *         the value for the key
+     * @param key   the key
+     * @param value the value for the key
      */
     public ConversionHints(final Key key, final Object value) {
         this(null, true);
@@ -545,9 +575,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         /**
          * Check if using the <code>value</code> with this Key makes sense.
          *
-         * @param value
-         *         value to check
-         *
+         * @param value value to check
          * @return true if the value is one of the allowed ones, false otherwise
          */
         public abstract boolean isCompatibleValue(Object value);
