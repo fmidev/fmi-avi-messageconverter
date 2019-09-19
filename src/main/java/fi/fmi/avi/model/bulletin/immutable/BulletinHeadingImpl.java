@@ -46,7 +46,6 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
     }
 
     /**
-     *
      * Tries to determine the intended message type from the bulletin heading.
      *
      * Not detected due to unambiguous use in practice:
@@ -124,8 +123,8 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
 
         @Override
         public Builder setBulletinNumber(final int bulletinNumber) {
-            if (bulletinNumber < 1 || bulletinNumber > 99) {
-                throw new IllegalArgumentException("Bulleting number must be between 1 and 99");
+            if (bulletinNumber < 0 || bulletinNumber > 99) {
+                throw new IllegalArgumentException("Bulletin number must be between 0 and 99");
             }
             return super.setBulletinNumber(bulletinNumber);
         }
