@@ -3,7 +3,6 @@ package fi.fmi.avi.converter.json;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -35,7 +34,6 @@ public abstract class AbstractJSONSerializer {
         final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
-        om.registerModule(new JtsModule());
         final ObjectWriter writer = om.writerWithDefaultPrettyPrinter();
         final StringWriter sw = new StringWriter();
         try {

@@ -204,6 +204,7 @@ public class JSONConverterTest {
         final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
         final ConversionResult<SIGMET> result = converter.convertMessage(reference, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        System.err.println("sigmet:"+result.getConvertedMessage().get());
 
         final SIGMETBulletinImpl.Builder builder = SIGMETBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//

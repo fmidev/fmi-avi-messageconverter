@@ -136,7 +136,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
 
         @Override
         @JsonDeserialize(contentAs = PhenomenonGeometryWithHeightImpl.class)
-        public AIRMETImpl.Builder setAnalysisGeometries(final List<PhenomenonGeometryWithHeight> analysis) {
+        public Builder setAnalysisGeometries(final List<PhenomenonGeometryWithHeight> analysis) {
             return super.setAnalysisGeometries(analysis);
         }
 

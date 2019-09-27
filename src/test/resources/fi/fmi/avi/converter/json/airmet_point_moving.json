@@ -27,16 +27,34 @@
     "name" : "AMSTERDAM",
     "type" : "FIR"
   },
-  "airmetPhenomenon": "MOD_ICE",
+  "movingDirection": {
+    "value": 180.0,
+    "uom": "deg"
+  },
+  "movingSpeed": {
+    "value": 10.0,
+    "uom": "[kn_i]"
+  },
   "permissibleUsage":"NON_OPERATIONAL",
   "permissibleUsageReason":"EXERCISE",
+  "airmetPhenomenon": "MOD_ICE",
   "analysisType": "OBSERVATION",
-  "intensityChange": "NO_CHANGE",
+
   "analysisGeometries": [
     {
+      "geometry": {
+        "geoGeometry": {
+          "type": "Point",
+          "point": [
+            5.0,
+            52.0
+          ]
+        }
+      },
       "time": {
         "completeTime": "2017-08-27T12:00:00Z"
       },
+      "approximateLocation": false,
       "lowerLimit": {
         "value": 10.0,
         "uom": "FL"
@@ -44,34 +62,7 @@
       "upperLimit": {
         "value": 35.0,
         "uom": "FL"
-      },
-      "approximateLocation": false,
-      "geometry": {
-        "geoGeometry": {
-          "type": "Polygon",
-          "polygons": [
-            [
-              [
-                5.0,
-                52.0
-              ],
-              [
-                6.0,
-                53.0
-              ],
-              [
-                4.0,
-                54.0
-              ],
-              [
-                5.0,
-                52.0
-              ]
-            ]
-          ]
-        }
       }
-    }
-  ],
-  "translated": false
+    } ],
+  "intensityChange": "NO_CHANGE"
 }
