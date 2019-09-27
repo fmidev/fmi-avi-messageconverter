@@ -54,7 +54,7 @@ public abstract class PolygonsGeometryImpl implements PolygonsGeometry {
 
 
  //       @Override
-        public final Builder setPolygons(final List<List<List<Double>>>polygons){
+        public final Builder setPolygons(final List<List<Double>>polygons){
             return super.addAllPolygons(polygons);
         }
     }

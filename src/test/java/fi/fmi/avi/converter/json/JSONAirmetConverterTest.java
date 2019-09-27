@@ -110,7 +110,7 @@ public class JSONAirmetConverterTest {
 
         Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
-        String geomString="{\"type\": \"Polygon\", \"polygons\": [[[5.0,52.0], [6.0,53.0], [4.0,54.0], [5.0,52.0]]]}";
+        String geomString="{\"type\": \"Polygon\", \"polygons\": [[5.0,52.0], [6.0,53.0], [4.0,54.0], [5.0,52.0]]}";
         Geometry geom=om.readValue(geomString, Geometry.class);
 
         PartialOrCompleteTimeInstant.Builder issueTimeBuilder=new PartialOrCompleteTimeInstant.Builder();

@@ -50,7 +50,6 @@
         "geoGeometry": {
           "type": "Polygon",
           "polygons": [
-            [
               [
                 5.0,
                 52.0
@@ -67,7 +66,6 @@
                 5.0,
                 52.0
               ]
-            ]
           ]
         }
       }
@@ -82,7 +80,6 @@
       "geoGeometry": {
         "type": "Polygon",
         "polygons": [
-          [
             [
               5.0,
               53.0
@@ -100,7 +97,6 @@
               53.0
             ]
           ]
-        ]
       }
     }
   }

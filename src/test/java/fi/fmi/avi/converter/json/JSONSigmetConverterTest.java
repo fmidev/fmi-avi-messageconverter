@@ -71,9 +71,9 @@ public class JSONSigmetConverterTest {
 
         Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
-        String geomString="{ \"type\": \"Polygon\", \"polygons\":[[[5.0,52.0],[6.0,53.0],[4.0,54.0],[5.0,52.0]]]}";
+        String geomString="{ \"type\": \"Polygon\", \"polygons\":[[5.0,52.0],[6.0,53.0],[4.0,54.0],[5.0,52.0]]}";
         Geometry geom=(Geometry)om.readValue(geomString, Geometry.class);
-        String fpaGeomString="{ \"type\": \"Polygon\", \"polygons\":[[[5.0,53.0],[6.0,54.0],[4.0,55.0],[5.0,53.0]]]}";
+        String fpaGeomString="{ \"type\": \"Polygon\", \"polygons\":[[5.0,53.0],[6.0,54.0],[4.0,55.0],[5.0,53.0]]}";
         Geometry fpaGeom=(Geometry)om.readValue(fpaGeomString, Geometry.class);
 
         PartialOrCompleteTimeInstant.Builder issueTimeBuilder=new PartialOrCompleteTimeInstant.Builder();
