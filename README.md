@@ -46,41 +46,36 @@ the conversion is straight-forward:
 ```java
 String tac = "TAF EFAB 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=";
 ConversionResult<TAF> result = converter.convertMessage(tac,TACConverter.TAC_TO_TAF_POJO);
- if (ConversionResult.Status.SUCCESS = result.getStatus()) {
-   Optional<TAF> pojo = result.getConvertedMessage();}
+ if (ConversionResult.Status.SUCCESS == result.getStatus()) {
+   Optional<TAF> pojo = result.getConvertedMessage();
+ }
 ```
 
-To create a custom conversion chain from one format to another, just combine two or more conversions:
+Conversions can by combined into arbitrary length conversion chains where the result of one step is the input of the next:
 
 ```java
 String tac = "TAF EETN 190815Z 1909/1915 14008G15MPS 9999 BKN010 BKN015=";
-ConversionResult<TAFImpl> result1 = converter.convertMessage(tac, TACConverter.TAC_TO_IMMUTABLE_TAF_POJO);
-if (ConversionResult.Status.SUCCESS == result1.getStatus()) {
-    Optional<TAFImpl> msg = result1.getConvertedMessage();
-    if (msg.isPresent()) {
-        //Add aerodrome and full time info missing from TAC:
-        TAFImpl tafPojo = msg.get().toBuilder()
-                .setAerodrome(new AerodromeImpl.Builder()
-                        .setDesignator("EETN")
-                        .setName("Tallinn Airport")
-                        .setFieldElevationValue(40.0)
-                        .setLocationIndicatorICAO("EETN")
-                        .setReferencePoint(new GeoPositionImpl.Builder()
-                                .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")
-                                .setCoordinates(new Double[]{24.8325, 59.413333})
-                                .build())
-                        .build())
-                .withCompleteIssueTime(YearMonth.of(2017, 7))
-                .withCompleteForecastTimes(YearMonth.of(2017, 7), 19, 08, ZoneId.of("UTC"))
-                .build();
-        ConversionResult<String> result2 = converter.convertMessage(tafPojo, IWXXMConverter.TAF_POJO_TO_IWXXM21_STRING);
-        if (ConversionResult.Status.SUCCESS == result2.getStatus()) {
-            Optional<String> iwxxmTAF = result2.getConvertedMessage();
-            // Do something with the IWXXM TAF
-
-        }
-    }
-}
+ConversionResult<String> result = new ConversionChainBuilder<>(converter, TACConverter.TAC_TO_IMMUTABLE_TAF_POJO)
+    //Add aerodrome and full time info missing from TAC:
+    .withMutator(TAFImpl.Builder::from, TAF.class, TAFImpl.Builder.class)
+    .withMutator(tafBuilder -> tafBuilder
+                    .setAerodrome(AerodromeImpl.Builder.from(tafBuilder.getAerodrome())
+                            .setDesignator("EETN")
+                            .setName("Tallinn Airport")
+                            .setFieldElevationValue(40.0)
+                            .setLocationIndicatorICAO("EETN")
+                            .setReferencePoint(GeoPositionImpl.builder()
+                                    .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")
+                                    .addCoordinates(24.8325, 59.413333)
+                                    .build())
+                            .build())
+                    .build(), TAFImpl.Builder.class, TAF.class)
+    .build(IWXXMConverter.TAF_POJO_TO_IWXXM21_STRING)//
+    .convertMessage(input, ConversionHints.EMPTY);
+if (ConversionResult.Status.SUCCESS == result.getStatus()) {
+   Optional<String> iwxxmString = result.getConvertedMessage();
+   //Do something with the IWXXM message
+ }
 ```
 
 ## Supported message types

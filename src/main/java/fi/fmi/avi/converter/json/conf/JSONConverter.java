@@ -19,7 +19,7 @@ import fi.fmi.avi.converter.json.TAFBulletinJSONParser;
 import fi.fmi.avi.converter.json.TAFBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.TAFJSONParser;
 import fi.fmi.avi.converter.json.TAFJSONSerializer;
-import fi.fmi.avi.model.GenericMeteorologicalBulletin;
+import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
@@ -116,7 +116,7 @@ public class JSONConverter {
 
     /**
      * Pre-configured spec for fmi-avi-messageconverter JSON GenericMeteorologicalBulletin document String to
-     * {@link fi.fmi.avi.model.GenericMeteorologicalBulletin}.
+     * {@link GenericMeteorologicalBulletin}.
      */
     public static final ConversionSpecification<String, GenericMeteorologicalBulletin> JSON_STRING_TO_GENERIC_BULLETIN_POJO = new ConversionSpecification<>(String.class,
             GenericMeteorologicalBulletin.class, "GenericMeteorologicalBulletin, fmi-avi-messageconverter JSON", null);

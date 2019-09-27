@@ -11,28 +11,14 @@
   <description>Aviation weather message conversions</description>
   <groupId>fi.fmi.avi.converter</groupId>
   <artifactId>fmi-avi-messageconverter</artifactId>
-  <version>3.6.2.K-SNAPSHOT</version>
+  <version>3.9.4.K-SNAPSHOT</version>
 
   <scm>
-    <connection>${scm-url}</connection>
-    <developerConnection>${scm-url}</developerConnection>
-    <url>${scm-web-url}</url>
+    <connection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</connection>
+    <developerConnection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</developerConnection>
+    <url>https://github.com/fmidev/fmi-avi-messageconverter</url>
     <tag>HEAD</tag>
   </scm>
-
-  <properties>
-    <!-- Github site plugin for Github mvn repo deployment -->
-    <site-maven-plugin.version>0.12</site-maven-plugin.version>
-    <!-- Most of these SHOULD NOT be overriden in child POMs -->
-    <project.scm.id>github</project.scm.id>
-    <github-repo-owner>ernstdevreede</github-repo-owner>
-    <github.global.server>github</github.global.server>
-    <github-mvn-release-repo>knmi-mvn-repo</github-mvn-release-repo>
-    <github-mvn-snapshot-repo>knmi-mvn-snapshot-repo</github-mvn-snapshot-repo>
-    <scm-url>scm:https://github.com/${github-repo-owner}/${project.artifactId}.git/</scm-url>
-    <scm-web-url>https://github.com/${github-repo-owner}/${project.artifactId}</scm-web-url>
-
-  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -231,7 +217,7 @@
             <plugin>
               <groupId>com.github.github</groupId>
               <artifactId>site-maven-plugin</artifactId>
-              <version>${site-maven-plugin.version}</version>
+              <version>0.12</version>
               <configuration>
                 <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
                 <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->

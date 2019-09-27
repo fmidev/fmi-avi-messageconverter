@@ -449,7 +449,7 @@ public interface AviationCodeListUser {
     }
     
     enum PermissibleUsage { OPERATIONAL, NON_OPERATIONAL }
-
+    
     enum PermissibleUsageReason { TEST, EXERCISE }
 
     //From: http://codes.wmo.int/49-2/SigWxPhenomena
@@ -474,8 +474,8 @@ public interface AviationCodeListUser {
 
         private String text;
 
-        AeronauticalSignificantWeatherPhenomenon(final String phen) {
-            this.text = phen;
+        AeronauticalSignificantWeatherPhenomenon(final String phen){
+            this.text=phen;
         }
 
         public String getText(){

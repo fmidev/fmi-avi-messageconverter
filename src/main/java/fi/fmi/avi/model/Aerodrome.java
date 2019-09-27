@@ -15,6 +15,8 @@ public interface Aerodrome {
 
     Optional<Double> getFieldElevationValue();
 
+    Optional<String> getFieldElevationUom();
+
     Optional<GeoPosition> getReferencePoint();
 
 

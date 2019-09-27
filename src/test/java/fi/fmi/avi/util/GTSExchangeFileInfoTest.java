@@ -9,23 +9,25 @@ import java.time.Month;
 
 import org.junit.Test;
 
-import fi.fmi.avi.model.BulletinHeading;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.immutable.BulletinHeadingImpl;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
+import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
 public class GTSExchangeFileInfoTest {
     @Test
     public void testFileNameGenerator() {
-        GTSExchangeFileInfo info = new GTSExchangeFileInfo.Builder().setPFlag(GTSExchangeFileInfo.GTSExchangePFlag.A)
+        final GTSExchangeFileInfo info = new GTSExchangeFileInfo.Builder().setPFlag(GTSExchangeFileInfo.GTSExchangePFlag.A)
                 .setMetadataFile(true)
                 .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.METADATA)
                 .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP).setHeading(BulletinHeadingImpl.builder()//
                         .setLocationIndicator("ABCD")//
                         .setBulletinAugmentationNumber('A')//
                         .setGeographicalDesignator("FI")//
-                        .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
-                        .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
+                        .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
+                        .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
                         .setType(BulletinHeading.Type.CORRECTED)//
                         .setBulletinNumber(12)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
@@ -35,17 +37,17 @@ public class GTSExchangeFileInfoTest {
                 .setTimeStamp(LocalDateTime.of(2019, Month.JANUARY, 9, 10, 5))
                 .build();
 
-        assertEquals("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz", info.toGTSExchangeFileName());
+        assertEquals("AM_FTFI12ABCD091000CCA_C_ABCD_20190109100500_foobar12345_-.met.gz", info.toGTSExchangeFileName());
     }
 
     @Test
     public void testFileNameParser() {
-        GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
-        BulletinHeading expectedHeading = BulletinHeadingImpl.builder().setLocationIndicator("ABCD")
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
+        final BulletinHeading expectedHeading = BulletinHeadingImpl.builder().setLocationIndicator("ABCD")
                 .setBulletinAugmentationNumber('A')
                 .setGeographicalDesignator("FI")
-                .setDataTypeDesignatorT1ForTAC(BulletinHeading.DataTypeDesignatorT1.FORECASTS)
-                .setDataTypeDesignatorT2(BulletinHeading.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
+                .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
+                .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
                 .setType(BulletinHeading.Type.CORRECTED)
                 .setBulletinNumber(12)
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
