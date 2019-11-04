@@ -12,12 +12,16 @@ import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
-public class BulletinHeadingDecoder {
+public final class BulletinHeadingDecoder {
     // Abbreviated heading with lenient augmentation indicator
     private static final Pattern ABBREVIATED_HEADING = Pattern.compile(
             "^(?<TT>[A-Z]{2})(?<AA>[A-Z]{2})(?<ii>[0-9]{2})\\s*(?<CCCC>[A-Z]{4})\\s*(?<YY>[0-9]{2})(?<GG>[0-9]{2})(?<gg>[0-9]{2})\\s*(?<BBB>[A-Z0-9]+)?$");
     // Strict augmentation indicator
     private static final Pattern AUGMENTATION_INDICATOR = Pattern.compile("(?<BBB>(CC|RR|AA)[A-Z])?");
+
+    private BulletinHeadingDecoder() {
+        throw new AssertionError();
+    }
 
     public static BulletinHeading decode(final String input, final ConversionHints hints) throws IllegalArgumentException {
         final Matcher m = ABBREVIATED_HEADING.matcher(input);
@@ -45,7 +49,7 @@ public class BulletinHeadingDecoder {
             }
 
             type = BulletinHeading.Type.fromCode(bbb.substring(0, 2));
-            bulletinAugmentationNumber = bbb.charAt(2) - 'A' + 1;
+            bulletinAugmentationNumber = decodeAugmentationNumber(bbb.charAt(2));
         }
 
         final DataTypeDesignatorT1 t1 = DataTypeDesignatorT1.fromCode(m.group("TT").charAt(0));
@@ -65,4 +69,14 @@ public class BulletinHeadingDecoder {
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.parse(issueTime)))//
                 .build();
     }
+
+    public static int decodeAugmentationNumber(final char tacChar) {
+        if (tacChar < BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR || tacChar > BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR) {
+            throw new IllegalArgumentException(
+                    "Illegal augmentation number TAC char '" + tacChar + "'; the value must be between '" + BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR
+                            + "' and " + "'" + BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR + "'");
+        }
+        return tacChar - BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR + BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN;
+    }
+
 }
