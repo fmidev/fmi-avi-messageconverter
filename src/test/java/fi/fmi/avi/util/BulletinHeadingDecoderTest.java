@@ -52,13 +52,13 @@ public class BulletinHeadingDecoderTest {
     private static final Map<String, String> AUGMENTATION_INDICATOR_REPLACEMENTS = ImmutableMap.of("COR", "CCA", "RTD", "RRA", "AMD", "AAA");
     private static final ConversionHints EXTENDED_AUGMENTATION_IDENTIFIERS = new ConversionHints();
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     static {
         EXTENDED_AUGMENTATION_IDENTIFIERS.put(ConversionHints.KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION,
                 (BulletinHeadingIndicatorInterpreter) key -> AUGMENTATION_INDICATOR_REPLACEMENTS.getOrDefault(key, key));
     }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     @Parameters
@@ -82,7 +82,9 @@ public class BulletinHeadingDecoderTest {
                         ConversionHints.EMPTY, null },//
                 new Object[] { "FTFI32 AAAA 250200 RRA", TAF_BULLETIN_HEADING.toBuilder()
                         .setType(BulletinHeading.Type.DELAYED)
-                        .setBulletinAugmentationNumber(1).setBulletinNumber(32).setLocationIndicator("AAAA").build(), ConversionHints.EMPTY, null },//
+                        .setBulletinAugmentationNumber(1)
+                        .setBulletinNumber(32)
+                        .setLocationIndicator("AAAA").build(), ConversionHints.EMPTY, null },//
                 // Extended augmentation indicators
                 new Object[] { "FTFI31 EFLK 250200 COR",
                         TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.CORRECTED).setBulletinAugmentationNumber(1).build(),
@@ -105,4 +107,33 @@ public class BulletinHeadingDecoderTest {
                         ConversionHints.EMPTY, null } };
     }
 
+    @Test
+    public void decodeAugmentationNumber_GivenMinimumChar_ShouldReturnMinimumNumber() {
+        assertEquals(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN,
+                BulletinHeadingDecoder.decodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR));
+    }
+
+    @Test
+    public void decodeAugmentationNumber_GivenMaximumChar_ShouldReturnMaximumNumber() {
+        assertEquals(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX,
+                BulletinHeadingDecoder.decodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR));
+    }
+
+    @Test
+    public void decodeAugmentationNumber_GivenCharSmallerThanMinimum_ShouldThrowException() {
+        final char tacChar = BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR - 1;
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("'" + tacChar + "'");
+        //noinspection ResultOfMethodCallIgnored
+        BulletinHeadingDecoder.decodeAugmentationNumber(tacChar);
+    }
+
+    @Test
+    public void decodeAugmentationNumber_GivenCharGreaterThanMaximum_ShouldThrowException() {
+        final char tacChar = BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR + 1;
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("'" + tacChar + "'");
+        //noinspection ResultOfMethodCallIgnored
+        BulletinHeadingDecoder.decodeAugmentationNumber(tacChar);
+    }
 }
