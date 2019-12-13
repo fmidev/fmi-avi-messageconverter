@@ -2,6 +2,8 @@ package fi.fmi.avi.model;
 
 import static fi.fmi.avi.model.AviationCodeListUser.RelationalOperator.BELOW;
 
+import java.util.Optional;
+
 /**
  * A convenience interface containing references to shared codelists and enums.
  */
@@ -22,6 +24,9 @@ public interface AviationCodeListUser {
     String CODELIST_VALUE_NIL_REASON_NOT_OBSERVABLE = "http://codes.wmo.int/common/nil/notObservable";
     String CODELIST_VALUE_NIL_REASON_NOT_DETECTED_BY_AUTO_SYSTEM = "http://codes.wmo.int/common/nil/notDetectedByAutoSystem";
     String CODELIST_VALUE_NIL_REASON_NO_SIGNIFICANT_CHANGE = "http://codes.wmo.int/common/nil/noSignificantChange";
+    String CODELIST_VALUE_NIL_REASON_MISSING = "http://codes.wmo.int/common/nil/missing";
+    String CODELIST_VALUE_NIL_REASON_INAPPLICABLE = "http://codes.wmo.int/common/nil/inapplicable";
+    String CODELIST_VALUE_NIL_REASON_WITHHELD = "http://codes.wmo.int/common/nil/withheld";
     String CODELIST_VALUE_NIL_REASON_UNKNOWN = "http://www.opengis.net/def/nil/OGC/0/unknown";
 
     String MET_AERODROME_FORECAST_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeForecast";
@@ -34,6 +39,22 @@ public interface AviationCodeListUser {
 
     String TREND_FORECAST_OBSERVATION_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeTrendForecast";
     String TREND_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeTrendForecast";
+
+    String CODELIST_VALUE_PREFIX_OM_SAMPLING = "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/";
+    String CODELIST_VALUE_EPSG_4326 = "http://www.opengis.net/def/crs/EPSG/0/4326";
+
+    String CODELIST_VALUE_SIGMET_PROCESS = "WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 6-1 TECHNICAL SPECIFICATIONS "
+            + "RELATED TO SIGMET INFORMATION";
+    String CODELIST_SIGMET_EVOLVING_CONDITION_COLLECTION_ANALYSIS = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/SIGMETEvolvingConditionCollectionAnalysis";
+    String CODELIST_SIGWX_PHENOMENA_ROOT = "http://codes.wmo.int/49-2/SigWxPhenomena/";
+    String CODELIST_SIGMET_POSITION_COLLECTION_ANALYSIS = "http://codes.wmo.int/49-2/observable-property/SIGMETPositionCollectionAnalysis";
+
+    String CODELIST_AIRMET_PHENOMENA_ROOT = "http://codes.wmo.int/49-2/AirWxPhenomena/";
+    String CODELIST_VALUE_AIRMET_PROCESS = "WMO No. 49 Volume 2 Meteorological Service for International Air Navigation APPENDIX 6-1 TECHNICAL SPECIFICATIONS "
+            + "RELATED TO AIRMET INFORMATION";
+    String CODELIST_AIRMET_EVOLVING_CONDITION_COLLECTION_ANALYSIS = "http://codes.wmo.int/49-2/observation-type/iwxxm/2"
+            + ".1/AIRMETEvolvingConditionCollectionAnalysis";
+    String CODELIST_VALUE_WEATHERCAUSINGVISIBILITYREDUCTION = "http://codes.wmo.int/49.2/WeatherCausingVisibilityReduction";
 
     enum MetarStatus {
         NORMAL(0), CORRECTION(1), MISSING(2);
@@ -472,10 +493,10 @@ public interface AviationCodeListUser {
 
     }
 
-    enum SigmetReportStatus {
+    enum SigmetAirmetReportStatus {
         NORMAL(0), CANCELLATION(1);
 
-        public static SigmetReportStatus fromInt(final int code) {
+        public static SigmetAirmetReportStatus fromInt(final int code) {
             switch (code) {
                 case 0: return NORMAL;
                 case 1: return CANCELLATION;
@@ -485,7 +506,7 @@ public interface AviationCodeListUser {
 
         private final int code;
 
-        SigmetReportStatus(final int code) {
+        SigmetAirmetReportStatus(final int code) {
             this.code = code;
         }
 
@@ -498,4 +519,110 @@ public interface AviationCodeListUser {
         OBSERVATION,
         FORECAST
     }
+
+    //From: http://codes.wmo.int/49-2/WeatherCausingVisibilityReduction
+    enum WeatherCausingVisibilityReduction {
+        DZ("DZ", "Drizzle"),
+        DU("DU", "Dust"),
+        PO("PO", "Dust/sand whirls"),
+        DS("DS", "Duststorm"),
+        FG("FG", "Fog"),
+        FC("FC", "Funnel cloud"),
+        GR("GR", "Hail"),
+        HZ("HZ", "Haze"),
+        PL("PL", "Ice Pellets"),
+        BR("BR", "Mist"),
+        RA("RA", "Rain"),
+        SA("SA", "Sand"),
+        SS("SS", "Sandstorm"),
+        GS("GS", "Small hail"),
+        FU("FU", "Smoke"),
+        SN("SN", "Snow"),
+        SG("SG", "Snow grams"),
+        SQ("SQ", "Squall"),
+        VA("VA", "Volcanic Ash");
+
+        private String text;
+        private String description;
+
+        public String getText() {
+          return text;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        WeatherCausingVisibilityReduction(final String s, final String description){
+            this.text=s;
+            this.description=description;
+        }
+
+        public static WeatherCausingVisibilityReduction fromString(String weather) {
+            for (WeatherCausingVisibilityReduction ph : WeatherCausingVisibilityReduction.values()) {
+                if (ph.getText().equals(weather)) {
+                    return ph;
+                }
+            }
+            return null;
+        }
+    }
+
+    enum AirmetPhenomenonParamInfo {
+        NEEDS_OBSCURATION,
+        NEEDS_WIND,
+        NEEDS_CLOUDLEVELS
+    }
+
+    //From: http://codes.wmo.int/49-2/AirWxPhenomena
+    enum AeronauticalAirmetWeatherPhenomenon {
+        BKN_CLD("BKN_CLD", AirmetPhenomenonParamInfo.NEEDS_CLOUDLEVELS),
+        FRQ_CB("FRQ_CB"),
+        FRQ_TCU("FRQ_TCU"),
+        ISOL_CB("ISOL_CB"),
+        ISOL_TCU("ISOL_TCU"),
+        ISOL_TS("ISOL_TS"),
+        ISOL_TSGR("ISOL_TSGR"),
+        MOD_ICE("MOD_ICE"),
+        MOD_MTW("MOD_MTW"),
+        MOD_TURB("MOD_TURB"),
+        MT_OBSC("MT_OBSC"),
+        OCNL_CB("OCNL_CB"),
+        OCNL_TS("OCNL_TS"),
+        OCNL_TSGR("OCNL_TSGR"),
+        OCNL_TCU("OCNL_TCU"),
+        OVC_CLD("OVC_CLD", AirmetPhenomenonParamInfo.NEEDS_CLOUDLEVELS),
+        SFC_VIS("SFC_VIS", AirmetPhenomenonParamInfo.NEEDS_OBSCURATION),
+        SFC_WIND("SFC_WIND", AirmetPhenomenonParamInfo.NEEDS_WIND);
+
+        private String text;
+        private Optional<AirmetPhenomenonParamInfo> info; //does parameter need extra info
+
+        AeronauticalAirmetWeatherPhenomenon(final String phen) {
+            this.text = phen;
+            this.info=Optional.empty();
+        }
+
+        AeronauticalAirmetWeatherPhenomenon(final String phen, final AirmetPhenomenonParamInfo info) {
+            this.text = phen;
+            this.info=Optional.of(info);
+        }
+
+        public String getText() {
+            return this.text;
+        }
+
+        public Optional<AirmetPhenomenonParamInfo> getInfo() { return this.info; }
+
+        public AeronauticalAirmetWeatherPhenomenon fromString(String phen) {
+            for (AeronauticalAirmetWeatherPhenomenon ph : AeronauticalAirmetWeatherPhenomenon.values()) {
+                if (ph.getText().equals(phen)) {
+                    return ph;
+                }
+            }
+            return null;
+        }
+    }
+    enum MessageType { TAF, METAR, SPECI, SIGMET, GAFOR, AIRMET, TROPICAL_CYCLONE_ADVISORY, VOLCANIC_ASH_ADVISORY, BULLETIN, GENERIC, LOW_WIND, WX_WARNING,
+        SPECIAL_AIR_REPORT, WXREP, SPACE_WEATHER_ADVISORY }
 }

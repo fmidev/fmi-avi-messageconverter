@@ -1,7 +1,7 @@
 {
   "status": "NORMAL",
   "issuingAirTrafficServicesUnit": {
-    "name": "AMSTERDAM FIR",
+    "name": "AMSTERDAM",
     "type": "FIR",
     "designator": "EHAA"
   },
@@ -14,11 +14,6 @@
   "issueTime": {
     "completeTime": "2017-08-27T11:30:00Z"
   },
-  "airspace": {
-    "designator":"EHAA",
-    "name":"AMSTERDAM",
-    "type":"FIR"
-  },
   "validityPeriod": {
     "startTime": {
       "completeTime": "2017-08-27T11:30:00Z"
@@ -26,6 +21,11 @@
     "endTime": {
       "completeTime": "2017-08-27T18:00:00Z"
     }
+  },
+  "airspace": {
+    "designator": "EHAA",
+    "name": "AMSTERDAM",
+    "type": "FIR"
   },
   "sigmetPhenomenon": "EMBD_TS",
   "permissibleUsage":"NON_OPERATIONAL",
@@ -66,40 +66,51 @@
                 5.0,
                 52.0
               ]
-            ]
-        }
-      }
-    }
-  ],
-  "forecastGeometries":[{
-      "time":  {
-        "completeTime": "2017-08-27T18:00:00Z"
-      },
-      "approximateLocation": false,
-      "geometry": {
-        "geoGeometry": {
-          "type": "Polygon",
-          "polygons": [
-              [
-                5.0,
-                53.0
-              ],
-              [
-                6.0,
-                54.0
-              ],
-              [
-                4.0,
-                55.0
-              ],
-              [
-                5.0,
-                53.0
-              ]
           ]
         }
       }
     }
   ],
-  "translated": true
+  "forecastGeometries":[{
+    "time":  {
+      "completeTime": "2017-08-27T18:00:00Z"
+    },
+    "approximateLocation": false,
+    "geometry": {
+      "geoGeometry": {
+        "type": "Polygon",
+        "polygons": [
+            [
+              5.0,
+              53.0
+            ],
+            [
+              6.0,
+              54.0
+            ],
+            [
+              4.0,
+              55.0
+            ],
+            [
+              5.0,
+              53.0
+            ]
+          ]
+      }
+    }
+  }
+  ],
+  "VAInfo": {
+    "volcano": {
+      "volcanoPosition": {
+        "coordinateReferenceSystemId": "EPSG:4326",
+        "coordinates": [
+          52.0,
+          5.2
+        ]
+      },
+      "volcanoName": "GRIMSVOTN"
+    }
+  }
 }

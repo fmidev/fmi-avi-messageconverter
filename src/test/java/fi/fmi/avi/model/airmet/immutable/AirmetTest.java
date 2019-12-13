@@ -1,4 +1,11 @@
-package fi.fmi.avi.model.sigmet.immutable;
+package fi.fmi.avi.model.airmet.immutable;
+
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Optional;
+
+import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,22 +19,18 @@ import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
+import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
+import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
+import fi.fmi.avi.model.sigmet.immutable.AirmetCloudLevelsImpl;
+import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
 
-import org.junit.Test;
-
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Optional;
-
-public class SigmetTest {
+public class AirmetTest {
 
     ObjectMapper om=new ObjectMapper().registerModule(new JavaTimeModule()).registerModule(new Jdk8Module()).enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -52,30 +55,20 @@ public class SigmetTest {
         return an.build();
     }
 
-    public PhenomenonGeometry getForecast() {
-        Optional<Geometry> fcGeometry=Optional.empty();
 
-        try {
-            fcGeometry=Optional.ofNullable(om.readValue(testGeoJson2, Geometry.class));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public AIRMET buildAirmet() {
+        AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon airmetPhenomenon= AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.BKN_CLD;
 
-        PhenomenonGeometryImpl.Builder an=new PhenomenonGeometryImpl.Builder()
-                .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T18:00:00Z")))
-                .setGeometry(TacOrGeoGeometryImpl.of(fcGeometry.get()))
-                .setApproximateLocation(false)
-                ;
-        return an.build();
-    }
+        AirmetCloudLevelsImpl.Builder levels = new AirmetCloudLevelsImpl.Builder()
+                .setCloudBase(NumericMeasureImpl.of(0, "SFC"))
+                .setCloudTop(NumericMeasureImpl.of(7000, "[ft_i]"));
 
-    public SIGMET buildSigmet() {
         Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
 
-        SIGMETImpl.Builder sm=new SIGMETImpl.Builder()
+        AIRMETImpl.Builder sm=new AIRMETImpl.Builder()
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T14:00:00Z")))
-                .setIssuingAirTrafficServicesUnit(new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAM", "FIR").build())
+                .setIssuingAirTrafficServicesUnit(new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build())
                 .setMeteorologicalWatchOffice(new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
                 .setAirspace(airspace)
                 .setSequenceNumber("1")
@@ -85,20 +78,21 @@ public class SigmetTest {
                         .setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T18:00:00Z")))
                         .build())
                 .setAnalysisGeometries(Arrays.asList(getAnalysis()))
-                .setForecastGeometries(Arrays.asList(getForecast()))
                 .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 .setIntensityChange(SigmetIntensityChange.WEAKENING)
 
                 //                .setAnalysis(Arrays.asList(getAnalysis()))
-                .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+                .setAirmetPhenomenon(AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.BKN_CLD)
+                .setCloudLevels(levels.build())
                 .setTranslated(false)
         ;
+
         return sm.build();
     }
 
     @Test
     public void testBuild() throws IOException {
-        SIGMET sm=buildSigmet();
+        AIRMET sm=buildAirmet();
         assert(sm.areAllTimeReferencesComplete());
         System.err.println("TAC: "+sm.toString());
         String json=om.writeValueAsString(sm);
@@ -107,5 +101,8 @@ public class SigmetTest {
         assert(!smNode.isNull());
         assert(smNode.has("status"));
         assert(smNode.get("status").asText().equals("NORMAL"));
+
+        AIRMET readBackAirmet=om.readValue(json, AIRMETImpl.class);
+        System.err.println("bottom: "+readBackAirmet.getCloudLevels().get().getCloudBase().getValue());
     }
 }

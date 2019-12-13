@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>fi.fmi</groupId>
     <artifactId>fmi-os-parent-pom</artifactId>
@@ -116,21 +117,6 @@
       <version>26.0-jre</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.locationtech.jts</groupId>
-      <artifactId>jts-core</artifactId>
-      <version>1.15.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.locationtech.jts.io</groupId>
-      <artifactId>jts-io-common</artifactId>
-      <version>1.15.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.betadriven</groupId>
-      <artifactId>jackson-datatype-jts</artifactId>
-      <version>2.6-SNAPSHOT</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -141,4 +127,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

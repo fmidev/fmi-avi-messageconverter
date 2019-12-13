@@ -3,6 +3,7 @@ package fi.fmi.avi.converter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import fi.fmi.avi.util.BulletinHeadingIndicatorInterpreter;
  * no requirement that a given implementation supports all possible
  * choices indicated below or that it can respond to requests to
  * modify its functionality.
- * <p>
+ *
  * Implementations are free to ignore the hints completely, but should
  * try to use an implementation option that is as close as possible
  * to the request.
@@ -283,6 +284,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final ConversionHints SIGMET;
 
     /**
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_AIRMET}
+     */
+    public static final ConversionHints AIRMET;
+
+    /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPECIAL_AIR_REPORT}.
      */
     public static final ConversionHints SPECIAL_AIR_REPORT;
@@ -349,6 +355,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
         SPECI = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPECI);
         SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SIGMET);
+        AIRMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.AIRMET);
         SPECIAL_AIR_REPORT = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPECIAL_AIR_REPORT);
 
         STRICT_PARSING = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
@@ -367,7 +374,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         this(null, true);
     }
 
-    /**
+    /**       SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SIGMET);
      * Creates ConversionHints with controlled modifiability.
      *
      * @param modifiable set true to create a modifiable hints instance

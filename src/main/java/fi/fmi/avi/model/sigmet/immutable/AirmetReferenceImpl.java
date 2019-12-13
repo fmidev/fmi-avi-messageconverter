@@ -1,44 +1,46 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.sigmet.SigmetReference;
-import org.inferred.freebuilder.FreeBuilder;
-
-import java.io.Serializable;
-import java.util.Optional;
+import fi.fmi.avi.model.sigmet.AirmetReference;
 
 @FreeBuilder
-@JsonDeserialize(builder = SigmetReferenceImpl.Builder.class)
+@JsonDeserialize(builder = AirmetReferenceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class SigmetReferenceImpl implements SigmetReference, Serializable {
-    public static SigmetReferenceImpl immutableCopyOf(final SigmetReference sigmetReference) {
-        Objects.requireNonNull(sigmetReference);
-        if (sigmetReference instanceof SigmetReferenceImpl) {
-            return (SigmetReferenceImpl) sigmetReference;
+public abstract class AirmetReferenceImpl implements AirmetReference, Serializable {
+    public static AirmetReferenceImpl immutableCopyOf(final AirmetReference airmetReference) {
+        Objects.requireNonNull(airmetReference);
+        if (airmetReference instanceof AirmetReferenceImpl) {
+            return (AirmetReferenceImpl) airmetReference;
         } else {
-            return Builder.from(sigmetReference).build();
+            return Builder.from(airmetReference).build();
         }
     }
 
-    public static Optional<SigmetReferenceImpl> immutableCopyOf(final Optional<SigmetReference> sigmetReference) {
-        Objects.requireNonNull(sigmetReference);
-        return sigmetReference.map(SigmetReferenceImpl::immutableCopyOf);
+    public static Optional<AirmetReferenceImpl> immutableCopyOf(final Optional<AirmetReference> airmetReference) {
+        Objects.requireNonNull(airmetReference);
+        return airmetReference.map(AirmetReferenceImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
 
-    public static class Builder extends SigmetReferenceImpl_Builder {
+    public static class Builder extends AirmetReferenceImpl_Builder {
 
-        public static Builder from(final SigmetReference value) {
-            if (value instanceof SigmetReferenceImpl) {
-                return ((SigmetReferenceImpl) value).toBuilder();
+        public static Builder from(final AirmetReference value) {
+            if (value instanceof AirmetReferenceImpl) {
+                return ((AirmetReferenceImpl) value).toBuilder();
             } else {
                 return new Builder();
 
@@ -58,9 +60,9 @@ public abstract class SigmetReferenceImpl implements SigmetReference, Serializab
         }
 
         @Override
-        @JsonDeserialize(as = AeronauticalSignificantWeatherPhenomenon.class)
-        public Builder setPhenomenon(final AeronauticalSignificantWeatherPhenomenon sigmetPhenomenon) {
-            return super.setPhenomenon(sigmetPhenomenon);
+        @JsonDeserialize(as = AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.class)
+        public Builder setPhenomenon(final AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon airmetPhenomenon) {
+            return super.setPhenomenon(airmetPhenomenon);
         }
 
         @Override

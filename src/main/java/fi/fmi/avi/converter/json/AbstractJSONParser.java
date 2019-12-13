@@ -2,7 +2,6 @@ package fi.fmi.avi.converter.json;
 
 import java.io.IOException;
 
-import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -41,12 +40,11 @@ public abstract class AbstractJSONParser {
         final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
-        om.registerModule(new JtsModule());
         try {
             final Object o = om.readValue(input, implClz);
             result.setConvertedMessage((T) o);
             result.setStatus(ConversionResult.Status.SUCCESS);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             result.addIssue(new ConversionIssue(ConversionIssue.Severity.ERROR, ConversionIssue.Type.OTHER, "Error parsing JSON", e));
             result.setStatus(ConversionResult.Status.FAIL);
         }

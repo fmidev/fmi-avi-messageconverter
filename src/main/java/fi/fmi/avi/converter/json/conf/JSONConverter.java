@@ -1,5 +1,7 @@
 package fi.fmi.avi.converter.json.conf;
 
+import fi.fmi.avi.converter.json.*;
+import fi.fmi.avi.model.sigmet.AIRMET;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,6 +49,12 @@ public class JSONConverter {
      * Pre-configured spec for {@link SIGMET} to fmi-avi-messageconverter JSON SIGMET document String.
      */
     public static final ConversionSpecification<SIGMET, String> SIGMET_POJO_TO_JSON_STRING = new ConversionSpecification<>(SIGMET.class, String.class,
+            null, "SIGMET, fmi-avi-messageconverter JSON");
+
+    /**
+     * Pre-configured spec for {@link AIRMET} to IWXXM 2.1 XML format AIRMET document String.
+     */
+    public static final ConversionSpecification<AIRMET, String> AIRMET_POJO_TO_JSON_STRING = new ConversionSpecification<>(AIRMET.class, String.class,
             null, "SIGMET, fmi-avi-messageconverter JSON");
 
     /**
@@ -99,6 +107,11 @@ public class JSONConverter {
      */
     public static final ConversionSpecification<String, SIGMETBulletin> JSON_STRING_TO_SIGMET_BULLETIN_POJO = new ConversionSpecification<>(String.class,
             SIGMETBulletin.class, "SIGMETBulletin, fmi-avi-messageconverter JSON", null);
+    /**
+     * Pre-configured spec for IWXXM 2.1 XML format AIRMET document DOM Node to {@link AIRMET}
+     */
+    public static final ConversionSpecification<String, AIRMET> JSON_STRING_TO_AIRMET_POJO = new ConversionSpecification<>(String.class, AIRMET.class,
+            "AIRMET, fmi-avi-messageconverter JSON", null);
 
 
     /**
@@ -154,6 +167,9 @@ public class JSONConverter {
     }
 
     @Bean
+    public AviMessageSpecificConverter<String, AIRMET> airmetJSONParser() {return new AIRMETJSONParser();}
+
+    @Bean
     public AviMessageSpecificConverter<String, TAFBulletin> tafBulletinJSONParser() {
         return new TAFBulletinJSONParser();
     }
@@ -168,5 +184,10 @@ public class JSONConverter {
         return new GenericMeteorologicalBulletinJSONParser();
     }
 
+
+    @Bean(name = "airmetJSONSerializer")
+    public AviMessageSpecificConverter<AIRMET, String> airmetJSONSerializer() {
+        return new AIRMETJSONSerializer();
+    }
 
 }

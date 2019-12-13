@@ -221,10 +221,13 @@ public class JSONConverterTest {
 
     @Test
     public void testSIGMETBulletinSerialization() throws Exception {
-        final InputStream is = JSONConverterTest.class.getResourceAsStream("sigmetBulletin1.json");
+        final InputStream is = JSONConverterTest.class.getResourceAsStream("sigmet1.json");
         Objects.requireNonNull(is);
         final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
+        final ConversionResult<SIGMET> result = converter.convertMessage(reference, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        System.err.println(result.getStatus()+" "+result.getConversionIssues());
+        System.err.println("sigmet:"+result.getConvertedMessage().get());
 
         final SIGMETBulletinImpl.Builder builder = SIGMETBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//
@@ -236,7 +239,7 @@ public class JSONConverterTest {
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
                         .build());
 
-        builder.addMessages(SIGMETImpl.builder()//
+        builder.addMessages(SIGMETImpl.Builder.from(result.getConvertedMessage().get())
                 .setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
                         + "EFIN FINLAND FIR SEV TURB FCST AT 0740Z\n"//
                         + "S OF LINE N5953 E01931 -\n"//

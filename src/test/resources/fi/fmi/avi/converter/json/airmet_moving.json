@@ -1,7 +1,7 @@
 {
   "status": "NORMAL",
   "issuingAirTrafficServicesUnit": {
-    "name": "AMSTERDAM FIR",
+    "name": "AMSTERDAM",
     "type": "FIR",
     "designator": "EHAA"
   },
@@ -14,11 +14,6 @@
   "issueTime": {
     "completeTime": "2017-08-27T11:30:00Z"
   },
-  "airspace": {
-    "designator":"EHAA",
-    "name":"AMSTERDAM",
-    "type":"FIR"
-  },
   "validityPeriod": {
     "startTime": {
       "completeTime": "2017-08-27T11:30:00Z"
@@ -27,16 +22,53 @@
       "completeTime": "2017-08-27T18:00:00Z"
     }
   },
-  "sigmetPhenomenon": "EMBD_TS",
+  "airspace" : {
+    "designator" : "EHAA",
+    "name" : "AMSTERDAM",
+    "type" : "FIR"
+  },
+  "movingDirection": {
+    "value": 180.0,
+    "uom": "deg"
+  },
+  "movingSpeed": {
+    "value": 10.0,
+    "uom": "[kn_i]"
+  },
   "permissibleUsage":"NON_OPERATIONAL",
   "permissibleUsageReason":"EXERCISE",
+  "airmetPhenomenon": "MOD_ICE",
   "analysisType": "OBSERVATION",
-  "intensityChange": "NO_CHANGE",
+
   "analysisGeometries": [
     {
+      "geometry": {
+        "geoGeometry": {
+          "type": "Polygon",
+          "polygons": [
+              [
+                5.0,
+                52.0
+              ],
+              [
+                6.0,
+                53.0
+              ],
+              [
+                4.0,
+                54.0
+              ],
+              [
+                5.0,
+                52.0
+              ]
+          ]
+        }
+      },
       "time": {
         "completeTime": "2017-08-27T12:00:00Z"
       },
+      "approximateLocation": false,
       "lowerLimit": {
         "value": 10.0,
         "uom": "FL"
@@ -44,62 +76,7 @@
       "upperLimit": {
         "value": 35.0,
         "uom": "FL"
-      },
-      "approximateLocation": false,
-      "geometry": {
-        "geoGeometry": {
-          "type": "Polygon",
-          "polygons": [
-              [
-                5.0,
-                52.0
-              ],
-              [
-                6.0,
-                53.0
-              ],
-              [
-                4.0,
-                54.0
-              ],
-              [
-                5.0,
-                52.0
-              ]
-            ]
-        }
       }
-    }
-  ],
-  "forecastGeometries":[{
-      "time":  {
-        "completeTime": "2017-08-27T18:00:00Z"
-      },
-      "approximateLocation": false,
-      "geometry": {
-        "geoGeometry": {
-          "type": "Polygon",
-          "polygons": [
-              [
-                5.0,
-                53.0
-              ],
-              [
-                6.0,
-                54.0
-              ],
-              [
-                4.0,
-                55.0
-              ],
-              [
-                5.0,
-                53.0
-              ]
-          ]
-        }
-      }
-    }
-  ],
-  "translated": true
+    } ],
+  "intensityChange": "NO_CHANGE"
 }

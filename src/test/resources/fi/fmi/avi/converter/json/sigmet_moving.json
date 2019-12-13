@@ -50,6 +50,7 @@
         "geoGeometry": {
           "type": "Polygon",
           "polygons": [
+            [
               [
                 5.0,
                 52.0
@@ -67,39 +68,18 @@
                 52.0
               ]
             ]
-        }
-      }
-    }
-  ],
-  "forecastGeometries":[{
-      "time":  {
-        "completeTime": "2017-08-27T18:00:00Z"
-      },
-      "approximateLocation": false,
-      "geometry": {
-        "geoGeometry": {
-          "type": "Polygon",
-          "polygons": [
-              [
-                5.0,
-                53.0
-              ],
-              [
-                6.0,
-                54.0
-              ],
-              [
-                4.0,
-                55.0
-              ],
-              [
-                5.0,
-                53.0
-              ]
           ]
         }
       }
     }
   ],
-  "translated": true
+  "movingSpeed": {
+    "value": 10,
+    "uom": "[kn_i]"
+  },
+  "movingDirection": {
+    "value": 180,
+    "uom": "deg"
+  },
+  "translated": false
 }
