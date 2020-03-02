@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import fi.fmi.avi.model.AviationWeatherMessage;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 
 public interface SWX extends AviationWeatherMessage {
     AdvisoryNumber getAdvisoryNumber();

@@ -42,8 +42,8 @@ import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryImpl;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.VAInfoImpl;
 

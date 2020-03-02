@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.sigmet.immutable;
+package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,10 +10,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.TacOrGeoGeometry;
-import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl_Builder;
 
 @FreeBuilder
     @JsonDeserialize(builder = PhenomenonGeometryWithHeightImpl.Builder.class)

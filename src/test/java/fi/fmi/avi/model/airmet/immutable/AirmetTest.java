@@ -23,12 +23,12 @@ import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.AirmetCloudLevelsImpl;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 
 public class AirmetTest {
 

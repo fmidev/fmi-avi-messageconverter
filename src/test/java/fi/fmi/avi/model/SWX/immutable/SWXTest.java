@@ -18,8 +18,8 @@ import fi.fmi.avi.model.SWX.NextAdvisoryImpl;
 import fi.fmi.avi.model.SWX.SWX;
 import fi.fmi.avi.model.SWX.SWXGeometry;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 
 public class SWXTest {
     private final String NO_ADVISORIES = "NO FURTHER ADVISORIES";

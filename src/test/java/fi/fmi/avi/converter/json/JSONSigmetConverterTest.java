@@ -11,8 +11,8 @@ import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.*;
 import fi.fmi.avi.model.immutable.*;
 import fi.fmi.avi.model.sigmet.*;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryImpl;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 
 import org.junit.Test;
