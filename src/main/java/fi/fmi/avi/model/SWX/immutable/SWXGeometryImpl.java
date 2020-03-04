@@ -22,4 +22,4 @@ public abstract class SWXGeometryImpl implements SWXGeometry, Serializable {
     public static class Builder extends SWXGeometryImpl_Builder {
 
     }
-}it a
+}
