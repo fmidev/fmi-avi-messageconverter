@@ -1,6 +1,7 @@
 package fi.fmi.avi.converter.json.conf;
 
 import fi.fmi.avi.converter.json.*;
+import fi.fmi.avi.model.SWX.SWX;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +53,12 @@ public class JSONConverter {
             null, "SIGMET, fmi-avi-messageconverter JSON");
 
     /**
+     * Pre-configured spec for {@link SWX} to fmi-avi-messageconverter JSON SWX document String.
+     */
+    public static final ConversionSpecification<SWX, String> SWX_POJO_TO_JSON_STRING = new ConversionSpecification<>(SWX.class, String.class,
+            null, "SWX, fmi-avi-messageconverter JSON");
+
+    /**
      * Pre-configured spec for {@link AIRMET} to IWXXM 2.1 XML format AIRMET document String.
      */
     public static final ConversionSpecification<AIRMET, String> AIRMET_POJO_TO_JSON_STRING = new ConversionSpecification<>(AIRMET.class, String.class,
@@ -83,6 +90,11 @@ public class JSONConverter {
     public static final ConversionSpecification<String, TAF> JSON_STRING_TO_TAF_POJO = new ConversionSpecification<>(String.class,TAF.class,
             "TAF, fmi-avi-messageconverter JSON", null);
 
+    /**
+     * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SWX}.
+     */
+    public static final ConversionSpecification<String, SWX> JSON_STRING_TO_SWX_POJO = new ConversionSpecification<>(String.class, SWX.class,
+            "SWX, fmi-avi-messageconverter JSON", null);
 
     /**
      * Pre-configured spec for fmi-avi-messageconverter JSON METAR document String to {@link METAR}.
@@ -137,6 +149,11 @@ public class JSONConverter {
     }
 
     @Bean
+    public AviMessageSpecificConverter<SWX, String> swxJSONSerializer() {
+        return new SWXJSONSerializer();
+    }
+
+    @Bean
     public AviMessageSpecificConverter<SIGMETBulletin, String> sigmetBulletinJSONSerializer() {
         return new SIGMETBulletinJSONSerializer();
     }
@@ -164,6 +181,11 @@ public class JSONConverter {
     @Bean
     public AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser() {
         return new SIGMETJSONParser();
+    }
+
+    @Bean
+    public AviMessageSpecificConverter<String, SWX> swxJSONParser() {
+        return new SWXJSONParser();
     }
 
     @Bean
