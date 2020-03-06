@@ -93,7 +93,9 @@ public class JSONSWXConverterTest {
             }
 
             String partialTime = "--" + day + "T" + hour + ":00Z";
-            analysis.setAnalysis(getPhenomenon(partialTime));
+            analysis.setAffectedArea(getPhenomenon(partialTime));
+            analysis.setNoInformationAvailable(false);
+            analysis.setNoPhenomenaExpected(false);
             analyses.add(analysis.build());
 
             hour += 6;

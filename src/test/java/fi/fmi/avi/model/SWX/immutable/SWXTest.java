@@ -80,7 +80,9 @@ public class SWXTest {
             }
 
             String partialTime = "--" + day + "T" + hour + ":00Z";
-            analysis.setAnalysis(getPhenomenon(partialTime));
+            analysis.setAffectedArea(getPhenomenon(partialTime));
+            analysis.setNoPhenomenaExpected(true);
+            analysis.setNoInformationAvailable(true);
             analyses.add(analysis.build());
 
             hour += 6;
@@ -127,7 +129,9 @@ public class SWXTest {
                 .setApproximateLocation(false)
                 .setGeometry(TacOrGeoGeometryImpl.of(cbcp.build()));
 
-        SWXAnalysisImpl.Builder analysis = SWXAnalysisImpl.builder().setAnalysisType(SWXAnalysis.Type.FORECAST).setAnalysis(phenomenon.build());
+        SWXAnalysisImpl.Builder analysis = SWXAnalysisImpl.builder().setAnalysisType(SWXAnalysis.Type.FORECAST).setAffectedArea(phenomenon.build());
+        analysis.setNoPhenomenaExpected(true);
+        analysis.setNoInformationAvailable(true);
 
         List<SWXAnalysis> analyses = new ArrayList<>();
         analyses.add(analysis.build());

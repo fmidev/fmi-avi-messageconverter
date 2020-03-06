@@ -16,7 +16,7 @@
   "analyses": [
     {
       "analysisType": "FORECAST",
-      "analysis": {
+      "affectedArea": {
         "geometry": {
           "geoGeometry": {
             "type": "Polygon",
@@ -51,7 +51,7 @@
     },
     {
       "analysisType": "FORECAST",
-      "analysis": {
+      "affectedArea": {
         "geometry": {
           "geoGeometry": {
             "type": "Polygon",
@@ -86,7 +86,7 @@
     },
     {
       "analysisType": "FORECAST",
-      "analysis": {
+      "affectedArea": {
         "geometry": {
           "geoGeometry": {
             "type": "Polygon",
@@ -121,7 +121,7 @@
     },
     {
       "analysisType": "FORECAST",
-      "analysis": {
+      "affectedArea": {
         "geometry": {
           "geoGeometry": {
             "type": "Polygon",
@@ -156,7 +156,7 @@
     },
     {
       "analysisType": "FORECAST",
-      "analysis": {
+      "affectedArea": {
         "geometry": {
           "geoGeometry": {
             "type": "Polygon",

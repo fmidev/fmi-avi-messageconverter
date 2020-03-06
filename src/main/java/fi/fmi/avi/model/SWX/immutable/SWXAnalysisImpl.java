@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.SWX.immutable;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -21,10 +22,10 @@ public abstract class SWXAnalysisImpl implements SWXAnalysis, Serializable {
     }
 
     public static class Builder extends SWXAnalysisImpl_Builder {
-        @Override
+
         @JsonDeserialize(as = PhenomenonGeometryWithHeightImpl.class)
-        public Builder setAnalysis(final PhenomenonGeometryWithHeight analysis) {
-            return super.setAnalysis(analysis);
+        public Builder setAffectedArea(final PhenomenonGeometryWithHeight analysis) {
+            return super.setAffectedArea(analysis);
         }
     }
 }
