@@ -19,9 +19,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.SWX.AdvisoryNumberImpl;
 import fi.fmi.avi.model.SWX.NextAdvisory;
-import fi.fmi.avi.model.SWX.NextAdvisoryImpl;
 import fi.fmi.avi.model.SWX.SWX;
 import fi.fmi.avi.model.SWX.SWXAnalysis;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
@@ -186,7 +184,6 @@ public class SWXTest {
         Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, SWXObject.getNextAdvisory().getTimeSpecifier());
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
-        System.out.println(serialized);
         final SWXImpl deserialized = OBJECT_MAPPER.readValue(serialized, SWXImpl.class);
 
         assertEquals(SWXObject, deserialized);

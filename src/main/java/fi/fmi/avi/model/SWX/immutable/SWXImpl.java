@@ -10,9 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.SWX.AdvisoryNumber;
-import fi.fmi.avi.model.SWX.AdvisoryNumberImpl;
 import fi.fmi.avi.model.SWX.NextAdvisory;
-import fi.fmi.avi.model.SWX.NextAdvisoryImpl;
 import fi.fmi.avi.model.SWX.SWX;
 import fi.fmi.avi.model.SWX.SWXAnalysis;
 
