@@ -17,6 +17,9 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
     @JsonDeserialize(builder = TacOrGeoGeometryImpl.Builder.class)
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializable {
+        public static Builder builder() {
+            return new Builder();
+        }
         public static  TacOrGeoGeometryImpl of(final Geometry value) {
             return new Builder().setGeoGeometry(value).build();
         }

@@ -5,6 +5,12 @@ import java.util.Optional;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 
 public interface NextAdvisory {
-    Optional<String> noFurtherAdvisory();
-    Optional<PartialOrCompleteTimeInstant> nextAdvisory();
+    Type getTimeSpecifier();
+
+    Optional<PartialOrCompleteTimeInstant> getTime();
+
+    enum Type {
+        NO_FURTHER_ADVISORIES, NEXT_ADVISORY_AT, NEXT_ADVISORY_BY
+
+    }
 }

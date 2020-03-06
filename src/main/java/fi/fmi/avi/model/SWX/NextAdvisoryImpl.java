@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class NextAdvisoryImpl implements NextAdvisory, Serializable {
 
-    public static NextAdvisoryImpl.Builder builder() {
+    public static Builder builder() {
         return new NextAdvisoryImpl.Builder();
     }
 

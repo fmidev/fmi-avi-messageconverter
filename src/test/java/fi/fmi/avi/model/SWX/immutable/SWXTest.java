@@ -23,28 +23,19 @@ import fi.fmi.avi.model.SWX.AdvisoryNumberImpl;
 import fi.fmi.avi.model.SWX.NextAdvisory;
 import fi.fmi.avi.model.SWX.NextAdvisoryImpl;
 import fi.fmi.avi.model.SWX.SWX;
-import fi.fmi.avi.model.SWX.SWXGeometry;
+import fi.fmi.avi.model.SWX.SWXAnalysis;
+import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.immutable.PolygonsGeometryImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 
 public class SWXTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private final String NO_ADVISORIES = "NO FURTHER ADVISORIES";
 
     @BeforeClass
     public static void setup() {
         OBJECT_MAPPER.registerModule(new Jdk8Module()).registerModule(new JavaTimeModule());
-    }
-
-    private SWXGeometry getSWXGeometry() {
-        List<String> regions = new ArrayList<>(Arrays.asList("HNH", "HSH"));
-
-        SWXGeometryImpl.Builder spaceGeometry = SWXGeometryImpl.builder()
-                .setEasternLatitudeBand(18000)
-                .setWesternLatitudeBand(18000)
-                .addAllLatitudeRegions(regions);
-
-        return spaceGeometry.build();
     }
 
     private AdvisoryNumberImpl getAdvisoryNumber() {
@@ -58,9 +49,10 @@ public class SWXTest {
 
         if (hasNext) {
             PartialOrCompleteTimeInstant nextAdvisoryTime = PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]"));
-            next.nextAdvisory(nextAdvisoryTime);
+            next.setTime(nextAdvisoryTime);
+            next.setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_AT);
         } else {
-            next.noFurtherAdvisory(NO_ADVISORIES);
+            next.setTimeSpecifier(NextAdvisory.Type.NO_FURTHER_ADVISORIES);
         }
 
         return next.build();
@@ -74,58 +66,96 @@ public class SWXTest {
         return remarks;
     }
 
-    private List<PhenomenonGeometryWithHeight> getForecasts(boolean hasObservation) {
-        int numberOfForecasts = (hasObservation) ? 4 : 5;
-        List<PhenomenonGeometryWithHeight> forecasts = new ArrayList<>();
+    private List<SWXAnalysis> getAnalyses(boolean hasObservation) {
+        List<SWXAnalysis> analyses = new ArrayList<>();
 
         int day = 27;
         int hour = 1;
 
-        for (int i = 0; i < numberOfForecasts; i++) {
+        for (int i = 0; i < 5; i++) {
+            SWXAnalysisImpl.Builder analysis = SWXAnalysisImpl.builder();
+
+            if (i == 0 && hasObservation) {
+                analysis.setAnalysisType(SWXAnalysis.Type.OBSERVATION);
+            } else {
+                analysis.setAnalysisType(SWXAnalysis.Type.FORECAST);
+            }
 
             String partialTime = "--" + day + "T" + hour + ":00Z";
-            forecasts.add(getForecast(partialTime));
+            analysis.setAnalysis(getPhenomenon(partialTime));
+            analyses.add(analysis.build());
+
             hour += 6;
             if (hour >= 24) {
                 day += 1;
                 hour = hour % 24;
             }
+
         }
 
-        return forecasts;
+        return analyses;
     }
 
-    private PhenomenonGeometryWithHeight getForecast(String partialTime) {
+    private PhenomenonGeometryWithHeight getPhenomenon(String partialTime) {
+        PolygonsGeometryImpl.Builder polygon = PolygonsGeometryImpl.builder();
+        polygon.addAllPolygons(
+                Arrays.asList(Arrays.asList(-180.0, -90.0), Arrays.asList(-180.0, -60.0), Arrays.asList(180.0, -60.0), Arrays.asList(180.0, -90.0),
+                        Arrays.asList(-180.0, -90.0)));
+
         PhenomenonGeometryWithHeightImpl.Builder phenomenon = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
-                PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime)))
-                .setGeometry(TacOrGeoGeometryImpl.of(getSWXGeometry()))
-                .setApproximateLocation(false);
+                PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime))).setGeometry(TacOrGeoGeometryImpl.of(polygon.build()));
 
         return phenomenon.build();
     }
 
     @Test
-    public void buildSWXWithNextAdvisory() throws Exception {
+    public void buildSWXWithCircleByCenterPoint() throws Exception {
+        NextAdvisoryImpl.Builder nextAdvisory = NextAdvisoryImpl.builder()
+                .setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_BY)
+                .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")));
+
+        int day = 27;
+        int hour = 1;
+        String partialTime = "--" + day + "T" + hour + ":00Z";
+
+        NumericMeasureImpl.Builder measure = NumericMeasureImpl.builder().setValue(5409.75).setUom("[nmi_i]");
+
+        CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
+                .addAllCoordinates(Arrays.asList(-16.6392, 160.9368))
+                .setRadius(measure.build());
+
+        PhenomenonGeometryWithHeightImpl.Builder phenomenon = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
+                PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime)))
+                .setApproximateLocation(false)
+                .setGeometry(TacOrGeoGeometryImpl.of(cbcp.build()));
+
+        SWXAnalysisImpl.Builder analysis = SWXAnalysisImpl.builder().setAnalysisType(SWXAnalysis.Type.FORECAST).setAnalysis(phenomenon.build());
+
+        List<SWXAnalysis> analyses = new ArrayList<>();
+        analyses.add(analysis.build());
+        analyses.add(analysis.build());
+        analyses.add(analysis.build());
+        analyses.add(analysis.build());
+        analyses.add(analysis.build());
+
         SWXImpl SWXObject = SWXImpl.builder()
                 .setTranslated(false)
+                .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
-                .setTranslationCentreName("DONLON")
-                .addAllWeatherEffects(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplacementAdvisoryNumber(Optional.empty())
-                .setObservation(getForecast("--27T00:00Z"))
-                .addAllForecasts(getForecasts(true))
+                .addAllAnalyses(analyses)
                 .setRemarks(getRemarks())
-                .setNextAdvisory(getNextAdvisory(true))
+                .setNextAdvisory(nextAdvisory.build())
                 .build();
 
         Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
         Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertTrue(SWXObject.getObservation().isPresent());
-        Assert.assertEquals(4, SWXObject.getForecasts().size());
-        Assert.assertTrue(SWXObject.getNextAdvisory().nextAdvisory().isPresent());
-        Assert.assertFalse(SWXObject.getNextAdvisory().noFurtherAdvisory().isPresent());
+        Assert.assertEquals(SWXAnalysis.Type.FORECAST, SWXObject.getAnalyses().get(0).getAnalysisType());
+        Assert.assertEquals(NextAdvisory.Type.NEXT_ADVISORY_BY, SWXObject.getNextAdvisory().getTimeSpecifier());
+        Assert.assertTrue(SWXObject.getNextAdvisory().getTime().isPresent());
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
         final SWXImpl deserialized = OBJECT_MAPPER.readValue(serialized, SWXImpl.class);
@@ -137,26 +167,26 @@ public class SWXTest {
     public void buildSWXWithoutNextAdvisory() throws Exception {
         SWXImpl SWXObject = SWXImpl.builder()
                 .setTranslated(false)
+                .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
-                .setTranslationCentreName("DONLON")
-                .addAllWeatherEffects(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplacementAdvisoryNumber(Optional.empty())
-                .setObservation(getForecast("--27T00:00Z"))
-                .addAllForecasts(getForecasts(true))
+                .addAllAnalyses(getAnalyses(true))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(false))
                 .build();
 
         Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
         Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertTrue(SWXObject.getObservation().isPresent());
-        Assert.assertEquals(4, SWXObject.getForecasts().size());
-        Assert.assertFalse(SWXObject.getNextAdvisory().nextAdvisory().isPresent());
-        Assert.assertEquals(NO_ADVISORIES, SWXObject.getNextAdvisory().noFurtherAdvisory().get());
+        Assert.assertEquals(SWXAnalysis.Type.OBSERVATION, SWXObject.getAnalyses().get(0).getAnalysisType());
+        Assert.assertEquals(5, SWXObject.getAnalyses().size());
+        Assert.assertFalse(SWXObject.getNextAdvisory().getTime().isPresent());
+        Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, SWXObject.getNextAdvisory().getTimeSpecifier());
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        System.out.println(serialized);
         final SWXImpl deserialized = OBJECT_MAPPER.readValue(serialized, SWXImpl.class);
 
         assertEquals(SWXObject, deserialized);
@@ -166,23 +196,23 @@ public class SWXTest {
     public void buildSWXWithoutObservation() throws Exception {
         SWXImpl SWXObject = SWXImpl.builder()
                 .setTranslated(false)
+                .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
-                .addAllWeatherEffects(Arrays.asList("HF COM MOD", "GNSS MOD"))
-                .setTranslationCentreName("DONLON")
+                .addAllAnalyses(getAnalyses(false))
+                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplacementAdvisoryNumber(Optional.empty())
-                .addAllForecasts(getForecasts(false))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(false))
                 .build();
 
         Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
         Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertFalse(SWXObject.getObservation().isPresent());
-        Assert.assertEquals(5, SWXObject.getForecasts().size());
-        Assert.assertFalse(SWXObject.getNextAdvisory().nextAdvisory().isPresent());
-        Assert.assertEquals(NO_ADVISORIES, SWXObject.getNextAdvisory().noFurtherAdvisory().get());
+        Assert.assertEquals(5, SWXObject.getAnalyses().size());
+
+        Assert.assertFalse(SWXObject.getNextAdvisory().getTime().isPresent());
+        Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, SWXObject.getNextAdvisory().getTimeSpecifier());
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
         final SWXImpl deserialized = OBJECT_MAPPER.readValue(serialized, SWXImpl.class);
@@ -193,16 +223,15 @@ public class SWXTest {
     @Test
     public void swxSerializationTest() throws Exception {
         SWXImpl SWXObject = SWXImpl.builder()
+                .setIssuingCenterName("DONLON")
                 .setTranslated(false)
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
                 .setReplacementAdvisoryNumber(getAdvisoryNumber())
-                .setTranslationCentreName("DONLON")
-                .addAllWeatherEffects(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplacementAdvisoryNumber(Optional.empty())
-                .setObservation(getForecast("--27T00:00Z"))
-                .addAllForecasts(getForecasts(true))
+                .addAllAnalyses(getAnalyses(true))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();

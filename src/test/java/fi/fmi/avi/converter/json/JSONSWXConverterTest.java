@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.fmi.avi.converter.AviMessageConverter;
-import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
@@ -37,12 +35,12 @@ import fi.fmi.avi.model.SWX.AdvisoryNumberImpl;
 import fi.fmi.avi.model.SWX.NextAdvisory;
 import fi.fmi.avi.model.SWX.NextAdvisoryImpl;
 import fi.fmi.avi.model.SWX.SWX;
-import fi.fmi.avi.model.SWX.SWXGeometry;
-import fi.fmi.avi.model.SWX.immutable.SWXGeometryImpl;
+import fi.fmi.avi.model.SWX.SWXAnalysis;
+import fi.fmi.avi.model.SWX.immutable.SWXAnalysisImpl;
 import fi.fmi.avi.model.SWX.immutable.SWXImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.immutable.PolygonsGeometryImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
-import fi.fmi.avi.model.sigmet.SIGMET;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONSWXTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -50,30 +48,6 @@ public class JSONSWXConverterTest {
 
     @Autowired
     private AviMessageConverter converter;
-
-    private final String NO_ADVISORIES = "NO FURTHER ADVISORIES";
-
-    //@Before
-    public void setup() {
-        AviMessageSpecificConverter<SWX, String> swxJSONSerializer = new SWXJSONSerializer();
-        AviMessageSpecificConverter<String, SWX> swxJSONParser = new SWXJSONParser();
-
-        AviMessageConverter p = new AviMessageConverter();
-        p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_SWX_POJO, swxJSONParser);
-        p.setMessageSpecificConverter(JSONConverter.SWX_POJO_TO_JSON_STRING, swxJSONSerializer);
-        converter =  p;
-    }
-
-    private SWXGeometry getSWXGeometry() {
-        List<String> regions = new ArrayList<>(Arrays.asList("HNH", "HSH"));
-
-        SWXGeometryImpl.Builder spaceGeometry = SWXGeometryImpl.builder()
-                .setEasternLatitudeBand(18000)
-                .setWesternLatitudeBand(18000)
-                .addAllLatitudeRegions(regions);
-
-        return spaceGeometry.build();
-    }
 
     private AdvisoryNumberImpl getAdvisoryNumber() {
         AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
@@ -86,9 +60,10 @@ public class JSONSWXConverterTest {
 
         if (hasNext) {
             PartialOrCompleteTimeInstant nextAdvisoryTime = PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]"));
-            next.nextAdvisory(nextAdvisoryTime);
+            next.setTime(nextAdvisoryTime);
+            next.setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_AT);
         } else {
-            next.noFurtherAdvisory(NO_ADVISORIES);
+            next.setTimeSpecifier(NextAdvisory.Type.NO_FURTHER_ADVISORIES);
         }
 
         return next.build();
@@ -102,32 +77,44 @@ public class JSONSWXConverterTest {
         return remarks;
     }
 
-    private List<PhenomenonGeometryWithHeight> getForecasts(boolean hasObservation) {
-        int numberOfForecasts = (hasObservation) ? 4 : 5;
-        List<PhenomenonGeometryWithHeight> forecasts = new ArrayList<>();
+    private List<SWXAnalysis> getAnalyses(boolean hasObservation) {
+        List<SWXAnalysis> analyses = new ArrayList<>();
 
         int day = 27;
         int hour = 1;
 
-        for (int i = 0; i < numberOfForecasts; i++) {
+        for (int i = 0; i < 5; i++) {
+            SWXAnalysisImpl.Builder analysis = SWXAnalysisImpl.builder();
+
+            if (i == 0 && hasObservation) {
+                analysis.setAnalysisType(SWXAnalysis.Type.OBSERVATION);
+            } else {
+                analysis.setAnalysisType(SWXAnalysis.Type.FORECAST);
+            }
 
             String partialTime = "--" + day + "T" + hour + ":00Z";
-            forecasts.add(getForecast(partialTime));
+            analysis.setAnalysis(getPhenomenon(partialTime));
+            analyses.add(analysis.build());
+
             hour += 6;
             if (hour >= 24) {
                 day += 1;
                 hour = hour % 24;
             }
+
         }
 
-        return forecasts;
+        return analyses;
     }
 
-    private PhenomenonGeometryWithHeight getForecast(String partialTime) {
+    private PhenomenonGeometryWithHeight getPhenomenon(String partialTime) {
+        PolygonsGeometryImpl.Builder polygon = PolygonsGeometryImpl.builder();
+        polygon.addAllPolygons(
+                Arrays.asList(Arrays.asList(-180.0, -90.0), Arrays.asList(-180.0, -60.0), Arrays.asList(180.0, -60.0), Arrays.asList(180.0, -90.0),
+                        Arrays.asList(-180.0, -90.0)));
+
         PhenomenonGeometryWithHeightImpl.Builder phenomenon = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
-                PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime)))
-                .setGeometry(TacOrGeoGeometryImpl.of(getSWXGeometry()))
-                .setApproximateLocation(false);
+                PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime))).setGeometry(TacOrGeoGeometryImpl.of(polygon.build()));
 
         return phenomenon.build();
     }
@@ -138,34 +125,31 @@ public class JSONSWXConverterTest {
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
 
-
         InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("swx1.json");
         Objects.requireNonNull(is);
 
-        String reference = IOUtils.toString(is,"UTF-8");
+        String reference = IOUtils.toString(is, "UTF-8");
 
         SWXImpl SWXObject = SWXImpl.builder()
                 .setTranslated(false)
+                .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
-                .setTranslationCentreName("DONLON")
-                .addAllWeatherEffects(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllAnalyses(getAnalyses(false))
+                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplacementAdvisoryNumber(Optional.empty())
-                .setObservation(getForecast("--27T00:00Z"))
-                .addAllForecasts(getForecasts(true))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();
-
 
         ConversionResult<String> result = converter.convertMessage(SWXObject, JSONConverter.SWX_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 
-        JsonNode refRoot=om.readTree(reference);
-        JsonNode convertedRoot=om.readTree(result.getConvertedMessage().get());
-        System.err.println("EQUALS: "+refRoot.equals(convertedRoot));
+        JsonNode refRoot = om.readTree(reference);
+        JsonNode convertedRoot = om.readTree(result.getConvertedMessage().get());
+        System.err.println("EQUALS: " + refRoot.equals(convertedRoot));
         assertEquals("constructed and parsed tree not equal", refRoot, convertedRoot);
     }
 }
