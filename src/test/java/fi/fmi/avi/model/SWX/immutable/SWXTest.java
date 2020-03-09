@@ -99,8 +99,12 @@ public class SWXTest {
     private PhenomenonGeometryWithHeight getPhenomenon(String partialTime) {
         PolygonsGeometryImpl.Builder polygon = PolygonsGeometryImpl.builder();
         polygon.addAllPolygons(
-                Arrays.asList(Arrays.asList(-180.0, -90.0), Arrays.asList(-180.0, -60.0), Arrays.asList(180.0, -60.0), Arrays.asList(180.0, -90.0),
-                        Arrays.asList(-180.0, -90.0)));
+                Arrays.asList(
+                        Arrays.asList((double)-180, (double)-90),
+                        Arrays.asList((double)-180, (double)-60),
+                        Arrays.asList((double)180, (double)-60),
+                        Arrays.asList((double)180, (double)-90),
+                        Arrays.asList((double)-180, (double)-90)));
 
         PhenomenonGeometryWithHeightImpl.Builder phenomenon = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
                 PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime))).setGeometry(TacOrGeoGeometryImpl.of(polygon.build()));
@@ -141,7 +145,6 @@ public class SWXTest {
         analyses.add(analysis.build());
 
         SWXImpl SWXObject = SWXImpl.builder()
-                .setTranslated(false)
                 .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
@@ -168,7 +171,6 @@ public class SWXTest {
     @Test
     public void buildSWXWithoutNextAdvisory() throws Exception {
         SWXImpl SWXObject = SWXImpl.builder()
-                .setTranslated(false)
                 .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
@@ -196,7 +198,6 @@ public class SWXTest {
     @Test
     public void buildSWXWithoutObservation() throws Exception {
         SWXImpl SWXObject = SWXImpl.builder()
-                .setTranslated(false)
                 .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
@@ -225,7 +226,6 @@ public class SWXTest {
     public void swxSerializationTest() throws Exception {
         SWXImpl SWXObject = SWXImpl.builder()
                 .setIssuingCenterName("DONLON")
-                .setTranslated(false)
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
                 .setReplacementAdvisoryNumber(getAdvisoryNumber())
