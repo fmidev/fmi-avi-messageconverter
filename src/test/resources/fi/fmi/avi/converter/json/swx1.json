@@ -8,7 +8,6 @@
     "year": 2020,
     "serialNumber": 1
   },
-  "replacementAdvisoryNumber": null,
   "phenomena": [
     "HF COM MOD",
     "GNSS MOD"
@@ -198,15 +197,5 @@
     "time": {
       "completeTime": "2020-02-27T01:00:00Z"
     }
-  },
-  "permissibleUsage": null,
-  "permissibleUsageReason": null,
-  "permissibleUsageSupplementary": null,
-  "translated": false,
-  "translatedBulletinID": null,
-  "translatedBulletinReceptionTime": null,
-  "translationCentreDesignator": null,
-  "translationCentreName": null,
-  "translationTime": null,
-  "translatedTAC": null
+  }
 }

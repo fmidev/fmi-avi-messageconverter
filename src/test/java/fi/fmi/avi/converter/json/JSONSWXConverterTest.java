@@ -112,8 +112,12 @@ public class JSONSWXConverterTest {
     private PhenomenonGeometryWithHeight getPhenomenon(String partialTime) {
         PolygonsGeometryImpl.Builder polygon = PolygonsGeometryImpl.builder();
         polygon.addAllPolygons(
-                Arrays.asList(Arrays.asList(-180.0, -90.0), Arrays.asList(-180.0, -60.0), Arrays.asList(180.0, -60.0), Arrays.asList(180.0, -90.0),
-                        Arrays.asList(-180.0, -90.0)));
+                Arrays.asList(
+                        Arrays.asList((double)-180, (double)-90),
+                        Arrays.asList((double)-180, (double)-60),
+                        Arrays.asList((double)180, (double)-60),
+                        Arrays.asList((double)180, (double)-90),
+                        Arrays.asList((double)-180, (double)-90)));
 
         PhenomenonGeometryWithHeightImpl.Builder phenomenon = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
                 PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime))).setGeometry(TacOrGeoGeometryImpl.of(polygon.build()));
@@ -133,7 +137,6 @@ public class JSONSWXConverterTest {
         String reference = IOUtils.toString(is, "UTF-8");
 
         SWXImpl SWXObject = SWXImpl.builder()
-                .setTranslated(false)
                 .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SWX.STATUS.TEST)
