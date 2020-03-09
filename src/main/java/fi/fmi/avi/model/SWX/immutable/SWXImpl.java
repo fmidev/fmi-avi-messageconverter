@@ -16,13 +16,13 @@ import fi.fmi.avi.model.SWX.SWXAnalysis;
 
 @FreeBuilder
 @JsonDeserialize(builder = SWXImpl.Builder.class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "issueTime", "status", "issuingCenterName", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "remarks",
         "nextAdvisory" })
 public abstract class SWXImpl implements SWX, Serializable {
 
     public static SWXImpl.Builder builder() {
-        return new SWXImpl.Builder();
+        return new Builder();
     }
 
     public abstract Builder toBuilder();
@@ -33,6 +33,10 @@ public abstract class SWXImpl implements SWX, Serializable {
     }
 
     public static class Builder extends SWXImpl_Builder {
+        public Builder() {
+            this.setTranslated(false);
+        }
+
         @Override
         @JsonDeserialize(as = AdvisoryNumberImpl.class)
         public Builder setAdvisoryNumber(final AdvisoryNumber advisoryNumber) {
