@@ -12,11 +12,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
-import fi.fmi.avi.model.SWX.SWX;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 
 @Configuration
 @Import(JSONConverter.class)
-public class JSONSWXTestConfiguration {
+public class JSONSpaceWeatherAdvisoryTestConfiguration {
 
     @Bean
     private static ObjectMapper getObjectMapper() {
@@ -28,10 +28,10 @@ public class JSONSWXTestConfiguration {
     }
 
     @Autowired
-    private AviMessageSpecificConverter<SWX, String> swxJSONSerializer;
+    private AviMessageSpecificConverter<SpaceWeatherAdvisory, String> swxJSONSerializer;
 
     @Autowired
-    private AviMessageSpecificConverter<String, SWX> swxJSONParser;
+    private AviMessageSpecificConverter<String, SpaceWeatherAdvisory> swxJSONParser;
 
     @Bean
     public AviMessageConverter aviMessageConverter() {

@@ -1,22 +1,22 @@
-package fi.fmi.avi.model.SWX;
+package fi.fmi.avi.model.SpaceWeatherAdvisory;
 
 import java.util.List;
 import java.util.Optional;
 
 import fi.fmi.avi.model.AviationWeatherMessage;
 
-public interface SWX extends AviationWeatherMessage {
+public interface SpaceWeatherAdvisory extends AviationWeatherMessage {
     String getIssuingCenterName();
 
     AdvisoryNumber getAdvisoryNumber();
 
-    Optional<AdvisoryNumber> getReplacementAdvisoryNumber();
+    Optional<AdvisoryNumber> getReplaceAdvisoryNumber();
 
     Optional<STATUS> getStatus();
 
     List<String> getPhenomena();
 
-    List<SWXAnalysis> getAnalyses();
+    List<SpaceWeatherAdvisoryAnalysis> getAnalyses();
 
     NextAdvisory getNextAdvisory();
 

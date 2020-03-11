@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.SWX.immutable;
+package fi.fmi.avi.model.SpaceWeatherAdvisory.immutable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,19 +9,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.SWX.AdvisoryNumber;
-import fi.fmi.avi.model.SWX.NextAdvisory;
-import fi.fmi.avi.model.SWX.SWX;
-import fi.fmi.avi.model.SWX.SWXAnalysis;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.AdvisoryNumber;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
 
 @FreeBuilder
-@JsonDeserialize(builder = SWXImpl.Builder.class)
+@JsonDeserialize(builder = SpaceWeatherAdvisoryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "issueTime", "status", "issuingCenterName", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "remarks",
         "nextAdvisory" })
-public abstract class SWXImpl implements SWX, Serializable {
+public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, Serializable {
 
-    public static SWXImpl.Builder builder() {
+    public static SpaceWeatherAdvisoryImpl.Builder builder() {
         return new Builder();
     }
 
@@ -32,7 +32,7 @@ public abstract class SWXImpl implements SWX, Serializable {
         return false;
     }
 
-    public static class Builder extends SWXImpl_Builder {
+    public static class Builder extends SpaceWeatherAdvisoryImpl_Builder {
         public Builder() {
             this.setTranslated(false);
         }
@@ -49,8 +49,8 @@ public abstract class SWXImpl implements SWX, Serializable {
             return super.setNextAdvisory(nextAdvisory);
         }
 
-        @JsonDeserialize(contentAs = SWXAnalysisImpl.class)
-        public Builder addAllAnalyses(final List<SWXAnalysis> elements) {
+        @JsonDeserialize(contentAs = SpaceWeatherAdvisoryAnalysisImpl.class)
+        public Builder addAllAnalyses(final List<SpaceWeatherAdvisoryAnalysis> elements) {
             return super.addAllAnalyses(elements);
         }
     }

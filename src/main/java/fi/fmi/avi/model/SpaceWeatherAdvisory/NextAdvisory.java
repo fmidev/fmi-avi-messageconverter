@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.SWX;
+package fi.fmi.avi.model.SpaceWeatherAdvisory;
 
 import java.util.Optional;
 

@@ -1,7 +1,7 @@
 package fi.fmi.avi.converter.json.conf;
 
 import fi.fmi.avi.converter.json.*;
-import fi.fmi.avi.model.SWX.SWX;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,9 +53,9 @@ public class JSONConverter {
             null, "SIGMET, fmi-avi-messageconverter JSON");
 
     /**
-     * Pre-configured spec for {@link SWX} to fmi-avi-messageconverter JSON SWX document String.
+     * Pre-configured spec for {@link SpaceWeatherAdvisory} to fmi-avi-messageconverter JSON SWX document String.
      */
-    public static final ConversionSpecification<SWX, String> SWX_POJO_TO_JSON_STRING = new ConversionSpecification<>(SWX.class, String.class,
+    public static final ConversionSpecification<SpaceWeatherAdvisory, String> SWX_POJO_TO_JSON_STRING = new ConversionSpecification<>(SpaceWeatherAdvisory.class, String.class,
             null, "SWX, fmi-avi-messageconverter JSON");
 
     /**
@@ -91,9 +91,9 @@ public class JSONConverter {
             "TAF, fmi-avi-messageconverter JSON", null);
 
     /**
-     * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SWX}.
+     * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SpaceWeatherAdvisory}.
      */
-    public static final ConversionSpecification<String, SWX> JSON_STRING_TO_SWX_POJO = new ConversionSpecification<>(String.class, SWX.class,
+    public static final ConversionSpecification<String, SpaceWeatherAdvisory> JSON_STRING_TO_SWX_POJO = new ConversionSpecification<>(String.class, SpaceWeatherAdvisory.class,
             "SWX, fmi-avi-messageconverter JSON", null);
 
     /**
@@ -149,8 +149,8 @@ public class JSONConverter {
     }
 
     @Bean
-    public AviMessageSpecificConverter<SWX, String> swxJSONSerializer() {
-        return new SWXJSONSerializer();
+    public AviMessageSpecificConverter<SpaceWeatherAdvisory, String> swxJSONSerializer() {
+        return new SpaceWeatherAdvisoryJSONSerializer();
     }
 
     @Bean
@@ -184,8 +184,8 @@ public class JSONConverter {
     }
 
     @Bean
-    public AviMessageSpecificConverter<String, SWX> swxJSONParser() {
-        return new SWXJSONParser();
+    public AviMessageSpecificConverter<String, SpaceWeatherAdvisory> swxJSONParser() {
+        return new SpaceWeatherAdvisoryJSONParser();
     }
 
     @Bean

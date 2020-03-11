@@ -31,20 +31,20 @@ import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.SWX.immutable.AdvisoryNumberImpl;
-import fi.fmi.avi.model.SWX.NextAdvisory;
-import fi.fmi.avi.model.SWX.immutable.NextAdvisoryImpl;
-import fi.fmi.avi.model.SWX.SWX;
-import fi.fmi.avi.model.SWX.SWXAnalysis;
-import fi.fmi.avi.model.SWX.immutable.SWXAnalysisImpl;
-import fi.fmi.avi.model.SWX.immutable.SWXImpl;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AdvisoryNumberImpl;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.NextAdvisoryImpl;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryAnalysisImpl;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.PolygonsGeometryImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JSONSWXTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
-public class JSONSWXConverterTest {
+@ContextConfiguration(classes = JSONSpaceWeatherAdvisoryTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
+public class JSONSpaceWeatherAdvisoryConverterTest {
 
     @Autowired
     private AviMessageConverter converter;
@@ -77,19 +77,19 @@ public class JSONSWXConverterTest {
         return remarks;
     }
 
-    private List<SWXAnalysis> getAnalyses(boolean hasObservation) {
-        List<SWXAnalysis> analyses = new ArrayList<>();
+    private List<SpaceWeatherAdvisoryAnalysis> getAnalyses(boolean hasObservation) {
+        List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
 
         int day = 27;
         int hour = 1;
 
         for (int i = 0; i < 5; i++) {
-            SWXAnalysisImpl.Builder analysis = SWXAnalysisImpl.builder();
+            SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
 
             if (i == 0 && hasObservation) {
-                analysis.setAnalysisType(SWXAnalysis.Type.OBSERVATION);
+                analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION);
             } else {
-                analysis.setAnalysisType(SWXAnalysis.Type.FORECAST);
+                analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST);
             }
 
             String partialTime = "--" + day + "T" + hour + ":00Z";
@@ -136,14 +136,14 @@ public class JSONSWXConverterTest {
 
         String reference = IOUtils.toString(is, "UTF-8");
 
-        SWXImpl SWXObject = SWXImpl.builder()
+        SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .setStatus(SWX.STATUS.TEST)
+                .setStatus(SpaceWeatherAdvisory.STATUS.TEST)
                 .addAllAnalyses(getAnalyses(false))
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
-                .setReplacementAdvisoryNumber(Optional.empty())
+                .setReplaceAdvisoryNumber(Optional.empty())
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();

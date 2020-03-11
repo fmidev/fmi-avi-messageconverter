@@ -1,10 +1,10 @@
-package fi.fmi.avi.model.SWX;
+package fi.fmi.avi.model.SpaceWeatherAdvisory;
 
 import java.util.Optional;
 
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 
-public interface SWXAnalysis {
+public interface SpaceWeatherAdvisoryAnalysis {
     Type getAnalysisType();
 
     Optional<PhenomenonGeometryWithHeight> getAffectedArea();
