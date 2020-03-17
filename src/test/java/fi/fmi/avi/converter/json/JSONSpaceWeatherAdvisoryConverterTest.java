@@ -38,6 +38,7 @@ import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryAnalysisImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryImpl;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherRegionImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.PolygonsGeometryImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
@@ -82,9 +83,15 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
 
         int day = 27;
         int hour = 1;
-
-        for (int i = 0; i < 5; i++) {
+        for(int i = 0; i < 5; i++) {
             SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
+
+            SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
+
+            String partialTime = "--" + day + "T" + hour + ":00Z";
+            region.setGeographiclocation(getPhenomenonLocation(partialTime));
+            region.setLocationIndicator("HNH");
+            analysis.setRegion(Arrays.asList(region.build(), region.setLocationIndicator("MNH").build()));
 
             if (i == 0 && hasObservation) {
                 analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION);
@@ -92,24 +99,16 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
                 analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST);
             }
 
-            String partialTime = "--" + day + "T" + hour + ":00Z";
-            analysis.setAffectedArea(getPhenomenon(partialTime));
-            analysis.setNoInformationAvailable(false);
-            analysis.setNoPhenomenaExpected(false);
+            analysis.setNoInformationAvailable(true);
+            analysis.setNoPhenomenaExpected(true);
+
             analyses.add(analysis.build());
-
-            hour += 6;
-            if (hour >= 24) {
-                day += 1;
-                hour = hour % 24;
-            }
-
         }
 
         return analyses;
     }
 
-    private PhenomenonGeometryWithHeight getPhenomenon(String partialTime) {
+    private PhenomenonGeometryWithHeight getPhenomenonLocation(String partialTime) {
         PolygonsGeometryImpl.Builder polygon = PolygonsGeometryImpl.builder();
         polygon.addAllPolygons(
                 Arrays.asList(

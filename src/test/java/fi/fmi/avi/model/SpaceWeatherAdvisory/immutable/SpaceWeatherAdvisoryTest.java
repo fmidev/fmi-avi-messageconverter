@@ -22,6 +22,7 @@ import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherRegion;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
@@ -69,9 +70,16 @@ public class SpaceWeatherAdvisoryTest {
 
         int day = 27;
         int hour = 1;
-
-        for (int i = 0; i < 5; i++) {
+        for(int i = 0; i < 5; i++) {
             SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
+
+            SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
+
+            String partialTime = "--" + day + "T" + hour + ":00Z";
+            region.setGeographiclocation(getPhenomenonLocation(partialTime));
+            region.setLocationIndicator("HNH");
+
+            analysis.setRegion(Arrays.asList(region.build(), region.setLocationIndicator("MNH").build()));
 
             if (i == 0 && hasObservation) {
                 analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION);
@@ -79,24 +87,16 @@ public class SpaceWeatherAdvisoryTest {
                 analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST);
             }
 
-            String partialTime = "--" + day + "T" + hour + ":00Z";
-            analysis.setAffectedArea(getPhenomenon(partialTime));
-            analysis.setNoPhenomenaExpected(true);
             analysis.setNoInformationAvailable(true);
+            analysis.setNoPhenomenaExpected(true);
+
             analyses.add(analysis.build());
-
-            hour += 6;
-            if (hour >= 24) {
-                day += 1;
-                hour = hour % 24;
-            }
-
         }
 
         return analyses;
     }
 
-    private PhenomenonGeometryWithHeight getPhenomenon(String partialTime) {
+    private PhenomenonGeometryWithHeight getPhenomenonLocation(String partialTime) {
         PolygonsGeometryImpl.Builder polygon = PolygonsGeometryImpl.builder();
         polygon.addAllPolygons(
                 Arrays.asList(
@@ -133,9 +133,22 @@ public class SpaceWeatherAdvisoryTest {
                 .setApproximateLocation(false)
                 .setGeometry(TacOrGeoGeometryImpl.of(cbcp.build()));
 
-        SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder().setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST).setAffectedArea(phenomenon.build());
-        analysis.setNoPhenomenaExpected(true);
-        analysis.setNoInformationAvailable(true);
+        List<SpaceWeatherRegion> regions = new ArrayList<>();
+        regions.add(SpaceWeatherRegionImpl.builder()
+                .setLocationIndicator("HNH")
+                .setGeographiclocation(phenomenon.build())
+                .build());
+        regions.add(SpaceWeatherRegionImpl.builder()
+                .setLocationIndicator("MNH")
+                .setGeographiclocation(phenomenon.build())
+                .build());
+
+        SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
+        analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST)
+                .setRegion(regions)
+                .setNoPhenomenaExpected(true)
+                .setNoInformationAvailable(true);
+
 
         List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
         analyses.add(analysis.build());
@@ -158,7 +171,8 @@ public class SpaceWeatherAdvisoryTest {
 
         Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
         Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.FORECAST, SWXObject.getAnalyses().get(0).getAnalysisType());
+        Assert.assertTrue(SWXObject.getAnalyses().get(0).getAnalysisType().isPresent());
+        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.FORECAST, SWXObject.getAnalyses().get(0).getAnalysisType().get());
         Assert.assertEquals(NextAdvisory.Type.NEXT_ADVISORY_BY, SWXObject.getNextAdvisory().getTimeSpecifier());
         Assert.assertTrue(SWXObject.getNextAdvisory().getTime().isPresent());
 
@@ -184,7 +198,8 @@ public class SpaceWeatherAdvisoryTest {
 
         Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
         Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION, SWXObject.getAnalyses().get(0).getAnalysisType());
+        Assert.assertTrue(SWXObject.getAnalyses().get(0).getAnalysisType().isPresent());
+        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION, SWXObject.getAnalyses().get(0).getAnalysisType().get());
         Assert.assertEquals(5, SWXObject.getAnalyses().size());
         Assert.assertFalse(SWXObject.getNextAdvisory().getTime().isPresent());
         Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, SWXObject.getNextAdvisory().getTimeSpecifier());

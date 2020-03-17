@@ -1,13 +1,20 @@
 package fi.fmi.avi.model.SpaceWeatherAdvisory;
 
+import java.util.List;
 import java.util.Optional;
+
+import javax.swing.text.html.Option;
 
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 
 public interface SpaceWeatherAdvisoryAnalysis {
-    Type getAnalysisType();
+    Optional<Type> getAnalysisType();
 
-    Optional<PhenomenonGeometryWithHeight> getAffectedArea();
+    //Optional<PhenomenonGeometryWithHeight> getAffectedArea();
+
+    //Optional<String> getLocatioIndicator();
+
+    Optional<List<SpaceWeatherRegion>> getRegion();
 
     boolean isNoPhenomenaExpected();
 

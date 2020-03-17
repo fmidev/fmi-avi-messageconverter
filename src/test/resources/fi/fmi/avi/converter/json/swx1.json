@@ -15,178 +15,388 @@
   "analyses": [
     {
       "analysisType": "FORECAST",
-      "affectedArea": {
-        "geometry": {
-          "geoGeometry": {
-            "type": "Polygon",
-            "polygons": [
-              [
-                -180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -90.0
-              ]
-            ]
+      "region": [
+        {
+          "locationIndicator": "HNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
           }
         },
-        "time": {
-          "partialTime": "--27T01:00Z"
+        {
+          "locationIndicator": "MNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
+          }
         }
-      }
+      ],
+      "noPhenomenaExpected": true,
+      "noInformationAvailable": true
     },
     {
       "analysisType": "FORECAST",
-      "affectedArea": {
-        "geometry": {
-          "geoGeometry": {
-            "type": "Polygon",
-            "polygons": [
-              [
-                -180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -90.0
-              ]
-            ]
+      "region": [
+        {
+          "locationIndicator": "HNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
           }
         },
-        "time": {
-          "partialTime": "--27T07:00Z"
+        {
+          "locationIndicator": "MNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
+          }
         }
-      }
+      ],
+      "noPhenomenaExpected": true,
+      "noInformationAvailable": true
     },
     {
       "analysisType": "FORECAST",
-      "affectedArea": {
-        "geometry": {
-          "geoGeometry": {
-            "type": "Polygon",
-            "polygons": [
-              [
-                -180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -90.0
-              ]
-            ]
+      "region": [
+        {
+          "locationIndicator": "HNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
           }
         },
-        "time": {
-          "partialTime": "--27T13:00Z"
+        {
+          "locationIndicator": "MNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
+          }
         }
-      }
+      ],
+      "noPhenomenaExpected": true,
+      "noInformationAvailable": true
     },
     {
       "analysisType": "FORECAST",
-      "affectedArea": {
-        "geometry": {
-          "geoGeometry": {
-            "type": "Polygon",
-            "polygons": [
-              [
-                -180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -90.0
-              ]
-            ]
+      "region": [
+        {
+          "locationIndicator": "HNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
           }
         },
-        "time": {
-          "partialTime": "--27T19:00Z"
+        {
+          "locationIndicator": "MNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
+          }
         }
-      }
+      ],
+      "noPhenomenaExpected": true,
+      "noInformationAvailable": true
     },
     {
       "analysisType": "FORECAST",
-      "affectedArea": {
-        "geometry": {
-          "geoGeometry": {
-            "type": "Polygon",
-            "polygons": [
-              [
-                -180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -60.0
-              ],
-              [
-                180.0,
-                -90.0
-              ],
-              [
-                -180.0,
-                -90.0
-              ]
-            ]
+      "region": [
+        {
+          "locationIndicator": "HNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
           }
         },
-        "time": {
-          "partialTime": "--28T01:00Z"
+        {
+          "locationIndicator": "MNH",
+          "geographiclocation": {
+            "geometry": {
+              "geoGeometry": {
+                "type": "Polygon",
+                "polygons": [
+                  [
+                    -180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -60.0
+                  ],
+                  [
+                    180.0,
+                    -90.0
+                  ],
+                  [
+                    -180.0,
+                    -90.0
+                  ]
+                ]
+              }
+            },
+            "time": {
+              "partialTime": "--27T01:00Z"
+            }
+          }
         }
-      }
+      ],
+      "noPhenomenaExpected": true,
+      "noInformationAvailable": true
     }
   ],
   "remarks": [
