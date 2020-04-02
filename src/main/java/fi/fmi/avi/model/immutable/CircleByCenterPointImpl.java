@@ -16,6 +16,8 @@ public abstract class CircleByCenterPointImpl implements CircleByCenterPoint {
         return new Builder();
     }
 
+    public abstract Builder toBuilder();
+
     public static class Builder extends CircleByCenterPointImpl_Builder {
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)

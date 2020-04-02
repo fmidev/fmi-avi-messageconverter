@@ -20,7 +20,13 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
         return new Builder();
     }
 
+    public abstract Builder toBuilder();
+
     public static class Builder extends SpaceWeatherAdvisoryAnalysisImpl_Builder {
+        public Builder() {
+            setNoPhenomenaExpected(false);
+            setNoInformationAvailable(false);
+        }
 
         @Override
         @JsonDeserialize(contentAs = SpaceWeatherRegionImpl.class)

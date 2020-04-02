@@ -21,7 +21,7 @@ import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
         "nextAdvisory" })
 public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, Serializable {
 
-    public static SpaceWeatherAdvisoryImpl.Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -41,6 +41,12 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
         @JsonDeserialize(as = AdvisoryNumberImpl.class)
         public Builder setAdvisoryNumber(final AdvisoryNumber advisoryNumber) {
             return super.setAdvisoryNumber(advisoryNumber);
+        }
+
+        @Override
+        @JsonDeserialize(as = AdvisoryNumberImpl.class)
+        public Builder setReplaceAdvisoryNumber(final AdvisoryNumber replaceAdvisoryNumber) {
+            return super.setReplaceAdvisoryNumber(replaceAdvisoryNumber);
         }
 
         @Override

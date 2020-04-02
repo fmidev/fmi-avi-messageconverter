@@ -13,9 +13,11 @@ import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class AirspaceVolumeImpl implements AirspaceVolume {
-    public static AirspaceVolumeImpl.Builder builder() {
+    public static Builder builder() {
         return new AirspaceVolumeImpl.Builder();
     }
+
+    public abstract Builder toBuilder();
 
     public static class Builder extends AirspaceVolumeImpl_Builder {
         @Override

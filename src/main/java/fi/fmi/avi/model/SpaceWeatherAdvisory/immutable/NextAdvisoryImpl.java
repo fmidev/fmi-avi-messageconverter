@@ -18,6 +18,8 @@ public abstract class NextAdvisoryImpl implements NextAdvisory, Serializable {
         return new NextAdvisoryImpl.Builder();
     }
 
+    public abstract Builder toBuilder();
+
     public static class Builder extends NextAdvisoryImpl_Builder {
 
     }

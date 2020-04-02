@@ -14,9 +14,12 @@ import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherRegion;
 @JsonDeserialize(builder = SpaceWeatherRegionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Serializable {
+
     public static Builder builder() {
         return new Builder();
     }
+
+    public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherRegionImpl_Builder {
         @Override

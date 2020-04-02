@@ -17,7 +17,7 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
         return new AdvisoryNumberImpl.Builder();
     }
 
-    public abstract AdvisoryNumberImpl.Builder toBuilder();
+    public abstract Builder toBuilder();
 
     public static class Builder extends AdvisoryNumberImpl_Builder {
 
