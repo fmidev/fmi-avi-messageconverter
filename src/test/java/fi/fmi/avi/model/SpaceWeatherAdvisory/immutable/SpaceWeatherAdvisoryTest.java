@@ -2,6 +2,7 @@ package fi.fmi.avi.model.SpaceWeatherAdvisory.immutable;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,18 +17,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.PointGeometry;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherRegion;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
-import fi.fmi.avi.model.immutable.PolygonsGeometryImpl;
-import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
+import fi.fmi.avi.model.immutable.PointGeometryImpl;
 
 public class SpaceWeatherAdvisoryTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -76,7 +77,8 @@ public class SpaceWeatherAdvisoryTest {
             SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
 
             String partialTime = "--" + day + "T" + hour + ":00Z";
-            region.setGeographiclocation(getPhenomenonLocation(partialTime));
+            analysis.setTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build());
+            region.setAirSpaceVolume(getAirspaceVolume(true));
             region.setLocationIndicator("HNH");
 
             analysis.setRegion(Arrays.asList(region.build(), region.setLocationIndicator("MNH").build()));
@@ -89,6 +91,7 @@ public class SpaceWeatherAdvisoryTest {
 
             analysis.setNoInformationAvailable(true);
             analysis.setNoPhenomenaExpected(true);
+            analysis.setTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")));
 
             analyses.add(analysis.build());
         }
@@ -96,21 +99,32 @@ public class SpaceWeatherAdvisoryTest {
         return analyses;
     }
 
-    private PhenomenonGeometryWithHeight getPhenomenonLocation(String partialTime) {
-        PolygonsGeometryImpl.Builder polygon = PolygonsGeometryImpl.builder();
-        polygon.addAllPolygons(
-                Arrays.asList(
-                        Arrays.asList((double)-180, (double)-90),
-                        Arrays.asList((double)-180, (double)-60),
-                        Arrays.asList((double)180, (double)-60),
-                        Arrays.asList((double)180, (double)-90),
-                        Arrays.asList((double)-180, (double)-90)));
+    private AirspaceVolume getAirspaceVolume(boolean isPointGeometry) {
+        AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
+        airspaceVolume.setUpperLimitReference("Reference");
+        airspaceVolume.setSrsName("Dimension");
+        airspaceVolume.setSrsDimension(BigInteger.valueOf(2));
+        airspaceVolume.setAxisLabels(Arrays.asList("lat", "lon"));
 
-        PhenomenonGeometryWithHeightImpl.Builder phenomenon = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
-                PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime))).setGeometry(TacOrGeoGeometryImpl.of(polygon.build()));
+        if(isPointGeometry) {
+            PointGeometry geometry = PointGeometryImpl.builder().setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0)).build();
+            airspaceVolume.setGeometry(geometry);
+        } else {
+            NumericMeasureImpl.Builder measure = NumericMeasureImpl.builder().setValue(5409.75).setUom("[nmi_i]");
 
-        return phenomenon.build();
+            CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
+                    .addAllCoordinates(Arrays.asList(-16.6392, 160.9368))
+                    .setRadius(measure.build());
+
+            airspaceVolume.setGeometry(cbcp.build());
+        }
+
+        NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
+        airspaceVolume.setUpperLimit(nm);
+
+        return airspaceVolume.build();
     }
+
 
     @Test
     public void buildSWXWithCircleByCenterPoint() throws Exception {
@@ -122,29 +136,19 @@ public class SpaceWeatherAdvisoryTest {
         int hour = 1;
         String partialTime = "--" + day + "T" + hour + ":00Z";
 
-        NumericMeasureImpl.Builder measure = NumericMeasureImpl.builder().setValue(5409.75).setUom("[nmi_i]");
-
-        CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
-                .addAllCoordinates(Arrays.asList(-16.6392, 160.9368))
-                .setRadius(measure.build());
-
-        PhenomenonGeometryWithHeightImpl.Builder phenomenon = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
-                PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime)))
-                .setApproximateLocation(false)
-                .setGeometry(TacOrGeoGeometryImpl.of(cbcp.build()));
-
         List<SpaceWeatherRegion> regions = new ArrayList<>();
         regions.add(SpaceWeatherRegionImpl.builder()
                 .setLocationIndicator("HNH")
-                .setGeographiclocation(phenomenon.build())
+                .setAirSpaceVolume(getAirspaceVolume(false))
                 .build());
         regions.add(SpaceWeatherRegionImpl.builder()
                 .setLocationIndicator("MNH")
-                .setGeographiclocation(phenomenon.build())
+                .setAirSpaceVolume(getAirspaceVolume(false))
                 .build());
-
+        PartialOrCompleteTimeInstant time = PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build();
         SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
         analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST)
+                .setTime(time)
                 .setRegion(regions)
                 .setNoPhenomenaExpected(true)
                 .setNoInformationAvailable(true);
@@ -253,6 +257,7 @@ public class SpaceWeatherAdvisoryTest {
                 .build();
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        System.out.println(serialized);
         final SpaceWeatherAdvisoryImpl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryImpl.class);
 
         assertEquals(SWXObject, deserialized);

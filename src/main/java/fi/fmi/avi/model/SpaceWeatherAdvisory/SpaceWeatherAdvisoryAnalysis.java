@@ -3,16 +3,12 @@ package fi.fmi.avi.model.SpaceWeatherAdvisory;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
-import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 
 public interface SpaceWeatherAdvisoryAnalysis {
+    PartialOrCompleteTimeInstant getTime();
+
     Optional<Type> getAnalysisType();
-
-    //Optional<PhenomenonGeometryWithHeight> getAffectedArea();
-
-    //Optional<String> getLocatioIndicator();
 
     Optional<List<SpaceWeatherRegion>> getRegion();
 

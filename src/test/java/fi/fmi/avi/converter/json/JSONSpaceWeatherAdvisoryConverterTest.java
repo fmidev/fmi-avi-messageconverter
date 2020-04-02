@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,20 +29,22 @@ import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
+import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AdvisoryNumberImpl;
+import fi.fmi.avi.model.PointGeometry;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.NextAdvisoryImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AdvisoryNumberImpl;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AirspaceVolumeImpl;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.NextAdvisoryImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryAnalysisImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherRegionImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
-import fi.fmi.avi.model.immutable.PolygonsGeometryImpl;
-import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.PointGeometryImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONSpaceWeatherAdvisoryTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -83,13 +86,14 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
 
         int day = 27;
         int hour = 1;
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
 
             SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
 
             String partialTime = "--" + day + "T" + hour + ":00Z";
-            region.setGeographiclocation(getPhenomenonLocation(partialTime));
+
+            region.setAirSpaceVolume(getAirspaceVolume());
             region.setLocationIndicator("HNH");
             analysis.setRegion(Arrays.asList(region.build(), region.setLocationIndicator("MNH").build()));
 
@@ -98,7 +102,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
             } else {
                 analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST);
             }
-
+            analysis.setTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build());
             analysis.setNoInformationAvailable(true);
             analysis.setNoPhenomenaExpected(true);
 
@@ -108,20 +112,22 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
         return analyses;
     }
 
-    private PhenomenonGeometryWithHeight getPhenomenonLocation(String partialTime) {
-        PolygonsGeometryImpl.Builder polygon = PolygonsGeometryImpl.builder();
-        polygon.addAllPolygons(
-                Arrays.asList(
-                        Arrays.asList((double)-180, (double)-90),
-                        Arrays.asList((double)-180, (double)-60),
-                        Arrays.asList((double)180, (double)-60),
-                        Arrays.asList((double)180, (double)-90),
-                        Arrays.asList((double)-180, (double)-90)));
+    private AirspaceVolume getAirspaceVolume() {
+        AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
+        airspaceVolume.setUpperLimitReference("Reference");
+        airspaceVolume.setSrsName("Dimension");
+        airspaceVolume.setSrsDimension(BigInteger.valueOf(2));
+        airspaceVolume.setAxisLabels(Arrays.asList("lat", "lon"));
 
-        PhenomenonGeometryWithHeightImpl.Builder phenomenon = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
-                PartialOrCompleteTimeInstant.of(PartialDateTime.parse(partialTime))).setGeometry(TacOrGeoGeometryImpl.of(polygon.build()));
+        PointGeometry geometry = PointGeometryImpl.builder()
+                .setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
+                .build();
+        airspaceVolume.setGeometry(geometry);
 
-        return phenomenon.build();
+        NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
+        airspaceVolume.setUpperLimit(nm);
+
+        return airspaceVolume.build();
     }
 
     @Test

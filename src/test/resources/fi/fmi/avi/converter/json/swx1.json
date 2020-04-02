@@ -14,385 +14,360 @@
   ],
   "analyses": [
     {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
       "analysisType": "FORECAST",
       "region": [
         {
-          "locationIndicator": "HNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "HNH"
         },
         {
-          "locationIndicator": "MNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "MNH"
         }
       ],
       "noPhenomenaExpected": true,
       "noInformationAvailable": true
     },
     {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
       "analysisType": "FORECAST",
       "region": [
         {
-          "locationIndicator": "HNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "HNH"
         },
         {
-          "locationIndicator": "MNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "MNH"
         }
       ],
       "noPhenomenaExpected": true,
       "noInformationAvailable": true
     },
     {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
       "analysisType": "FORECAST",
       "region": [
         {
-          "locationIndicator": "HNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "HNH"
         },
         {
-          "locationIndicator": "MNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "MNH"
         }
       ],
       "noPhenomenaExpected": true,
       "noInformationAvailable": true
     },
     {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
       "analysisType": "FORECAST",
       "region": [
         {
-          "locationIndicator": "HNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "HNH"
         },
         {
-          "locationIndicator": "MNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "MNH"
         }
       ],
       "noPhenomenaExpected": true,
       "noInformationAvailable": true
     },
     {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
       "analysisType": "FORECAST",
       "region": [
         {
-          "locationIndicator": "HNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "HNH"
         },
         {
-          "locationIndicator": "MNH",
-          "geographiclocation": {
+          "airSpaceVolume": {
+            "srsDimension": 2,
+            "srsName": "Dimension",
+            "axisLabels": [
+              "lat",
+              "lon"
+            ],
             "geometry": {
-              "geoGeometry": {
-                "type": "Polygon",
-                "polygons": [
-                  [
-                    -180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -60.0
-                  ],
-                  [
-                    180.0,
-                    -90.0
-                  ],
-                  [
-                    -180.0,
-                    -90.0
-                  ]
-                ]
-              }
+              "type": "Point",
+              "point": [
+                -180.0,
+                90.0,
+                -180.0,
+                60.0,
+                180.0,
+                60.0,
+                180.0,
+                90.0,
+                -180.0,
+                90.0
+              ]
             },
-            "time": {
-              "partialTime": "--27T01:00Z"
-            }
-          }
+            "upperLimit": {
+              "value": 350.0,
+              "uom": "uom"
+            },
+            "upperLimitReference": "Reference"
+          },
+          "locationIndicator": "MNH"
         }
       ],
       "noPhenomenaExpected": true,
