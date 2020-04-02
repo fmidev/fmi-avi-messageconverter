@@ -144,7 +144,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenterName("DONLON")
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .setStatus(SpaceWeatherAdvisory.STATUS.TEST)
+                .setStatus(SpaceWeatherAdvisory.Status.TEST)
                 .addAllAnalyses(getAnalyses(false))
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())

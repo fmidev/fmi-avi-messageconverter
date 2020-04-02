@@ -12,7 +12,7 @@ public interface SpaceWeatherAdvisory extends AviationWeatherMessage {
 
     Optional<AdvisoryNumber> getReplaceAdvisoryNumber();
 
-    Optional<STATUS> getStatus();
+    Optional<Status> getStatus();
 
     List<String> getPhenomena();
 
@@ -20,7 +20,7 @@ public interface SpaceWeatherAdvisory extends AviationWeatherMessage {
 
     NextAdvisory getNextAdvisory();
 
-    enum STATUS {
-        TEST, EXER
+    enum Status {
+        TEST, EXERCISE
     }
 }
