@@ -21,6 +21,7 @@ public abstract class NextAdvisoryImpl implements NextAdvisory, Serializable {
     public abstract Builder toBuilder();
 
     public static class Builder extends NextAdvisoryImpl_Builder {
-
+        Builder() {
+        }
     }
 }

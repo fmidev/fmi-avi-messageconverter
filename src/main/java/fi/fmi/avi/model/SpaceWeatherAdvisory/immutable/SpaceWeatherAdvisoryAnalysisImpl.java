@@ -23,7 +23,7 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
     public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherAdvisoryAnalysisImpl_Builder {
-        public Builder() {
+        Builder() {
             setNoPhenomenaExpected(false);
             setNoInformationAvailable(false);
         }

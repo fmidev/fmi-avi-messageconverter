@@ -22,6 +22,9 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
     public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherRegionImpl_Builder {
+        Builder() {
+        }
+
         @Override
         @JsonDeserialize(as = AirspaceVolumeImpl.class)
         public Builder setAirSpaceVolume(final AirspaceVolume airSpaceVolume) {

@@ -20,6 +20,7 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
     public abstract Builder toBuilder();
 
     public static class Builder extends AdvisoryNumberImpl_Builder {
-
+        Builder() {
+        }
     }
 }

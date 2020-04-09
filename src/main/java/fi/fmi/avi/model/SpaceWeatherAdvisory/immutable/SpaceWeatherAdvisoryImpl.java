@@ -33,7 +33,7 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
     }
 
     public static class Builder extends SpaceWeatherAdvisoryImpl_Builder {
-        public Builder() {
+        Builder() {
             this.setTranslated(false);
         }
 

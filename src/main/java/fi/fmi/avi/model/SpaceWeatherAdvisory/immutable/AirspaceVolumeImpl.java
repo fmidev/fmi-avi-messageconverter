@@ -20,6 +20,9 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume {
     public abstract Builder toBuilder();
 
     public static class Builder extends AirspaceVolumeImpl_Builder {
+        Builder() {
+        }
+
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setUpperLimit(final NumericMeasure upperLimit) {
