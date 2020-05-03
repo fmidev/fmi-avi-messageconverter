@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.SpaceWeatherAdvisory.AdvisoryNumber;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.IssuingCenter;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
@@ -17,7 +18,7 @@ import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "issueTime", "status", "issuingCenterName", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "remarks",
+@JsonPropertyOrder({ "issueTime", "status", "issuingCenter", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "remarks",
         "nextAdvisory" })
 public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, Serializable {
 
@@ -53,6 +54,12 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
         @JsonDeserialize(as = NextAdvisoryImpl.class)
         public Builder setNextAdvisory(final NextAdvisory nextAdvisory) {
             return super.setNextAdvisory(nextAdvisory);
+        }
+
+        @Override
+        @JsonDeserialize(as = IssuingCenterImpl.class)
+        public Builder setIssuingCenter(final IssuingCenter issuingCenter) {
+            return super.setIssuingCenter(issuingCenter);
         }
 
         @JsonDeserialize(contentAs = SpaceWeatherAdvisoryAnalysisImpl.class)

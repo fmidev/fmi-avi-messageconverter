@@ -34,11 +34,13 @@ import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PointGeometry;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.IssuingCenter;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AdvisoryNumberImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AirspaceVolumeImpl;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.IssuingCenterImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.NextAdvisoryImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryAnalysisImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryImpl;
@@ -130,6 +132,14 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
         return airspaceVolume.build();
     }
 
+    private IssuingCenter getIssuingCenter() {
+        IssuingCenterImpl.Builder issuingCenter = IssuingCenterImpl.builder();
+        issuingCenter.setName("DONLON");
+        issuingCenter.setType("OTHER:SWXC");
+        issuingCenter.setInterpretation("SNAPSHOT");
+        return issuingCenter.build();
+    }
+
     @Test
     public void testSWXSerialization() throws Exception {
         ObjectMapper om = new ObjectMapper();
@@ -142,7 +152,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
         String reference = IOUtils.toString(is, "UTF-8");
 
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
-                .setIssuingCenterName("DONLON")
+                .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SpaceWeatherAdvisory.Status.TEST)
                 .addAllAnalyses(getAnalyses(false))

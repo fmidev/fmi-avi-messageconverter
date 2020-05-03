@@ -6,7 +6,7 @@ import java.util.Optional;
 import fi.fmi.avi.model.AviationWeatherMessage;
 
 public interface SpaceWeatherAdvisory extends AviationWeatherMessage {
-    String getIssuingCenterName();
+    IssuingCenter getIssuingCenter();
 
     AdvisoryNumber getAdvisoryNumber();
 

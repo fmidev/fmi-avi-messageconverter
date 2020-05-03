@@ -22,6 +22,7 @@ import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PointGeometry;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
+import fi.fmi.avi.model.SpaceWeatherAdvisory.IssuingCenter;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
@@ -125,6 +126,13 @@ public class SpaceWeatherAdvisoryTest {
         return airspaceVolume.build();
     }
 
+    private IssuingCenter getIssuingCenter() {
+        IssuingCenterImpl.Builder issuingCenter = IssuingCenterImpl.builder();
+        issuingCenter.setName("DONLON");
+        issuingCenter.setType("OTHER:SWXC");
+        issuingCenter.setInterpretation("SNAPSHOT");
+        return issuingCenter.build();
+    }
 
     @Test
     public void buildSWXWithCircleByCenterPoint() throws Exception {
@@ -162,7 +170,7 @@ public class SpaceWeatherAdvisoryTest {
         analyses.add(analysis.build());
 
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
-                .setIssuingCenterName("DONLON")
+                .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SpaceWeatherAdvisory.Status.TEST)
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
@@ -189,7 +197,7 @@ public class SpaceWeatherAdvisoryTest {
     @Test
     public void buildSWXWithoutNextAdvisory() throws Exception {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
-                .setIssuingCenterName("DONLON")
+                .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SpaceWeatherAdvisory.Status.TEST)
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
@@ -217,7 +225,7 @@ public class SpaceWeatherAdvisoryTest {
     @Test
     public void buildSWXWithoutObservation() throws Exception {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
-                .setIssuingCenterName("DONLON")
+                .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SpaceWeatherAdvisory.Status.TEST)
                 .addAllAnalyses(getAnalyses(false))
@@ -244,7 +252,7 @@ public class SpaceWeatherAdvisoryTest {
     @Test
     public void swxSerializationTest() throws Exception {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
-                .setIssuingCenterName("DONLON")
+                .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setStatus(SpaceWeatherAdvisory.Status.TEST)
                 .setReplaceAdvisoryNumber(getAdvisoryNumber())
@@ -257,7 +265,7 @@ public class SpaceWeatherAdvisoryTest {
                 .build();
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
-        System.out.println(serialized);
+        //System.out.println(serialized);
         final SpaceWeatherAdvisoryImpl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryImpl.class);
 
         assertEquals(SWXObject, deserialized);
