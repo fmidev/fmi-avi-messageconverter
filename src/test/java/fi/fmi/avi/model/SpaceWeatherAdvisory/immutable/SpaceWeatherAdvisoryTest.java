@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
@@ -72,7 +73,7 @@ public class SpaceWeatherAdvisoryTest {
 
         int day = 27;
         int hour = 1;
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
 
             SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
@@ -107,15 +108,18 @@ public class SpaceWeatherAdvisoryTest {
         airspaceVolume.setSrsDimension(BigInteger.valueOf(2));
         airspaceVolume.setAxisLabels(Arrays.asList("lat", "lon"));
 
-        if(isPointGeometry) {
-            PointGeometry geometry = PointGeometryImpl.builder().setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0)).build();
+        if (isPointGeometry) {
+            PointGeometry geometry = PointGeometryImpl.builder()
+                    .setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
+                    .build();
             airspaceVolume.setGeometry(geometry);
         } else {
             NumericMeasureImpl.Builder measure = NumericMeasureImpl.builder().setValue(5409.75).setUom("[nmi_i]");
 
             CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
                     .addAllCoordinates(Arrays.asList(-16.6392, 160.9368))
-                    .setRadius(measure.build());
+                    .setRadius(measure.build())
+                    .setNumarc(BigInteger.valueOf(1));
 
             airspaceVolume.setGeometry(cbcp.build());
         }
@@ -145,14 +149,8 @@ public class SpaceWeatherAdvisoryTest {
         String partialTime = "--" + day + "T" + hour + ":00Z";
 
         List<SpaceWeatherRegion> regions = new ArrayList<>();
-        regions.add(SpaceWeatherRegionImpl.builder()
-                .setLocationIndicator("HNH")
-                .setAirSpaceVolume(getAirspaceVolume(false))
-                .build());
-        regions.add(SpaceWeatherRegionImpl.builder()
-                .setLocationIndicator("MNH")
-                .setAirSpaceVolume(getAirspaceVolume(false))
-                .build());
+        regions.add(SpaceWeatherRegionImpl.builder().setLocationIndicator("HNH").setAirSpaceVolume(getAirspaceVolume(false)).build());
+        regions.add(SpaceWeatherRegionImpl.builder().setLocationIndicator("MNH").setAirSpaceVolume(getAirspaceVolume(false)).build());
         PartialOrCompleteTimeInstant time = PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build();
         SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
         analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST)
@@ -160,7 +158,6 @@ public class SpaceWeatherAdvisoryTest {
                 .setRegion(regions)
                 .setNoPhenomenaExpected(true)
                 .setNoInformationAvailable(true);
-
 
         List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
         analyses.add(analysis.build());
@@ -190,7 +187,7 @@ public class SpaceWeatherAdvisoryTest {
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
         final SpaceWeatherAdvisoryImpl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryImpl.class);
-
+        System.out.println(serialized);
         assertEquals(SWXObject, deserialized);
     }
 
@@ -262,10 +259,11 @@ public class SpaceWeatherAdvisoryTest {
                 .addAllAnalyses(getAnalyses(true))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
+                .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
                 .build();
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
-        //System.out.println(serialized);
+        System.out.println(serialized);
         final SpaceWeatherAdvisoryImpl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryImpl.class);
 
         assertEquals(SWXObject, deserialized);
