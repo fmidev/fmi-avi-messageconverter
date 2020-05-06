@@ -33,6 +33,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
     //Copied from https://codes.wmo.int/306/4678
     static {
         final Map<String, String> _WEATHER_CODES = new HashMap<>();
+        _WEATHER_CODES.put("+DS", "Heavy duststorm");
         _WEATHER_CODES.put("+DZ", "Heavy precipitation of drizzle");
         _WEATHER_CODES.put("+DZPL", "Heavy precipitation of drizzle and ice pellets");
         _WEATHER_CODES.put("+DZPLRA", "Heavy precipitation of drizzle, ice pellets and rain");
