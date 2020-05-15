@@ -39,6 +39,7 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<TAFBulletinImpl> immutableCopyOf(final Optional<TAFBulletin> bulletin) {
         return bulletin.map(TAFBulletinImpl::immutableCopyOf);
     }
