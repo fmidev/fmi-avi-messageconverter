@@ -94,15 +94,24 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
         @Override
         @JsonDeserialize(as = BulletinHeadingImpl.class)
         public Builder setHeading(final BulletinHeading heading) {
-            if (!DataTypeDesignatorT1.FORECASTS.equals(heading.getDataTypeDesignatorT1ForTAC())) {
+            if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML.equals(heading.getDataTypeDesignatorT1ForTAC())) {
+                if (!DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_AERODROME_VT_LONG.equals(heading.getDataTypeDesignatorT2())
+                        && !DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_AERODROME_VT_SHORT.equals(heading.getDataTypeDesignatorT2())) {
+                    throw new IllegalArgumentException(
+                            "Data type designator T2 of the bulletin heading must " + DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_AERODROME_VT_LONG
+                                    + " or " + DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_AERODROME_VT_SHORT + " for TAF");
+                }
+            } else if (DataTypeDesignatorT1.FORECASTS.equals(heading.getDataTypeDesignatorT1ForTAC())) {
+                if (!DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG.equals(heading.getDataTypeDesignatorT2())
+                        && !DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT.equals(heading.getDataTypeDesignatorT2())) {
+                    throw new IllegalArgumentException("Data type designator T2 of the bulletin heading must be either "
+                            + DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG + " or "
+                            + DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT + " for TAF");
+                }
+            } else {
                 throw new IllegalArgumentException(
-                        "Data type designator T1 for TAC of the bulletin heading must be " + DataTypeDesignatorT1.FORECASTS + " " + "for TAF");
-            }
-            if (!DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG.equals(heading.getDataTypeDesignatorT2())
-                    && !DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT.equals(heading.getDataTypeDesignatorT2())) {
-                throw new IllegalArgumentException(
-                        "Data type designator T2 of the bulletin heading must be either " + DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG
-                                + " or " + DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT + " for TAF");
+                        "Data type designator T1 for TAC of the bulletin heading must be either " + DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML + " or "
+                                + DataTypeDesignatorT1.FORECASTS + " for TAF");
             }
             return super.setHeading(heading);
         }
