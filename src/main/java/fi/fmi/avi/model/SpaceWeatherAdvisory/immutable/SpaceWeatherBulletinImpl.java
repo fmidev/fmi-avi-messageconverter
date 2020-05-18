@@ -66,15 +66,22 @@ public abstract class SpaceWeatherBulletinImpl implements SpaceWeatherBulletin, 
         @Override
         @JsonDeserialize(as = BulletinHeadingImpl.class)
         public Builder setHeading(final BulletinHeading heading) {
-            if (!DataTypeDesignatorT1.FORECASTS.equals(heading.getDataTypeDesignatorT1ForTAC())) {
+            if (DataTypeDesignatorT1.FORECASTS.equals(heading.getDataTypeDesignatorT1ForTAC())) {
+                if (!DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_SPACE_WEATHER.equals(heading.getDataTypeDesignatorT2())) {
+                    throw new IllegalArgumentException(
+                            "Data type designator T2 of the bulletin heading must " + DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_SPACE_WEATHER
+                                    + " for SpaceWeatherAdvisory");
+                }
+            } else if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML.equals(heading.getDataTypeDesignatorT1ForTAC())) {
+                if (!DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_SPACE_WEATHER_ADVISORY.equals(heading.getDataTypeDesignatorT2())) {
+                    throw new IllegalArgumentException(
+                            "Data type designator T2 of the bulletin heading must " + DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_SPACE_WEATHER_ADVISORY
+                                    + " for SpaceWeatherAdvisory");
+                }
+            } else {
                 throw new IllegalArgumentException(
-                        "Data type designator T1 for TAC of the bulletin heading must be " + DataTypeDesignatorT1.FORECASTS + " " + "for SpaceWeatherAdvisory");
-            }
-            if (!DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_SPACE_WEATHER.equals(heading.getDataTypeDesignatorT2())
-                    && !DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_SPACE_WEATHER_ADVISORY.equals(heading.getDataTypeDesignatorT2())) {
-                throw new IllegalArgumentException(
-                        "Data type designator T2 of the bulletin heading must be either " + DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_SPACE_WEATHER
-                                + " or " + DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_SPACE_WEATHER_ADVISORY + " for SpaceWeatherAdvisory");
+                        "Data type designator T1 for TAC of the bulletin heading must be either " + DataTypeDesignatorT1.FORECASTS + " or "
+                                + DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML + " for SpaceWeatherAdvisory");
             }
             return super.setHeading(heading);
         }
