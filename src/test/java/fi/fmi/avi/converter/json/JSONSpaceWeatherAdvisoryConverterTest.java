@@ -34,19 +34,19 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PointGeometry;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.IssuingCenter;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AdvisoryNumberImpl;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AirspaceVolumeImpl;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.IssuingCenterImpl;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.NextAdvisoryImpl;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryAnalysisImpl;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherAdvisoryImpl;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.SpaceWeatherRegionImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PointGeometryImpl;
+import fi.fmi.avi.model.swx.AirspaceVolume;
+import fi.fmi.avi.model.swx.IssuingCenter;
+import fi.fmi.avi.model.swx.NextAdvisory;
+import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.swx.immutable.AdvisoryNumberImpl;
+import fi.fmi.avi.model.swx.immutable.AirspaceVolumeImpl;
+import fi.fmi.avi.model.swx.immutable.IssuingCenterImpl;
+import fi.fmi.avi.model.swx.immutable.NextAdvisoryImpl;
+import fi.fmi.avi.model.swx.immutable.SpaceWeatherAdvisoryAnalysisImpl;
+import fi.fmi.avi.model.swx.immutable.SpaceWeatherAdvisoryImpl;
+import fi.fmi.avi.model.swx.immutable.SpaceWeatherRegionImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONSpaceWeatherAdvisoryTestConfiguration.class, loader = AnnotationConfigContextLoader.class)

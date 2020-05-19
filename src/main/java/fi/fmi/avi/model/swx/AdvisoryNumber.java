@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.SpaceWeatherAdvisory;
+package fi.fmi.avi.model.swx;
 
 public interface AdvisoryNumber {
     int getYear();

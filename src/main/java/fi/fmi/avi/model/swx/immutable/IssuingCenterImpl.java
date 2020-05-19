@@ -1,11 +1,11 @@
-package fi.fmi.avi.model.SpaceWeatherAdvisory.immutable;
+package fi.fmi.avi.model.swx.immutable;
 
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.SpaceWeatherAdvisory.IssuingCenter;
+import fi.fmi.avi.model.swx.IssuingCenter;
 
 @FreeBuilder
 @JsonDeserialize(builder = IssuingCenterImpl.Builder.class)

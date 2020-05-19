@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.SpaceWeatherAdvisory;
+package fi.fmi.avi.model.swx;
 
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletin;
 

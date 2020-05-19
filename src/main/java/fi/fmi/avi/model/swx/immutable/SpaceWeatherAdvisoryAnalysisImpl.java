@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.SpaceWeatherAdvisory.immutable;
+package fi.fmi.avi.model.swx.immutable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,8 +8,8 @@ import org.inferred.freebuilder.FreeBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherRegion;
+import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAnalysisImpl.Builder.class)

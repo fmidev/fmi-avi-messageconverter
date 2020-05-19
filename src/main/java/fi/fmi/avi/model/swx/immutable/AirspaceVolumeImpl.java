@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.SpaceWeatherAdvisory.immutable;
+package fi.fmi.avi.model.swx.immutable;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.swx.AirspaceVolume;
 
 @FreeBuilder
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)

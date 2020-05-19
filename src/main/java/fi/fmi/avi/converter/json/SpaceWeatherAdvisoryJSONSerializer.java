@@ -3,7 +3,7 @@ package fi.fmi.avi.converter.json;
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
+import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
 
 public class SpaceWeatherAdvisoryJSONSerializer extends AbstractJSONSerializer implements AviMessageSpecificConverter<SpaceWeatherAdvisory, String> {
     @Override

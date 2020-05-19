@@ -1,13 +1,12 @@
 package fi.fmi.avi.converter.json.conf;
 
-import fi.fmi.avi.converter.json.*;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
-import fi.fmi.avi.model.sigmet.AIRMET;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionSpecification;
+import fi.fmi.avi.converter.json.AIRMETJSONParser;
+import fi.fmi.avi.converter.json.AIRMETJSONSerializer;
 import fi.fmi.avi.converter.json.GenericMeteorologicalBulletinJSONParser;
 import fi.fmi.avi.converter.json.GenericMeteorologicalBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.METARJSONParser;
@@ -16,14 +15,18 @@ import fi.fmi.avi.converter.json.SIGMETBulletinJSONParser;
 import fi.fmi.avi.converter.json.SIGMETBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.SIGMETJSONParser;
 import fi.fmi.avi.converter.json.SIGMETJSONSerializer;
+import fi.fmi.avi.converter.json.SpaceWeatherAdvisoryJSONParser;
+import fi.fmi.avi.converter.json.SpaceWeatherAdvisoryJSONSerializer;
 import fi.fmi.avi.converter.json.TAFBulletinJSONParser;
 import fi.fmi.avi.converter.json.TAFBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.TAFJSONParser;
 import fi.fmi.avi.converter.json.TAFJSONSerializer;
 import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
 import fi.fmi.avi.model.metar.METAR;
+import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
+import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 

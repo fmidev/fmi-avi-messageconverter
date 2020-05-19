@@ -2,7 +2,6 @@
   "issueTime": {
     "completeTime": "2020-02-27T01:00:00Z"
   },
-  "status": "TEST",
   "issuingCenter": {
     "name":"DONLON",
     "type":"OTHER:SWXC",
@@ -386,5 +385,6 @@
     "time": {
       "completeTime": "2020-02-27T01:00:00Z"
     }
-  }
+  },
+  "permissibleUsageReason": "TEST"
 }

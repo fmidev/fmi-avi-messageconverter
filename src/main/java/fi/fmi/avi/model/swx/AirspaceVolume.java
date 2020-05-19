@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.SpaceWeatherAdvisory;
+package fi.fmi.avi.model.swx;
 
 import java.math.BigInteger;
 import java.util.List;

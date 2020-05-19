@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.SpaceWeatherAdvisory.immutable;
+package fi.fmi.avi.model.swx.immutable;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,14 +23,14 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PointGeometry;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.IssuingCenter;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherRegion;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PointGeometryImpl;
+import fi.fmi.avi.model.swx.AirspaceVolume;
+import fi.fmi.avi.model.swx.IssuingCenter;
+import fi.fmi.avi.model.swx.NextAdvisory;
+import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 
 public class SpaceWeatherAdvisoryTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
