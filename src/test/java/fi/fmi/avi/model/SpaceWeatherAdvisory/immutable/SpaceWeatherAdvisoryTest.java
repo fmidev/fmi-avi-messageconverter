@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
@@ -25,7 +26,6 @@ import fi.fmi.avi.model.PointGeometry;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.IssuingCenter;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherRegion;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
@@ -169,7 +169,7 @@ public class SpaceWeatherAdvisoryTest {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .setStatus(SpaceWeatherAdvisory.Status.TEST)
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
@@ -196,7 +196,7 @@ public class SpaceWeatherAdvisoryTest {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .setStatus(SpaceWeatherAdvisory.Status.TEST)
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
@@ -224,7 +224,7 @@ public class SpaceWeatherAdvisoryTest {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .setStatus(SpaceWeatherAdvisory.Status.TEST)
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllAnalyses(getAnalyses(false))
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
@@ -251,7 +251,7 @@ public class SpaceWeatherAdvisoryTest {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .setStatus(SpaceWeatherAdvisory.Status.TEST)
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setReplaceAdvisoryNumber(getAdvisoryNumber())
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())

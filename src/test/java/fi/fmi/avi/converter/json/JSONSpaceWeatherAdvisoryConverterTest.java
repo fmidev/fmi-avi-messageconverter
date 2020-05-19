@@ -29,6 +29,7 @@ import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
+import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
@@ -36,7 +37,6 @@ import fi.fmi.avi.model.PointGeometry;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.AirspaceVolume;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.IssuingCenter;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.NextAdvisory;
-import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AdvisoryNumberImpl;
 import fi.fmi.avi.model.SpaceWeatherAdvisory.immutable.AirspaceVolumeImpl;
@@ -154,8 +154,8 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
         SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .setStatus(SpaceWeatherAdvisory.Status.TEST)
                 .addAllAnalyses(getAnalyses(false))
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
