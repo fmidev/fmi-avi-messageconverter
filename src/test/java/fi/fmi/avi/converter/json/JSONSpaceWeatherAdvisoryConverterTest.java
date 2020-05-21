@@ -120,9 +120,6 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
     private AirspaceVolume getAirspaceVolume() {
         AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
         airspaceVolume.setUpperLimitReference("Reference");
-        airspaceVolume.setSrsName("Dimension");
-        airspaceVolume.setSrsDimension(BigInteger.valueOf(2));
-        airspaceVolume.setAxisLabels(Arrays.asList("lat", "lon"));
 
         PointGeometry geometry = PointGeometryImpl.builder()
                 .setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
@@ -142,7 +139,6 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
         IssuingCenterImpl.Builder issuingCenter = IssuingCenterImpl.builder();
         issuingCenter.setName("DONLON");
         issuingCenter.setType("OTHER:SWXC");
-        issuingCenter.setInterpretation("SNAPSHOT");
         return issuingCenter.build();
     }
 
