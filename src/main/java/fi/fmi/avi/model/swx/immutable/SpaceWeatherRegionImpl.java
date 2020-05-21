@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.swx.AirspaceVolume;
@@ -13,6 +14,7 @@ import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherRegionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({ "airspaceVolume", "locationIndicator" })
 public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Serializable {
 
     public static Builder builder() {

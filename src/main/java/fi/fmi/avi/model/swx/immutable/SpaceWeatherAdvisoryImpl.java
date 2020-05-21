@@ -18,8 +18,9 @@ import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "issueTime", "status", "issuingCenter", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "remarks",
-        "nextAdvisory" })
+@JsonPropertyOrder({ "issueTime", "issuingCenter", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "nextAdvisory", "remarks",
+        "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime",
+        "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, Serializable {
 
     public static Builder builder() {
