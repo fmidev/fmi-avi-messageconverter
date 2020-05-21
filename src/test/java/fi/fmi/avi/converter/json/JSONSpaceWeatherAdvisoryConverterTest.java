@@ -40,6 +40,8 @@ import fi.fmi.avi.model.swx.AirspaceVolume;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
 import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.swx.SpaceWeatherPhenomenon;
+import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 import fi.fmi.avi.model.swx.immutable.AdvisoryNumberImpl;
 import fi.fmi.avi.model.swx.immutable.AirspaceVolumeImpl;
 import fi.fmi.avi.model.swx.immutable.IssuingCenterImpl;
@@ -96,8 +98,9 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
             String partialTime = "--" + day + "T" + hour + ":00Z";
 
             region.setAirSpaceVolume(getAirspaceVolume());
-            region.setLocationIndicator("HNH");
-            analysis.setRegion(Arrays.asList(region.build(), region.setLocationIndicator("MNH").build()));
+            region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE);
+            analysis.setRegion(
+                    Arrays.asList(region.build(), region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE).build()));
 
             if (i == 0 && hasObservation) {
                 analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION);
@@ -156,7 +159,8 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .addAllAnalyses(getAnalyses(false))
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .setRemarks(getRemarks())

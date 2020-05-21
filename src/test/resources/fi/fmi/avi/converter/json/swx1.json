@@ -12,8 +12,14 @@
     "serialNumber": 1
   },
   "phenomena": [
-    "HF COM MOD",
-    "GNSS MOD"
+    {
+      "type": "HF_COMMUNICATIONS",
+      "severity": "MODERATE"
+    },
+    {
+      "type": "GNSS_BASED_NAVIGATION_AND_SURVEILLANCE",
+      "severity": "MODERATE"
+    }
   ],
   "analyses": [
     {
@@ -51,7 +57,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "HNH"
+          "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
         },
         {
           "airSpaceVolume": {
@@ -82,7 +88,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "MNH"
+          "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
       "noPhenomenaExpected": true,
@@ -123,7 +129,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "HNH"
+          "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
         },
         {
           "airSpaceVolume": {
@@ -154,7 +160,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "MNH"
+          "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
       "noPhenomenaExpected": true,
@@ -195,7 +201,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "HNH"
+          "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
         },
         {
           "airSpaceVolume": {
@@ -226,7 +232,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "MNH"
+          "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
       "noPhenomenaExpected": true,
@@ -267,7 +273,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "HNH"
+          "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
         },
         {
           "airSpaceVolume": {
@@ -298,7 +304,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "MNH"
+          "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
       "noPhenomenaExpected": true,
@@ -339,7 +345,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "HNH"
+          "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
         },
         {
           "airSpaceVolume": {
@@ -370,7 +376,7 @@
             },
             "upperLimitReference": "Reference"
           },
-          "locationIndicator": "MNH"
+          "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
       "noPhenomenaExpected": true,

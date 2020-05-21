@@ -30,6 +30,7 @@ import fi.fmi.avi.model.swx.AirspaceVolume;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
 import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.swx.SpaceWeatherPhenomenon;
 import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 
 public class SpaceWeatherAdvisoryTest {
@@ -81,9 +82,10 @@ public class SpaceWeatherAdvisoryTest {
             String partialTime = "--" + day + "T" + hour + ":00Z";
             analysis.setTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build());
             region.setAirSpaceVolume(getAirspaceVolume(true));
-            region.setLocationIndicator("HNH");
+            region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE);
 
-            analysis.setRegion(Arrays.asList(region.build(), region.setLocationIndicator("MNH").build()));
+            analysis.setRegion(
+                    Arrays.asList(region.build(), region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE).build()));
 
             if (i == 0 && hasObservation) {
                 analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION);
@@ -149,8 +151,14 @@ public class SpaceWeatherAdvisoryTest {
         String partialTime = "--" + day + "T" + hour + ":00Z";
 
         List<SpaceWeatherRegion> regions = new ArrayList<>();
-        regions.add(SpaceWeatherRegionImpl.builder().setLocationIndicator("HNH").setAirSpaceVolume(getAirspaceVolume(false)).build());
-        regions.add(SpaceWeatherRegionImpl.builder().setLocationIndicator("MNH").setAirSpaceVolume(getAirspaceVolume(false)).build());
+        regions.add(SpaceWeatherRegionImpl.builder()
+                .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE)
+                .setAirSpaceVolume(getAirspaceVolume(false))
+                .build());
+        regions.add(SpaceWeatherRegionImpl.builder()
+                .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE)
+                .setAirSpaceVolume(getAirspaceVolume(false))
+                .build());
         PartialOrCompleteTimeInstant time = PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build();
         SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
         analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST)
@@ -170,7 +178,8 @@ public class SpaceWeatherAdvisoryTest {
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(analyses)
@@ -197,7 +206,8 @@ public class SpaceWeatherAdvisoryTest {
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(getAnalyses(true))
@@ -226,7 +236,8 @@ public class SpaceWeatherAdvisoryTest {
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllAnalyses(getAnalyses(false))
-                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .setRemarks(getRemarks())
@@ -253,7 +264,8 @@ public class SpaceWeatherAdvisoryTest {
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setReplaceAdvisoryNumber(getAdvisoryNumber())
-                .addAllPhenomena(Arrays.asList("HF COM MOD", "GNSS MOD"))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(getAnalyses(true))
