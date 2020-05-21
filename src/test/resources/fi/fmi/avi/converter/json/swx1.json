@@ -4,8 +4,7 @@
   },
   "issuingCenter": {
     "name":"DONLON",
-    "type":"OTHER:SWXC",
-    "interpretation":"SNAPSHOT"
+    "type": "OTHER:SWXC"
   },
   "advisoryNumber": {
     "year": 2020,
