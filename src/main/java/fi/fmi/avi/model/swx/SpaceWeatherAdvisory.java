@@ -12,10 +12,9 @@ public interface SpaceWeatherAdvisory extends AviationWeatherMessage {
 
     Optional<AdvisoryNumber> getReplaceAdvisoryNumber();
 
-    List<String> getPhenomena();
+    List<SpaceWeatherPhenomenon> getPhenomena();
 
     List<SpaceWeatherAdvisoryAnalysis> getAnalyses();
 
     NextAdvisory getNextAdvisory();
-
 }

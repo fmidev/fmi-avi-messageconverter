@@ -126,8 +126,11 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
 
         PointGeometry geometry = PointGeometryImpl.builder()
                 .setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
+                .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
+                .setAxisLabels(Arrays.asList("lat", "lon"))
+                .setSrsDimension(BigInteger.valueOf(2))
                 .build();
-        airspaceVolume.setGeometry(geometry);
+        airspaceVolume.setHorizontalProjection(geometry);
 
         NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
         airspaceVolume.setUpperLimit(nm);

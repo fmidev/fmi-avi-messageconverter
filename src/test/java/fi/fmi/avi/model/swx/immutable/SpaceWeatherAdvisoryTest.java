@@ -106,24 +106,27 @@ public class SpaceWeatherAdvisoryTest {
     private AirspaceVolume getAirspaceVolume(boolean isPointGeometry) {
         AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
         airspaceVolume.setUpperLimitReference("Reference");
-        airspaceVolume.setSrsName("Dimension");
-        airspaceVolume.setSrsDimension(BigInteger.valueOf(2));
-        airspaceVolume.setAxisLabels(Arrays.asList("lat", "lon"));
 
         if (isPointGeometry) {
             PointGeometry geometry = PointGeometryImpl.builder()
                     .setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
+                    .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
+                    .setAxisLabels(Arrays.asList("lat", "lon"))
+                    .setSrsDimension(BigInteger.valueOf(2))
                     .build();
-            airspaceVolume.setGeometry(geometry);
+            airspaceVolume.setHorizontalProjection(geometry);
         } else {
             NumericMeasureImpl.Builder measure = NumericMeasureImpl.builder().setValue(5409.75).setUom("[nmi_i]");
 
             CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
                     .addAllCoordinates(Arrays.asList(-16.6392, 160.9368))
                     .setRadius(measure.build())
+                    .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
+                    .setAxisLabels(Arrays.asList("lat", "lon"))
+                    .setSrsDimension(BigInteger.valueOf(2))
                     .setNumarc(BigInteger.valueOf(1));
 
-            airspaceVolume.setGeometry(cbcp.build());
+            airspaceVolume.setHorizontalProjection(cbcp.build());
         }
 
         NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
@@ -136,7 +139,6 @@ public class SpaceWeatherAdvisoryTest {
         IssuingCenterImpl.Builder issuingCenter = IssuingCenterImpl.builder();
         issuingCenter.setName("DONLON");
         issuingCenter.setType("OTHER:SWXC");
-        issuingCenter.setInterpretation("SNAPSHOT");
         return issuingCenter.build();
     }
 
