@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import fi.fmi.avi.JSONTestUtil;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
-import fi.fmi.avi.model.immutable.GeoPositionImpl;
+import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.metar.METAR;
 
 public class JSONSerializationTest {
@@ -22,11 +22,8 @@ public class JSONSerializationTest {
                 .setName("Tallinn Airport")
                 .setFieldElevationValue(40.0)
                 .setLocationIndicatorICAO("EETN")
-                .setReferencePoint(GeoPositionImpl.builder()
-                        .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")
-                        .addCoordinates(24.8325, 59.413333)
-                        .build()
-                );
+                .setReferencePoint(
+                        ElevatedPointImpl.builder().setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326").addCoordinates(24.8325, 59.413333).build());
         m = mib
                 .setAerodrome(airportBuilder.build())
                 .withCompleteIssueTime(YearMonth.of(2017,7))

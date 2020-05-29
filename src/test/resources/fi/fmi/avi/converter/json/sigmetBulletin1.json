@@ -61,23 +61,15 @@
           "geometry": {
             "geoGeometry": {
               "type": "Polygon",
-              "polygons": [
-                  [
-                    5.0,
-                    52.0
-                  ],
-                  [
-                    6.0,
-                    53.0
-                  ],
-                  [
-                    4.0,
-                    54.0
-                  ],
-                  [
-                    5.0,
-                    52.0
-                  ]
+              "exteriorRingPositions": [
+                5.0,
+                52.0,
+                6.0,
+                53.0,
+                4.0,
+                54.0,
+                5.0,
+                52.0
               ]
             }
           }
@@ -91,23 +83,15 @@
         "geometry": {
           "geoGeometry": {
             "type": "Polygon",
-            "polygons": [
-                [
-                  5.0,
-                  53.0
-                ],
-                [
-                  6.0,
-                  54.0
-                ],
-                [
-                  4.0,
-                  55.0
-                ],
-                [
-                  5.0,
-                  53.0
-                ]
+            "exteriorRingPositions": [
+              5.0,
+              53.0,
+              6.0,
+              54.0,
+              4.0,
+              55.0,
+              5.0,
+              53.0
             ]
           }
         }
@@ -166,23 +150,15 @@
           "geometry": {
             "geoGeometry": {
               "type": "Polygon",
-              "polygons": [
-                  [
-                    5.0,
-                    52.0
-                  ],
-                  [
-                    6.0,
-                    53.0
-                  ],
-                  [
-                    4.0,
-                    54.0
-                  ],
-                  [
-                    5.0,
-                    52.0
-                  ]
+              "exteriorRingPositions": [
+                5.0,
+                52.0,
+                6.0,
+                53.0,
+                4.0,
+                54.0,
+                5.0,
+                52.0
               ]
             }
           }
@@ -196,23 +172,15 @@
         "geometry": {
           "geoGeometry": {
             "type": "Polygon",
-            "polygons": [
-                [
-                  5.0,
-                  53.0
-                ],
-                [
-                  6.0,
-                  54.0
-                ],
-                [
-                  4.0,
-                  55.0
-                ],
-                [
-                  5.0,
-                  53.0
-                ]
+            "exteriorRingPositions": [
+              5.0,
+              53.0,
+              6.0,
+              54.0,
+              4.0,
+              55.0,
+              5.0,
+              53.0
             ]
           }
         }
@@ -221,7 +189,8 @@
       "VAInfo": {
         "volcano": {
           "volcanoPosition": {
-            "coordinateReferenceSystemId": "EPSG:4326",
+            "type": "ElevatedPoint",
+            "srsName": "EPSG:4326",
             "coordinates": [
               52.0,
               5.2

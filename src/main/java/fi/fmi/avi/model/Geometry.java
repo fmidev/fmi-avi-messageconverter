@@ -9,11 +9,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
 import fi.fmi.avi.model.immutable.PointGeometryImpl;
-import fi.fmi.avi.model.immutable.PolygonsGeometryImpl;
+import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({ @JsonSubTypes.Type(value = PointGeometryImpl.class, name = "Point"), @JsonSubTypes.Type(value = PolygonsGeometryImpl.class, name = "Polygon"),
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({ @JsonSubTypes.Type(value = PointGeometryImpl.class, name = "Point"), @JsonSubTypes.Type(value = PolygonGeometryImpl.class, name = "Polygon"),
         @JsonSubTypes.Type(value = CircleByCenterPointImpl.class, name = "CircleByCenterPoint") })
 
 public interface Geometry {

@@ -33,9 +33,9 @@ import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PointGeometry;
+import fi.fmi.avi.model.PolygonGeometry;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.PointGeometryImpl;
+import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.AirspaceVolume;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
@@ -121,8 +121,8 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
         AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
         airspaceVolume.setUpperLimitReference("Reference");
 
-        PointGeometry geometry = PointGeometryImpl.builder()
-                .setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
+        PolygonGeometry geometry = PolygonGeometryImpl.builder()
+                .addAllExteriorRingPositions(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
                 .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
                 .setAxisLabels(Arrays.asList("lat", "lon"))
                 .setSrsDimension(BigInteger.valueOf(2))

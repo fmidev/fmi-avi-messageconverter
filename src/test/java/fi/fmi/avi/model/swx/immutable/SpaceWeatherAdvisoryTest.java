@@ -22,10 +22,10 @@ import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PointGeometry;
+import fi.fmi.avi.model.PolygonGeometry;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.PointGeometryImpl;
+import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.AirspaceVolume;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
@@ -108,8 +108,8 @@ public class SpaceWeatherAdvisoryTest {
         airspaceVolume.setUpperLimitReference("Reference");
 
         if (isPointGeometry) {
-            PointGeometry geometry = PointGeometryImpl.builder()
-                    .setPoint(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
+            PolygonGeometry geometry = PolygonGeometryImpl.builder()
+                    .addAllExteriorRingPositions(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
                     .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
                     .setAxisLabels(Arrays.asList("lat", "lon"))
                     .setSrsDimension(BigInteger.valueOf(2))
@@ -119,12 +119,11 @@ public class SpaceWeatherAdvisoryTest {
             NumericMeasureImpl.Builder measure = NumericMeasureImpl.builder().setValue(5409.75).setUom("[nmi_i]");
 
             CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
-                    .addAllCoordinates(Arrays.asList(-16.6392, 160.9368))
+                    .addAllCenterPointCoordinates(Arrays.asList(-16.6392, 160.9368))
                     .setRadius(measure.build())
                     .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
                     .setAxisLabels(Arrays.asList("lat", "lon"))
-                    .setSrsDimension(BigInteger.valueOf(2))
-                    .setNumarc(BigInteger.valueOf(1));
+                    .setSrsDimension(BigInteger.valueOf(2));
 
             airspaceVolume.setHorizontalProjection(cbcp.build());
         }

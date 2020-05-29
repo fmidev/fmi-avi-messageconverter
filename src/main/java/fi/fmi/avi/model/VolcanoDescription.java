@@ -4,5 +4,6 @@ import java.util.Optional;
 
 public interface VolcanoDescription {
     Optional<String> getVolcanoName();
-    Optional<GeoPosition> getVolcanoPosition();
+
+    Optional<ElevatedPoint> getVolcanoPosition();
 }

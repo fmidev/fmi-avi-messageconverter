@@ -30,14 +30,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -61,14 +61,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -102,14 +102,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -133,14 +133,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -174,14 +174,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -205,14 +205,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -246,14 +246,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -277,14 +277,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -318,14 +318,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,
@@ -349,14 +349,14 @@
         {
           "airSpaceVolume": {
             "horizontalProjection": {
-              "type": "Point",
+              "type": "Polygon",
               "srsDimension": 2,
               "srsName": "http://www.opengis.net/def/crs/EPSG/0/4326",
               "axisLabels": [
                 "lat",
                 "lon"
               ],
-              "point": [
+              "exteriorRingPositions": [
                 -180.0,
                 90.0,
                 -180.0,

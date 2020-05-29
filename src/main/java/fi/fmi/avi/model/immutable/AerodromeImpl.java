@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
-import fi.fmi.avi.model.GeoPosition;
+import fi.fmi.avi.model.ElevatedPoint;
 
 /**
  * Created by rinne on 13/04/2018.
@@ -62,13 +62,13 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
                         .setFieldElevationUom(value.getFieldElevationUom())
                         .setLocationIndicatorICAO(value.getLocationIndicatorICAO())
                         .setName(value.getName())
-                        .setReferencePoint(GeoPositionImpl.immutableCopyOf(value.getReferencePoint()));
+                        .setReferencePoint(ElevatedPointImpl.immutableCopyOf(value.getReferencePoint()));
             }
         }
 
         @Override
-        @JsonDeserialize(as = GeoPositionImpl.class)
-        public Builder setReferencePoint(final GeoPosition referencePoint) {
+        @JsonDeserialize(as = ElevatedPointImpl.class)
+        public Builder setReferencePoint(final ElevatedPoint referencePoint) {
             return super.setReferencePoint(referencePoint);
         }
     }

@@ -34,16 +34,16 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
-import fi.fmi.avi.model.immutable.GeoPositionImpl;
+import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.VAInfoImpl;
 
@@ -71,82 +71,81 @@ public class JSONVASigmetConverterTest {
 
 @Test
     public void testVASIGMETSerialization() throws Exception {
-        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new Jdk8Module());
-        om.registerModule(new JavaTimeModule());
+    ObjectMapper om = new ObjectMapper();
+    om.registerModule(new Jdk8Module());
+    om.registerModule(new JavaTimeModule());
 
+    InputStream is = JSONVASigmetConverterTest.class.getResourceAsStream("vasigmet1.json");
+    Objects.requireNonNull(is);
+    String reference = IOUtils.toString(is, "UTF-8");
+    is.close();
 
-        InputStream is = JSONVASigmetConverterTest.class.getResourceAsStream("vasigmet1.json");
-        Objects.requireNonNull(is);
-        String reference = IOUtils.toString(is,"UTF-8");
-        is.close();
+    SIGMETImpl.Builder builder = new SIGMETImpl.Builder();
 
-        SIGMETImpl.Builder builder = new SIGMETImpl.Builder();
+    UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
+    UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build();
 
-        UnitPropertyGroup mwo=new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        UnitPropertyGroup fir=new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build();
+    Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
-        Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+    String geomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
+    Geometry geom = (Geometry) om.readValue(geomString, Geometry.class);
+    String fpaGeomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,53.0,6.0,54.0,4.0,55.0,5.0,53.0]}";
+    Geometry fpaGeom = (Geometry) om.readValue(fpaGeomString, Geometry.class);
 
-        String geomString="{ \"type\": \"Polygon\", \"polygons\":[[5.0,52.0],[6.0,53.0],[4.0,54.0],[5.0,52.0]]}";
-        Geometry geom=(Geometry)om.readValue(geomString, Geometry.class);
-        String fpaGeomString="{ \"type\": \"Polygon\", \"polygons\":[[5.0,53.0],[6.0,54.0],[4.0,55.0],[5.0,53.0]]}";
-        Geometry fpaGeom=(Geometry)om.readValue(fpaGeomString, Geometry.class);
+    PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
+    List<Geometry> geoms = Arrays.asList(geom);
+    geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
+    geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
+    geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
+    geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
+    geomBuilder.setApproximateLocation(false);
 
-        PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
-        List<Geometry> geoms=Arrays.asList(geom);
-        geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
-        geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
-        geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
-        geomBuilder.setUpperLimit(NumericMeasureImpl.of(35,"FL"));
-        geomBuilder.setApproximateLocation(false);
+    PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
+    fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
+    fpGeomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
+    fpGeomBuilder.setApproximateLocation(false);
 
-        PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
-        fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
-        fpGeomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
-        fpGeomBuilder.setApproximateLocation(false);
+    PartialOrCompleteTimeInstant.Builder issueTimeBuilder = new PartialOrCompleteTimeInstant.Builder();
+    issueTimeBuilder.setCompleteTime(ZonedDateTime.parse("2017-08-27T11:30:00Z"));
+    PartialOrCompleteTimePeriod.Builder validPeriod = new PartialOrCompleteTimePeriod.Builder();
+    validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
+    validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
-        PartialOrCompleteTimeInstant.Builder issueTimeBuilder=new PartialOrCompleteTimeInstant.Builder();
-        issueTimeBuilder.setCompleteTime(ZonedDateTime.parse("2017-08-27T11:30:00Z"));
-        PartialOrCompleteTimePeriod.Builder validPeriod=new PartialOrCompleteTimePeriod.Builder();
-        validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
-        validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
+    VolcanoDescriptionImpl.Builder volcanoBuilder = new VolcanoDescriptionImpl.Builder();
+    ElevatedPointImpl.Builder gpBuilder = ElevatedPointImpl.builder();
+    gpBuilder.addAllCoordinates(Arrays.stream(new Double[] { 52.0, 5.2 }));
+    gpBuilder.setSrsName("EPSG:4326");
+    volcanoBuilder.setVolcanoPosition(gpBuilder.build());
+    volcanoBuilder.setVolcanoName("GRIMSVOTN");
 
-        VolcanoDescriptionImpl.Builder volcanoBuilder=new VolcanoDescriptionImpl.Builder();
-        GeoPositionImpl.Builder gpBuilder = GeoPositionImpl.builder();
-        gpBuilder.addAllCoordinates(Arrays.stream(new Double[] { 52.0, 5.2 }));
-        gpBuilder.setCoordinateReferenceSystemId("EPSG:4326");
-        volcanoBuilder.setVolcanoPosition(gpBuilder.build());
-        volcanoBuilder.setVolcanoName("GRIMSVOTN");
+    VAInfoImpl.Builder vaInfoBuilder = new VAInfoImpl.Builder();
+    vaInfoBuilder.setVolcano(volcanoBuilder.build());
 
-        VAInfoImpl.Builder vaInfoBuilder= new VAInfoImpl.Builder();
-        vaInfoBuilder.setVolcano(volcanoBuilder.build());
+    builder.setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
+            .setMeteorologicalWatchOffice(mwo)
+            .setIssuingAirTrafficServicesUnit(fir)
+            .setAirspace(airspace)
+            .setIssueTime(issueTimeBuilder.build())
+            .setPermissibleUsage(AviationCodeListUser.PermissibleUsage.NON_OPERATIONAL)
+            .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
+            .setSequenceNumber("1")
+            .setTranslated(false)
+            .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+            .setValidityPeriod(validPeriod.build())
+            .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
+            .setAnalysisType(SigmetAnalysisType.OBSERVATION)
+            .setAnalysisGeometries(Arrays.asList(geomBuilder.build()))
+            .setForecastGeometries(Arrays.asList(fpGeomBuilder.build()))
+            .setVAInfo(vaInfoBuilder.build());
 
-        builder.setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
-                .setMeteorologicalWatchOffice(mwo)
-                .setIssuingAirTrafficServicesUnit(fir)
-                .setAirspace(airspace)
-                .setIssueTime(issueTimeBuilder.build())
-                .setPermissibleUsage(AviationCodeListUser.PermissibleUsage.NON_OPERATIONAL)
-                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
-                .setSequenceNumber("1")
-                .setTranslated(false)
-                .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
-                .setValidityPeriod(validPeriod.build())
-                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
-                .setAnalysisGeometries(Arrays.asList(geomBuilder.build()))
-                .setForecastGeometries(Arrays.asList(fpGeomBuilder.build()))
-                .setVAInfo(vaInfoBuilder.build());
+    SIGMET vaSigmet = builder.build();
 
-        SIGMET vaSigmet=builder.build();
+    ConversionResult<String> result = converter.convertMessage(vaSigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+    assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+    assertTrue(result.getConvertedMessage().isPresent());
+    System.err.println("Converted: " + result.getConvertedMessage().get());
 
-        ConversionResult<String> result = converter.convertMessage(vaSigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
-        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
-        assertTrue(result.getConvertedMessage().isPresent());
-        System.err.println("Converted: "+result.getConvertedMessage().get());
-
-        SIGMET refVaSigmet=om.readValue(reference, SIGMETImpl.class);
+    SIGMET refVaSigmet = om.readValue(reference, SIGMETImpl.class);
         System.err.println("refVaSigmet: "+refVaSigmet);
 
         SIGMET newVaSigmet = om.readValue(result.getConvertedMessage().get(), SIGMETImpl.class);
