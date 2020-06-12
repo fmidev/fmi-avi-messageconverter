@@ -92,5 +92,10 @@ public abstract class SpaceWeatherBulletinImpl implements SpaceWeatherBulletin, 
         public Builder addMessages(final SpaceWeatherAdvisory... messages) {
             return super.addMessages(messages);
         }
+
+        @Override
+        public Builder addMessages(final SpaceWeatherAdvisory message) {
+            return super.addMessages(SpaceWeatherAdvisoryImpl.immutableCopyOf(message));
+        }
     }
 }

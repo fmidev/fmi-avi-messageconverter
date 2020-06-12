@@ -1,6 +1,8 @@
 package fi.fmi.avi.model.swx.immutable;
 
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -16,14 +18,40 @@ import fi.fmi.avi.model.swx.NextAdvisory;
 @JsonPropertyOrder({ "time", "timeSpecifier" })
 public abstract class NextAdvisoryImpl implements NextAdvisory, Serializable {
 
+    private static final long serialVersionUID = 1697837715002765108L;
+
     public static Builder builder() {
         return new NextAdvisoryImpl.Builder();
+    }
+
+    public static NextAdvisoryImpl immutableCopyOf(final NextAdvisory nextAdvisory) {
+        Objects.requireNonNull(nextAdvisory);
+        if (nextAdvisory instanceof NextAdvisoryImpl) {
+            return (NextAdvisoryImpl) nextAdvisory;
+        } else {
+            return Builder.from(nextAdvisory).build();
+        }
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static Optional<NextAdvisoryImpl> immutableCopyOf(final Optional<NextAdvisory> nextAdvisory) {
+        Objects.requireNonNull(nextAdvisory);
+        return nextAdvisory.map(NextAdvisoryImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
 
     public static class Builder extends NextAdvisoryImpl_Builder {
+        @Deprecated
         Builder() {
+        }
+
+        public static Builder from(final NextAdvisory value) {
+            if (value instanceof NextAdvisoryImpl) {
+                return ((NextAdvisoryImpl) value).toBuilder();
+            } else {
+                return builder().setTime(value.getTime()).setTimeSpecifier(value.getTimeSpecifier());
+            }
         }
     }
 }

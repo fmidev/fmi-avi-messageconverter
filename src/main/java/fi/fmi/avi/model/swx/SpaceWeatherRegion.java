@@ -10,6 +10,7 @@ public interface SpaceWeatherRegion {
 
     Optional<SpaceWeatherLocation> getLocationIndicator();
 
+    //FIXME: unravel the TAC info (bands etc.)
     Optional<String> getTac();
 
     enum SpaceWeatherLocation {
