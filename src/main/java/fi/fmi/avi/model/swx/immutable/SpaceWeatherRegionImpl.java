@@ -16,7 +16,7 @@ import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherRegionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "airspaceVolume", "locationIndicator", "tac" })
+@JsonPropertyOrder({ "airspaceVolume", "locationIndicator" })
 public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Serializable {
 
     private static final long serialVersionUID = 207049872292188821L;
@@ -52,8 +52,7 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
                 return ((SpaceWeatherRegionImpl) value).toBuilder();
             } else {
                 return builder().setAirSpaceVolume(AirspaceVolumeImpl.immutableCopyOf(value.getAirSpaceVolume()))
-                        .setLocationIndicator(value.getLocationIndicator())
-                        .setTac(value.getTac());
+                        .setLocationIndicator(value.getLocationIndicator());
             }
         }
 

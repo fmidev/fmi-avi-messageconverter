@@ -10,27 +10,27 @@ public interface SpaceWeatherRegion {
 
     Optional<SpaceWeatherLocation> getLocationIndicator();
 
-    //FIXME: unravel the TAC info (bands etc.)
-    Optional<String> getTac();
-
     enum SpaceWeatherLocation {
-
-        EQUATORIAL_LATITUDES_NORTHERN_HEMISPHERE("EQN"),
-        MIDDLE_NORTHERN_HEMISPHERE("MNH"),
-        DAYLIGHT_SIDE("DAYLIGHT_SIDE"),
-        EQUATORIAL_LATITUDES_SOUTHERN_HEMISPHERE("EQS"),
-        MIDDLE_LATITUDES_SOUTHERN_HEMISPHERE("MSH"),
-        HIGH_LATITUDES_SOUTHERN_HEMISPHERE("HSH"),
-        HIGH_NORTHERN_HEMISPHERE("HNH");
+        HIGH_NORTHERN_HEMISPHERE("HNH", -90d, -60d),
+        MIDDLE_NORTHERN_HEMISPHERE("MNH", -60d, -30d),
+        EQUATORIAL_LATITUDES_NORTHERN_HEMISPHERE("EQN", -30d, 0d),
+        EQUATORIAL_LATITUDES_SOUTHERN_HEMISPHERE("EQS", 0d, 30d),
+        MIDDLE_LATITUDES_SOUTHERN_HEMISPHERE("MSH", 30d, 60d),
+        HIGH_LATITUDES_SOUTHERN_HEMISPHERE("HSH", 60d, 90d),
+        DAYLIGHT_SIDE("DAYLIGHT_SIDE", null, null);
 
         private static final String CODELIST_BASE = "http://codes.wmo.int/49-2/SpaceWxLocation/";
         private static final Pattern WMO_CODELIST_PATTERN = Pattern.compile(
                 "^(?<protocol>[a-z]*)://codes\\.wmo\\.int/49-2/SpaceWxLocation/" + "(?<value>[A-Z_0-9]*)$");
 
         private final String code;
+        private final Double latitudeBandMinCoordinate;
+        private final Double latitudeBandMaxCoordinate;
 
-        SpaceWeatherLocation(final String code) {
+        SpaceWeatherLocation(final String code, final Double minLat, final Double maxLat) {
             this.code = code;
+            this.latitudeBandMinCoordinate = minLat;
+            this.latitudeBandMaxCoordinate = maxLat;
         }
 
         public static SpaceWeatherLocation fromWMOCodeListValue(final String value) {
@@ -52,6 +52,14 @@ public interface SpaceWeatherRegion {
 
         public String getCode() {
             return this.code;
+        }
+
+        public Double getLatitudeBandMinCoordinate() {
+            return this.latitudeBandMinCoordinate;
+        }
+
+        public Double getLatitudeBandMaxCoordinate() {
+            return this.latitudeBandMaxCoordinate;
         }
 
         public String asWMOCodeListValue() {
