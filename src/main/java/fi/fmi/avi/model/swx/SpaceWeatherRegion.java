@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.swx;
 
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,17 +18,17 @@ public interface SpaceWeatherRegion {
         EQUATORIAL_LATITUDES_SOUTHERN_HEMISPHERE("EQS", 0d, 30d),
         MIDDLE_LATITUDES_SOUTHERN_HEMISPHERE("MSH", 30d, 60d),
         HIGH_LATITUDES_SOUTHERN_HEMISPHERE("HSH", 60d, 90d),
-        DAYLIGHT_SIDE("DAYLIGHT_SIDE", null, null);
+        DAYLIGHT_SIDE("DAYLIGHT_SIDE", Double.NaN, Double.NaN);
 
         private static final String CODELIST_BASE = "http://codes.wmo.int/49-2/SpaceWxLocation/";
         private static final Pattern WMO_CODELIST_PATTERN = Pattern.compile(
                 "^(?<protocol>[a-z]*)://codes\\.wmo\\.int/49-2/SpaceWxLocation/" + "(?<value>[A-Z_0-9]*)$");
 
         private final String code;
-        private final Double latitudeBandMinCoordinate;
-        private final Double latitudeBandMaxCoordinate;
+        private final double latitudeBandMinCoordinate;
+        private final double latitudeBandMaxCoordinate;
 
-        SpaceWeatherLocation(final String code, final Double minLat, final Double maxLat) {
+        SpaceWeatherLocation(final String code, final double minLat, final double maxLat) {
             this.code = code;
             this.latitudeBandMinCoordinate = minLat;
             this.latitudeBandMaxCoordinate = maxLat;
@@ -41,25 +42,25 @@ public interface SpaceWeatherRegion {
             throw new IllegalArgumentException("Value '" + value + "' is not valid WMO 49-2 SpaceWxLocation value");
         }
 
-        public static SpaceWeatherLocation fromCode(String code) {
-            for (SpaceWeatherLocation loc : SpaceWeatherLocation.values()) {
+        public static SpaceWeatherLocation fromCode(final String code) {
+            for (final SpaceWeatherLocation loc : SpaceWeatherLocation.values()) {
                 if (loc.getCode().equals(code)) {
                     return loc;
                 }
             }
-            return null;
+            throw new IllegalArgumentException("Value '" + code + "' is not valid SpaceWeatherLocation code value");
         }
 
         public String getCode() {
             return this.code;
         }
 
-        public Double getLatitudeBandMinCoordinate() {
-            return this.latitudeBandMinCoordinate;
+        public OptionalDouble getLatitudeBandMinCoordinate() {
+            return Double.isNaN(this.latitudeBandMinCoordinate) ? OptionalDouble.empty() : OptionalDouble.of(this.latitudeBandMinCoordinate);
         }
 
-        public Double getLatitudeBandMaxCoordinate() {
-            return this.latitudeBandMaxCoordinate;
+        public OptionalDouble getLatitudeBandMaxCoordinate() {
+            return Double.isNaN(this.latitudeBandMaxCoordinate) ? OptionalDouble.empty() : OptionalDouble.of(this.latitudeBandMaxCoordinate);
         }
 
         public String asWMOCodeListValue() {
