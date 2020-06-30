@@ -1,10 +1,12 @@
 package fi.fmi.avi.model.swx;
 
+import fi.fmi.avi.model.AviationWeatherMessageOrCollection;
+
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public interface SpaceWeatherRegion {
+public interface SpaceWeatherRegion extends AviationWeatherMessageOrCollection {
 
     Optional<AirspaceVolume> getAirSpaceVolume();
 
