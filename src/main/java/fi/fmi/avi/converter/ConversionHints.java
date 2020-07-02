@@ -206,6 +206,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_BULLETIN_HEADING_SPACING;
 
     /**
+     * The index number of the space weather analysis being handled
+     */
+    public static final Key KEY_SWX_ANALYSIS_INDEX;
+
+    /**
      * The heading fields should be concatenated with no spacing.
      */
     public static final Object VALUE_BULLETIN_HEADING_SPACING_NONE = "NONE";
@@ -315,6 +320,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
                 VALUE_TIMEZONE_ID_POLICY_LOOSE, VALUE_TIMEZONE_ID_POLICY_STRICT);
 
         KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags", VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
+
+        KEY_SWX_ANALYSIS_INDEX = new KeyImpl(15, "Helps determine which space weather analysis is in question");
 
         KEY_WEATHER_CODES = new KeyImpl(7, "Control the checks on the used weather codes", VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678,
                 VALUE_WEATHER_CODES_STRICT_WMO_4678, VALUE_WEATHER_CODES_ALLOW_ANY);
