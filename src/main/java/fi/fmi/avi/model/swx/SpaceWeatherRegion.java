@@ -13,6 +13,11 @@ public interface SpaceWeatherRegion extends AviationWeatherMessageOrCollection {
 
     Optional<SpaceWeatherLocation> getLocationIndicator();
 
+    OptionalDouble getLongitudeLimitMinimum();
+
+    OptionalDouble getLongitudeLimitMaximum();
+
+
     enum SpaceWeatherLocation {
         HIGH_NORTHERN_HEMISPHERE("HNH", -90d, -60d),
         MIDDLE_NORTHERN_HEMISPHERE("MNH", -60d, -30d),
