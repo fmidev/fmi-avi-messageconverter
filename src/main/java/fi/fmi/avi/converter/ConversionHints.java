@@ -211,6 +211,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_SWX_ANALYSIS_INDEX;
 
     /**
+     * Determines the length of tac label field, so that whitespace can be added accordingly
+     */
+    public static final Key KEY_SWX_LABEL_END_LENGTH;
+
+    /**
      * The heading fields should be concatenated with no spacing.
      */
     public static final Object VALUE_BULLETIN_HEADING_SPACING_NONE = "NONE";
@@ -322,6 +327,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags", VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
 
         KEY_SWX_ANALYSIS_INDEX = new KeyImpl(15, "Helps determine which space weather analysis is in question");
+        KEY_SWX_LABEL_END_LENGTH = new KeyImpl(16, "Used to determine the length of the label, so that white space can be added accordingly.");
 
         KEY_WEATHER_CODES = new KeyImpl(7, "Control the checks on the used weather codes", VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678,
                 VALUE_WEATHER_CODES_STRICT_WMO_4678, VALUE_WEATHER_CODES_ALLOW_ANY);
