@@ -9,6 +9,7 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 public interface SpaceWeatherAdvisoryAnalysis extends AviationWeatherMessageOrCollection {
     PartialOrCompleteTimeInstant getTime();
 
+    //TODO/FIXME: are there any cases where we would not have the type?
     Optional<Type> getAnalysisType();
 
     Optional<List<SpaceWeatherRegion>> getRegion();

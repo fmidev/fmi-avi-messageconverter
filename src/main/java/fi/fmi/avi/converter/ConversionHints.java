@@ -3,7 +3,6 @@ package fi.fmi.avi.converter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -205,6 +204,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      */
     public static final Key KEY_BULLETIN_HEADING_SPACING;
 
+    //FIXME: this kind of dynamic information cannot be a conversion hint, remove:
     /**
      * The index number of the space weather analysis being handled
      */
