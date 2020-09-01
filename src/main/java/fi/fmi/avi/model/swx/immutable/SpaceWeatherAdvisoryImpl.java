@@ -5,18 +5,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import fi.fmi.avi.model.swx.*;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fi.fmi.avi.model.swx.AdvisoryNumber;
-import fi.fmi.avi.model.swx.IssuingCenter;
-import fi.fmi.avi.model.swx.NextAdvisory;
-import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
-import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.swx.SpaceWeatherPhenomenon;
 
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryImpl.Builder.class)
@@ -95,10 +89,15 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
                         .setNextAdvisory(NextAdvisoryImpl.immutableCopyOf(value.getNextAdvisory()));
 
                 retval.addAllPhenomena(value.getPhenomena().stream()//
-                        .map(p -> SpaceWeatherPhenomenon.fromWMOCodeListValue(p.asWMOCodeListValue())));
+                        .map(p -> SpaceWeatherPhenomenonImpl.builder().setType(p.getType()).setSeverity(p.getSeverity()).build()));
                 retval.addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf));
                 return retval;
             }
+        }
+
+        @JsonDeserialize(contentAs = SpaceWeatherPhenomenonImpl.class)
+        public Builder addAllPhenomena(final List<SpaceWeatherPhenomenon> elements) {
+            return super.addAllPhenomena(elements);
         }
 
         @Override
