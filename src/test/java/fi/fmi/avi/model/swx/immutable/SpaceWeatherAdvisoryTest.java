@@ -30,7 +30,6 @@ import fi.fmi.avi.model.swx.AirspaceVolume;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
 import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.swx.SpaceWeatherPhenomenon;
 import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 
 public class SpaceWeatherAdvisoryTest {
@@ -179,8 +178,8 @@ public class SpaceWeatherAdvisoryTest {
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
-                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
+                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(analyses)
@@ -207,8 +206,8 @@ public class SpaceWeatherAdvisoryTest {
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
-                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
+                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(getAnalyses(true))
@@ -237,8 +236,8 @@ public class SpaceWeatherAdvisoryTest {
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllAnalyses(getAnalyses(false))
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
-                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
+                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .setRemarks(getRemarks())
@@ -265,8 +264,8 @@ public class SpaceWeatherAdvisoryTest {
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setReplaceAdvisoryNumber(getAdvisoryNumber())
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
-                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
+                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(getAnalyses(true))
