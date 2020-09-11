@@ -44,7 +44,7 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
     public abstract Builder toBuilder();
 
     public static class Builder extends AdvisoryNumberImpl_Builder {
-        private static final Pattern ADVISORY_NO_FORMAT = Pattern.compile("^(?<year>[0-9]{4})/(?<serialNo>[0-9][0-9]?[0-9]?[0-9]?)$");
+        private static final Pattern ADVISORY_NO_FORMAT = Pattern.compile("^(?<year>[0-9]{4})/(?<serialNo>[0-9]*)$");
 
         @Deprecated
         Builder() {
@@ -61,7 +61,7 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
 
         /**
          * Parses AdvisoryNumber from a String matching
-         * pattern "^(?<year>[0-9]{4})/(?<serialNo>[0-9][0-9]?[0-9]?[0-9]?)$"
+         * pattern "^(?<year>[0-9]{4})/(?<serialNo>[0-9]*?)$"
          */
         public static Builder from(final String value) {
             final Matcher m = ADVISORY_NO_FORMAT.matcher(value);
