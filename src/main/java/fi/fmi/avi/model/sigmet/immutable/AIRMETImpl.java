@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
@@ -26,7 +27,7 @@ import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
 import fi.fmi.avi.model.sigmet.AirmetReference;
 import fi.fmi.avi.model.sigmet.AirmetWind;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 
 @FreeBuilder
 @JsonDeserialize(builder = AIRMETImpl.Builder.class)

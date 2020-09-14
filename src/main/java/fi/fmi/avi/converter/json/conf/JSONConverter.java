@@ -1,12 +1,12 @@
 package fi.fmi.avi.converter.json.conf;
 
-import fi.fmi.avi.converter.json.*;
-import fi.fmi.avi.model.sigmet.AIRMET;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionSpecification;
+import fi.fmi.avi.converter.json.AIRMETJSONParser;
+import fi.fmi.avi.converter.json.AIRMETJSONSerializer;
 import fi.fmi.avi.converter.json.GenericMeteorologicalBulletinJSONParser;
 import fi.fmi.avi.converter.json.GenericMeteorologicalBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.METARJSONParser;
@@ -15,14 +15,18 @@ import fi.fmi.avi.converter.json.SIGMETBulletinJSONParser;
 import fi.fmi.avi.converter.json.SIGMETBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.SIGMETJSONParser;
 import fi.fmi.avi.converter.json.SIGMETJSONSerializer;
+import fi.fmi.avi.converter.json.SpaceWeatherAdvisoryJSONParser;
+import fi.fmi.avi.converter.json.SpaceWeatherAdvisoryJSONSerializer;
 import fi.fmi.avi.converter.json.TAFBulletinJSONParser;
 import fi.fmi.avi.converter.json.TAFBulletinJSONSerializer;
 import fi.fmi.avi.converter.json.TAFJSONParser;
 import fi.fmi.avi.converter.json.TAFJSONSerializer;
 import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
 import fi.fmi.avi.model.metar.METAR;
+import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
+import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 
@@ -50,6 +54,12 @@ public class JSONConverter {
      */
     public static final ConversionSpecification<SIGMET, String> SIGMET_POJO_TO_JSON_STRING = new ConversionSpecification<>(SIGMET.class, String.class,
             null, "SIGMET, fmi-avi-messageconverter JSON");
+
+    /**
+     * Pre-configured spec for {@link SpaceWeatherAdvisory} to fmi-avi-messageconverter JSON SWX document String.
+     */
+    public static final ConversionSpecification<SpaceWeatherAdvisory, String> SWX_POJO_TO_JSON_STRING = new ConversionSpecification<>(SpaceWeatherAdvisory.class, String.class,
+            null, "SWX, fmi-avi-messageconverter JSON");
 
     /**
      * Pre-configured spec for {@link AIRMET} to IWXXM 2.1 XML format AIRMET document String.
@@ -83,6 +93,11 @@ public class JSONConverter {
     public static final ConversionSpecification<String, TAF> JSON_STRING_TO_TAF_POJO = new ConversionSpecification<>(String.class,TAF.class,
             "TAF, fmi-avi-messageconverter JSON", null);
 
+    /**
+     * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SpaceWeatherAdvisory}.
+     */
+    public static final ConversionSpecification<String, SpaceWeatherAdvisory> JSON_STRING_TO_SWX_POJO = new ConversionSpecification<>(String.class, SpaceWeatherAdvisory.class,
+            "SWX, fmi-avi-messageconverter JSON", null);
 
     /**
      * Pre-configured spec for fmi-avi-messageconverter JSON METAR document String to {@link METAR}.
@@ -137,6 +152,11 @@ public class JSONConverter {
     }
 
     @Bean
+    public AviMessageSpecificConverter<SpaceWeatherAdvisory, String> swxJSONSerializer() {
+        return new SpaceWeatherAdvisoryJSONSerializer();
+    }
+
+    @Bean
     public AviMessageSpecificConverter<SIGMETBulletin, String> sigmetBulletinJSONSerializer() {
         return new SIGMETBulletinJSONSerializer();
     }
@@ -164,6 +184,11 @@ public class JSONConverter {
     @Bean
     public AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser() {
         return new SIGMETJSONParser();
+    }
+
+    @Bean
+    public AviMessageSpecificConverter<String, SpaceWeatherAdvisory> swxJSONParser() {
+        return new SpaceWeatherAdvisoryJSONParser();
     }
 
     @Bean

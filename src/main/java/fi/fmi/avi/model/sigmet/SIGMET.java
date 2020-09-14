@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PhenomenonGeometry;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SIGMETAIRMET;
-import fi.fmi.avi.model.UnitPropertyGroup;
-import fi.fmi.avi.model.VolcanoDescription;
 
 public interface SIGMET extends SIGMETAIRMET {
     AeronauticalSignificantWeatherPhenomenon getSigmetPhenomenon();

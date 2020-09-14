@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.GeoPosition;
+import fi.fmi.avi.model.ElevatedPoint;
 import fi.fmi.avi.model.VolcanoDescription;
 
 @FreeBuilder
@@ -40,15 +40,14 @@ public abstract class VolcanoDescriptionImpl implements VolcanoDescription, Seri
             if (value instanceof VolcanoDescriptionImpl) {
                 return ((VolcanoDescriptionImpl) value).toBuilder();
             } else {
-                return new VolcanoDescriptionImpl.Builder()
-                        .setVolcanoName(value.getVolcanoName().get())
-                        .setVolcanoPosition(GeoPositionImpl.immutableCopyOf(value.getVolcanoPosition()));
+                return new VolcanoDescriptionImpl.Builder().setVolcanoName(value.getVolcanoName())
+                        .setVolcanoPosition(ElevatedPointImpl.immutableCopyOf(value.getVolcanoPosition()));
             }
         }
 
         @Override
-        @JsonDeserialize(as = GeoPositionImpl.class)
-        public Builder setVolcanoPosition(final GeoPosition volcanoPosition) {
+        @JsonDeserialize(as = ElevatedPointImpl.class)
+        public Builder setVolcanoPosition(final ElevatedPoint volcanoPosition) {
             return super.setVolcanoPosition(volcanoPosition);
         }
 

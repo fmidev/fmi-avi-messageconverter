@@ -9,14 +9,12 @@ import org.inferred.freebuilder.FreeBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.GeoPosition;
 import fi.fmi.avi.model.PointGeometry;
 
 @FreeBuilder
 @JsonDeserialize(builder = PointGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PointGeometryImpl implements PointGeometry {
-    private GeoPosition geoPosition;
 
     public static Builder builder() {
         return new Builder();
@@ -24,7 +22,7 @@ public abstract class PointGeometryImpl implements PointGeometry {
 
     public static PointGeometryImpl immutableCopyOf(final PointGeometry pointGeometry) {
         Objects.requireNonNull(pointGeometry);
-        if (pointGeometry instanceof GeoPositionImpl) {
+        if (pointGeometry instanceof ElevatedPointImpl) {
             return (PointGeometryImpl) pointGeometry;
         } else {
             return Builder.from(pointGeometry).build();
@@ -49,17 +47,16 @@ public abstract class PointGeometryImpl implements PointGeometry {
             if (value instanceof PointGeometryImpl) {
                 return ((PointGeometryImpl) value).toBuilder();
             } else {
-                return PointGeometryImpl.builder()//
-                .setPoint(value.getPoint()) ;
+                return PointGeometryImpl.builder().setSrsName(value.getSrsName())//
+                        .setSrsDimension(value.getSrsDimension())//
+                        .setAxisLabels(value.getAxisLabels())//
+                        .addAllCoordinates(value.getCoordinates());
             }
         }
 
- //       @Override
-        @JsonDeserialize(contentAs=Double.class)
-        public final Builder setPoint(List<Double> point) {
-            return super.addAllPoint(point);
+        public Builder setCoordinates(final List<Double> coordinates) {
+            return this.clearCoordinates().addAllCoordinates(coordinates);
         }
-
 
     }
 }

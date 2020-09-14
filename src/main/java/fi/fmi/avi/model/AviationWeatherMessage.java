@@ -118,4 +118,16 @@ public interface AviationWeatherMessage extends AviationWeatherMessageOrCollecti
      */
     Optional<PartialOrCompleteTimeInstant> getIssueTime();
 
+    /**
+     *See https://schemas.wmo.int/iwxxm/3.0/common.xsd
+     *
+     * @return report status
+     */
+    Optional<ReportStatus> getReportStatus();
+
+    public enum ReportStatus {
+        CORRECTION,
+        AMENDMENT,
+        NORMAL
+    }
 }

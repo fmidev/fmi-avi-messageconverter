@@ -1,6 +1,5 @@
 package fi.fmi.avi.converter.json;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -29,19 +28,15 @@ import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.PointGeometry;
-import fi.fmi.avi.model.PolygonsGeometry;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.PointGeometryImpl;
-import fi.fmi.avi.model.immutable.PolygonsGeometryImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -95,33 +90,32 @@ public class JSONAirmetConverterTest {
         om.registerModule(new JtsModule());
         om.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);*/
 
-
         InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
         Objects.requireNonNull(is);
-        String reference = IOUtils.toString(is,"UTF-8");
+        String reference = IOUtils.toString(is, "UTF-8");
         is.close();
-        AIRMET am=((AIRMETImpl.Builder)om.readValue(reference, AIRMETImpl.Builder.class)).build();
-        System.err.println("am:"+am);
+        AIRMET am = ((AIRMETImpl.Builder) om.readValue(reference, AIRMETImpl.Builder.class)).build();
+        System.err.println("am:" + am);
 
         AIRMETImpl.Builder builder = new AIRMETImpl.Builder();
 
-        UnitPropertyGroup mwo=new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        UnitPropertyGroup fir=new UnitPropertyGroupImpl.Builder().setPropertyGroup( "AMSTERDAM FIR", "EHAA", "FIR").build();
+        UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
+        UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
 
-        Airspace airspace=new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
-        String geomString="{\"type\": \"Polygon\", \"polygons\": [[5.0,52.0], [6.0,53.0], [4.0,54.0], [5.0,52.0]]}";
-        Geometry geom=om.readValue(geomString, Geometry.class);
+        String geomString = "{\"type\": \"Polygon\", \"exteriorRingPositions\": [5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
+        Geometry geom = om.readValue(geomString, Geometry.class);
 
-        PartialOrCompleteTimeInstant.Builder issueTimeBuilder=new PartialOrCompleteTimeInstant.Builder();
+        PartialOrCompleteTimeInstant.Builder issueTimeBuilder = new PartialOrCompleteTimeInstant.Builder();
         issueTimeBuilder.setCompleteTime(ZonedDateTime.parse("2017-08-27T11:30:00Z"));
-        PartialOrCompleteTimePeriod.Builder validPeriod=new PartialOrCompleteTimePeriod.Builder();
+        PartialOrCompleteTimePeriod.Builder validPeriod = new PartialOrCompleteTimePeriod.Builder();
         validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
         validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
         PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
         geomBuilder.setApproximateLocation(false);
-        List<Geometry> geoms=Arrays.asList(geom);
+        List<Geometry> geoms = Arrays.asList(geom);
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));

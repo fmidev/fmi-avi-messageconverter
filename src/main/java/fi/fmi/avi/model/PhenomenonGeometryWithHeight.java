@@ -1,9 +1,6 @@
-package fi.fmi.avi.model.sigmet;
+package fi.fmi.avi.model;
 
 import java.util.Optional;
-
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.NumericMeasure;
 
 public interface PhenomenonGeometryWithHeight extends PhenomenonGeometry{
     public Optional<NumericMeasure> getLowerLimit();

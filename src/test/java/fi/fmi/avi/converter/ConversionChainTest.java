@@ -17,7 +17,7 @@ import fi.fmi.avi.converter.json.JSONConverterTest;
 import fi.fmi.avi.converter.json.JSONTestConfiguration;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
-import fi.fmi.avi.model.immutable.GeoPositionImpl;
+import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
@@ -43,8 +43,8 @@ public class ConversionChainTest {
                                         .setName("Tallinn Airport")
                                         .setFieldElevationValue(40.0)
                                         .setLocationIndicatorICAO("EETN")
-                                        .setReferencePoint(GeoPositionImpl.builder()
-                                                .setCoordinateReferenceSystemId("http://www.opengis.net/def/crs/EPSG/0/4326")
+                                        .setReferencePoint(ElevatedPointImpl.builder()
+                                                .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
                                                 .addCoordinates(24.8325, 59.413333)
                                                 .build())
                                         .build())

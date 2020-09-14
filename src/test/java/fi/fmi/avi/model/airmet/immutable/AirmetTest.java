@@ -18,25 +18,25 @@ import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.AirmetCloudLevelsImpl;
-import fi.fmi.avi.model.sigmet.immutable.PhenomenonGeometryWithHeightImpl;
 
 public class AirmetTest {
 
     ObjectMapper om=new ObjectMapper().registerModule(new JavaTimeModule()).registerModule(new Jdk8Module()).enable(SerializationFeature.INDENT_OUTPUT);
 
-    static String testGeoJson1="{\"type\":\"Polygon\",\"polygons\":[[0,52],[0,60],[10,60],[10,52],[0,52]]}}";
+    static String testGeoJson1 = "{\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
 
-    static String testGeoJson2="{\"type\":\"Polygon\",\"polygons\":[[0,52],[0,60],[5,60],[5,52],[0,52]]}}";
+    static String testGeoJson2 = "{\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,5,60,5,52,0,52]}}";
 
     public PhenomenonGeometryWithHeight getAnalysis() {
         Optional<Geometry> anGeometry=Optional.empty();

@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.sigmet;
+package fi.fmi.avi.model;
 
 import java.util.Optional;
 

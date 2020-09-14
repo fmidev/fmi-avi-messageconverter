@@ -152,6 +152,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator, Serializable {
         public static final XMLDataTypeDesignatorT2 XML_VOLCANIC_ASH_SIGMET = new XMLDataTypeDesignatorT2('V');
         public static final XMLDataTypeDesignatorT2 XML_AIRMET = new XMLDataTypeDesignatorT2('W');
         public static final XMLDataTypeDesignatorT2 XML_TROPICAL_CYCLONE_SIGMET = new XMLDataTypeDesignatorT2('Y');
+        public static final XMLDataTypeDesignatorT2 XML_SPACE_WEATHER_ADVISORY = new XMLDataTypeDesignatorT2('N');
 
         private static final AutoReflectionDataTypeDesignatorMapping<XMLDataTypeDesignatorT2> MAPPING = new AutoReflectionDataTypeDesignatorMapping<>(
                 XMLDataTypeDesignatorT2.class);
@@ -168,6 +169,7 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator, Serializable {
             t2ToContainedMessageType.put(XML_AERODROME_VT_LONG, MessageType.TAF);
             t2ToContainedMessageType.put(XML_VOLCANIC_ASH_ADVISORY, MessageType.VOLCANIC_ASH_ADVISORY);
             t2ToContainedMessageType.put(XML_TROPICAL_CYCLONE_ADVISORIES, MessageType.VOLCANIC_ASH_ADVISORY);
+            t2ToContainedMessageType.put(XML_SPACE_WEATHER_ADVISORY, MessageType.SPACE_WEATHER_ADVISORY);
         }
 
         XMLDataTypeDesignatorT2(final char code) {

@@ -1,14 +1,11 @@
 package fi.fmi.avi.model;
 
-import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
-public interface GeoPosition {
-
-    String getCoordinateReferenceSystemId();
-
-    List<Double> getCoordinates();
+@JsonTypeName("ElevatedPoint")
+public interface ElevatedPoint extends PointGeometry {
 
     Optional<Double> getElevationValue();
 

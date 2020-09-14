@@ -1,5 +1,12 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Optional;
+
+import org.junit.Test;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,29 +18,24 @@ import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.PhenomenonGeometry;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometry;
-import fi.fmi.avi.model.sigmet.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
-
-import org.junit.Test;
-
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Optional;
 
 public class SigmetTest {
 
     ObjectMapper om=new ObjectMapper().registerModule(new JavaTimeModule()).registerModule(new Jdk8Module()).enable(SerializationFeature.INDENT_OUTPUT);
 
-    static String testGeoJson1="{\"type\":\"Polygon\",\"polygons\":[[0,52],[0,60],[10,60],[10,52],[0,52]]}}";
+    static String testGeoJson1 = "{\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
 
-    static String testGeoJson2="{\"type\":\"Polygon\",\"polygons\":[[0,52],[0,60],[5,60],[5,52],[0,52]]}}";
+    static String testGeoJson2 = "{\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,5,60,5,52,0,52]}}";
 
     public PhenomenonGeometryWithHeight getAnalysis() {
         Optional<Geometry> anGeometry=Optional.empty();
