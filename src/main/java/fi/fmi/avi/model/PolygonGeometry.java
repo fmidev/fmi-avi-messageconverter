@@ -6,5 +6,5 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("Polygon")
 public interface PolygonGeometry extends Geometry {
-    public List<Double> getExteriorRingPositions();
+    List<Double> getExteriorRingPositions();
 }

@@ -26,7 +26,7 @@
         "partialTime": "--27T01:00Z"
       },
       "analysisType": "FORECAST",
-      "region": [
+      "regions": [
         {
           "airSpaceVolume": {
             "horizontalProjection": {
@@ -90,15 +90,14 @@
           "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
-      "noPhenomenaExpected": true,
-      "noInformationAvailable": true
+      "nilPhenomenonReason":"NO_INFORMATION_AVAILABLE"
     },
     {
       "time": {
         "partialTime": "--27T01:00Z"
       },
       "analysisType": "FORECAST",
-      "region": [
+      "regions": [
         {
           "airSpaceVolume": {
             "horizontalProjection": {
@@ -162,15 +161,14 @@
           "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
-      "noPhenomenaExpected": true,
-      "noInformationAvailable": true
+      "nilPhenomenonReason":"NO_INFORMATION_AVAILABLE"
     },
     {
       "time": {
         "partialTime": "--27T01:00Z"
       },
       "analysisType": "FORECAST",
-      "region": [
+      "regions": [
         {
           "airSpaceVolume": {
             "horizontalProjection": {
@@ -234,15 +232,14 @@
           "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
-      "noPhenomenaExpected": true,
-      "noInformationAvailable": true
+      "nilPhenomenonReason":"NO_INFORMATION_AVAILABLE"
     },
     {
       "time": {
         "partialTime": "--27T01:00Z"
       },
       "analysisType": "FORECAST",
-      "region": [
+      "regions": [
         {
           "airSpaceVolume": {
             "horizontalProjection": {
@@ -306,15 +303,14 @@
           "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
-      "noPhenomenaExpected": true,
-      "noInformationAvailable": true
+      "nilPhenomenonReason":"NO_INFORMATION_AVAILABLE"
     },
     {
       "time": {
         "partialTime": "--27T01:00Z"
       },
       "analysisType": "FORECAST",
-      "region": [
+      "regions": [
         {
           "airSpaceVolume": {
             "horizontalProjection": {
@@ -378,8 +374,7 @@
           "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
         }
       ],
-      "noPhenomenaExpected": true,
-      "noInformationAvailable": true
+      "nilPhenomenonReason":"NO_INFORMATION_AVAILABLE"
     }
   ],
   "remarks": [

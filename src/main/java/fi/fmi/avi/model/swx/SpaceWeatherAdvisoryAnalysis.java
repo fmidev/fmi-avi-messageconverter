@@ -9,14 +9,15 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 public interface SpaceWeatherAdvisoryAnalysis extends AviationWeatherMessageOrCollection {
     PartialOrCompleteTimeInstant getTime();
 
-    //TODO/FIXME: are there any cases where we would not have the type?
-    Optional<Type> getAnalysisType();
+    Type getAnalysisType();
 
-    Optional<List<SpaceWeatherRegion>> getRegion();
+    List<SpaceWeatherRegion> getRegions();
 
-    boolean isNoPhenomenaExpected();
+    Optional<NilPhenomenonReason> getNilPhenomenonReason();
 
-    boolean isNoInformationAvailable();
+    enum NilPhenomenonReason {
+        NO_PHENOMENON_EXPECTED, NO_INFORMATION_AVAILABLE
+    }
 
     enum Type {
         FORECAST, OBSERVATION

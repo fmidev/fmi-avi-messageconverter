@@ -45,7 +45,7 @@ public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Seri
 
         @Override
         @JsonDeserialize(as = TacOrGeoGeometryImpl.class)
-        public Builder setGeometry(TacOrGeoGeometry geom) {
+        public Builder setGeometry(final TacOrGeoGeometry geom) {
             return super.setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(geom));
         }
     }

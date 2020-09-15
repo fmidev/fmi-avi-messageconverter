@@ -16,7 +16,7 @@ import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherRegionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "airspaceVolume", "locationIndicator", "longitudeLimitMinimum", "longitudeLimitMaximum" })
+@JsonPropertyOrder({ "airSpaceVolume", "locationIndicator", "longitudeLimitMinimum", "longitudeLimitMaximum" })
 public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Serializable {
 
     private static final long serialVersionUID = 207049872292188821L;

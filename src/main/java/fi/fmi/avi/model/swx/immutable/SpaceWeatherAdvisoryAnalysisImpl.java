@@ -1,11 +1,9 @@
 package fi.fmi.avi.model.swx.immutable;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -19,7 +17,7 @@ import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAnalysisImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "time", "analysisType", "region", "noPhenomenaExpected", "noInformationAvailable" })
+@JsonPropertyOrder({ "time", "analysisType", "regions", "nilPhenomenonReason" })
 public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAdvisoryAnalysis, Serializable {
 
     private static final long serialVersionUID = -6443983160749650868L;
@@ -46,10 +44,7 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
     public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherAdvisoryAnalysisImpl_Builder {
-        Builder() {
-            setNoPhenomenaExpected(false);
-            setNoInformationAvailable(false);
-        }
+        Builder() { }
 
         public static Builder from(final SpaceWeatherAdvisoryAnalysis value) {
             if (value instanceof SpaceWeatherAdvisoryAnalysisImpl) {
@@ -57,21 +52,17 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
             } else {
                 final Builder retval = builder().setTime(value.getTime())
                         .setAnalysisType(value.getAnalysisType())
-                        .setNoPhenomenaExpected(value.isNoPhenomenaExpected())
-                        .setNoInformationAvailable(value.isNoInformationAvailable());
+                        .setNilPhenomenonReason(value.getNilPhenomenonReason());
 
-                value.getRegion()
-                        .map(regions -> retval.setRegion(
-                                Collections.unmodifiableList(regions.stream().map(SpaceWeatherRegionImpl::immutableCopyOf).collect(Collectors.toList()))));
+                value.getRegions().stream().forEach(region -> retval.getRegions().add(region));
 
                 return retval;
             }
         }
 
-        @Override
         @JsonDeserialize(contentAs = SpaceWeatherRegionImpl.class)
-        public Builder setRegion(final List<SpaceWeatherRegion> region) {
-            return super.setRegion(region);
+        public Builder addAllRegions(final List<SpaceWeatherRegion> region) {
+            return super.addAllRegions(region);
         }
 
     }

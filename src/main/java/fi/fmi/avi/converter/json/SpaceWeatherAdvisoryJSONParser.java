@@ -8,7 +8,7 @@ import fi.fmi.avi.model.swx.immutable.SpaceWeatherAdvisoryImpl;
 
 public class SpaceWeatherAdvisoryJSONParser extends AbstractJSONParser implements AviMessageSpecificConverter<String, SpaceWeatherAdvisory>  {
     @Override
-    public ConversionResult<SpaceWeatherAdvisory> convertMessage(String input, ConversionHints hints) {
+    public ConversionResult<SpaceWeatherAdvisory> convertMessage(final String input, final ConversionHints hints) {
         return doConvertMessage(input, SpaceWeatherAdvisory.class, SpaceWeatherAdvisoryImpl.class, hints);
     }
 }
