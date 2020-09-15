@@ -26,6 +26,16 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
         return new AdvisoryNumberImpl.Builder();
     }
 
+    public String asAdvisoryNumber() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(getYear())
+                .append("/")
+                .append(getSerialNumber());
+
+        return builder.toString();
+    }
+
     public static AdvisoryNumberImpl immutableCopyOf(final AdvisoryNumber advisoryNumber) {
         Objects.requireNonNull(advisoryNumber);
         if (advisoryNumber instanceof AdvisoryNumberImpl) {
