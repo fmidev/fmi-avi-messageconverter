@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -59,6 +60,12 @@ public abstract class ElevatedPointImpl implements ElevatedPoint, Serializable {
                         .setAxisLabels(value.getAxisLabels())//
                         .addAllCoordinates(value.getCoordinates()).setElevationUom(value.getElevationUom()).setElevationValue(value.getElevationValue());
             }
+        }
+
+        @Override
+        @JsonAlias("coordinateReferenceSystemId")
+        public Optional<String> getSrsName() {
+            return super.getSrsName();
         }
 
         public Builder setCoordinates(final List<Double> coordinates) {
