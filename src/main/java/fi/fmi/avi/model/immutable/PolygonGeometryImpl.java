@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -13,7 +14,9 @@ import fi.fmi.avi.model.PolygonGeometry;
 @FreeBuilder
 @JsonDeserialize(builder = PolygonGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class PolygonGeometryImpl implements PolygonGeometry {
+public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializable {
+
+    private static final long serialVersionUID = 5468081316994649748L;
 
     public static Builder builder() {
         return new Builder();

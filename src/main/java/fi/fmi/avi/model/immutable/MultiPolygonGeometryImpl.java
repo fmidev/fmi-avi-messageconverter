@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -13,7 +14,9 @@ import fi.fmi.avi.model.MultiPolygonGeometry;
 @FreeBuilder
 @JsonDeserialize(builder = MultiPolygonGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry {
+public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, Serializable {
+
+    private static final long serialVersionUID = 4308464817438332280L;
 
     public static Builder builder() {
         return new Builder();

@@ -1,11 +1,10 @@
 package fi.fmi.avi.model.swx;
 
-import fi.fmi.avi.model.AviationWeatherMessageOrCollection;
-
 import java.util.Optional;
-import java.util.OptionalDouble;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import fi.fmi.avi.model.AviationWeatherMessageOrCollection;
 
 public interface SpaceWeatherRegion extends AviationWeatherMessageOrCollection {
 
@@ -13,10 +12,9 @@ public interface SpaceWeatherRegion extends AviationWeatherMessageOrCollection {
 
     Optional<SpaceWeatherLocation> getLocationIndicator();
 
-    OptionalDouble getLongitudeLimitMinimum();
+    Optional<Double> getLongitudeLimitMinimum();
 
-    OptionalDouble getLongitudeLimitMaximum();
-
+    Optional<Double> getLongitudeLimitMaximum();
 
     enum SpaceWeatherLocation {
         HIGH_NORTHERN_HEMISPHERE("HNH", -90d, -60d),
@@ -62,12 +60,12 @@ public interface SpaceWeatherRegion extends AviationWeatherMessageOrCollection {
             return this.code;
         }
 
-        public OptionalDouble getLatitudeBandMinCoordinate() {
-            return Double.isNaN(this.latitudeBandMinCoordinate) ? OptionalDouble.empty() : OptionalDouble.of(this.latitudeBandMinCoordinate);
+        public Optional<Double> getLatitudeBandMinCoordinate() {
+            return Double.isNaN(this.latitudeBandMinCoordinate) ? Optional.empty() : Optional.of(this.latitudeBandMinCoordinate);
         }
 
-        public OptionalDouble getLatitudeBandMaxCoordinate() {
-            return Double.isNaN(this.latitudeBandMaxCoordinate) ? OptionalDouble.empty() : OptionalDouble.of(this.latitudeBandMaxCoordinate);
+        public Optional<Double> getLatitudeBandMaxCoordinate() {
+            return Double.isNaN(this.latitudeBandMaxCoordinate) ? Optional.empty() : Optional.of(this.latitudeBandMaxCoordinate);
         }
 
         public String asWMOCodeListValue() {

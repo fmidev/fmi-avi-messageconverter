@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +15,9 @@ import fi.fmi.avi.model.PointGeometry;
 @FreeBuilder
 @JsonDeserialize(builder = PointGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class PointGeometryImpl implements PointGeometry {
+public abstract class PointGeometryImpl implements PointGeometry, Serializable {
+
+    private static final long serialVersionUID = -5666437406419795118L;
 
     public static Builder builder() {
         return new Builder();
