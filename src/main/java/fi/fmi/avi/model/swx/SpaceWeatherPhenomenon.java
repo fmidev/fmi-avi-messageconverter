@@ -2,9 +2,9 @@ package fi.fmi.avi.model.swx;
 
 public interface SpaceWeatherPhenomenon {
     enum Type {
-        GNSS_BASED_NAVIGATION_AND_SURVEILLANCE("GNSS"),//
-        HF_COMMUNICATIONS("HF COM"),//
-        RADIATION_AT_FLIGHT_LEVELS("RADIATION"),//
+        GNSS_BASED_NAVIGATION_AND_SURVEILLANCE("GNSS"), //
+        HF_COMMUNICATIONS("HF COM"), //
+        RADIATION_AT_FLIGHT_LEVELS("RADIATION"), //
         COMMUNICATIONS_VIA_SATELLITE("SATCOM");
 
         private final String code;
@@ -23,7 +23,7 @@ public interface SpaceWeatherPhenomenon {
                     return t;
                 }
             }
-            return null;
+            throw new IllegalArgumentException("Type code \" " + code + "\" could not be resolved");
         }
     }
 
@@ -46,7 +46,7 @@ public interface SpaceWeatherPhenomenon {
                     return t;
                 }
             }
-            return null;
+            throw new IllegalArgumentException("Severity code \" " + code + "\" could not be resolved");
         }
 
     }

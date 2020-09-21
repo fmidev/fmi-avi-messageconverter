@@ -4,4 +4,6 @@ public interface AdvisoryNumber {
     int getYear();
 
     int getSerialNumber();
+
+    String asAdvisoryNumber();
 }

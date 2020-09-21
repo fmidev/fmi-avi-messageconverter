@@ -74,17 +74,18 @@ public abstract class SpaceWeatherPhenomenonImpl implements SpaceWeatherPhenomen
 
         @Override
         @JsonDeserialize(as = Severity.class)
-        public Builder setSeverity(Severity severity) {
+        public Builder setSeverity(final Severity severity) {
             return super.setSeverity(severity);
         }
 
         @Override
         @JsonDeserialize(as = Type.class)
-        public Builder setType(Type type) {
+        public Builder setType(final Type type) {
             return super.setType(type);
         }
 
-        private static final Pattern WMO_CODELIST_PATTERN = Pattern.compile("^(?<protocol>[a-z]*)://codes\\.wmo\\.int/49-2/SpaceWxPhenomena/(?<value>[A-Z_0-9]*)$");
+        private static final Pattern WMO_CODELIST_PATTERN =
+                Pattern.compile("^(?<protocol>[a-z]*)://codes\\.wmo\\.int/49-2/SpaceWxPhenomena/(?<value>[A-Z_0-9]*)$");
 
         public static Builder fromCombinedCode(final String code) {
             return fromCombinedCode(code, ' ');

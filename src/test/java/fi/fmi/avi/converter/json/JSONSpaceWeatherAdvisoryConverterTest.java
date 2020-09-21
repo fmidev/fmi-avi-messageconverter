@@ -88,7 +88,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
 
             region.setAirSpaceVolume(getAirspaceVolume());
             region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE);
-            analysis.setRegion(
+            analysis.addAllRegions(
                     Arrays.asList(region.build(), region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE).build()));
 
             if (i == 0 && hasObservation) {
@@ -97,8 +97,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
                 analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST);
             }
             analysis.setTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build());
-            analysis.setNoInformationAvailable(true);
-            analysis.setNoPhenomenaExpected(true);
+            analysis.setNilPhenomenonReason(SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason.NO_INFORMATION_AVAILABLE);
 
             analyses.add(analysis.build());
         }
