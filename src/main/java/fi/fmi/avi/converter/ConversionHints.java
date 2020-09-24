@@ -298,6 +298,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final ConversionHints SPECIAL_AIR_REPORT;
 
     /**
+     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPACE_WEATHER_ADVISORY}.
+     */
+    public static final ConversionHints SPACE_WEATHER_ADVISORY;
+
+    /**
      * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value {@link ConversionHints#VALUE_PARSING_MODE_STRICT}.
      */
     public static final ConversionHints STRICT_PARSING;
@@ -363,6 +368,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SIGMET);
         AIRMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.AIRMET);
         SPECIAL_AIR_REPORT = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPECIAL_AIR_REPORT);
+        SPACE_WEATHER_ADVISORY = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SPACE_WEATHER_ADVISORY);
 
         STRICT_PARSING = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_STRICT);
         ALLOW_ERRORS = new ConversionHints(KEY_PARSING_MODE, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
@@ -380,10 +386,12 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         this(null, true);
     }
 
-    /**       SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SIGMET);
+    /**
+     * SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SIGMET);
      * Creates ConversionHints with controlled modifiability.
      *
-     * @param modifiable set true to create a modifiable hints instance
+     * @param modifiable
+     *         set true to create a modifiable hints instance
      */
     public ConversionHints(final boolean modifiable) {
         this(null, modifiable);
@@ -392,7 +400,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ConversionHints with the given key-value pairs.
      *
-     * @param init the map of key-values
+     * @param init
+     *         the map of key-values
      */
     public ConversionHints(final Map<? super Key, ?> init) {
         this(init, true);
@@ -401,8 +410,10 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ParsingHints with the given key-value pairs and controlled modifiability.
      *
-     * @param init       the map of key-values
-     * @param modifiable true if hints can be modified, false if not
+     * @param init
+     *         the map of key-values
+     * @param modifiable
+     *         true if hints can be modified, false if not
      */
     public ConversionHints(final Map<? super Key, ?> init, final boolean modifiable) {
         if (init != null) {
@@ -416,8 +427,10 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      * Creates a ParsingHints with only a single key-value pair.
      * The result is unmodifiable.
      *
-     * @param key   the key
-     * @param value the value for the key
+     * @param key
+     *         the key
+     * @param value
+     *         the value for the key
      */
     public ConversionHints(final Key key, final Object value) {
         this(null, true);
@@ -588,7 +601,9 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         /**
          * Check if using the <code>value</code> with this Key makes sense.
          *
-         * @param value value to check
+         * @param value
+         *         value to check
+         *
          * @return true if the value is one of the allowed ones, false otherwise
          */
         public abstract boolean isCompatibleValue(Object value);
