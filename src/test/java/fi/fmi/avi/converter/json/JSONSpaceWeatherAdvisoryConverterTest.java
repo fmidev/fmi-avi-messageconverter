@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import fi.fmi.avi.model.swx.*;
-import fi.fmi.avi.model.swx.immutable.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +36,19 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PolygonGeometry;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
+import fi.fmi.avi.model.swx.AirspaceVolume;
+import fi.fmi.avi.model.swx.EnumSpaceWeatherPhenomenon;
+import fi.fmi.avi.model.swx.IssuingCenter;
+import fi.fmi.avi.model.swx.NextAdvisory;
+import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.swx.SpaceWeatherRegion;
+import fi.fmi.avi.model.swx.immutable.AdvisoryNumberImpl;
+import fi.fmi.avi.model.swx.immutable.AirspaceVolumeImpl;
+import fi.fmi.avi.model.swx.immutable.IssuingCenterImpl;
+import fi.fmi.avi.model.swx.immutable.NextAdvisoryImpl;
+import fi.fmi.avi.model.swx.immutable.SpaceWeatherAdvisoryAnalysisImpl;
+import fi.fmi.avi.model.swx.immutable.SpaceWeatherAdvisoryImpl;
+import fi.fmi.avi.model.swx.immutable.SpaceWeatherRegionImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONSpaceWeatherAdvisoryTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -47,16 +58,16 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
     private AviMessageConverter converter;
 
     private AdvisoryNumberImpl getAdvisoryNumber() {
-        AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
+        final AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
 
         return advisory.build();
     }
 
-    private NextAdvisory getNextAdvisory(boolean hasNext) {
-        NextAdvisoryImpl.Builder next = NextAdvisoryImpl.builder();
+    private NextAdvisory getNextAdvisory(final boolean hasNext) {
+        final NextAdvisoryImpl.Builder next = NextAdvisoryImpl.builder();
 
         if (hasNext) {
-            PartialOrCompleteTimeInstant nextAdvisoryTime = PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]"));
+            final PartialOrCompleteTimeInstant nextAdvisoryTime = PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]"));
             next.setTime(nextAdvisoryTime);
             next.setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_AT);
         } else {
@@ -67,24 +78,24 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
     }
 
     private List<String> getRemarks() {
-        List<String> remarks = new ArrayList<>();
+        final List<String> remarks = new ArrayList<>();
         remarks.add("RADIATION LVL EXCEEDED 100 PCT OF BACKGROUND LVL AT FL350 AND ABV. THE CURRENT EVENT HAS PEAKED AND LVL SLW RTN TO BACKGROUND LVL."
                 + " SEE WWW.SPACEWEATHERPROVIDER.WEB");
 
         return remarks;
     }
 
-    private List<SpaceWeatherAdvisoryAnalysis> getAnalyses(boolean hasObservation) {
-        List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
+    private List<SpaceWeatherAdvisoryAnalysis> getAnalyses(final boolean hasObservation) {
+        final List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
 
-        int day = 27;
-        int hour = 1;
+        final int day = 27;
+        final int hour = 1;
         for (int i = 0; i < 5; i++) {
-            SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
+            final SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
 
-            SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
+            final SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
 
-            String partialTime = "--" + day + "T" + hour + ":00Z";
+            final String partialTime = "--" + day + "T" + hour + ":00Z";
 
             region.setAirSpaceVolume(getAirspaceVolume());
             region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE);
@@ -106,10 +117,10 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
     }
 
     private AirspaceVolume getAirspaceVolume() {
-        AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
+        final AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
         airspaceVolume.setUpperLimitReference("Reference");
 
-        PolygonGeometry geometry = PolygonGeometryImpl.builder()
+        final PolygonGeometry geometry = PolygonGeometryImpl.builder()
                 .addAllExteriorRingPositions(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
                 .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
                 .setAxisLabels(Arrays.asList("lat", "lon"))
@@ -117,14 +128,14 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
                 .build();
         airspaceVolume.setHorizontalProjection(geometry);
 
-        NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
+        final NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
         airspaceVolume.setUpperLimit(nm);
 
         return airspaceVolume.build();
     }
 
     private IssuingCenter getIssuingCenter() {
-        IssuingCenterImpl.Builder issuingCenter = IssuingCenterImpl.builder();
+        final IssuingCenterImpl.Builder issuingCenter = IssuingCenterImpl.builder();
         issuingCenter.setName("DONLON");
         issuingCenter.setType("OTHER:SWXC");
         return issuingCenter.build();
@@ -132,34 +143,34 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
 
     @Test
     public void testSWXSerialization() throws Exception {
-        ObjectMapper om = new ObjectMapper();
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
 
-        InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("swx1.json");
+        final InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("swx1.json");
         Objects.requireNonNull(is);
 
-        String reference = IOUtils.toString(is, "UTF-8");
+        final String reference = IOUtils.toString(is, "UTF-8");
 
-        SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
+        final SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .addAllAnalyses(getAnalyses(false))
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
-                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
+                .addAllPhenomena(Arrays.asList(EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();
 
-        ConversionResult<String> result = converter.convertMessage(SWXObject, JSONConverter.SWX_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> result = converter.convertMessage(SWXObject, JSONConverter.SWX_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 
-        JsonNode refRoot = om.readTree(reference);
-        JsonNode convertedRoot = om.readTree(result.getConvertedMessage().get());
+        final JsonNode refRoot = om.readTree(reference);
+        final JsonNode convertedRoot = om.readTree(result.getConvertedMessage().get());
         System.err.println("EQUALS: " + refRoot.equals(convertedRoot));
         assertEquals("constructed and parsed tree not equal", refRoot, convertedRoot);
     }

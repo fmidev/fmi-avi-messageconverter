@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.swx.AdvisoryNumber;
+import fi.fmi.avi.model.swx.EnumSpaceWeatherPhenomenon;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
 import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
@@ -94,13 +96,13 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
                         .setNextAdvisory(NextAdvisoryImpl.immutableCopyOf(value.getNextAdvisory()));
 
                 retval.addAllPhenomena(value.getPhenomena().stream()//
-                        .map(p -> SpaceWeatherPhenomenonImpl.builder().setType(p.getType()).setSeverity(p.getSeverity()).build()));
+                        .map(p -> EnumSpaceWeatherPhenomenon.from(p.getType(), p.getSeverity())));
                 retval.addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf));
                 return retval;
             }
         }
 
-        @JsonDeserialize(contentAs = SpaceWeatherPhenomenonImpl.class)
+        @JsonDeserialize(contentAs = EnumSpaceWeatherPhenomenon.class)
         public Builder addAllPhenomena(final List<SpaceWeatherPhenomenon> elements) {
             return super.addAllPhenomena(elements);
         }

@@ -27,6 +27,7 @@ import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.AirspaceVolume;
+import fi.fmi.avi.model.swx.EnumSpaceWeatherPhenomenon;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
 import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
@@ -41,16 +42,16 @@ public class SpaceWeatherAdvisoryTest {
     }
 
     private AdvisoryNumberImpl getAdvisoryNumber() {
-        AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
+        final AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
 
         return advisory.build();
     }
 
-    private NextAdvisory getNextAdvisory(boolean hasNext) {
-        NextAdvisoryImpl.Builder next = NextAdvisoryImpl.builder();
+    private NextAdvisory getNextAdvisory(final boolean hasNext) {
+        final NextAdvisoryImpl.Builder next = NextAdvisoryImpl.builder();
 
         if (hasNext) {
-            PartialOrCompleteTimeInstant nextAdvisoryTime = PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]"));
+            final PartialOrCompleteTimeInstant nextAdvisoryTime = PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]"));
             next.setTime(nextAdvisoryTime);
             next.setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_AT);
         } else {
@@ -61,24 +62,24 @@ public class SpaceWeatherAdvisoryTest {
     }
 
     private List<String> getRemarks() {
-        List<String> remarks = new ArrayList<>();
+        final List<String> remarks = new ArrayList<>();
         remarks.add("RADIATION LVL EXCEEDED 100 PCT OF BACKGROUND LVL AT FL350 AND ABV. THE CURRENT EVENT HAS PEAKED AND LVL SLW RTN TO BACKGROUND LVL."
                 + " SEE WWW.SPACEWEATHERPROVIDER.WEB");
 
         return remarks;
     }
 
-    private List<SpaceWeatherAdvisoryAnalysis> getAnalyses(boolean hasObservation) {
-        List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
+    private List<SpaceWeatherAdvisoryAnalysis> getAnalyses(final boolean hasObservation) {
+        final List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
 
-        int day = 27;
-        int hour = 1;
+        final int day = 27;
+        final int hour = 1;
         for (int i = 0; i < 5; i++) {
-            SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
+            final SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
 
-            SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
+            final SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
 
-            String partialTime = "--" + day + "T" + hour + ":00Z";
+            final String partialTime = "--" + day + "T" + hour + ":00Z";
             analysis.setTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build());
             region.setAirSpaceVolume(getAirspaceVolume(true));
             region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE);
@@ -101,12 +102,12 @@ public class SpaceWeatherAdvisoryTest {
         return analyses;
     }
 
-    private AirspaceVolume getAirspaceVolume(boolean isPointGeometry) {
-        AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
+    private AirspaceVolume getAirspaceVolume(final boolean isPointGeometry) {
+        final AirspaceVolumeImpl.Builder airspaceVolume = AirspaceVolumeImpl.builder();
         airspaceVolume.setUpperLimitReference("Reference");
 
         if (isPointGeometry) {
-            PolygonGeometry geometry = PolygonGeometryImpl.builder()
+            final PolygonGeometry geometry = PolygonGeometryImpl.builder()
                     .addAllExteriorRingPositions(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
                     .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
                     .setAxisLabels(Arrays.asList("lat", "lon"))
@@ -114,9 +115,9 @@ public class SpaceWeatherAdvisoryTest {
                     .build();
             airspaceVolume.setHorizontalProjection(geometry);
         } else {
-            NumericMeasureImpl.Builder measure = NumericMeasureImpl.builder().setValue(5409.75).setUom("[nmi_i]");
+            final NumericMeasureImpl.Builder measure = NumericMeasureImpl.builder().setValue(5409.75).setUom("[nmi_i]");
 
-            CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
+            final CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
                     .addAllCenterPointCoordinates(Arrays.asList(-16.6392, 160.9368))
                     .setRadius(measure.build())
                     .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
@@ -126,14 +127,14 @@ public class SpaceWeatherAdvisoryTest {
             airspaceVolume.setHorizontalProjection(cbcp.build());
         }
 
-        NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
+        final NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
         airspaceVolume.setUpperLimit(nm);
 
         return airspaceVolume.build();
     }
 
     private IssuingCenter getIssuingCenter() {
-        IssuingCenterImpl.Builder issuingCenter = IssuingCenterImpl.builder();
+        final IssuingCenterImpl.Builder issuingCenter = IssuingCenterImpl.builder();
         issuingCenter.setName("DONLON");
         issuingCenter.setType("OTHER:SWXC");
         return issuingCenter.build();
@@ -141,15 +142,15 @@ public class SpaceWeatherAdvisoryTest {
 
     @Test
     public void buildSWXWithCircleByCenterPoint() throws Exception {
-        NextAdvisoryImpl.Builder nextAdvisory = NextAdvisoryImpl.builder()
+        final NextAdvisoryImpl.Builder nextAdvisory = NextAdvisoryImpl.builder()
                 .setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_BY)
                 .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")));
 
-        int day = 27;
-        int hour = 1;
-        String partialTime = "--" + day + "T" + hour + ":00Z";
+        final int day = 27;
+        final int hour = 1;
+        final String partialTime = "--" + day + "T" + hour + ":00Z";
 
-        List<SpaceWeatherRegion> regions = new ArrayList<>();
+        final List<SpaceWeatherRegion> regions = new ArrayList<>();
         regions.add(SpaceWeatherRegionImpl.builder()
                 .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE)
                 .setAirSpaceVolume(getAirspaceVolume(false))
@@ -158,26 +159,26 @@ public class SpaceWeatherAdvisoryTest {
                 .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE)
                 .setAirSpaceVolume(getAirspaceVolume(false))
                 .build());
-        PartialOrCompleteTimeInstant time = PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build();
-        SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
+        final PartialOrCompleteTimeInstant time = PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build();
+        final SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
         analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST)
                 .setTime(time)
                 .addAllRegions(regions)
                 .setNilPhenomenonReason(SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason.NO_INFORMATION_AVAILABLE);
 
-        List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
+        final List<SpaceWeatherAdvisoryAnalysis> analyses = new ArrayList<>();
         analyses.add(analysis.build());
         analyses.add(analysis.build());
         analyses.add(analysis.build());
         analyses.add(analysis.build());
         analyses.add(analysis.build());
 
-        SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
+        final SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
-                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
+                .addAllPhenomena(Arrays.asList(EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(analyses)
@@ -199,12 +200,12 @@ public class SpaceWeatherAdvisoryTest {
 
     @Test
     public void buildSWXWithoutNextAdvisory() throws Exception {
-        SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
+        final SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
-                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
+                .addAllPhenomena(Arrays.asList(EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(getAnalyses(true))
@@ -227,13 +228,13 @@ public class SpaceWeatherAdvisoryTest {
 
     @Test
     public void buildSWXWithoutObservation() throws Exception {
-        SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
+        final SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllAnalyses(getAnalyses(false))
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
-                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
+                .addAllPhenomena(Arrays.asList(EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .setRemarks(getRemarks())
@@ -255,13 +256,13 @@ public class SpaceWeatherAdvisoryTest {
 
     @Test
     public void swxSerializationTest() throws Exception {
-        SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
+        final SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setReplaceAdvisoryNumber(getAdvisoryNumber())
-                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD").build(),
-                        SpaceWeatherPhenomenonImpl.builder().fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD").build()))
+                .addAllPhenomena(Arrays.asList(EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(getAnalyses(true))
