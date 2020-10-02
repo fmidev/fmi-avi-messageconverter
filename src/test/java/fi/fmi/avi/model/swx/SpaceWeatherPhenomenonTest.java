@@ -14,29 +14,29 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-public class EnumSpaceWeatherPhenomenonTest {
+public class SpaceWeatherPhenomenonTest {
     @Test
     public void covers_all_combinations_of_type_and_severity() {
-        final EnumSet<EnumSpaceWeatherPhenomenon> result = EnumSet.noneOf(EnumSpaceWeatherPhenomenon.class);
+        final EnumSet<SpaceWeatherPhenomenon> result = EnumSet.noneOf(SpaceWeatherPhenomenon.class);
         for (final SpaceWeatherPhenomenon.Type type : SpaceWeatherPhenomenon.Type.values()) {
             for (final SpaceWeatherPhenomenon.Severity severity : SpaceWeatherPhenomenon.Severity.values()) {
-                result.add(EnumSpaceWeatherPhenomenon.from(type, severity));
+                result.add(SpaceWeatherPhenomenon.from(type, severity));
             }
         }
-        assertEquals(EnumSet.allOf(EnumSpaceWeatherPhenomenon.class), result);
+        assertEquals(EnumSet.allOf(SpaceWeatherPhenomenon.class), result);
     }
 
     @Test
     public void from_given_type_and_severity_of_value_returns_same_instance() {
-        for (final EnumSpaceWeatherPhenomenon value : EnumSpaceWeatherPhenomenon.values()) {
-            assertSame(value, EnumSpaceWeatherPhenomenon.from(value.getType(), value.getSeverity()));
+        for (final SpaceWeatherPhenomenon value : SpaceWeatherPhenomenon.values()) {
+            assertSame(value, SpaceWeatherPhenomenon.from(value.getType(), value.getSeverity()));
         }
     }
 
     @Test
     public void combined_codes_are_unique() {
         final Set<String> codes = new HashSet<>();
-        for (final EnumSpaceWeatherPhenomenon value : EnumSpaceWeatherPhenomenon.values()) {
+        for (final SpaceWeatherPhenomenon value : SpaceWeatherPhenomenon.values()) {
             final String code = value.asCombinedCode();
             assertFalse("unexpectedly duplicated: " + code, codes.contains(code));
             codes.add(code);
@@ -46,7 +46,7 @@ public class EnumSpaceWeatherPhenomenonTest {
     @Test
     public void wmoCodeListValues_are_unique() {
         final Set<String> codes = new HashSet<>();
-        for (final EnumSpaceWeatherPhenomenon value : EnumSpaceWeatherPhenomenon.values()) {
+        for (final SpaceWeatherPhenomenon value : SpaceWeatherPhenomenon.values()) {
             final String code = value.asWMOCodeListValue();
             assertFalse("unexpectedly duplicated: " + code, codes.contains(code));
             codes.add(code);
@@ -55,8 +55,8 @@ public class EnumSpaceWeatherPhenomenonTest {
 
     @Test
     public void fromCombinedCode_given_result_of_asCombinedCode_returns_same_instance() {
-        for (final EnumSpaceWeatherPhenomenon value : EnumSpaceWeatherPhenomenon.values()) {
-            assertSame(value, EnumSpaceWeatherPhenomenon.fromCombinedCode(value.asCombinedCode()));
+        for (final SpaceWeatherPhenomenon value : SpaceWeatherPhenomenon.values()) {
+            assertSame(value, SpaceWeatherPhenomenon.fromCombinedCode(value.asCombinedCode()));
         }
     }
 
@@ -66,7 +66,7 @@ public class EnumSpaceWeatherPhenomenonTest {
                 "SATCOMM MOD", "SATCOM MODD", "SATCOM_ MOD", "SATCOM _MOD", "SATCOM  MOD", "satcom mod")//
                 .filter(code -> {
                     try {
-                        EnumSpaceWeatherPhenomenon.fromCombinedCode(code);
+                        SpaceWeatherPhenomenon.fromCombinedCode(code);
                         return true;
                     } catch (final IllegalArgumentException e) {
                         return false;
@@ -78,8 +78,8 @@ public class EnumSpaceWeatherPhenomenonTest {
 
     @Test
     public void fromWMOCodeListValue_given_result_of_asWMOCodeListValue_returns_same_instance() {
-        for (final EnumSpaceWeatherPhenomenon value : EnumSpaceWeatherPhenomenon.values()) {
-            assertSame(value, EnumSpaceWeatherPhenomenon.fromWMOCodeListValue(value.asWMOCodeListValue()));
+        for (final SpaceWeatherPhenomenon value : SpaceWeatherPhenomenon.values()) {
+            assertSame(value, SpaceWeatherPhenomenon.fromWMOCodeListValue(value.asWMOCodeListValue()));
         }
     }
 
@@ -93,7 +93,7 @@ public class EnumSpaceWeatherPhenomenonTest {
                         "http://wmo.int/49-2/SpaceWxPhenomena/SATCOM_MOD", "http://codes.wmo.int/49-3/SpaceWxPhenomena/SATCOM_MOD"))//
                 .filter(code -> {
                     try {
-                        EnumSpaceWeatherPhenomenon.fromWMOCodeListValue(code);
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue(code);
                         return true;
                     } catch (final IllegalArgumentException e) {
                         return false;

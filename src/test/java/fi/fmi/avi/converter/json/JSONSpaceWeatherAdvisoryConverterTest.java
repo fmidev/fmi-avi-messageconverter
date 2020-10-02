@@ -37,10 +37,10 @@ import fi.fmi.avi.model.PolygonGeometry;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.AirspaceVolume;
-import fi.fmi.avi.model.swx.EnumSpaceWeatherPhenomenon;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
 import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.swx.SpaceWeatherPhenomenon;
 import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 import fi.fmi.avi.model.swx.immutable.AdvisoryNumberImpl;
 import fi.fmi.avi.model.swx.immutable.AirspaceVolumeImpl;
@@ -157,8 +157,8 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .addAllAnalyses(getAnalyses(false))
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList(EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
-                        EnumSpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
                 .setReplaceAdvisoryNumber(Optional.empty())
                 .setRemarks(getRemarks())
