@@ -3,7 +3,6 @@ package fi.fmi.avi.model.swx.immutable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +24,7 @@ import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PolygonGeometry;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
+import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.AirspaceVolume;
@@ -109,9 +109,7 @@ public class SpaceWeatherAdvisoryTest {
         if (isPointGeometry) {
             final PolygonGeometry geometry = PolygonGeometryImpl.builder()
                     .addAllExteriorRingPositions(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
-                    .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
-                    .setAxisLabels(Arrays.asList("lat", "lon"))
-                    .setSrsDimension(BigInteger.valueOf(2))
+                    .setCrs(CoordinateReferenceSystemImpl.wgs84())
                     .build();
             airspaceVolume.setHorizontalProjection(geometry);
         } else {
@@ -120,9 +118,7 @@ public class SpaceWeatherAdvisoryTest {
             final CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
                     .addAllCenterPointCoordinates(Arrays.asList(-16.6392, 160.9368))
                     .setRadius(measure.build())
-                    .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
-                    .setAxisLabels(Arrays.asList("lat", "lon"))
-                    .setSrsDimension(BigInteger.valueOf(2));
+                    .setCrs(CoordinateReferenceSystemImpl.wgs84());
 
             airspaceVolume.setHorizontalProjection(cbcp.build());
         }

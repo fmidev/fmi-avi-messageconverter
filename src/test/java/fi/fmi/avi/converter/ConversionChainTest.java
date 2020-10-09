@@ -17,6 +17,7 @@ import fi.fmi.avi.converter.json.JSONConverterTest;
 import fi.fmi.avi.converter.json.JSONTestConfiguration;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
@@ -35,20 +36,19 @@ public class ConversionChainTest {
         Objects.requireNonNull(is);
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        ConversionResult<String> result = new ConversionChainBuilder<>(this.converter, JSONConverter.JSON_STRING_TO_TAF_POJO)
-                .withMutator(TAFImpl.Builder::from, TAF.class, TAFImpl.Builder.class)
-                .withMutator(tafBuilder -> tafBuilder
-                                .setAerodrome(AerodromeImpl.Builder.from(tafBuilder.getAerodrome())
-                                        .setDesignator("EETN")
-                                        .setName("Tallinn Airport")
-                                        .setFieldElevationValue(40.0)
-                                        .setLocationIndicatorICAO("EETN")
-                                        .setReferencePoint(ElevatedPointImpl.builder()
-                                                .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
-                                                .addCoordinates(24.8325, 59.413333)
-                                                .build())
-                                        .build())
-                                .build(), TAFImpl.Builder.class, TAF.class)
+        final ConversionResult<String> result = new ConversionChainBuilder<>(this.converter, JSONConverter.JSON_STRING_TO_TAF_POJO)//
+                .withMutator(TAFImpl.Builder::from, TAF.class, TAFImpl.Builder.class)//
+                .withMutator(tafBuilder -> tafBuilder.setAerodrome(AerodromeImpl.Builder.from(tafBuilder.getAerodrome())
+                        .setDesignator("EETN")
+                        .setName("Tallinn Airport")
+                        .setFieldElevationValue(40.0)
+                        .setLocationIndicatorICAO("EETN")
+                        .setReferencePoint(ElevatedPointImpl.builder()//
+                                .setCrs(CoordinateReferenceSystemImpl.wgs84())//
+                                .addCoordinates(24.8325, 59.413333)//
+                                .build())//
+                        .build())//
+                        .build(), TAFImpl.Builder.class, TAF.class)//
                 .withConversionStep(JSONConverter.TAF_POJO_TO_JSON_STRING)//
                 .withConversionStep(JSONConverter.JSON_STRING_TO_TAF_POJO)//
                 .build(JSONConverter.TAF_POJO_TO_JSON_STRING)//
@@ -62,10 +62,10 @@ public class ConversionChainTest {
     public void testBulletinExtractionChain() throws Exception {
         final InputStream is = JSONConverterTest.class.getResourceAsStream("tafBulletin1.json");
         Objects.requireNonNull(is);
-        final String input = IOUtils.toString(is,"UTF-8");
+        final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        ConversionResult<String> result = new ConversionChainBuilder<>(this.converter, JSONConverter.JSON_STRING_TO_TAF_BULLETIN_POJO)
-                .withMutator(bulletin -> bulletin.getMessages().get(0),TAFBulletin.class, TAF.class)
+        final ConversionResult<String> result = new ConversionChainBuilder<>(this.converter, JSONConverter.JSON_STRING_TO_TAF_BULLETIN_POJO)//
+                .withMutator(bulletin -> bulletin.getMessages().get(0), TAFBulletin.class, TAF.class)//
                 .build(JSONConverter.TAF_POJO_TO_JSON_STRING)//
                 .convertMessage(input, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());

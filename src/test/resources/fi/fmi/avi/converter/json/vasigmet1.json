@@ -28,8 +28,8 @@
     "type": "FIR"
   },
   "sigmetPhenomenon": "EMBD_TS",
-  "permissibleUsage":"NON_OPERATIONAL",
-  "permissibleUsageReason":"EXERCISE",
+  "permissibleUsage": "NON_OPERATIONAL",
+  "permissibleUsageReason": "EXERCISE",
   "analysisType": "OBSERVATION",
   "intensityChange": "NO_CHANGE",
   "analysisGeometries": [
@@ -63,33 +63,41 @@
       }
     }
   ],
-  "forecastGeometries":[{
-    "time":  {
-      "completeTime": "2017-08-27T18:00:00Z"
-    },
-    "approximateLocation": false,
-    "geometry": {
-      "geoGeometry": {
-        "type": "Polygon",
-        "exteriorRingPositions": [
-          5.0,
-          53.0,
-          6.0,
-          54.0,
-          4.0,
-          55.0,
-          5.0,
-          53.0
-        ]
+  "forecastGeometries": [
+    {
+      "time": {
+        "completeTime": "2017-08-27T18:00:00Z"
+      },
+      "approximateLocation": false,
+      "geometry": {
+        "geoGeometry": {
+          "type": "Polygon",
+          "exteriorRingPositions": [
+            5.0,
+            53.0,
+            6.0,
+            54.0,
+            4.0,
+            55.0,
+            5.0,
+            53.0
+          ]
+        }
       }
     }
-  }
   ],
   "VAInfo": {
     "volcano": {
       "volcanoPosition": {
         "type": "ElevatedPoint",
-        "srsName": "EPSG:4326",
+        "crs": {
+          "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+          "dimension": 2,
+          "axisLabels": [
+            "Lat",
+            "Lon"
+          ]
+        },
         "coordinates": [
           52.0,
           5.2
