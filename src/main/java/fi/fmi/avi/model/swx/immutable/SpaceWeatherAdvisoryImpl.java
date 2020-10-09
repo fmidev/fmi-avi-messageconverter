@@ -5,8 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -120,11 +118,17 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
 
         public SpaceWeatherAdvisoryImpl.Builder withCompleteIssueTimeNear(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
+            if (getIssueTime().isPresent() && getIssueTime().get().getCompleteTime().isPresent()) {
+                return this;
+            }
             return mapIssueTime((input) -> input.toBuilder().completePartialNear(reference).build());
         }
 
         private SpaceWeatherAdvisoryImpl.Builder withCompleteNextAdvisory(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
+            if (getNextAdvisory().getTime().isPresent() && getNextAdvisory().getTime().get().getCompleteTime().isPresent()) {
+                return this;
+            }
             return mapNextAdvisory(nextAdvisory -> {
                 final NextAdvisoryImpl.Builder builder = NextAdvisoryImpl.Builder.from(nextAdvisory);
                 builder.mapTime(time -> time.toBuilder().completePartialNear(reference).build());
@@ -135,18 +139,17 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
         private Builder withCompleteAnalysisTimes(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             if (!getAnalyses().isEmpty()) {
-                final Iterable<PartialOrCompleteTimeInstant> partialTimes = getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysis::getTime)::iterator;
-                final List<PartialOrCompleteTime> times = PartialOrCompleteTimes.completeAscendingPartialTimes(partialTimes, reference,
-                        toZonedDateTimeNotBeforeOrNear());
-
-                final List<SpaceWeatherAdvisoryAnalysis> completedAnalyses = new ArrayList<>();
-                for (int i = 0; i < times.size(); i++) {
-                    final PartialOrCompleteTime time = times.get(i);
-                    completedAnalyses.add(
-                            SpaceWeatherAdvisoryAnalysisImpl.Builder.from(getAnalyses().get(i)).setTime((PartialOrCompleteTimeInstant) time).build());
-                }
-                clearAnalyses();
-                addAllAnalyses(Collections.unmodifiableList(completedAnalyses));
+                mutateAnalyses(analyses -> {
+                    final Iterable<PartialOrCompleteTimeInstant> partialTimes = () -> analyses.stream().map(SpaceWeatherAdvisoryAnalysis::getTime).iterator();
+                    final List<PartialOrCompleteTime> times = PartialOrCompleteTimes.completeAscendingPartialTimes(partialTimes, reference,
+                            toZonedDateTimeNotBeforeOrNear());
+                    for (int i = 0; i < times.size(); i++) {
+                        final PartialOrCompleteTimeInstant time = (PartialOrCompleteTimeInstant) times.get(i);
+                        if (!analyses.get(i).getTime().equals(time)) {
+                            analyses.set(i, SpaceWeatherAdvisoryAnalysisImpl.Builder.from(analyses.get(i)).setTime(time).build());
+                        }
+                    }
+                });
             }
             return this;
         }
