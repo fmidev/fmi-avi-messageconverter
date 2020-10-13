@@ -2,6 +2,7 @@ package fi.fmi.avi.model.immutable;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -17,7 +18,10 @@ import fi.fmi.avi.model.CoordinateReferenceSystem;
 @JsonDeserialize(builder = CoordinateReferenceSystemImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "name", "dimension", "axisLabels", "uomLabels" })
-public abstract class CoordinateReferenceSystemImpl implements CoordinateReferenceSystem {
+public abstract class CoordinateReferenceSystemImpl implements CoordinateReferenceSystem, Serializable {
+
+    private static final long serialVersionUID = 8478876500014731383L;
+
     private static final CoordinateReferenceSystemImpl WGS_84 = CoordinateReferenceSystemImpl.builder()//
             .setName(AviationCodeListUser.CODELIST_VALUE_EPSG_4326)//
             .setDimension(2)//
@@ -48,7 +52,8 @@ public abstract class CoordinateReferenceSystemImpl implements CoordinateReferen
     public abstract Builder toBuilder();
 
     public static class Builder extends CoordinateReferenceSystemImpl_Builder {
-        Builder() {
+        @Deprecated
+        public Builder() {
         }
 
         public static Builder from(final CoordinateReferenceSystem value) {
