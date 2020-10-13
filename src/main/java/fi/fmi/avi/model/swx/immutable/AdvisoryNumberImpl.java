@@ -70,8 +70,10 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
         }
 
         /**
-         * Parses AdvisoryNumber from a String matching
-         * pattern "^(?<year>[0-9]{4})/(?<serialNo>[0-9]*?)$"
+         * Parses AdvisoryNumber from a String matching format declared in ICAO Annex 3.
+         * <pre><code>nnnn/[n][n][n]n</code></pre>
+         *
+         * No strict checking is made, this method may accept more digits than specified.
          */
         public static Builder from(final String value) {
             final Matcher m = ADVISORY_NO_FORMAT.matcher(value);
@@ -80,7 +82,6 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
             } else {
                 throw new IllegalArgumentException("Input does not match advisory number pattern " + ADVISORY_NO_FORMAT);
             }
-
         }
     }
 }
