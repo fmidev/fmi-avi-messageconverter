@@ -17,12 +17,12 @@ public interface SpaceWeatherRegion extends AviationWeatherMessageOrCollection {
     Optional<Double> getLongitudeLimitMaximum();
 
     enum SpaceWeatherLocation {
-        HIGH_NORTHERN_HEMISPHERE("HNH", -90d, -60d),
-        MIDDLE_NORTHERN_HEMISPHERE("MNH", -60d, -30d),
-        EQUATORIAL_LATITUDES_NORTHERN_HEMISPHERE("EQN", -30d, 0d),
-        EQUATORIAL_LATITUDES_SOUTHERN_HEMISPHERE("EQS", 0d, 30d),
-        MIDDLE_LATITUDES_SOUTHERN_HEMISPHERE("MSH", 30d, 60d),
-        HIGH_LATITUDES_SOUTHERN_HEMISPHERE("HSH", 60d, 90d),
+        HIGH_NORTHERN_HEMISPHERE("HNH", 90d, 60d),
+        MIDDLE_NORTHERN_HEMISPHERE("MNH", 60d, 30d),
+        EQUATORIAL_LATITUDES_NORTHERN_HEMISPHERE("EQN", 30d, 0d),
+        EQUATORIAL_LATITUDES_SOUTHERN_HEMISPHERE("EQS", 0d, -30d),
+        MIDDLE_LATITUDES_SOUTHERN_HEMISPHERE("MSH", -30d, -60d),
+        HIGH_LATITUDES_SOUTHERN_HEMISPHERE("HSH", -60d, -90d),
         DAYLIGHT_SIDE("DAYLIGHT_SIDE", Double.NaN, Double.NaN);
 
         private static final String CODELIST_BASE = "http://codes.wmo.int/49-2/SpaceWxLocation/";
