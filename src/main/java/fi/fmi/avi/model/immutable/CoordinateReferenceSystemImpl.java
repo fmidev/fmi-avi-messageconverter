@@ -3,6 +3,7 @@ package fi.fmi.avi.model.immutable;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
@@ -66,5 +67,22 @@ public abstract class CoordinateReferenceSystemImpl implements CoordinateReferen
                     .addAllAxisLabels(value.getAxisLabels())//
                     .addAllUomLabels(value.getUomLabels());
         }
+
+        public final Builder setAxisLabels(final List<String> axisLabels) {
+            requireNonNull(axisLabels, "axisLabels");
+            return mutateAxisLabels(labels -> {
+                labels.clear();
+                labels.addAll(axisLabels);
+            });
+        }
+
+        public final Builder setUomLabels(final List<String> uomLabels) {
+            requireNonNull(uomLabels, "uomLabels");
+            return mutateUomLabels(labels -> {
+                labels.clear();
+                labels.addAll(uomLabels);
+            });
+        }
+
     }
 }
