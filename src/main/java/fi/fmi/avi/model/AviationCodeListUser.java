@@ -54,7 +54,7 @@ public interface AviationCodeListUser {
             + "RELATED TO AIRMET INFORMATION";
     String CODELIST_AIRMET_EVOLVING_CONDITION_COLLECTION_ANALYSIS =
             "http://codes.wmo.int/49-2/observation-type/iwxxm/2" + ".1/AIRMETEvolvingConditionCollectionAnalysis";
-    String CODELIST_VALUE_WEATHERCAUSINGVISIBILITYREDUCTION = "http://codes.wmo.int/49.2/WeatherCausingVisibilityReduction";
+    String CODELIST_VALUE_WEATHERCAUSINGVISIBILITYREDUCTION = "http://codes.wmo.int/49-2/WeatherCausingVisibilityReduction";
 
     enum MetarStatus {
         NORMAL(0), CORRECTION(1), MISSING(2);
