@@ -14,7 +14,7 @@ public interface AviationCodeListUser {
 
     String CODELIST_VALUE_PREFIX_SIG_WEATHER = "http://codes.wmo.int/306/4678/";
     String CODELIST_VALUE_PREFIX_CLOUD_AMOUNT_REPORTED_AT_AERODROME = "http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome/";
-    String CODELIST_VALUE_PREFIX_SIG_CONVECTIVE_CLOUD_TYPE = "http://codes.wmo.int/bufr4/codeflag/0-20-012/";
+    String CODELIST_VALUE_PREFIX_SIG_CONVECTIVE_CLOUD_TYPE = "http://codes.wmo.int/49-2/SigConvectiveCloudType/";
     String CODELIST_VALUE_PREFIX_SEA_SURFACE_STATE = "http://codes.wmo.int/bufr4/codeflag/0-22-061/";
     String CODELIST_VALUE_PREFIX_RUNWAY_DEPOSITS = "http://codes.wmo.int/bufr4/codeflag/0-20-086/";
     String CODELIST_VALUE_PREFIX_RUNWAY_CONTAMINATION = "http://codes.wmo.int/bufr4/codeflag/0-20-087/";
@@ -224,12 +224,12 @@ public interface AviationCodeListUser {
         }
 
         public int getBufrCode() {
-            return this.bufrCode;
+            return bufrCode;
         }
     }
 
     enum CloudType {
-        CB(9), TCU(32);
+        CB("CB", 9), TCU("TCU", 32);
 
         public static CloudType fromInt(final int code) {
             switch (code) {
@@ -242,14 +242,20 @@ public interface AviationCodeListUser {
             }
         }
 
-        private final int code;
+        private final String code;
+        private final int bufrCode;
 
-        CloudType(final int code) {
+        CloudType(final String code, final int bufrCode) {
             this.code = code;
+            this.bufrCode = bufrCode;
         }
 
-        public int getCode() {
-            return this.code;
+        public String getCode() {
+            return code;
+        }
+
+        public int getBufrCode() {
+            return bufrCode;
         }
     }
 
