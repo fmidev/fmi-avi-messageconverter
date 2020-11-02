@@ -26,7 +26,7 @@ import fi.fmi.avi.model.PartialDateTime.PartialField;
 @FreeBuilder
 @JsonDeserialize(builder = PartialOrCompleteTimeInstant.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "completeTime", "partialTime", "partialTimePattern" })
+@JsonPropertyOrder({ "completeTime", "partialTime" })
 public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime {
 
     private static final long serialVersionUID = -3820077096763961462L;
