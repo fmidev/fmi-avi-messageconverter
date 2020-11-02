@@ -14,10 +14,14 @@ public interface TAFReference {
 
     Aerodrome getAerodrome();
 
+    // Should not be used: cannot be parsed from TAC and information does not exist in IWXXM 2.1 or 3.0, not used in code either.
+    @Deprecated
     Optional<PartialOrCompleteTimeInstant> getIssueTime();
 
     Optional<PartialOrCompleteTimePeriod> getValidityTime();
 
+    // Should not be used: cannot be parsed from TAC and information does not exist in IWXXM 2.1 or 3.0, not used in code either.
+    @Deprecated
     Optional<TAF.TAFStatus> getStatus();
 
     /**
