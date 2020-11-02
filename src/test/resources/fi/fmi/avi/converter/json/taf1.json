@@ -149,15 +149,20 @@
     "forecastWeather" : [ {
       "code" : "RASN",
       "description" : "Precipitation of rain and snow"
-    } ],
-    "cloud" : {
-      "layers" : [ {
-        "amount" : "BKN",
-        "base" : {
-          "value" : 400.0,
-          "uom" : "[ft_i]"
-        }
-      } ]
     }
-  } ]
+    ],
+    "cloud": {
+      "layers": [
+        {
+          "amount": "BKN",
+          "base": {
+            "value": 400.0,
+            "uom": "[ft_i]"
+          }
+        }
+      ]
+    }
+  }
+  ],
+  "reportStatus": "NORMAL"
 }

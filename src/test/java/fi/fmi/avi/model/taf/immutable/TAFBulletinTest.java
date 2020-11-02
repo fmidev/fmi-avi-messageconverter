@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.taf.impl;
+package fi.fmi.avi.model.taf.immutable;
 
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -17,8 +17,6 @@ import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.taf.TAF;
-import fi.fmi.avi.model.taf.immutable.TAFBulletinImpl;
-import fi.fmi.avi.model.taf.immutable.TAFImpl;
 
 public class TAFBulletinTest {
 
