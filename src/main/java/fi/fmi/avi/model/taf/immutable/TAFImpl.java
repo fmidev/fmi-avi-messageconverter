@@ -42,9 +42,10 @@ import fi.fmi.avi.model.taf.TAFReference;
 @FreeBuilder
 @JsonDeserialize(builder = TAFImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "status", "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts", "referredReport", "remarks", "permissibleUsage",
-        "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime",
-        "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
+@JsonPropertyOrder({ "status", "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts", "referredReport", "isCancelledMessage",
+        "isMissingMessage", "cancelledReportValidPeriod", "reportStatus", "remarks", "permissibleUsage", "permissibleUsageReason",
+        "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
+        "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class TAFImpl implements TAF, Serializable {
 
     private static final long serialVersionUID = -449932311496894566L;
@@ -114,6 +115,7 @@ public abstract class TAFImpl implements TAF, Serializable {
             } else {
                 //From AviationWeatherMessage:
                 final Builder retval = builder()//
+                        .setReportStatus(value.getReportStatus())
                         .setPermissibleUsage(value.getPermissibleUsage())
                         .setPermissibleUsageReason(value.getPermissibleUsageReason())
                         .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
@@ -250,9 +252,55 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         @Override
+        public Builder setStatus(final TAFStatus status) {
+            super.setStatus(status);
+            if (TAFStatus.CANCELLATION.equals(status)) {
+                super.setReportStatus(ReportStatus.NORMAL).setCancelMessage(true);
+            } else if (TAFStatus.MISSING.equals(status)) {
+                super.setReportStatus(ReportStatus.NORMAL).setMissingMessage(true);
+            } else {
+                if (TAFStatus.NORMAL.equals(status)) {
+                    if (!super.getReportStatus().isPresent()) {
+                        super.setReportStatus(ReportStatus.NORMAL);
+                    }
+                } else if (TAFStatus.AMENDMENT.equals(status)) {
+                    super.setReportStatus(ReportStatus.AMENDMENT);
+                } else if (TAFStatus.CORRECTION.equals(status)) {
+                    super.setReportStatus(ReportStatus.CORRECTION);
+                } else {
+                    throw new IllegalArgumentException("Cannot determine report status from TAFStatus " + status);
+                }
+                super.setMissingMessage(false).setCancelMessage(false);
+            }
+            return this;
+        }
+
+        @Override
+        public Builder setReportStatus(final ReportStatus status) {
+            super.setReportStatus(status);
+            if (ReportStatus.NORMAL.equals(status)) {
+                super.setStatus(TAFStatus.NORMAL);
+            } else if (ReportStatus.AMENDMENT.equals(status)) {
+                super.setStatus(TAFStatus.AMENDMENT);
+            } else if (ReportStatus.CORRECTION.equals(status)) {
+                super.setStatus(TAFStatus.CORRECTION);
+            } else {
+                throw new IllegalArgumentException("Cannot determine TAFStatus from report status " + status);
+            }
+            return this;
+        }
+
+        @Override
         @JsonDeserialize(as = AerodromeImpl.class)
         public Builder setAerodrome(final Aerodrome aerodrome) {
-            return super.setAerodrome(aerodrome);
+            super.setAerodrome(aerodrome);
+            if (super.getCancelledReportValidPeriod().isPresent() && !super.getReferredReport().isPresent()) {
+                super.setReferredReport(TAFReferenceImpl.builder()//
+                        .setAerodrome(this.getAerodrome())//
+                        .setValidityTime(super.getCancelledReportValidPeriod().get())//
+                        .build());
+            }
+            return this;
         }
 
         @Override
@@ -270,24 +318,83 @@ public abstract class TAFImpl implements TAF, Serializable {
         @Override
         @JsonDeserialize(as = TAFReferenceImpl.class)
         public Builder setReferredReport(final TAFReference referredReport) {
-            final Builder retval = super.setReferredReport(referredReport);
-            final Aerodrome ref = referredReport.getAerodrome();
-            try {
-                final Aerodrome base = this.getAerodrome();
-                if (ref != null) {
-                    if (base != null) {
-                        if (!base.equals(ref)) {
-                            throw new IllegalStateException("Aerodrome " + base + " already set for TAF, cannot set referred report with aerodrome " + ref);
-                        }
-                    }
-                    this.setAerodrome(AerodromeImpl.immutableCopyOf(ref));
-                }
-            } catch (final IllegalStateException ise) {
-                //No aerodrome set, do not ask
-                this.setAerodrome(AerodromeImpl.immutableCopyOf(ref));
+            super.setReferredReport(referredReport);
+            if (this.isCancelMessage() && referredReport.getValidityTime().isPresent()) {
+                super.setCancelledReportValidPeriod(referredReport.getValidityTime().get());
             }
-            return retval;
+            return this;
         }
 
+        @Override
+        public Builder setCancelMessage(final boolean cancel) {
+            super.setCancelMessage(cancel);
+            if (cancel) {
+                super.setStatus(TAFStatus.CANCELLATION);
+            } else {
+                if (this.getReportStatus().isPresent()) {
+                    this.setReportStatus(this.getReportStatus()); // takes care of setting the status based on reportStatus
+                }
+            }
+            if (cancel && this.getReferredReport().isPresent()) {
+                this.setCancelledReportValidPeriod(this.getReferredReport().get().getValidityTime());
+            }
+            return this;
+        }
+
+        @Override
+        public Builder setMissingMessage(final boolean missing) {
+            super.setMissingMessage(missing);
+            if (missing) {
+                super.setStatus(TAFStatus.MISSING);
+            } else {
+                if (this.getReportStatus().isPresent()) {
+                    this.setReportStatus(this.getReportStatus()); // takes care of setting the status based on reportStatus
+                }
+            }
+            return this;
+        }
+
+        @Override
+        public Builder setCancelledReportValidPeriod(final PartialOrCompleteTimePeriod period) {
+            super.setCancelledReportValidPeriod(period);
+            if (this.getReferredReport().isPresent()) {
+                super.setReferredReport(TAFReferenceImpl.immutableCopyOf(this.getReferredReport().get()).toBuilder()//
+                        .setValidityTime(period)//
+                        .build());
+            } else {
+                try {
+                    super.setReferredReport(TAFReferenceImpl.builder()//
+                            .setAerodrome(this.getAerodrome())//
+                            .setValidityTime(period)//
+                            .build());
+                } catch (final IllegalStateException ise) {
+                    //Aerodrome is not set at this point, defer to setting the referredReport when setting the Aerodrome
+                }
+            }
+            return this;
+        }
+
+        @Override
+        public TAFImpl build() {
+            // Referred report aerodrome consistency:
+            if (this.getReferredReport().isPresent()) {
+                final Aerodrome base = this.getAerodrome();
+                final Aerodrome ref = this.getReferredReport().get().getAerodrome();
+                if (base != null && ref != null && !base.equals(ref)) {
+                    throw new IllegalStateException("Aerodrome " + base + " set for TAF is not the same as the aerodrome set for the referred report " + ref);
+                }
+            }
+            //cancelReport - referredReport validity time consistency
+            if (this.isCancelMessage()) {
+                if (this.getReferredReport().isPresent() && this.getReferredReport().get().getValidityTime().isPresent()) {
+                    if (this.getCancelledReportValidPeriod().isPresent()) {
+                        if (!this.getReferredReport().get().getValidityTime().get().equals(this.getCancelledReportValidPeriod().get())) {
+                            throw new IllegalStateException("ReferredReport.validityTime and cancelledReportValidPeriod are both given but not equal");
+                        }
+                    }
+                }
+            }
+            return super.build();
+        }
     }
 }

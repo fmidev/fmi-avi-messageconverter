@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import fi.fmi.avi.model.AerodromeWeatherMessage;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 
 /**
@@ -13,6 +14,14 @@ import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 
 public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
+    /**
+     * Returns the TAF message status.
+     *
+     * @return the status of the TAF message
+     * @deprecated migrate to using a combination of {@link AviationWeatherMessage#getReportStatus()}, {@link #isCancelMessage()} and
+     * {@link #isMissingMessage()} instead
+     */
+    @Deprecated
     TAFStatus getStatus();
 
     Optional<PartialOrCompleteTimePeriod> getValidityTime();
@@ -22,5 +31,11 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
     Optional<List<TAFChangeForecast>> getChangeForecasts();
 
     Optional<TAFReference> getReferredReport();
+
+    boolean isCancelMessage();
+
+    boolean isMissingMessage();
+
+    Optional<PartialOrCompleteTimePeriod> getCancelledReportValidPeriod();
 
 }
