@@ -27,7 +27,7 @@ public interface AviationCodeListUser {
     String CODELIST_VALUE_NIL_REASON_MISSING = "http://codes.wmo.int/common/nil/missing";
     String CODELIST_VALUE_NIL_REASON_INAPPLICABLE = "http://codes.wmo.int/common/nil/inapplicable";
     String CODELIST_VALUE_NIL_REASON_WITHHELD = "http://codes.wmo.int/common/nil/withheld";
-    String CODELIST_VALUE_NIL_REASON_UNKNOWN = "http://www.opengis.net/def/nil/OGC/0/unknown";
+    String CODELIST_VALUE_NIL_REASON_UNKNOWN = "http://codes.wmo.int/common/nil/unknown";
 
     String MET_AERODROME_FORECAST_TYPE = "http://codes.wmo.int/49-2/observation-type/iwxxm/2.1/MeteorologicalAerodromeForecast";
     String MET_AERODROME_FORECAST_PROPERTIES = "http://codes.wmo.int/49-2/observable-property/MeteorologicalAerodromeForecast";
