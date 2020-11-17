@@ -117,7 +117,29 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+   <repositories>
+   <repository>
+    <id>fmi-os-mvn-snapshot-repo</id>
+    <url>https://raw.githubusercontent.com/fmidev/fmi-os-mvn-snapshot-repo/master</url>
+    <snapshots>
+      <enabled>true</enabled>
+      <updatePolicy>always</updatePolicy>
+    </snapshots>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+  </repository>
+  <repository>
+    <id>fmi-os-mvn-release-repo</id>
+    <url>https://raw.githubusercontent.com/fmidev/fmi-os-mvn-repo/master</url>
+    <snapshots>      <enabled>true</enabled>
+      <updatePolicy>always</updatePolicy>
+    </snapshots>
+    <releases>
+      <enabled>false</enabled>
+    </releases>
+  </repository>
+  </repositories>
   <build>
     <plugins>
       <plugin>
