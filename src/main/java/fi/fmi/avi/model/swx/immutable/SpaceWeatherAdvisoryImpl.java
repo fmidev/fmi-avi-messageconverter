@@ -1,9 +1,13 @@
 package fi.fmi.avi.model.swx.immutable;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
+import java.time.DateTimeException;
+import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -11,6 +15,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.PartialDateTime;
+import fi.fmi.avi.model.PartialOrCompleteTime;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.PartialOrCompleteTimes;
 import fi.fmi.avi.model.swx.AdvisoryNumber;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
@@ -33,7 +41,7 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
     }
 
     public static SpaceWeatherAdvisoryImpl immutableCopyOf(final SpaceWeatherAdvisory advisory) {
-        Objects.requireNonNull(advisory);
+        requireNonNull(advisory);
         if (advisory instanceof SpaceWeatherAdvisoryImpl) {
             return (SpaceWeatherAdvisoryImpl) advisory;
         } else {
@@ -43,7 +51,7 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<SpaceWeatherAdvisoryImpl> immutableCopyOf(final Optional<SpaceWeatherAdvisory> advisory) {
-        Objects.requireNonNull(advisory);
+        requireNonNull(advisory);
         return advisory.map(SpaceWeatherAdvisoryImpl::immutableCopyOf);
     }
 
@@ -52,6 +60,9 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
     @Override
     public boolean areAllTimeReferencesComplete() {
         if (this.getIssueTime().isPresent() && !this.getIssueTime().get().getCompleteTime().isPresent()) {
+            return false;
+        }
+        if (this.getNextAdvisory().getTime().isPresent() && !this.getNextAdvisory().getTime().get().getCompleteTime().isPresent()) {
             return false;
         }
         for (final SpaceWeatherAdvisoryAnalysis analysis : this.getAnalyses()) {
@@ -103,6 +114,76 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
 
         public Builder addAllPhenomena(final List<SpaceWeatherPhenomenon> elements) {
             return super.addAllPhenomena(elements);
+        }
+
+        public SpaceWeatherAdvisoryImpl.Builder withCompleteIssueTimeNear(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            if (getIssueTime().isPresent() && getIssueTime().get().getCompleteTime().isPresent()) {
+                return this;
+            }
+            return mapIssueTime((input) -> input.toBuilder().completePartialNear(reference).build());
+        }
+
+        public SpaceWeatherAdvisoryImpl.Builder withCompleteNextAdvisory(final ZonedDateTime issueTime) {
+            requireNonNull(issueTime, "issueTime");
+            if (getNextAdvisory().getTime().isPresent() && getNextAdvisory().getTime().get().getCompleteTime().isPresent()) {
+                return this;
+            }
+            return mapNextAdvisory(nextAdvisory -> {
+                final NextAdvisoryImpl.Builder builder = NextAdvisoryImpl.Builder.from(nextAdvisory);
+                builder.mapTime(time -> time.toBuilder().completePartial(partial -> partial.toZonedDateTimeAfter(issueTime)).build());
+                return builder.build();
+            });
+        }
+
+        public Builder withCompleteAnalysisTimes(final ZonedDateTime issueTime) {
+            requireNonNull(issueTime, "issueTime");
+            if (!getAnalyses().isEmpty()) {
+                mutateAnalyses(analyses -> {
+                    final PartialOrCompleteTimeInstant completeObservationTime = analyses.get(0).getTime().toBuilder().completePartialNear(issueTime).build();
+                    final Iterable<PartialOrCompleteTimeInstant> timesToComplete = () -> analyses.stream()//
+                            .skip(1)// skip observation completed above
+                            .map(SpaceWeatherAdvisoryAnalysis::getTime)//
+                            .iterator();
+                    final List<PartialOrCompleteTime> completedForecastTimes = PartialOrCompleteTimes.completeAscendingPartialTimes(timesToComplete,
+                            completeObservationTime.getCompleteTime().orElse(issueTime), toZonedDateTimeNotBeforeOrNear());
+                    updateAnalysisTime(analyses, 0, completeObservationTime);
+                    for (int i = 1; i < analyses.size(); i++) {
+                        updateAnalysisTime(analyses, i, (PartialOrCompleteTimeInstant) completedForecastTimes.get(i - 1));
+                    }
+                });
+            }
+            return this;
+        }
+
+        private void updateAnalysisTime(final List<SpaceWeatherAdvisoryAnalysis> analyses, final int index, final PartialOrCompleteTimeInstant time) {
+            if (!time.equals(analyses.get(index).getTime())) {
+                analyses.set(index, SpaceWeatherAdvisoryAnalysisImpl.Builder.from(analyses.get(index)).setTime(time).build());
+            }
+        }
+
+        private BiFunction<PartialDateTime, ZonedDateTime, ZonedDateTime> toZonedDateTimeNotBeforeOrNear() {
+            return (partial, reference) -> {
+                try {
+                    return partial.toZonedDateTimeNotBefore(reference);
+                } catch (final DateTimeException exception) {
+                    try {
+                        return partial.toZonedDateTimeNear(reference);
+                    } catch (final DateTimeException ignored) {
+                        throw exception;
+                    }
+                }
+            };
+        }
+
+        public SpaceWeatherAdvisoryImpl.Builder withAllTimesComplete(final ZonedDateTime reference) {
+            requireNonNull(reference, "reference");
+            withCompleteIssueTimeNear(reference);
+            final ZonedDateTime issueTime = getIssueTime()//
+                    .flatMap(PartialOrCompleteTimeInstant::getCompleteTime)//
+                    .orElse(reference);
+            withCompleteNextAdvisory(issueTime);
+            return withCompleteAnalysisTimes(issueTime);
         }
 
         @Override

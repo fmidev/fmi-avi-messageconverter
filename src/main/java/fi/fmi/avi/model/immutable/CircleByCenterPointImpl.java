@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CircleByCenterPoint;
+import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.NumericMeasure;
 
 @FreeBuilder
@@ -46,11 +47,15 @@ public abstract class CircleByCenterPointImpl implements CircleByCenterPoint {
                 return ((CircleByCenterPointImpl) value).toBuilder();
             } else {
                 return CircleByCenterPointImpl.builder()//
-                        .setSrsName(value.getSrsName())//
-                        .setSrsDimension(value.getSrsDimension())//
-                        .setAxisLabels(value.getAxisLabels())//
+                        .setCrs(value.getCrs())//
                         .addAllCenterPointCoordinates(value.getCenterPointCoordinates());
             }
+        }
+
+        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
+        @Override
+        public Builder setCrs(final CoordinateReferenceSystem crs) {
+            return super.setCrs(crs);
         }
 
         @Override

@@ -7,10 +7,10 @@ import java.util.Optional;
 
 import org.inferred.freebuilder.FreeBuilder;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.ElevatedPoint;
 
 /**
@@ -55,22 +55,19 @@ public abstract class ElevatedPointImpl implements ElevatedPoint, Serializable {
                 return ((ElevatedPointImpl) value).toBuilder();
             } else {
                 return ElevatedPointImpl.builder()//
-                        .setSrsName(value.getSrsName())//
-                        .setSrsDimension(value.getSrsDimension())//
-                        .setAxisLabels(value.getAxisLabels())//
+                        .setCrs(value.getCrs())//
                         .addAllCoordinates(value.getCoordinates()).setElevationUom(value.getElevationUom()).setElevationValue(value.getElevationValue());
             }
-        }
-
-        @Override
-        @JsonAlias("coordinateReferenceSystemId")
-        public Optional<String> getSrsName() {
-            return super.getSrsName();
         }
 
         public Builder setCoordinates(final List<Double> coordinates) {
             return this.clearCoordinates().addAllCoordinates(coordinates);
         }
-    }
 
+        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
+        @Override
+        public Builder setCrs(final CoordinateReferenceSystem crs) {
+            return super.setCrs(crs);
+        }
+    }
 }

@@ -1,11 +1,13 @@
 package fi.fmi.avi.model.swx.immutable;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +26,13 @@ import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PolygonGeometry;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
+import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.AirspaceVolume;
 import fi.fmi.avi.model.swx.IssuingCenter;
 import fi.fmi.avi.model.swx.NextAdvisory;
+import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.swx.SpaceWeatherPhenomenon;
 import fi.fmi.avi.model.swx.SpaceWeatherRegion;
@@ -39,6 +43,15 @@ public class SpaceWeatherAdvisoryTest {
     @BeforeClass
     public static void setup() {
         OBJECT_MAPPER.registerModule(new Jdk8Module()).registerModule(new JavaTimeModule());
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private static ZonedDateTime nullableCompleteTime(final Optional<PartialOrCompleteTimeInstant> partialOrCompleteTimeInstant) {
+        return partialOrCompleteTimeInstant.flatMap(PartialOrCompleteTimeInstant::getCompleteTime).orElse(null);
+    }
+
+    private static ZonedDateTime nullableCompleteTime(final PartialOrCompleteTimeInstant partialOrCompleteTimeInstant) {
+        return partialOrCompleteTimeInstant.getCompleteTime().orElse(null);
     }
 
     private AdvisoryNumberImpl getAdvisoryNumber() {
@@ -79,8 +92,7 @@ public class SpaceWeatherAdvisoryTest {
 
             final SpaceWeatherRegionImpl.Builder region = SpaceWeatherRegionImpl.builder();
 
-            final String partialTime = "--" + day + "T" + hour + ":00Z";
-            analysis.setTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build());
+            analysis.setTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.ofDayHour(day, hour + i)).build());
             region.setAirSpaceVolume(getAirspaceVolume(true));
             region.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE);
 
@@ -94,8 +106,6 @@ public class SpaceWeatherAdvisoryTest {
             }
 
             analysis.setNilPhenomenonReason(SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason.NO_INFORMATION_AVAILABLE);
-            analysis.setTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")));
-
             analyses.add(analysis.build());
         }
 
@@ -109,9 +119,7 @@ public class SpaceWeatherAdvisoryTest {
         if (isPointGeometry) {
             final PolygonGeometry geometry = PolygonGeometryImpl.builder()
                     .addAllExteriorRingPositions(Arrays.asList(-180.0, 90.0, -180.0, 60.0, 180.0, 60.0, 180.0, 90.0, -180.0, 90.0))
-                    .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
-                    .setAxisLabels(Arrays.asList("lat", "lon"))
-                    .setSrsDimension(BigInteger.valueOf(2))
+                    .setCrs(CoordinateReferenceSystemImpl.wgs84())
                     .build();
             airspaceVolume.setHorizontalProjection(geometry);
         } else {
@@ -120,14 +128,12 @@ public class SpaceWeatherAdvisoryTest {
             final CircleByCenterPointImpl.Builder cbcp = CircleByCenterPointImpl.builder()
                     .addAllCenterPointCoordinates(Arrays.asList(-16.6392, 160.9368))
                     .setRadius(measure.build())
-                    .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")
-                    .setAxisLabels(Arrays.asList("lat", "lon"))
-                    .setSrsDimension(BigInteger.valueOf(2));
+                    .setCrs(CoordinateReferenceSystemImpl.wgs84());
 
             airspaceVolume.setHorizontalProjection(cbcp.build());
         }
 
-        final NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
+        final NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(350.0).build();
         airspaceVolume.setUpperLimit(nm);
 
         return airspaceVolume.build();
@@ -148,7 +154,6 @@ public class SpaceWeatherAdvisoryTest {
 
         final int day = 27;
         final int hour = 1;
-        final String partialTime = "--" + day + "T" + hour + ":00Z";
 
         final List<SpaceWeatherRegion> regions = new ArrayList<>();
         regions.add(SpaceWeatherRegionImpl.builder()
@@ -159,7 +164,7 @@ public class SpaceWeatherAdvisoryTest {
                 .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE)
                 .setAirSpaceVolume(getAirspaceVolume(false))
                 .build());
-        final PartialOrCompleteTimeInstant time = PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.parse(partialTime)).build();
+        final PartialOrCompleteTimeInstant time = PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.ofDayHour(day, hour)).build();
         final SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
         analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST)
                 .setTime(time)
@@ -194,7 +199,6 @@ public class SpaceWeatherAdvisoryTest {
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
         final SpaceWeatherAdvisoryImpl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryImpl.class);
-        System.out.println(serialized);
         assertEquals(SWXObject, deserialized);
     }
 
@@ -272,9 +276,44 @@ public class SpaceWeatherAdvisoryTest {
                 .build();
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
-        System.out.println(serialized);
         final SpaceWeatherAdvisoryImpl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryImpl.class);
 
         assertEquals(SWXObject, deserialized);
+    }
+
+    @Test
+    public void swxPartialTimeCompletionTest() {
+        final NextAdvisory partialNextAdvisory = NextAdvisoryImpl.builder()//
+                .setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_AT)//
+                .setTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.ofHour(1)).build())//
+                .build();
+
+        final SpaceWeatherAdvisoryImpl advisory = SpaceWeatherAdvisoryImpl.builder()
+                .setIssuingCenter(getIssuingCenter())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.ofDayHourMinute(27, 1, 31)).build())
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
+                .setReplaceAdvisoryNumber(getAdvisoryNumber())
+                .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
+                .setAdvisoryNumber(getAdvisoryNumber())
+                .setReplaceAdvisoryNumber(Optional.empty())
+                .addAllAnalyses(getAnalyses(true))
+                .setRemarks(getRemarks())
+                .setNextAdvisory(partialNextAdvisory)
+                .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
+                .build();
+
+        final ZonedDateTime referenceTime = ZonedDateTime.parse("2020-02-27T00:00Z");
+        final SpaceWeatherAdvisory completedAdvisory = advisory.toBuilder().withAllTimesComplete(referenceTime).build();
+        assertEquals("issueTime", ZonedDateTime.parse("2020-02-27T01:31Z"), nullableCompleteTime(completedAdvisory.getIssueTime()));
+        assertEquals("nextAdvisory", ZonedDateTime.parse("2020-02-28T01:00Z"), nullableCompleteTime(completedAdvisory.getNextAdvisory().getTime()));
+        final Iterator<SpaceWeatherAdvisoryAnalysis> completedAnalyses = completedAdvisory.getAnalyses().iterator();
+        assertEquals("observation", ZonedDateTime.parse("2020-02-27T01:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
+        assertEquals("forecast +6", ZonedDateTime.parse("2020-02-27T02:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
+        assertEquals("forecast +12", ZonedDateTime.parse("2020-02-27T03:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
+        assertEquals("forecast +18", ZonedDateTime.parse("2020-02-27T04:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
+        assertEquals("forecast +24", ZonedDateTime.parse("2020-02-27T05:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
+        assertFalse("no more analyses", completedAnalyses.hasNext());
+        assertTrue("all times are complete", completedAdvisory.areAllTimeReferencesComplete());
     }
 }

@@ -251,7 +251,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             getPartialTime().ifPresent(partialTime -> {
                 if (!partialTime.representsStrict(completeTime)) {
                     super.setPartialTime(PartialDateTime.of(completeTime, partialTime.getPresentFields(), partialTime.getZone().isPresent(),
-                            partialTime.isMidnight24h() ? PartialDateTime.MIDNIGHT_24_HOUR : PartialDateTime.MIDNIGHT_24_HOUR));
+                            partialTime.isMidnight24h() ? PartialDateTime.MIDNIGHT_24_HOUR : PartialDateTime.MIDNIGHT_0_HOUR));
                 }
             });
             return this;

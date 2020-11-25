@@ -10,6 +10,7 @@ import org.inferred.freebuilder.FreeBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.PointGeometry;
 
 @FreeBuilder
@@ -25,7 +26,7 @@ public abstract class PointGeometryImpl implements PointGeometry, Serializable {
 
     public static PointGeometryImpl immutableCopyOf(final PointGeometry pointGeometry) {
         Objects.requireNonNull(pointGeometry);
-        if (pointGeometry instanceof ElevatedPointImpl) {
+        if (pointGeometry instanceof PointGeometryImpl) {
             return (PointGeometryImpl) pointGeometry;
         } else {
             return Builder.from(pointGeometry).build();
@@ -50,9 +51,8 @@ public abstract class PointGeometryImpl implements PointGeometry, Serializable {
             if (value instanceof PointGeometryImpl) {
                 return ((PointGeometryImpl) value).toBuilder();
             } else {
-                return PointGeometryImpl.builder().setSrsName(value.getSrsName())//
-                        .setSrsDimension(value.getSrsDimension())//
-                        .setAxisLabels(value.getAxisLabels())//
+                return PointGeometryImpl.builder()//
+                        .setCrs(value.getCrs())//
                         .addAllCoordinates(value.getCoordinates());
             }
         }
@@ -61,5 +61,10 @@ public abstract class PointGeometryImpl implements PointGeometry, Serializable {
             return this.clearCoordinates().addAllCoordinates(coordinates);
         }
 
+        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
+        @Override
+        public Builder setCrs(final CoordinateReferenceSystem crs) {
+            return super.setCrs(crs);
+        }
     }
 }

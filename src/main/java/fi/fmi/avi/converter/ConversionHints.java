@@ -210,6 +210,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_ADVISORY_LABEL_WIDTH;
 
     /**
+     * Determines the indentation after line wrap
+     */
+    public static final Key KEY_INDENT_ON_LINE_WRAP;
+
+    /**
      * The heading fields should be concatenated with no spacing.
      */
     public static final Object VALUE_BULLETIN_HEADING_SPACING_NONE = "NONE";
@@ -326,6 +331,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags", VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
 
         KEY_ADVISORY_LABEL_WIDTH = new KeyImpl(16, "Used to determine the length of the label, so that white space can be added accordingly.");
+
+        KEY_INDENT_ON_LINE_WRAP = new KeyImpl(17, "Used to determine the indentation after line wrap.");
 
         KEY_WEATHER_CODES = new KeyImpl(7, "Control the checks on the used weather codes", VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678,
                 VALUE_WEATHER_CODES_STRICT_WMO_4678, VALUE_WEATHER_CODES_ALLOW_ANY);
@@ -490,6 +497,15 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         } else {
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T tryGet(final Key key, final Class<T> clz) {
+        final Object value = this.hintMap.get(key);
+        if (value != null && clz.isAssignableFrom(value.getClass())) {
+            return (T) value;
+        }
+        return null;
     }
 
     @Override

@@ -190,7 +190,14 @@
         "volcano": {
           "volcanoPosition": {
             "type": "ElevatedPoint",
-            "srsName": "EPSG:4326",
+            "crs": {
+              "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+              "dimension": 2,
+              "axisLabels": [
+                "Lat",
+                "Lon"
+              ]
+            },
             "coordinates": [
               52.0,
               5.2

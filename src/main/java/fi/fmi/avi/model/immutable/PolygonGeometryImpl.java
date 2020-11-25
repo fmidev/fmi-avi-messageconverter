@@ -9,6 +9,7 @@ import org.inferred.freebuilder.FreeBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.PolygonGeometry;
 
 @FreeBuilder
@@ -49,11 +50,16 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
             if (value instanceof PolygonGeometryImpl) {
                 return ((PolygonGeometryImpl) value).toBuilder();
             } else {
-                return PolygonGeometryImpl.builder().setSrsName(value.getSrsName())//
-                        .setSrsDimension(value.getSrsDimension())//
-                        .setAxisLabels(value.getAxisLabels())//
+                return PolygonGeometryImpl.builder()//
+                        .setCrs(value.getCrs())//
                         .addAllExteriorRingPositions(value.getExteriorRingPositions());
             }
+        }
+
+        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
+        @Override
+        public Builder setCrs(final CoordinateReferenceSystem crs) {
+            return super.setCrs(crs);
         }
     }
 }

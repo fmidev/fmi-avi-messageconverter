@@ -14,6 +14,7 @@ import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.immutable.TAFBulletinImpl;
@@ -30,7 +31,7 @@ public class TAFBulletinTest {
                 .setFieldElevationValue(19.0)//
                 .setLocationIndicatorICAO("EFVA")//
                 .setReferencePoint(ElevatedPointImpl.builder()//
-                        .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")//
+                        .setCrs(CoordinateReferenceSystemImpl.wgs84())//
                         .addCoordinates(21.762199401855, 63.050701141357)//
                         .setElevationValue(19.0)//
                         .setElevationUom("m")//
@@ -66,7 +67,7 @@ public class TAFBulletinTest {
                 .setFieldElevationValue(19.0)//
                 .setLocationIndicatorICAO("EFVA")//
                 .setReferencePoint(ElevatedPointImpl.builder()//
-                        .setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326")//
+                        .setCrs(CoordinateReferenceSystemImpl.wgs84())//
                         .addCoordinates(21.762199401855, 63.050701141357)//
                         .setElevationValue(19.0)//
                         .setElevationUom("m")//
