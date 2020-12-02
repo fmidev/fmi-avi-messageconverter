@@ -14,9 +14,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
-import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
@@ -43,11 +45,11 @@ import fi.fmi.avi.model.taf.TAFReference;
 @FreeBuilder
 @JsonDeserialize(builder = TAFImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "status", "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts", "referredReport", "isCancelledMessage",
-        "isMissingMessage", "cancelledReportValidPeriod", "reportStatus", "remarks", "permissibleUsage", "permissibleUsageReason",
-        "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
-        "translationCentreName", "translationTime", "translatedTAC" })
+@JsonPropertyOrder({ "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts", "referredReport", "isCancelledMessage", "isMissingMessage",
+        "cancelledReportValidPeriod", "reportStatus", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+        "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class TAFImpl implements TAF, Serializable {
+    private static Logger LOG = LoggerFactory.getLogger(TAFImpl.class);
 
     private static final long serialVersionUID = -449932311496894566L;
 
@@ -67,6 +69,23 @@ public abstract class TAFImpl implements TAF, Serializable {
     public static Optional<TAFImpl> immutableCopyOf(final Optional<TAF> taf) {
         requireNonNull(taf);
         return taf.map(TAFImpl::immutableCopyOf);
+    }
+
+    /**
+     * Provides the value of the status property.
+     * <p>
+     * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+     * explicitly stored. This implementation uses {@link TAFStatus#fromReportStatus(ReportStatus, boolean, boolean)} instead to determine the returned value
+     * on-the-fly.
+     *
+     * @return the message status
+     * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
+     */
+    @Override
+    @JsonIgnore
+    @Deprecated
+    public TAFStatus getStatus() {
+        return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
     }
 
     public abstract Builder toBuilder();
@@ -138,7 +157,8 @@ public abstract class TAFImpl implements TAF, Serializable {
                 retval.setStatus(value.getStatus())
                         .setValidityTime(value.getValidityTime())
                         .setBaseForecast(TAFBaseForecastImpl.immutableCopyOf(value.getBaseForecast()))
-                        .setReferredReport(TAFReferenceImpl.immutableCopyOf(value.getReferredReport()));
+                        .setReferredReport(TAFReferenceImpl.immutableCopyOf(value.getReferredReport()))
+                        .setCancelledReportValidPeriod(value.getCancelledReportValidPeriod());
 
                 value.getChangeForecasts()
                         .map(forecasts -> retval.setChangeForecasts(
@@ -191,93 +211,65 @@ public abstract class TAFImpl implements TAF, Serializable {
 
         /**
          * Sets the TAF-specific message status.
-         * <p>
-         * Note, this method is provided for backward compatibility with previous versions of the API. In addition to
-         * setting the <code>status</code> value, it also sets other property values with the following logic:
+         *
+         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+         * explicitly stored. Instead, this method sets other property values with the following logic:
          * <ul>
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION}: <code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}, <code>cancelMessage = true</code>, <code>missingMessage = false</code></li>
-         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#MISSING}: <code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}, <code>cancelMessage = false</code>, <code>missingMessage = true</code></li>
+         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}, <code>cancelMessage = true</code></li>
+         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#MISSING}: no effect</li>
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#NORMAL}: <code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}, <code>cancelMessage = false</code>, <code>missingMessage = false</code></li>
+         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}, <code>cancelMessage = false</code></li>
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#AMENDMENT}: <code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT}, <code>cancelMessage = false</code>, <code>missingMessage = false</code></li>
+         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT}, <code>cancelMessage = false</code></li>
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CORRECTION}: <code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#CORRECTION}, <code>cancelMessage = false</code>, <code>missingMessage = false</code></li>
+         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#CORRECTION}, <code>cancelMessage = false</code></li>
          * </ul>
          *
          * @param status the status to set
          * @return builder
-         * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)}, {@link #setCancelMessage(boolean)} and
-         * {@link #setMissingMessage(boolean)} instead
+         * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)} and {@link #setCancelMessage(boolean)} instead
          */
-        @Override
         @Deprecated
         public Builder setStatus(final TAFStatus status) {
-            super.setStatus(status);
-            if (TAFStatus.CANCELLATION.equals(status)) {
-                super.setReportStatus(ReportStatus.NORMAL).setCancelMessage(true).setMissingMessage(false);
-            } else if (TAFStatus.MISSING.equals(status)) {
-                super.setReportStatus(ReportStatus.NORMAL).setMissingMessage(true).setCancelMessage(false);
-            } else {
-                if (TAFStatus.NORMAL.equals(status)) {
-                    super.setReportStatus(ReportStatus.NORMAL);
-                } else if (TAFStatus.AMENDMENT.equals(status)) {
-                    super.setReportStatus(ReportStatus.AMENDMENT);
-                } else if (TAFStatus.CORRECTION.equals(status)) {
-                    super.setReportStatus(ReportStatus.CORRECTION);
-                } else {
-                    throw new IllegalArgumentException("Cannot determine report status from TAFStatus " + status);
-                }
-                super.setMissingMessage(false).setCancelMessage(false);
+            if (status.equals(TAFStatus.MISSING)) {
+                LOG.warn("setStatus called with {}, ignoring", TAFStatus.MISSING);
             }
+            requireNonNull(status, "tafStatus");
+            setReportStatus(status.getReportStatus());
+            setCancelMessage(status.isCancelMessage());
             return this;
+        }
+
+        @Deprecated
+        public Builder mapStatus(final UnaryOperator<TAFStatus> mapper) {
+            requireNonNull(mapper, "mapper");
+            return setStatus(mapper.apply(getStatus()));
         }
 
         /**
          * Provides the current builder value of the status property.
          *
+         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+         * explicitly stored. This implementation uses {@link TAFStatus#fromReportStatus(ReportStatus, boolean, boolean)} instead to determine the returned
+         * value
+         * on-the-fly.
+         *
          * @return the message status
-         * @deprecated migrate to using a combination of {@link #getReportStatus()}, {@link #isCancelMessage()} and
-         * * {@link #isMissingMessage()} instead
+         * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
          */
-        @Override
         @Deprecated
         public TAFStatus getStatus() {
-            return super.getStatus();
+            return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
         }
 
         /**
-         * Sets the report message status.
-         * <p>
-         * Note that for backward compatibility this method also sets the <code>status</code> property with the following logic:
-         * <ul>
-         *     <li>status is {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}: <code>status =</code>
-         *     {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#NORMAL}</li>
-         *     <li>status is {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT}: <code>status =</code>
-         *     {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#AMENDMENT}</li>
-         *     <li>status is {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#CORRECTION}: <code>status =</code>
-         *     {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CORRECTION}</li>
-         * </ul>
+         * Determines if the current builder status indicates a "missing" message.
          *
-         * @param status the message status to set
-         * @return the builder
-         * @see #setReportStatus(ReportStatus)
+         * @return false if the {@link #getBaseForecast()} is present, true otherwise
          */
-        @Override
-        public Builder setReportStatus(final ReportStatus status) {
-            super.setReportStatus(status);
-            if (ReportStatus.NORMAL.equals(status)) {
-                super.setStatus(TAFStatus.NORMAL);
-            } else if (ReportStatus.AMENDMENT.equals(status)) {
-                super.setStatus(TAFStatus.AMENDMENT);
-            } else if (ReportStatus.CORRECTION.equals(status)) {
-                super.setStatus(TAFStatus.CORRECTION);
-            } else {
-                throw new IllegalArgumentException("Cannot determine TAFStatus from report status " + status);
-            }
-            return this;
+        public boolean isMissingMessage() {
+            return !getBaseForecast().isPresent();
         }
 
         /**
@@ -345,37 +337,8 @@ public abstract class TAFImpl implements TAF, Serializable {
         @Override
         public Builder setCancelMessage(final boolean cancel) {
             super.setCancelMessage(cancel);
-            if (cancel) {
-                super.setStatus(TAFStatus.CANCELLATION);
-            } else {
-                if (this.getReportStatus().isPresent()) {
-                    this.setReportStatus(this.getReportStatus()); // takes care of setting the status based on reportStatus
-                }
-            }
             if (cancel && this.getReferredReport().isPresent()) {
                 this.setCancelledReportValidPeriod(this.getReferredReport().get().getValidityTime());
-            }
-            return this;
-        }
-
-        /**
-         * Sets the cancellation status of this message.
-         * If <code>missing == true</code> also calls {@link #setReportStatus(AviationWeatherMessage.ReportStatus)} with
-         * {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#MISSING}. Otherwise resets the <code>status</code> value based on the
-         * {@link #getReportStatus()} value.
-         *
-         * @param missing true to set as missing message, false to unset
-         * @return the builder
-         */
-        @Override
-        public Builder setMissingMessage(final boolean missing) {
-            super.setMissingMessage(missing);
-            if (missing) {
-                super.setStatus(TAFStatus.MISSING);
-            } else {
-                if (this.getReportStatus().isPresent()) {
-                    this.setReportStatus(this.getReportStatus()); // takes care of setting the status based on reportStatus
-                }
             }
             return this;
         }
@@ -429,6 +392,7 @@ public abstract class TAFImpl implements TAF, Serializable {
                     }
                 }
             }
+
             return super.build();
         }
 

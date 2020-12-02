@@ -1,5 +1,4 @@
 {
-  "status" : "NORMAL",
   "aerodrome" : {
     "designator" : "EFVA"
   },
@@ -133,12 +132,12 @@
       "uom" : "m"
     }
   }, {
-    "changeIndicator" : "PROBABILITY_40",
-    "periodOfChange" : {
-      "startTime" : {
-        "partialTime" : "--28T02:"
+    "changeIndicator": "PROBABILITY_40",
+    "periodOfChange": {
+      "startTime": {
+        "partialTime": "--28T02:"
       },
-      "endTime" : {
+      "endTime": {
         "partialTime": "--28T06:"
       }
     },
