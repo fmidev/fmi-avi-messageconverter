@@ -17,7 +17,10 @@ public class TAFIWXXM21_30_ResilienceTest {
 
     @Test
     public void testTAFStatus() {
-        TAF t = TAFImpl.builder().setStatus(TAF.TAFStatus.NORMAL).buildPartial();
+        TAF t = TAFImpl.builder()//
+                .setStatus(TAF.TAFStatus.NORMAL)//
+                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .buildPartial();
         assertEquals(AviationCodeListUser.TAFStatus.NORMAL, t.getStatus());
         assertTrue(t.getReportStatus().isPresent());
         assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
@@ -26,7 +29,10 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getCancelledReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
-        t = TAFImpl.builder().setStatus(AviationCodeListUser.TAFStatus.CANCELLATION).buildPartial();
+        t = TAFImpl.builder()//
+                .setStatus(AviationCodeListUser.TAFStatus.CANCELLATION)//
+                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .buildPartial();
         assertEquals(t.getStatus(), TAF.TAFStatus.CANCELLATION);
         assertTrue(t.getReportStatus().isPresent());
         assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
@@ -35,7 +41,10 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getCancelledReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
-        t = TAFImpl.builder().setStatus(AviationCodeListUser.TAFStatus.AMENDMENT).buildPartial();
+        t = TAFImpl.builder()//
+                .setStatus(AviationCodeListUser.TAFStatus.AMENDMENT)//
+                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .buildPartial();
         assertEquals(t.getStatus(), TAF.TAFStatus.AMENDMENT);
         assertTrue(t.getReportStatus().isPresent());
         assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
@@ -44,7 +53,8 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getCancelledReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
-        t = TAFImpl.builder().setStatus(AviationCodeListUser.TAFStatus.CORRECTION).buildPartial();
+        t = TAFImpl.builder().setStatus(AviationCodeListUser.TAFStatus.CORRECTION).setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .buildPartial();
         assertEquals(t.getStatus(), TAF.TAFStatus.CORRECTION);
         assertTrue(t.getReportStatus().isPresent());
         assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
@@ -52,21 +62,30 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.isMissingMessage());
         assertFalse(t.getCancelledReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
+    }
+
+    @Test
+    public void testMissingMessage() {
+        TAFImpl t = TAFImpl.builder().setBaseForecast(TAFBaseForecastImpl.builder().buildPartial()).buildPartial();
+        assertEquals(t.getStatus(), TAF.TAFStatus.NORMAL);
+
+        t = TAFImpl.builder().buildPartial();
+        assertEquals(t.getStatus(), TAF.TAFStatus.MISSING);
+
+        t = TAFImpl.builder().setBaseForecast(TAFBaseForecastImpl.builder().buildPartial()).setStatus(AviationCodeListUser.TAFStatus.MISSING).buildPartial();
+        assertEquals(t.getStatus(), TAF.TAFStatus.NORMAL);
 
         t = TAFImpl.builder().setStatus(AviationCodeListUser.TAFStatus.MISSING).buildPartial();
         assertEquals(t.getStatus(), TAF.TAFStatus.MISSING);
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
-        assertFalse(t.isCancelMessage());
-        assertTrue(t.isMissingMessage());
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
-        assertFalse(t.getReferredReport().isPresent());
 
     }
 
     @Test
     public void testReportStatus() {
-        TAF t = TAFImpl.builder().setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL).buildPartial();
+        TAF t = TAFImpl.builder()//
+                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)//
+                .buildPartial();
         assertEquals(AviationCodeListUser.TAFStatus.NORMAL, t.getStatus());
         assertTrue(t.getReportStatus().isPresent());
         assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
@@ -75,7 +94,10 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getCancelledReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
-        t = TAFImpl.builder().setReportStatus(AviationWeatherMessage.ReportStatus.AMENDMENT).buildPartial();
+        t = TAFImpl.builder()//
+                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .setReportStatus(AviationWeatherMessage.ReportStatus.AMENDMENT)//
+                .buildPartial();
         assertEquals(t.getStatus(), TAF.TAFStatus.AMENDMENT);
         assertTrue(t.getReportStatus().isPresent());
         assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
@@ -84,7 +106,10 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getCancelledReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
-        t = TAFImpl.builder().setReportStatus(AviationWeatherMessage.ReportStatus.CORRECTION).buildPartial();
+        t = TAFImpl.builder()//
+                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .setReportStatus(AviationWeatherMessage.ReportStatus.CORRECTION)//
+                .buildPartial();
         assertEquals(t.getStatus(), TAF.TAFStatus.CORRECTION);
         assertTrue(t.getReportStatus().isPresent());
         assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
@@ -93,6 +118,19 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getCancelledReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
+    }
+
+    @Test
+    public void testStatusAndReportStatusConsistency() {
+        TAFImpl.Builder t = TAFImpl.builder().setCancelMessage(true).setReportStatus(AviationWeatherMessage.ReportStatus.AMENDMENT);
+        assertEquals(t.getStatus(), AviationCodeListUser.TAFStatus.CANCELLATION);
+        assertTrue(t.getReportStatus().isPresent());
+        assertEquals(t.getReportStatus().get(), AviationWeatherMessage.ReportStatus.AMENDMENT);
+
+        t = TAFImpl.builder().setReportStatus(AviationWeatherMessage.ReportStatus.AMENDMENT).setCancelMessage(true);
+        assertEquals(t.getStatus(), AviationCodeListUser.TAFStatus.CANCELLATION);
+        assertTrue(t.getReportStatus().isPresent());
+        assertEquals(t.getReportStatus().get(), AviationWeatherMessage.ReportStatus.AMENDMENT);
     }
 
     @Test
@@ -191,6 +229,19 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setCancelMessage(true)//
                 .build();
 
+    }
+
+    @Test
+    public void testCancelBuildOrderConsistency() {
+        final PartialOrCompleteTimePeriod validityTime = PartialOrCompleteTimePeriod.createValidityTime("0112/0214");
+        final PartialOrCompleteTimePeriod cancelledReportValidPeriod = PartialOrCompleteTimePeriod.createValidityTime("0106/0212");
+        TAFImpl.Builder t = TAFImpl.builder().setValidityTime(validityTime).setCancelMessage(true).setCancelledReportValidPeriod(cancelledReportValidPeriod);
+        assertTrue(t.getCancelledReportValidPeriod().isPresent());
+        assertEquals(t.getCancelledReportValidPeriod().get(), cancelledReportValidPeriod);
+
+        t = TAFImpl.builder().setValidityTime(validityTime).setCancelledReportValidPeriod(cancelledReportValidPeriod).setCancelMessage(true);
+        assertTrue(t.getCancelledReportValidPeriod().isPresent());
+        assertEquals(t.getCancelledReportValidPeriod().get(), cancelledReportValidPeriod);
     }
 
 }
