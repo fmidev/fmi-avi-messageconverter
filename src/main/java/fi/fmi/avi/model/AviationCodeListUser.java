@@ -5,8 +5,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 
-import fi.fmi.avi.model.taf.TAF;
-
 /**
  * A convenience interface containing references to shared codelists and enums.
  */
@@ -122,12 +120,13 @@ public interface AviationCodeListUser {
             }
         }
 
-        public static TAFStatus fromReportStatus(final TAF msg, final AviationWeatherMessage.ReportStatus reportStatus, final boolean cancelMessage) {
+        public static TAFStatus fromReportStatus(final AviationWeatherMessage.ReportStatus reportStatus, final boolean cancelMessage,
+                final boolean missingMessage) {
             requireNonNull(reportStatus, "reportStatus");
             if (cancelMessage) {
                 return CANCELLATION;
             }
-            if (!msg.getBaseForecast().isPresent()) {
+            if (missingMessage) {
                 return MISSING;
             }
             switch (reportStatus) {
