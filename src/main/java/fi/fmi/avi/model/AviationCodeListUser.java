@@ -1,8 +1,11 @@
 package fi.fmi.avi.model;
 
 import static fi.fmi.avi.model.AviationCodeListUser.RelationalOperator.BELOW;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+
+import fi.fmi.avi.model.taf.TAF;
 
 /**
  * A convenience interface containing references to shared codelists and enums.
@@ -84,8 +87,23 @@ public interface AviationCodeListUser {
 
     }
 
+    @Deprecated
     enum TAFStatus {
-        NORMAL(0), AMENDMENT(1), CANCELLATION(2), CORRECTION(3), MISSING(4);
+        NORMAL(0, AviationWeatherMessage.ReportStatus.NORMAL, false),//
+        AMENDMENT(1, AviationWeatherMessage.ReportStatus.AMENDMENT, false),//
+        CANCELLATION(2, AviationWeatherMessage.ReportStatus.NORMAL, true),//
+        CORRECTION(3, AviationWeatherMessage.ReportStatus.CORRECTION, false),//
+        MISSING(4, AviationWeatherMessage.ReportStatus.NORMAL, false);//
+
+        private final int code;
+        private final AviationWeatherMessage.ReportStatus reportStatus;
+        private final boolean cancelMessage;
+
+        TAFStatus(final int code, final AviationWeatherMessage.ReportStatus reportStatus, final boolean cancelMessage) {
+            this.code = code;
+            this.reportStatus = reportStatus;
+            this.cancelMessage = cancelMessage;
+        }
 
         public static TAFStatus fromInt(final int code) {
             switch (code) {
@@ -104,14 +122,36 @@ public interface AviationCodeListUser {
             }
         }
 
-        private final int code;
-
-        TAFStatus(final int code) {
-            this.code = code;
+        public static TAFStatus fromReportStatus(final TAF msg, final AviationWeatherMessage.ReportStatus reportStatus, final boolean cancelMessage) {
+            requireNonNull(reportStatus, "reportStatus");
+            if (cancelMessage) {
+                return CANCELLATION;
+            }
+            if (!msg.getBaseForecast().isPresent()) {
+                return MISSING;
+            }
+            switch (reportStatus) {
+                case CORRECTION:
+                    return CORRECTION;
+                case AMENDMENT:
+                    return AMENDMENT;
+                case NORMAL:
+                    return NORMAL;
+                default:
+                    throw new IllegalArgumentException("Unknown reportStatus: " + reportStatus);
+            }
         }
 
         public int getCode() {
             return this.code;
+        }
+
+        public AviationWeatherMessage.ReportStatus getReportStatus() {
+            return reportStatus;
+        }
+
+        public boolean isCancelMessage() {
+            return cancelMessage;
         }
 
     }
