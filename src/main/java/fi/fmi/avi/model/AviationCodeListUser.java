@@ -89,7 +89,7 @@ public interface AviationCodeListUser {
     enum TAFStatus {
         NORMAL(0, AviationWeatherMessage.ReportStatus.NORMAL, false),//
         AMENDMENT(1, AviationWeatherMessage.ReportStatus.AMENDMENT, false),//
-        CANCELLATION(2, AviationWeatherMessage.ReportStatus.NORMAL, true),//
+        CANCELLATION(2, AviationWeatherMessage.ReportStatus.AMENDMENT, true),//
         CORRECTION(3, AviationWeatherMessage.ReportStatus.CORRECTION, false),//
         MISSING(4, AviationWeatherMessage.ReportStatus.NORMAL, false);//
 
