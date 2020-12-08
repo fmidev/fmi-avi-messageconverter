@@ -215,7 +215,8 @@ public abstract class TAFImpl implements TAF, Serializable {
          * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
          * explicitly stored. Instead, this method sets other property values with the following logic:
          * <ul>
-         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION}: <code>reportStatus =</code>
+         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION} and reportStatus is not present or is NORMAL:
+         *     <code>reportStatus =</code>
          *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT}, <code>cancelMessage = true</code></li>
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#MISSING}: no effect</li>
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#NORMAL}: <code>reportStatus =</code>
@@ -232,11 +233,14 @@ public abstract class TAFImpl implements TAF, Serializable {
          */
         @Deprecated
         public Builder setStatus(final TAFStatus status) {
+            requireNonNull(status, "tafStatus");
             if (status.equals(TAFStatus.MISSING)) {
                 LOG.warn("setStatus called with {}, ignoring", TAFStatus.MISSING);
+                return this;
             }
-            requireNonNull(status, "tafStatus");
-            setReportStatus(status.getReportStatus());
+            if (!status.equals(TAFStatus.CANCELLATION) || !getReportStatus().isPresent() || getReportStatus().get().equals(ReportStatus.NORMAL)) {
+                setReportStatus(status.getReportStatus());
+            }
             setCancelMessage(status.isCancelMessage());
             return this;
         }
@@ -380,16 +384,17 @@ public abstract class TAFImpl implements TAF, Serializable {
             // Referred report aerodrome consistency:
             if (this.getReferredReport().isPresent()) {
                 final Aerodrome ref = this.getReferredReport().get().getAerodrome();
+                Aerodrome base = null;
                 try {
-                    final Aerodrome base = this.getAerodrome();
-                    if (!base.equals(ref)) {
-                        throw new IllegalStateException(
-                                "Aerodrome " + base + " set for TAF is not the same as the aerodrome set for the referred report " + ref);
-                    }
+                    base = this.getAerodrome();
                 } catch (final IllegalStateException ise) {
                     //No aerodrome set, sync from referred report:
                     this.setAerodrome(AerodromeImpl.immutableCopyOf(ref));
                 }
+                if (base != null && !base.equals(ref)) {
+                    throw new IllegalStateException("Aerodrome " + base + " set for TAF is not the same as the aerodrome set for the referred report " + ref);
+                }
+
             }
             //cancelReport - referredReport validity time consistency
             if (this.isCancelMessage()) {
