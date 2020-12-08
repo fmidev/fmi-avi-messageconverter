@@ -218,7 +218,7 @@ public abstract class TAFImpl implements TAF, Serializable {
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION} and reportStatus is not present or is NORMAL:
          *     <code>reportStatus =</code>
          *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT}, <code>cancelMessage = true</code></li>
-         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#MISSING}: no effect</li>
+         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#MISSING}: clears the baseForecast if present</li>
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#NORMAL}: <code>reportStatus =</code>
          *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}, <code>cancelMessage = false</code></li>
          *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#AMENDMENT}: <code>reportStatus =</code>
@@ -235,8 +235,10 @@ public abstract class TAFImpl implements TAF, Serializable {
         public Builder setStatus(final TAFStatus status) {
             requireNonNull(status, "tafStatus");
             if (status.equals(TAFStatus.MISSING)) {
-                LOG.warn("setStatus called with {}, ignoring", TAFStatus.MISSING);
-                return this;
+                if (getBaseForecast().isPresent()) {
+                    LOG.warn("Removing the baseForecast in setStatus(TAFStatus.MISSING)");
+                    clearBaseForecast();
+                }
             }
             if (!status.equals(TAFStatus.CANCELLATION) || !getReportStatus().isPresent() || getReportStatus().get().equals(ReportStatus.NORMAL)) {
                 setReportStatus(status.getReportStatus());
