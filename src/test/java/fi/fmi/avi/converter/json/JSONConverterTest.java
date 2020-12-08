@@ -3,9 +3,7 @@ package fi.fmi.avi.converter.json;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
@@ -17,6 +15,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.ConversionHints;
@@ -130,7 +133,10 @@ public class JSONConverterTest {
     public void testTAFSerialization() throws Exception {
         final InputStream is = JSONConverterTest.class.getResourceAsStream("taf1.json");
         Objects.requireNonNull(is);
-        final String reference = IOUtils.toString(is,"UTF-8");
+        final ObjectMapper om = new ObjectMapper();
+        om.registerModule(new Jdk8Module());
+        om.registerModule(new JavaTimeModule());
+        final JsonNode reference = om.readerFor(TAFImpl.class).readTree(is);
         is.close();
 
         final TAFImpl.Builder builder = TAFImpl.builder();
@@ -139,7 +145,8 @@ public class JSONConverterTest {
                 .setAerodrome(AerodromeImpl.builder().setDesignator("EFVA").build())
                 .setValidityTime(PartialOrCompleteTimePeriod.createValidityTime("2712/2812"))
                 .setBaseForecast(TAFBaseForecastImpl.builder()
-                        .setForecastWeather(WeatherImpl.fromCodes("-RA")).setPrevailingVisibility(NumericMeasureImpl.of(8000.0, "m"))//
+                        .setForecastWeather(WeatherImpl.fromCodes("-RA"))
+                        .setPrevailingVisibility(NumericMeasureImpl.of(8000.0, "m"))//
                         .setSurfaceWind(SurfaceWindImpl.builder()
                                 .setMeanWindDirection(NumericMeasureImpl.of(140,"deg"))
                                 .setMeanWindSpeed(NumericMeasureImpl.of(15.0, "[kn_i]"))
@@ -198,25 +205,13 @@ public class JSONConverterTest {
                         .setCloud(CloudForecastImpl.builder()
                                 .setLayers(Collections.singletonList(CloudLayerImpl.builder().setBase(NumericMeasureImpl.of(400, "[ft_i]"))
                                         .setAmount(AviationCodeListUser.CloudAmount.BKN)
-                                        .build()))
-                                .build()
-                        )
-                        .build())
-        );
+                                        .build())).build()).build()));
 
         final ConversionResult<String> result = converter.convertMessage(builder.build(), JSONConverter.TAF_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
-
-        final BufferedReader refReader = new BufferedReader(new StringReader(reference));
-        final BufferedReader resultReader = new BufferedReader(new StringReader(result.getConvertedMessage().get()));
-        String line = null;
-        int lineNo = 0;
-        while ((line = refReader.readLine()) != null) {
-            lineNo++;
-            assertEquals("Line " + lineNo + " does not match", line, resultReader.readLine());
-        }
-        assertTrue(resultReader.readLine() == null);
+        final JsonNode resultJSON = om.readTree(result.getConvertedMessage().get());
+        assertEquals(reference, resultJSON);
     }
 
     @Test
