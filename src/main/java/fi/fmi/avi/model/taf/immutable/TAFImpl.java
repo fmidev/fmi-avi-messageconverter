@@ -373,13 +373,22 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         @Override
-        public TAFImpl build() {
+        /**
+         * Builds the TAFImpl. Also ensures that the aerodrome information provided in the referredReport equals {@link #getAerodrome()}.
+         * If {@link #getAerodrome()} fails due to it not being set, sets it as a copy of {@link #getReferredReport()#get()#getAerodrome()}
+         */ public TAFImpl build() {
             // Referred report aerodrome consistency:
             if (this.getReferredReport().isPresent()) {
-                final Aerodrome base = this.getAerodrome();
                 final Aerodrome ref = this.getReferredReport().get().getAerodrome();
-                if (base != null && ref != null && !base.equals(ref)) {
-                    throw new IllegalStateException("Aerodrome " + base + " set for TAF is not the same as the aerodrome set for the referred report " + ref);
+                try {
+                    final Aerodrome base = this.getAerodrome();
+                    if (!base.equals(ref)) {
+                        throw new IllegalStateException(
+                                "Aerodrome " + base + " set for TAF is not the same as the aerodrome set for the referred report " + ref);
+                    }
+                } catch (final IllegalStateException ise) {
+                    //No aerodrome set, sync from referred report:
+                    this.setAerodrome(AerodromeImpl.immutableCopyOf(ref));
                 }
             }
             //cancelReport - referredReport validity time consistency
