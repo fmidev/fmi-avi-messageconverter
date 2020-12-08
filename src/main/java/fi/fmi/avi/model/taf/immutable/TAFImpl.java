@@ -327,9 +327,9 @@ public abstract class TAFImpl implements TAF, Serializable {
 
         /**
          * Sets the cancellation status of this message.
-         * If <code>cancel == true</code> also calls {@link #setReportStatus(ReportStatus)} with
-         * {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION}. Otherwise resets the <code>status</code> value based on the
-         * {@link #getReportStatus()} value.
+         * If <code>cancel == true</code> and {@link #getReferredReport()} is present,
+         * also calls {@link #setCancelledReportValidPeriod(PartialOrCompleteTimePeriod)} with
+         * the content of the referredReport validity time.
          *
          * @param cancel true to set as cancellation, false to unset
          * @return the builder
