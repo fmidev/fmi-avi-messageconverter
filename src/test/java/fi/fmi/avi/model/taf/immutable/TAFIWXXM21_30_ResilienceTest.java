@@ -73,7 +73,12 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(TAF.TAFStatus.MISSING, t.getStatus());
 
         t = TAFImpl.builder().setBaseForecast(TAFBaseForecastImpl.builder().buildPartial()).setStatus(AviationCodeListUser.TAFStatus.MISSING).buildPartial();
+        assertEquals(TAF.TAFStatus.MISSING, t.getStatus());
+        assertFalse(t.getBaseForecast().isPresent());
+
+        t = TAFImpl.builder().setStatus(AviationCodeListUser.TAFStatus.MISSING).setBaseForecast(TAFBaseForecastImpl.builder().buildPartial()).buildPartial();
         assertEquals(TAF.TAFStatus.NORMAL, t.getStatus());
+        assertTrue(t.getBaseForecast().isPresent());
 
         t = TAFImpl.builder().setStatus(AviationCodeListUser.TAFStatus.MISSING).buildPartial();
         assertEquals(TAF.TAFStatus.MISSING, t.getStatus());
