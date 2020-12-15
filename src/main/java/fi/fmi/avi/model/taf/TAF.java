@@ -30,6 +30,13 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
 
     Optional<List<TAFChangeForecast>> getChangeForecasts();
 
+    /**
+     * Deprecated in favour of using the {@link #getReferredReportValidPeriod()} and {@link #getAerodrome()}. Links with other than cancellation amended
+     * messages should be handled in the application code if necessary.
+     *
+     * @return the reference to the previously issued, amended message
+     */
+    @Deprecated
     Optional<TAFReference> getReferredReport();
 
     boolean isCancelMessage();
@@ -38,6 +45,6 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
         return !getBaseForecast().isPresent();
     }
 
-    Optional<PartialOrCompleteTimePeriod> getCancelledReportValidPeriod();
+    Optional<PartialOrCompleteTimePeriod> getReferredReportValidPeriod();
 
 }
