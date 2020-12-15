@@ -365,6 +365,8 @@ public abstract class TAFImpl implements TAF, Serializable {
          * {@link #isCancelMessage()} is true. If {@link #isCancelMessage()} is false, stores the potential cancel report valid time temporarily in the Builder
          * to be set if {@link #setReportStatus(ReportStatus)} is later called with parameter
          * {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION}.
+         * <p>
+         * Also calls {@link #setAerodrome(Aerodrome)} with the provided aerodrome info if no aerodrome is set.
          *
          * @param referredReport the reference to the amended message
          * @return the builder
@@ -380,7 +382,8 @@ public abstract class TAFImpl implements TAF, Serializable {
                                     + referredReport.getAerodrome());
                 }
             } catch (final IllegalStateException ise) {
-                //Aerodrome not set in builder, ignore
+                //Aerodrome not set in builder, set it here:
+                this.setAerodrome(referredReport.getAerodrome());
             }
             if (isCancelMessage()) {
                 this.setReferredReportValidPeriod(referredReport.getValidityTime());
