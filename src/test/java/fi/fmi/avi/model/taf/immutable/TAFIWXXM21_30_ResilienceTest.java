@@ -6,7 +6,9 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
+import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
@@ -26,7 +28,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder()//
@@ -38,7 +40,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
         assertTrue(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder()//
@@ -50,7 +52,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder().setStatus(AviationCodeListUser.TAFStatus.CORRECTION).setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
@@ -60,7 +62,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
     }
 
@@ -96,7 +98,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder()//
@@ -108,7 +110,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder()//
@@ -120,7 +122,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
     }
@@ -164,6 +166,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
     }
 
+    /*
     @Test
     public void testReferredReportValidityAffectsCancelledReportValidTime() {
         final PartialOrCompleteTimePeriod tp1 = PartialOrCompleteTimePeriod.createValidityTime("0112/0214");
@@ -179,100 +182,122 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertEquals(tp2, t.getCancelledReportValidPeriod().get());
     }
 
+     */
+
     @Test
     public void testCancelledReportValidTimeAffectsReferredReportValidity() {
         final PartialOrCompleteTimePeriod tp1 = PartialOrCompleteTimePeriod.createValidityTime("0112/0214");
         final PartialOrCompleteTimePeriod tp2 = PartialOrCompleteTimePeriod.createValidityTime("0112/0214");
         assertEquals(tp2, tp1);
         TAF t = TAFImpl.builder()//
-                .setCancelledReportValidPeriod(tp1)//
-                .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build()).buildPartial();
+                .setReferredReportValidPeriod(tp1)//
+                .setCancelMessage(true)//
+                .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
+                .buildPartial();
         assertTrue(t.getReferredReport().isPresent());
         assertTrue(t.getReferredReport().get().getValidityTime().isPresent());
         assertEquals(tp2, t.getReferredReport().get().getValidityTime().get());
     }
 
     @Test
-    public void testSetCancelMessageAffectsCancelledReportValidTime() {
+    //@Ignore
+    /*
+    Test ignored, based on the latest spec setting cancelMessage should not affect the cancelled report valid time,
+    see https://github.com/fmidev/fmi-avi-messageconverter/pull/68#discussion_r540170430
+     */
+
+    public void testSetCancelStatusCancelledReportValidTime() {
         final PartialOrCompleteTimePeriod tp1 = PartialOrCompleteTimePeriod.createValidityTime("0112/0214");
-        final PartialOrCompleteTimePeriod tp2 = PartialOrCompleteTimePeriod.createValidityTime("0112/0214");
-        assertEquals(tp2, tp1);
         TAF t = TAFImpl.builder()//
                 .setReferredReport(TAFReferenceImpl.builder()//
                         .setValidityTime(tp1)//
                         .buildPartial())//
                 .buildPartial();
-        assertFalse(t.getCancelledReportValidPeriod().isPresent());
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
+
+        t = TAFImpl.builder()//
+                .setStatus(AviationCodeListUser.TAFStatus.CANCELLATION)//
+                .setReferredReport(TAFReferenceImpl.builder()//
+                        .setValidityTime(tp1)//
+                        .buildPartial())//
+                .buildPartial();
+        assertTrue(t.getReferredReportValidPeriod().isPresent());
+        assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
         t = TAFImpl.builder()//
                 .setReferredReport(TAFReferenceImpl.builder()//
                         .setValidityTime(tp1)//
                         .buildPartial())//
-                .setCancelMessage(true).buildPartial();
-        assertTrue(t.getCancelledReportValidPeriod().isPresent());
-        assertEquals(tp2, t.getCancelledReportValidPeriod().get());
+                .setStatus(AviationCodeListUser.TAFStatus.CANCELLATION)//
+                .buildPartial();
+        assertTrue(t.getReferredReportValidPeriod().isPresent());
+        assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
     }
 
     @Test
-    public void testReferredReportAerodromeConsistencyOnBuild() {
-        TAFImpl.builder()//
-                .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
-                .setReferredReport(TAFReferenceImpl.builder()//
-                        .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
-                        .buildPartial())//
-                .build();
-
-        assertThrows(IllegalStateException.class, () -> {
-            TAFImpl.builder()//
-                    .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
-                    .setReferredReport(TAFReferenceImpl.builder()//
-                            .setAerodrome(AerodromeImpl.builder().setDesignator("BAR").build())//
-                            .buildPartial())//
-                    .build();
-        });
-    }
-
-    @Test
-    public void testCancelledReportReferredReportValidTimeConsistencyOnBuild() {
+    public void testReferredReportAdapter() {
         final PartialOrCompleteTimePeriod tp1 = PartialOrCompleteTimePeriod.createValidityTime("0112/0214");
-        final PartialOrCompleteTimePeriod tp2 = PartialOrCompleteTimePeriod.createValidityTime("0106/0212");
-        TAFImpl.builder()//
-                .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
-                .setCancelMessage(true).setReferredReport(TAFReferenceImpl.builder()//
-                .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build()).setValidityTime(tp1)//
-                .buildPartial())//
-                .setCancelledReportValidPeriod(tp1).build();
+        final Aerodrome ad = AerodromeImpl.builder().setDesignator("FOO").build();
+        final Aerodrome ad2 = AerodromeImpl.builder().setDesignator("BAR").build();
 
-        TAFImpl.builder()//
-                .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
-                .setCancelledReportValidPeriod(tp2)//
-                .setReferredReport(TAFReferenceImpl.builder()//
-                        .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
-                        .setValidityTime(tp1)//
-                        .buildPartial())//
-                .setCancelMessage(true)//
-                .build();
+        TAF t = TAFImpl.builder().setCancelMessage(true)//
+                .setReferredReportValidPeriod(tp1)//
+                .setAerodrome(ad)//
+                .buildPartial();
+        assertTrue(t.getReferredReport().isPresent());
+        assertTrue(t.getReferredReport().get().getValidityTime().isPresent());
+        assertEquals(tp1, t.getReferredReport().get().getValidityTime().get());
+        assertEquals(ad, t.getReferredReport().get().getAerodrome());
 
-        TAFImpl.builder()//
-                .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
-                .setCancelledReportValidPeriod(tp2)//
-                .setCancelMessage(true)//
-                .build();
+        t = TAFImpl.builder().setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build()).buildPartial();
+        assertFalse(t.getReferredReportValidPeriod().isPresent());
 
+        t = TAFImpl.builder()
+                .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())
+                .setStatus(AviationCodeListUser.TAFStatus.CANCELLATION)
+                .buildPartial();
+        assertTrue(t.getReferredReportValidPeriod().isPresent());
+        assertEquals(tp1, t.getReferredReportValidPeriod().get());
+
+        t = TAFImpl.builder()
+                .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())
+                .setStatus(AviationCodeListUser.TAFStatus.AMENDMENT)
+                .buildPartial();
+        assertTrue(t.getReferredReportValidPeriod().isPresent());
+        assertEquals(tp1, t.getReferredReportValidPeriod().get());
+
+        t = TAFImpl.builder()
+                .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())
+                .setStatus(AviationCodeListUser.TAFStatus.CORRECTION)
+                .buildPartial();
+        assertTrue(t.getReferredReportValidPeriod().isPresent());
+        assertEquals(tp1, t.getReferredReportValidPeriod().get());
+
+        assertThrows("setReferredReport should throw an IllegalArgumentException when given a conflicting aerodrome", IllegalArgumentException.class,
+                new ThrowingRunnable() {
+                    @Override
+                    public void run() throws Throwable {
+                        final TAF t = TAFImpl.builder().setAerodrome(ad)//
+                                .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad2).setValidityTime(tp1).build()).buildPartial();
+                    }
+                });
     }
 
     @Test
     public void testCancelBuildOrderConsistency() {
         final PartialOrCompleteTimePeriod validityTime = PartialOrCompleteTimePeriod.createValidityTime("0112/0214");
         final PartialOrCompleteTimePeriod cancelledReportValidPeriod = PartialOrCompleteTimePeriod.createValidityTime("0106/0212");
-        TAFImpl.Builder t = TAFImpl.builder().setValidityTime(validityTime).setCancelMessage(true).setCancelledReportValidPeriod(cancelledReportValidPeriod);
-        assertTrue(t.getCancelledReportValidPeriod().isPresent());
-        assertEquals(cancelledReportValidPeriod, t.getCancelledReportValidPeriod().get());
+        TAFImpl.Builder t = TAFImpl.builder()//
+                .setValidityTime(validityTime)//
+                .setCancelMessage(true)//
+                .setReferredReportValidPeriod(cancelledReportValidPeriod);
+        assertTrue(t.getReferredReportValidPeriod().isPresent());
+        assertEquals(cancelledReportValidPeriod, t.getReferredReportValidPeriod().get());
 
-        t = TAFImpl.builder().setValidityTime(validityTime).setCancelledReportValidPeriod(cancelledReportValidPeriod).setCancelMessage(true);
-        assertTrue(t.getCancelledReportValidPeriod().isPresent());
-        assertEquals(cancelledReportValidPeriod, t.getCancelledReportValidPeriod().get());
+        t = TAFImpl.builder().setValidityTime(validityTime).setReferredReportValidPeriod(cancelledReportValidPeriod).setCancelMessage(true);
+        assertTrue(t.getReferredReportValidPeriod().isPresent());
+        assertEquals(cancelledReportValidPeriod, t.getReferredReportValidPeriod().get());
     }
 
 }
