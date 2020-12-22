@@ -42,7 +42,7 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
     boolean isCancelMessage();
 
     default boolean isMissingMessage() {
-        return !getBaseForecast().isPresent();
+        return !isCancelMessage() && !getBaseForecast().isPresent();
     }
 
     Optional<PartialOrCompleteTimePeriod> getReferredReportValidPeriod();

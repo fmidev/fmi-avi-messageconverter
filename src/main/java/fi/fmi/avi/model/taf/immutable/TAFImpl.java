@@ -327,10 +327,11 @@ public abstract class TAFImpl implements TAF, Serializable {
         /**
          * Determines if the current builder status indicates a "missing" message.
          *
-         * @return false if the {@link #getBaseForecast()} is present, true otherwise
+         * @return {@code true} if this is not a {@link #isCancelMessage() cancel message} and {@link #getBaseForecast() base forecast} is empty,
+         * {@code false} otherwise
          */
         public boolean isMissingMessage() {
-            return !getBaseForecast().isPresent();
+            return !isCancelMessage() && !getBaseForecast().isPresent();
         }
 
         /**
