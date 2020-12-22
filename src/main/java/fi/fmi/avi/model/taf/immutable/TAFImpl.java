@@ -78,6 +78,7 @@ public abstract class TAFImpl implements TAF, Serializable {
      * on-the-fly.
      *
      * @return the message status
+     *
      * @deprecated please migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
      */
     @Override
@@ -97,6 +98,7 @@ public abstract class TAFImpl implements TAF, Serializable {
      * {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}.
      *
      * @return the amended message information messages
+     *
      * @deprecated please migrate to using {@link #getAerodrome()} and {@link #getReferredReportValidPeriod()} instead
      */
     @Override
@@ -240,6 +242,29 @@ public abstract class TAFImpl implements TAF, Serializable {
                     .orElse(reference));
         }
 
+        @Deprecated
+        public Builder mapStatus(final UnaryOperator<TAFStatus> mapper) {
+            requireNonNull(mapper, "mapper");
+            return setStatus(mapper.apply(getStatus()));
+        }
+
+        /**
+         * Provides the current builder value of the status property.
+         *
+         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+         * explicitly stored. This implementation uses {@link TAFStatus#fromReportStatus(ReportStatus, boolean, boolean)} instead to determine the returned
+         * value
+         * on-the-fly.
+         *
+         * @return the message status
+         *
+         * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
+         */
+        @Deprecated
+        public TAFStatus getStatus() {
+            return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
+        }
+
         /**
          * Sets the TAF-specific message status.
          *
@@ -260,8 +285,11 @@ public abstract class TAFImpl implements TAF, Serializable {
          *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#CORRECTION}, <code>cancelMessage = false</code></li>
          * </ul>
          *
-         * @param status the status to set
+         * @param status
+         *         the status to set
+         *
          * @return builder
+         *
          * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)} and {@link #setCancelMessage(boolean)} instead
          */
         @Deprecated
@@ -296,28 +324,6 @@ public abstract class TAFImpl implements TAF, Serializable {
             return this;
         }
 
-        @Deprecated
-        public Builder mapStatus(final UnaryOperator<TAFStatus> mapper) {
-            requireNonNull(mapper, "mapper");
-            return setStatus(mapper.apply(getStatus()));
-        }
-
-        /**
-         * Provides the current builder value of the status property.
-         *
-         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
-         * explicitly stored. This implementation uses {@link TAFStatus#fromReportStatus(ReportStatus, boolean, boolean)} instead to determine the returned
-         * value
-         * on-the-fly.
-         *
-         * @return the message status
-         * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
-         */
-        @Deprecated
-        public TAFStatus getStatus() {
-            return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
-        }
-
         /**
          * Determines if the current builder status indicates a "missing" message.
          *
@@ -334,6 +340,7 @@ public abstract class TAFImpl implements TAF, Serializable {
          * provided aerodrome and the value of {@link #getReferredReportValidPeriod()}.
          *
          * @param aerodrome
+         *
          * @return
          */
         @Override
@@ -357,40 +364,9 @@ public abstract class TAFImpl implements TAF, Serializable {
             return super.setChangeForecasts(changeForecasts);
         }
 
-        /**
-         * Sets the link to another (referred) report used for cancellation and amendment messages.
-         * <p>
-         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>referredReport</code> is no longer
-         * explicitly stored. Instead, this method conditionally sets {@link #setReferredReportValidPeriod(PartialOrCompleteTimePeriod)} if
-         * {@link #isCancelMessage()} is true. If {@link #isCancelMessage()} is false, stores the potential cancel report valid time temporarily in the Builder
-         * to be set if {@link #setReportStatus(ReportStatus)} is later called with parameter
-         * {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION}.
-         * <p>
-         * Also calls {@link #setAerodrome(Aerodrome)} with the provided aerodrome info if no aerodrome is set.
-         *
-         * @param referredReport the reference to the amended message
-         * @return the builder
-         * @throws IllegalArgumentException if the {@link TAFReference#getAerodrome()} does not equal {@link #getAerodrome()} aerodrome
-         * @deprecated please migrate into using {@link #setReferredReportValidPeriod(PartialOrCompleteTimePeriod)} instead
-         */
         @Deprecated
-        public Builder setReferredReport(final TAFReference referredReport) throws IllegalArgumentException {
-            try {
-                if (!getAerodrome().equals(referredReport.getAerodrome())) {
-                    throw new IllegalArgumentException(
-                            "Aerodrome " + getAerodrome() + " set for TAF is not the same as the aerodrome set for the referred " + "report "
-                                    + referredReport.getAerodrome());
-                }
-            } catch (final IllegalStateException ise) {
-                //Aerodrome not set in builder, set it here:
-                this.setAerodrome(referredReport.getAerodrome());
-            }
-            if (isCancelMessage()) {
-                this.setReferredReportValidPeriod(referredReport.getValidityTime());
-            } else if (referredReport.getValidityTime().isPresent()) {
-                this.possibleReferredReportValidPeriod = referredReport.getValidityTime().get();
-            }
-            return this;
+        public Builder clearReferredReport() {
+            return clearReferredReportValidPeriod();
         }
 
         @Deprecated
@@ -414,6 +390,7 @@ public abstract class TAFImpl implements TAF, Serializable {
          * not present.
          *
          * @return the amended message information for cancellation messages
+         *
          * @deprecated please migrate to using {@link #getAerodrome()} and {@link #getReferredReportValidPeriod()} instead
          */
         @Deprecated
@@ -436,9 +413,60 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         /**
+         * Sets the link to another (referred) report used for cancellation and amendment messages.
+         * <p>
+         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>referredReport</code> is no longer
+         * explicitly stored. Instead, this method conditionally sets {@link #setReferredReportValidPeriod(PartialOrCompleteTimePeriod)} if
+         * {@link #isCancelMessage()} is true. If {@link #isCancelMessage()} is false, stores the potential cancel report valid time temporarily in the Builder
+         * to be set if {@link #setReportStatus(ReportStatus)} is later called with parameter
+         * {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION}.
+         * <p>
+         * Also calls {@link #setAerodrome(Aerodrome)} with the provided aerodrome info if no aerodrome is set.
+         *
+         * @param referredReport
+         *         the reference to the amended message
+         *
+         * @return the builder
+         *
+         * @throws IllegalArgumentException
+         *         if the {@link TAFReference#getAerodrome()} does not equal {@link #getAerodrome()} aerodrome
+         * @deprecated please migrate into using {@link #setReferredReportValidPeriod(PartialOrCompleteTimePeriod)} instead
+         */
+        @Deprecated
+        public Builder setReferredReport(final TAFReference referredReport) {
+            try {
+                if (!getAerodrome().equals(referredReport.getAerodrome())) {
+                    throw new IllegalArgumentException(
+                            "Aerodrome " + getAerodrome() + " set for TAF is not the same as the aerodrome set for the referred " + "report "
+                                    + referredReport.getAerodrome());
+                }
+            } catch (final IllegalStateException ise) {
+                //Aerodrome not set in builder, set it here:
+                this.setAerodrome(referredReport.getAerodrome());
+            }
+            if (isCancelMessage()) {
+                this.setReferredReportValidPeriod(referredReport.getValidityTime());
+            } else if (referredReport.getValidityTime().isPresent()) {
+                this.possibleReferredReportValidPeriod = referredReport.getValidityTime().get();
+            }
+            return this;
+        }
+
+        @Deprecated
+        public Builder setReferredReport(final Optional<TAFReference> referredReport) {
+            if (referredReport.isPresent()) {
+                return setReferredReport(referredReport.get());
+            } else {
+                return clearReferredReport();
+            }
+        }
+
+        /**
          * Sets the time period of the cancelled previously issued message.
          *
-         * @param period valid time period of the cancelled report
+         * @param period
+         *         valid time period of the cancelled report
+         *
          * @return the builder
          */
         @Override
@@ -447,7 +475,6 @@ public abstract class TAFImpl implements TAF, Serializable {
             this.possibleReferredReportValidPeriod = null;
             return this;
         }
-
 
         private void completeValidityTime(final ZonedDateTime reference) {
             mapValidityTime(validityTime -> validityTime.toBuilder().completePartialStartingNear(reference).build());
