@@ -4,6 +4,7 @@
     <groupId>fi.fmi</groupId>
     <artifactId>fmi-os-parent-pom</artifactId>
     <version>0.8.1</version>
+    <relativePath />
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -117,29 +118,27 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-   <repositories>
-   <repository>
-    <id>fmi-os-mvn-snapshot-repo</id>
-    <url>https://raw.githubusercontent.com/fmidev/fmi-os-mvn-snapshot-repo/master</url>
-    <snapshots>
-      <enabled>true</enabled>
-      <updatePolicy>always</updatePolicy>
-    </snapshots>
-    <releases>
-      <enabled>false</enabled>
-    </releases>
-  </repository>
-  <repository>
-    <id>fmi-os-mvn-release-repo</id>
-    <url>https://raw.githubusercontent.com/fmidev/fmi-os-mvn-repo/master</url>
-    <snapshots>      <enabled>true</enabled>
-      <updatePolicy>always</updatePolicy>
-    </snapshots>
-    <releases>
-      <enabled>false</enabled>
-    </releases>
-  </repository>
+  
+  <repositories>
+    <!-- Needed to resolve parent pom during deploy -->
+    <repository>
+      <id>fmi-os-mvn-release-repo</id>
+      <url>https://raw.githubusercontent.com/fmidev/fmi-os-mvn-repo/master</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+   </repository>
+
+    <repository>
+      <id>gitlab-maven</id>
+      <url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+    </repository>
   </repositories>
+  
   <build>
     <plugins>
       <plugin>
@@ -147,6 +146,30 @@
         <artifactId>maven-bundle-plugin</artifactId>
       </plugin>
     </plugins>
+
+     <!-- Overriding settings from parent pom: -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+          <configuration>
+            <altDeploymentRepository>gitlab-maven::default::${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</altDeploymentRepository>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
+  <distributionManagement>
+    <repository>
+      <id>gitlab-maven</id>
+      <url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+    </repository>
+    <snapshotRepository>
+      <id>gitlab-maven</id>
+      <url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

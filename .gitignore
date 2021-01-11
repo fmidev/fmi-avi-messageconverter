@@ -23,3 +23,10 @@ hs_err_pid*
 *.iml
 .idea
 /target/
+
+#Maven
+.m2
+
+#vscode
+.vscode
+.factorypath
