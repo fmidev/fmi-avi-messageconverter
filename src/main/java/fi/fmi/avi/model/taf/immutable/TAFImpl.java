@@ -500,20 +500,6 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         /**
-         * Sets the time period of the cancelled previously issued message.
-         *
-         * @param period
-         *         valid time period of the cancelled report
-         *
-         * @return the builder
-         */
-        @Override
-        public Builder setReferredReportValidPeriod(final PartialOrCompleteTimePeriod period) {
-            super.setReferredReportValidPeriod(period);
-            return this;
-        }
-
-        /**
          * {@inheritDoc}
          *
          * <p>
