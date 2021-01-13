@@ -89,13 +89,14 @@ public abstract class TAFImpl implements TAF, Serializable {
     }
 
     /**
-     * TODO: REVISE; Provides the value of the referredReport property.
+     * Provides the value of the referredReport property.
+     *
      * <p>
      * Note, this method is provided for backward compatibility with previous versions of the API. The <code>referredReport</code> is no longer
      * explicitly stored. This implementation uses {@link #getAerodrome()} and {@link #getReferredReportValidPeriod()} instead to determine the returned value
      * on-the-fly for cancel, amendment and correction messages. Returns {@link Optional#empty()} if {@link #getReferredReportValidPeriod()} is
-     * not present or {@link #isCancelMessage()} is false or {@link #getReportStatus()} returns
-     * {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}.
+     * not present.
+     * </p>
      *
      * @return the amended message information messages
      *
@@ -180,7 +181,8 @@ public abstract class TAFImpl implements TAF, Serializable {
                         .setIssueTime(value.getIssueTime());
 
                 //From TAF:
-                retval.setCancelMessage(value.isCancelMessage()).setValidityTime(value.getValidityTime())//
+                retval.setCancelMessage(value.isCancelMessage())//
+                        .setValidityTime(value.getValidityTime())//
                         .setBaseForecast(TAFBaseForecastImpl.immutableCopyOf(value.getBaseForecast()))//
                         .setReferredReportValidPeriod(value.getReferredReportValidPeriod());
 
@@ -249,7 +251,6 @@ public abstract class TAFImpl implements TAF, Serializable {
                     .orElse(LocalDateTime.MAX.atZone(reference.getZone()));
             completeAirTemperatureForecast(reference, validityStart, validityEnd);
             completeChangeForecastPeriods(reference, validityStart, validityEnd);
-            //completeReferredReport(reference, validityEnd);
             return this;
         }
 
@@ -293,31 +294,51 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         /**
-         * TODO: REVISE; Sets the TAF-specific message status.
+         * Sets the TAF-specific message status.
          *
          * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
          * explicitly stored. Instead, this method sets other property values with the following logic:
-         * <ul>
-         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION}:<code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT}, <code>cancelMessage = true</code>. Also sets
-         *     {@link #setReferredReportValidPeriod(PartialOrCompleteTimePeriod)} if {@link #setReferredReport(TAFReference)} was previously called with a
-         *     present {@link TAFReference#getValidityTime()} when {@link #isCancelMessage()} was false</li>
-         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#MISSING}: clears the baseForecast if present, but keeps a temporary
-         *     copy internally in the builder in case the status is later set back to other value without setting a new baseForecast value explicitly</li>
-         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#NORMAL}: <code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL}, <code>cancelMessage = false</code></li>
-         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#AMENDMENT}: <code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT}, <code>cancelMessage = false</code></li>
-         *     <li>status is {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CORRECTION}: <code>reportStatus =</code>
-         *     {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#CORRECTION}, <code>cancelMessage = false</code></li>
-         * </ul>
+         * <dl>
+         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION CANCELLATION}</dt>
+         *     <dd>
+         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT AMENDMENT}</code><br>
+         *         <code>cancelMessage = true</code><br>
+         *     </dd>
+         *
+         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#MISSING MISSING}</dt>
+         *     <dd>
+         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         *         <code>cancelMessage = false</code><br>
+         *         <code>baseForecast = Optional.empty()</code> ; postponed until {@link #build()} / {@link #buildPartial()} by setting internal
+         *         {@link #isMissingMessage()} missingMessage} flag.<br>
+         *     </dd>
+         *
+         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#NORMAL NORMAL}</dt>
+         *     <dd>
+         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         *         <code>cancelMessage = false</code><br>
+         *     </dd>
+         *
+         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#AMENDMENT AMENDMENT}</dt>
+         *     <dd>
+         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#AMENDMENT AMENDMENT}</code><br>
+         *         <code>cancelMessage = false</code><br>
+         *     </dd>
+         *
+         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CORRECTION CORRECTION}</dt>
+         *     <dd>
+         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#CORRECTION CORRECTION}</code><br>
+         *         <code>cancelMessage = false</code><br>
+         *     </dd>
+         * </dl>
          *
          * @param status
          *         the status to set
          *
          * @return builder
          *
-         * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)} and {@link #setCancelMessage(boolean)} instead
+         * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)} and {@link #setCancelMessage(boolean)}, and controlling
+         * presence of {@link #setBaseForecast(Optional) baseForecast} instead
          */
         @Deprecated
         public Builder setStatus(final TAFStatus status) {
@@ -329,25 +350,34 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         /**
-         * TODO: REVISE; Determines if the current builder status indicates a "missing" message.
+         * Determines if the current builder status indicates a "missing" message. Message is considered missing if <em>one</em> of following conditions is
+         * true:
+         * <ul>
+         *     <li>this builder <em>internal</em> {@code missingMessage} flag is set</li>
+         *     <li>this builder does not represent a {@link #isCancelMessage() cancel message} and {@link #getBaseForecast() base forecast} is empty</li>
+         * </ul>
          *
-         * @return {@code true} if this is not a {@link #isCancelMessage() cancel message} and {@link #getBaseForecast() base forecast} is empty,
-         * {@code false} otherwise
+         * <p>
+         *     The <em>internal</em> {@code missingMessage} flag is temporarily used for backwards compatibility with old api, and is set upon
+         *     {@link #setStatus(TAFStatus) setStatus(MISSING)}. It is cleared on these invocations:
+         * </p>
+         * <ul>
+         *     <li>{@link #setStatus(TAFStatus)} with status other than {@code MISSING}</li>
+         *     <li>{@link #setCancelMessage(boolean)}</li>
+         *     <li>{@link #setReportStatus(ReportStatus)}</li>
+         * </ul>
+         * <p>
+         *     but <em>not</em> on {@link #setBaseForecast(TAFBaseForecast)} or {@link #clearBaseForecast()}. The base idea is that old deprecated and new
+         *     API should not be mixed, but only one of them (preferably the new) should be used. The {@code baseForecast} property exists in both, therefore
+         *     it is ambiguous whether e.g. clearing {@code baseForecast} denotes missing message or not.
+         * </p>
+         *
+         * @return {@code true} if this builder represents a missing message; {@code false} otherwise
          */
         public boolean isMissingMessage() {
             return missingMessage || (!isCancelMessage() && !getBaseForecast().isPresent());
         }
 
-        /**
-         * Sets the aerodrome which the TAF applies to.
-         * <p>
-         * Additionally if {@link #getReferredReportValidPeriod()} is present but {@link #getReferredReport()} is not, sets the referred report with the
-         * provided aerodrome and the value of {@link #getReferredReportValidPeriod()}.
-         *
-         * @param aerodrome
-         *
-         * @return
-         */
         @Override
         @JsonDeserialize(as = AerodromeImpl.class)
         public Builder setAerodrome(final Aerodrome aerodrome) {
@@ -368,6 +398,13 @@ public abstract class TAFImpl implements TAF, Serializable {
             return super.setChangeForecasts(changeForecasts);
         }
 
+        /**
+         * Clears {@link #clearReferredReportValidPeriod() referredReportValidPeriod} and <em>internally</em> stored referredReport aerodrome.
+         *
+         * @return builder
+         *
+         * @deprecated please migrate to using {@link #clearReferredReportValidPeriod()} instead
+         */
         @Deprecated
         public Builder clearReferredReport() {
             referredReportAerodrome = null;
@@ -386,15 +423,17 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         /**
-         * TODO: REVISE; Provides the current builder value of the referredReport property.
+         * Provides the current builder value of the referredReport property.
+         *
          * <p>
          * Note, this method is provided for backward compatibility with previous versions of the API. The <code>referredReport</code> is no longer
          * explicitly stored. This implementation uses {@link #getAerodrome()} and {@link #getReferredReportValidPeriod()} instead to determine the returned
-         * value
-         * on-the-fly for cancel messages. Returns {@link Optional#empty()} if {@link #isCancelMessage()} is false or {@link #getReferredReportValidPeriod()} is
-         * not present.
+         * value on-the-fly for cancel, amendment and correction messages. Returns {@link Optional#empty()} if {@link #getReferredReportValidPeriod()} is
+         * not present or if aerodrome cannot be determined because either {@link #setAerodrome(Aerodrome)} nor {@link #setReferredReport(TAFReference)}
+         * is not invoked.
+         * </p>
          *
-         * @return the amended message information for cancellation messages
+         * @return the amended message information messages
          *
          * @deprecated please migrate to using {@link #getAerodrome()} and {@link #getReferredReportValidPeriod()} instead
          */
@@ -412,15 +451,12 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         /**
-         * TODO: REVISE; Sets the link to another (referred) report used for cancellation and amendment messages.
+         * Sets the link to another (referred) report used for cancellation and amendment messages.
          * <p>
          * Note, this method is provided for backward compatibility with previous versions of the API. The <code>referredReport</code> is no longer
-         * explicitly stored. Instead, this method conditionally sets {@link #setReferredReportValidPeriod(PartialOrCompleteTimePeriod)} if
-         * {@link #isCancelMessage()} is true. If {@link #isCancelMessage()} is false, stores the potential cancel report valid time temporarily in the Builder
-         * to be set if {@link #setReportStatus(ReportStatus)} is later called with parameter
-         * {@link fi.fmi.avi.model.AviationCodeListUser.TAFStatus#CANCELLATION}.
+         * explicitly stored. Instead, this method sets {@link #setReferredReportValidPeriod(PartialOrCompleteTimePeriod)} and stores <em>internally</em> the
+         * {@link TAFReference#getAerodrome() aerodrome} of referred report to be checked against {@link #getAerodrome()} upon {@link #build()}.
          * <p>
-         * Also calls {@link #setAerodrome(Aerodrome)} with the provided aerodrome info if no aerodrome is set.
          *
          * @param referredReport
          *         the reference to the amended message
@@ -438,6 +474,22 @@ public abstract class TAFImpl implements TAF, Serializable {
             return this;
         }
 
+        /**
+         * Sets or clears the link to another (referred) report used for cancellation and amendment messages.
+         * <p>
+         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>referredReport</code> is no longer
+         * explicitly stored. See {@link #setReferredReport(TAFReference)} and {@link #clearReferredReport()} for description of transition phase behavior.
+         * <p>
+         *
+         * @param referredReport
+         *         the reference to the amended message
+         *
+         * @return the builder
+         *
+         * @throws IllegalArgumentException
+         *         if the {@link TAFReference#getAerodrome()} does not equal {@link #getAerodrome()} aerodrome
+         * @deprecated please migrate into using {@link #setReferredReportValidPeriod(Optional)} instead
+         */
         @Deprecated
         public Builder setReferredReport(final Optional<TAFReference> referredReport) {
             if (referredReport.isPresent()) {
@@ -461,12 +513,36 @@ public abstract class TAFImpl implements TAF, Serializable {
             return this;
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>
+         * Additionally this method clears the <em>internal</em> {@code missingMessage} flag (see {@link #isMissingMessage()} for details).
+         * </p>
+         *
+         * @param cancelMessage
+         *         {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @Override
         public Builder setCancelMessage(final boolean cancelMessage) {
             missingMessage = false;
             return super.setCancelMessage(cancelMessage);
         }
 
+        /**
+         * {@inheritDoc}
+         *
+         * <p>
+         * Additionally this method clears the <em>internal</em> {@code missingMessage} flag (see {@link #isMissingMessage()} for details).
+         * </p>
+         *
+         * @param reportStatus
+         *         {@inheritDoc}
+         *
+         * @return {@inheritDoc}
+         */
         @Override
         public Builder setReportStatus(final ReportStatus reportStatus) {
             missingMessage = false;
