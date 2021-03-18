@@ -78,6 +78,7 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
         @Deprecated
         Builder() {
             this.setTranslated(false);
+            this.setReportStatus(ReportStatus.NORMAL);
         }
 
         public static Builder from(final SpaceWeatherAdvisory value) {
