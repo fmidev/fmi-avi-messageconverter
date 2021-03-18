@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
+import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
@@ -56,11 +57,14 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
             if (value instanceof TAFBulletinImpl) {
                 return ((TAFBulletinImpl) value).toBuilder();
             } else {
-                return TAFBulletinImpl.builder()//
-                        .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
-                        .setTimeStamp(value.getTimeStamp())//
-                        .addAllTimeStampFields(value.getTimeStampFields())//
-                        .addAllMessages(value.getMessages());
+                final Builder builder = TAFBulletinImpl.builder();
+                MeteorologicalBulletinBuilderHelper.copyFrom(builder, value, //
+                        Builder::setHeading, //
+                        Builder::addAllMessages, //
+                        TAFImpl::immutableCopyOf, //
+                        Builder::setTimeStamp, //
+                        Builder::addAllTimeStampFields);
+                return builder;
             }
         }
 
@@ -89,7 +93,6 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
             return super.build();
         }
         */
-
 
         @Override
         @JsonDeserialize(as = BulletinHeadingImpl.class)

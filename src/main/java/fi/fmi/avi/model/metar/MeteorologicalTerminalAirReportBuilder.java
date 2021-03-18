@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.Weather;
@@ -702,6 +703,48 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
      * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
      *
      * @return this {@code Builder} object
+     */
+    default B setNullableIssueTime(@Nullable final PartialOrCompleteTimeInstant issueTime) {
+        if (issueTime != null) {
+            return setIssueTime(issueTime);
+        } else {
+            return clearIssueTime();
+        }
+    }
+
+    /**
+     * If the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} is present, replaces it by
+     * applying {@code mapper} to it and using the result.
+     *
+     * <p>If the result is null, clears the value.
+     *
+     * @return this {@code Builder} object
+     *
+     * @throws NullPointerException
+     *         if {@code mapper} is null
+     */
+    default B mapIssueTime(final UnaryOperator<PartialOrCompleteTimeInstant> mapper) {
+        Objects.requireNonNull(mapper);
+        return setIssueTime(getIssueTime().map(mapper));
+    }
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} to {@link Optional#empty()
+     * Optional.empty()}.
+     *
+     * @return this {@code Builder} object
+     */
+    B clearIssueTime();
+
+    /**
+     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     */
+    Optional<PartialOrCompleteTimeInstant> getIssueTime();
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     *
+     * @return this {@code Builder} object
      *
      * @throws NullPointerException
      *         if {@code issueTime} is null
@@ -716,46 +759,68 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
     B setIssueTime(Optional<? extends PartialOrCompleteTimeInstant> issueTime);
 
     /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
      *
      * @return this {@code Builder} object
      */
-    default B setNullableIssueTime(@Nullable PartialOrCompleteTimeInstant issueTime){
-        if (issueTime != null) {
-            return setIssueTime(issueTime);
+    default B setNullableReportStatus(final AviationWeatherMessage.ReportStatus reportStatus) {
+        if (reportStatus != null) {
+            return setReportStatus(reportStatus);
         } else {
-            return clearIssueTime();
+            return clearReportStatus();
         }
     }
 
-
     /**
-     * If the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} is present, replaces it by
+     * If the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()} is present, replaces it by
      * applying {@code mapper} to it and using the result.
      *
      * <p>If the result is null, clears the value.
      *
      * @return this {@code Builder} object
-     * @throws NullPointerException if {@code mapper} is null
+     *
+     * @throws NullPointerException
+     *         if {@code mapper} is null
      */
-    default B mapIssueTime(UnaryOperator<PartialOrCompleteTimeInstant> mapper){
-        Objects.requireNonNull(mapper);
-        return setIssueTime(getIssueTime().map(mapper));
+    default B mapReportStatus(final UnaryOperator<AviationWeatherMessage.ReportStatus> mapper) {
+        return setReportStatus(getReportStatus().map(mapper));
     }
 
     /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} to {@link Optional#empty()
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()} to {@link Optional#empty()
      * Optional.empty()}.
      *
      * @return this {@code Builder} object
      */
-    B clearIssueTime();
-
+    B clearReportStatus();
 
     /**
-     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
      */
-    Optional<PartialOrCompleteTimeInstant> getIssueTime();
+    Optional<AviationWeatherMessage.ReportStatus> getReportStatus();
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
+     *
+     * @return this {@code Builder} object
+     *
+     * @throws NullPointerException
+     *         if {@code reportStatus} is null
+     */
+    B setReportStatus(AviationWeatherMessage.ReportStatus reportStatus);
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
+     *
+     * @return this {@code Builder} object
+     */
+    default B setReportStatus(final Optional<? extends AviationWeatherMessage.ReportStatus> reportStatus) {
+        if (reportStatus.isPresent()) {
+            return setReportStatus(reportStatus.get());
+        } else {
+            return clearReportStatus();
+        }
+    }
 
     /**
      * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#getAerodrome()} by applying {@code

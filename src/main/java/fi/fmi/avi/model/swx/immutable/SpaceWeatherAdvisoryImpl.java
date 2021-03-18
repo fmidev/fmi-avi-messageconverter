@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
@@ -83,32 +84,29 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
             if (value instanceof SpaceWeatherAdvisoryImpl) {
                 return ((SpaceWeatherAdvisoryImpl) value).toBuilder();
             } else {
-                final Builder retval = builder();
-
-                //From AviationWeatherMessage:
-                retval.setPermissibleUsage(value.getPermissibleUsage());
-                retval.setPermissibleUsageReason(value.getPermissibleUsageReason());
-                retval.setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary());
-                retval.setTranslated(value.isTranslated());
-                retval.setTranslatedBulletinID(value.getTranslatedBulletinID());
-                retval.setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime());
-                retval.setTranslationCentreDesignator(value.getTranslationCentreDesignator());
-                retval.setTranslationCentreName(value.getTranslationCentreName());
-                retval.setTranslationTime(value.getTranslationTime());
-                retval.setTranslatedTAC(value.getTranslatedTAC());
-                retval.setRemarks(value.getRemarks());
-                retval.setIssueTime(value.getIssueTime());
-
-                //From SpaceWeatherAdvisory:
-                retval.setIssuingCenter(IssuingCenterImpl.immutableCopyOf(value.getIssuingCenter()))
+                final Builder builder = builder();
+                AviationWeatherMessageBuilderHelper.copyFrom(builder, value,  //
+                        Builder::setRemarks, //
+                        Builder::setPermissibleUsage, //
+                        Builder::setPermissibleUsageReason, //
+                        Builder::setPermissibleUsageSupplementary, //
+                        Builder::setTranslated, //
+                        Builder::setTranslatedBulletinID, //
+                        Builder::setTranslatedBulletinReceptionTime, //
+                        Builder::setTranslationCentreDesignator, //
+                        Builder::setTranslationCentreName, //
+                        Builder::setTranslationTime, //
+                        Builder::setTranslatedTAC, //
+                        Builder::setIssueTime, //
+                        Builder::setReportStatus);
+                return builder//
+                        .setIssuingCenter(IssuingCenterImpl.immutableCopyOf(value.getIssuingCenter()))
                         .setAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(value.getAdvisoryNumber()))
                         .setReplaceAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(value.getReplaceAdvisoryNumber()))
+                        .addAllPhenomena(value.getPhenomena().stream()//
+                                .map(p -> SpaceWeatherPhenomenon.from(p.getType(), p.getSeverity())))//
+                        .addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf))//
                         .setNextAdvisory(NextAdvisoryImpl.immutableCopyOf(value.getNextAdvisory()));
-
-                retval.addAllPhenomena(value.getPhenomena().stream()//
-                        .map(p -> SpaceWeatherPhenomenon.from(p.getType(), p.getSeverity())));
-                retval.addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf));
-                return retval;
             }
         }
 

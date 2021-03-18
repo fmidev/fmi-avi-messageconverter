@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
@@ -42,7 +43,6 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
         return bulletin.map(SIGMETBulletinImpl::immutableCopyOf);
     }
 
-
     public abstract Builder toBuilder();
 
     public static class Builder extends SIGMETBulletinImpl_Builder {
@@ -55,11 +55,14 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
             if (value instanceof SIGMETBulletinImpl) {
                 return ((SIGMETBulletinImpl) value).toBuilder();
             } else {
-                return SIGMETBulletinImpl.builder()//
-                        .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
-                        .setTimeStamp(value.getTimeStamp())//
-                        .addAllMessages(value.getMessages())//
-                        .addAllTimeStampFields(value.getTimeStampFields());
+                final Builder builder = builder();
+                MeteorologicalBulletinBuilderHelper.copyFrom(builder, value, //
+                        Builder::setHeading, //
+                        Builder::addAllMessages, //
+                        SIGMETImpl::immutableCopyOf, //
+                        Builder::setTimeStamp, //
+                        Builder::addAllTimeStampFields);
+                return builder;
             }
         }
 

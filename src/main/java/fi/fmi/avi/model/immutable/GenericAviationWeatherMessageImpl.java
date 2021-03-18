@@ -1,7 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -13,16 +12,20 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
 
 @FreeBuilder
 @JsonDeserialize(builder = GenericAviationWeatherMessageImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "messageType", "messageFormat", "originalMessage",
-        "issueTime", "validityTime", "targetAerodrome"})
+@JsonPropertyOrder({ "messageType", "messageFormat", "originalMessage", "issueTime", "validityTime", "targetAerodrome" })
 public abstract class GenericAviationWeatherMessageImpl implements GenericAviationWeatherMessage, Serializable {
 
     private static final long serialVersionUID = 2232603779482075673L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static GenericAviationWeatherMessageImpl immutableCopyOf(final GenericAviationWeatherMessage message) {
         Objects.requireNonNull(message);
@@ -50,43 +53,41 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
             }
         }
         if (this.getValidityTime().isPresent()) {
-            if (!this.getValidityTime().get().isComplete()) {
-                return false;
-            }
+            return this.getValidityTime().get().isComplete();
         }
         return true;
     }
 
-
     public static class Builder extends GenericAviationWeatherMessageImpl_Builder {
+        @Deprecated
+        public Builder() {
+        }
 
         public static Builder from(final GenericAviationWeatherMessage value) {
             if (value instanceof GenericAviationWeatherMessageImpl) {
                 return ((GenericAviationWeatherMessageImpl) value).toBuilder();
             } else {
-                //From AviationWeatherMessage:
-                final GenericAviationWeatherMessageImpl.Builder retval = new GenericAviationWeatherMessageImpl.Builder()//
-                        .setPermissibleUsage(value.getPermissibleUsage())//
-                        .setPermissibleUsageReason(value.getPermissibleUsageReason())//
-                        .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())//
-                        .setTranslated(value.isTranslated())//
-                        .setTranslatedBulletinID(value.getTranslatedBulletinID())//
-                        .setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime())//
-                        .setTranslationCentreDesignator(value.getTranslationCentreDesignator())//
-                        .setTranslationCentreName(value.getTranslationCentreName())//
-                        .setTranslationTime(value.getTranslationTime())//
-                        .setTranslatedTAC(value.getTranslatedTAC());
-
-                value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
-
-                retval.setOriginalMessage(value.getOriginalMessage())
+                final Builder builder = builder();
+                AviationWeatherMessageBuilderHelper.copyFrom(builder, value,  //
+                        Builder::setRemarks, //
+                        Builder::setPermissibleUsage, //
+                        Builder::setPermissibleUsageReason, //
+                        Builder::setPermissibleUsageSupplementary, //
+                        Builder::setTranslated, //
+                        Builder::setTranslatedBulletinID, //
+                        Builder::setTranslatedBulletinReceptionTime, //
+                        Builder::setTranslationCentreDesignator, //
+                        Builder::setTranslationCentreName, //
+                        Builder::setTranslationTime, //
+                        Builder::setTranslatedTAC, //
+                        Builder::setIssueTime, //
+                        Builder::setReportStatus);
+                return builder//
+                        .setOriginalMessage(value.getOriginalMessage())//
                         .setMessageType(value.getMessageType())//
                         .setMessageFormat(value.getMessageFormat())//
-                        .setIssueTime(value.getIssueTime())//
                         .setValidityTime(value.getValidityTime())//
                         .setTargetAerodrome(value.getTargetAerodrome());
-
-                return retval;
             }
         }
 

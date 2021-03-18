@@ -1,12 +1,9 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -15,18 +12,22 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.AirTrafficServicesUnitWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.Airspace;
+import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
+import fi.fmi.avi.model.BuilderHelper;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.PhenomenonGeometry;
+import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.SIGMETAIRMETBuilderHelper;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.PhenomenonGeometry;
-import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetReference;
 import fi.fmi.avi.model.sigmet.VAInfo;
@@ -35,12 +36,14 @@ import fi.fmi.avi.model.sigmet.VAInfo;
 @JsonDeserialize(builder = SIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "airspace",
-        "analysisGeometries", "forecastGeometries",
-        "movingSpeed", "movingDirection",
-        "volcano", "noVolcanicAshExpected", "volcanicAshMovedToFIR",
-        "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
-        "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
+        "analysisGeometries", "forecastGeometries", "movingSpeed", "movingDirection", "volcano", "noVolcanicAshExpected", "volcanicAshMovedToFIR",
+        "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID",
+        "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class SIGMETImpl implements SIGMET, Serializable {
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static SIGMETImpl immutableCopyOf(final SIGMET sigmet) {
         Objects.requireNonNull(sigmet);
@@ -56,10 +59,6 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         return sigmet.map(SIGMETImpl::immutableCopyOf);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public abstract Builder toBuilder();
 
     @Override
@@ -69,84 +68,79 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
             return false;
         }
         if (this.getAnalysisGeometries().isPresent()) {
-            for (PhenomenonGeometryWithHeight geometryWithHeight : this.getAnalysisGeometries().get()) {
+            for (final PhenomenonGeometryWithHeight geometryWithHeight : this.getAnalysisGeometries().get()) {
                 if (geometryWithHeight.getTime().isPresent() && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
         }
         if (this.getForecastGeometries().isPresent()) {
-            for (PhenomenonGeometry geometry: this.getForecastGeometries().get()) {
+            for (final PhenomenonGeometry geometry : this.getForecastGeometries().get()) {
                 if (geometry.getTime().isPresent() && !geometry.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
         }
-        if (this.getCancelledReference().isPresent() && (!this.getCancelledReference().get().getValidityPeriod().isComplete())) {
-            return false;
-        }
-        return true;
+        return !this.getCancelledReference().isPresent() || (this.getCancelledReference().get().getValidityPeriod().isComplete());
     }
 
     public static class Builder extends SIGMETImpl_Builder {
 
+        @Deprecated
         public Builder() {
-          this.setTranslated(false);
+            this.setTranslated(false);
         }
 
         public static Builder from(final SIGMET value) {
             if (value instanceof SIGMETImpl) {
                 return ((SIGMETImpl) value).toBuilder();
             } else {
-                //From AviationWeatherMessage
-                Builder retval = new Builder()//
-                        .setIssueTime(value.getIssueTime())
-                        .setPermissibleUsage(value.getPermissibleUsage())
-                        .setPermissibleUsageReason(value.getPermissibleUsageReason())
-                        .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
-                        .setAnalysisType(value.getAnalysisType())
-                        .setTranslated(value.isTranslated())
-                        .setTranslatedBulletinID(value.getTranslatedBulletinID())
-                        .setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime())
-                        .setTranslationCentreDesignator(value.getTranslationCentreDesignator())
-                        .setTranslationCentreName(value.getTranslationCentreName())
-                        .setTranslationTime(value.getTranslationTime())
-                        .setTranslatedTAC(value.getTranslatedTAC());
+                final Builder builder = builder();
+                AviationWeatherMessageBuilderHelper.copyFrom(builder, value,  //
+                        Builder::setRemarks, //
+                        Builder::setPermissibleUsage, //
+                        Builder::setPermissibleUsageReason, //
+                        Builder::setPermissibleUsageSupplementary, //
+                        Builder::setTranslated, //
+                        Builder::setTranslatedBulletinID, //
+                        Builder::setTranslatedBulletinReceptionTime, //
+                        Builder::setTranslationCentreDesignator, //
+                        Builder::setTranslationCentreName, //
+                        Builder::setTranslationTime, //
+                        Builder::setTranslatedTAC, //
+                        Builder::setIssueTime, //
+                        Builder::setReportStatus);
+                AirTrafficServicesUnitWeatherMessageBuilderHelper.copyFrom(builder, value, //
+                        Builder::setIssuingAirTrafficServicesUnit, //
+                        Builder::setMeteorologicalWatchOffice);
+                SIGMETAIRMETBuilderHelper.copyFrom(builder, value, //
+                        Builder::setSequenceNumber, //
+                        Builder::setValidityPeriod, //
+                        Builder::setAirspace, //
+                        Builder::setStatus);
+                return builder//
+                        .setSigmetPhenomenon(value.getSigmetPhenomenon())//
+                        .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))//
+                        .setAnalysisType(value.getAnalysisType())//
+                        .setAnalysisGeometries(value.getAnalysisGeometries()//
+                                .map(analysisGeometries -> BuilderHelper.toImmutableList(analysisGeometries,
+                                        PhenomenonGeometryWithHeightImpl::immutableCopyOf)))//
+                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()))//
+                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))//
+                        .setIntensityChange(value.getIntensityChange())//
+                        .setForecastGeometries(value.getForecastGeometries()//
+                                .map(forecastGeometries -> BuilderHelper.toImmutableList(forecastGeometries, PhenomenonGeometryImpl::immutableCopyOf)))//
+                        .setNoVaExpected(value.getNoVaExpected())//
+                        .setVAInfo(VAInfoImpl.immutableCopyOf(value.getVAInfo()));
 
-                value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(new ArrayList<>(remarks))));
-
-                //From AirTrafficServicesUnitWeatherMessage
-                retval.setIssuingAirTrafficServicesUnit(UnitPropertyGroupImpl.immutableCopyOf(value.getIssuingAirTrafficServicesUnit()))
-                        .setMeteorologicalWatchOffice(UnitPropertyGroupImpl.immutableCopyOf(value.getMeteorologicalWatchOffice()));
-
-                //From SigmetAirmet
-                retval.setAirspace(AirspaceImpl.immutableCopyOf(value.getAirspace()))
-                    .setStatus(value.getStatus())
-                    .setSequenceNumber(value.getSequenceNumber())
-                    .setValidityPeriod(value.getValidityPeriod());
-
-                //From Sigmet
-                retval.setSigmetPhenomenon(value.getSigmetPhenomenon())
-                        .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))
-                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))
-                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()));
-
-                value.getAnalysisGeometries().map(an -> retval.setAnalysisGeometries(
-                        (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryWithHeightImpl::immutableCopyOf).collect(Collectors.toList())))));
-
-                value.getForecastGeometries().map(an -> retval.setForecastGeometries(
-                        (Collections.unmodifiableList(an.stream().map(PhenomenonGeometryImpl::immutableCopyOf).collect(Collectors.toList())))));
-
-                retval.setVAInfo(value.getVAInfo());
  /*               if (value instanceof VASIGMET) {
                     //From VASigmet
                     VASIGMET va=(VASIGMET)value;
-                    retval.setVolcano(VolcanoDescriptionImpl.immutableCopyOf((va.getVolcano())));
-                    if (va.getNoVolcanicAshExpected().isPresent()) retval.setNoVolcanicAshExpected(va.getNoVolcanicAshExpected().get());
-                    if (va.getVolcanicAshMovedToFIR().isPresent()) retval.setVolcanicAshMovedToFIR(va.getVolcanicAshMovedToFIR().get());
+                    builder.setVolcano(VolcanoDescriptionImpl.immutableCopyOf((va.getVolcano())));
+                    if (va.getNoVolcanicAshExpected().isPresent()) builder.setNoVolcanicAshExpected(va.getNoVolcanicAshExpected().get());
+                    if (va.getVolcanicAshMovedToFIR().isPresent()) builder.setVolcanicAshMovedToFIR(va.getVolcanicAshMovedToFIR().get());
                 }
 */
-                return retval;
             }
         }
 
@@ -194,11 +188,15 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
 
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingSpeed(NumericMeasure speed) { return super.setMovingSpeed(speed);}
+        public Builder setMovingSpeed(final NumericMeasure speed) {
+            return super.setMovingSpeed(speed);
+        }
 
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingDirection(NumericMeasure direction) { return super.setMovingDirection(direction);}
+        public Builder setMovingDirection(final NumericMeasure direction) {
+            return super.setMovingDirection(direction);
+        }
 
         @Override
         @JsonDeserialize(as = VAInfoImpl.class)
@@ -212,14 +210,15 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
             return super.setVAInfo(vaInfo);
         }*/
 
-
         /*       @Override
                public Builder setTranslated(boolean translated) {
                    return super.setTranslated(translated);
                }
        */
         @Override
-        @JsonDeserialize( as = AirspaceImpl.class)
-        public Builder setAirspace(Airspace airspace) { return super.setAirspace(airspace);}
+        @JsonDeserialize(as = AirspaceImpl.class)
+        public Builder setAirspace(final Airspace airspace) {
+            return super.setAirspace(airspace);
+        }
     }
 }
