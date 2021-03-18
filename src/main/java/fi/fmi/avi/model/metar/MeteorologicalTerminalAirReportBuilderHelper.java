@@ -57,7 +57,7 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
                 MeteorologicalTerminalAirReportBuilder::setAerodrome);
         builder//
                 .setAutomatedStation(value.isAutomatedStation())//
-                .setStatus(value.getStatus())//
+                .setMissingMessage(value.isMissingMessage())//
                 .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())//
                 .setAirTemperature(NumericMeasureImpl.immutableCopyOf(value.getAirTemperature()))//
                 .setDewpointTemperature(NumericMeasureImpl.immutableCopyOf(value.getDewpointTemperature()))//

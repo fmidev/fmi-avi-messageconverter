@@ -57,13 +57,18 @@ public interface AviationCodeListUser {
             "http://codes.wmo.int/49-2/observation-type/iwxxm/2" + ".1/AIRMETEvolvingConditionCollectionAnalysis";
     String CODELIST_VALUE_WEATHERCAUSINGVISIBILITYREDUCTION = "http://codes.wmo.int/49-2/WeatherCausingVisibilityReduction";
 
+    @Deprecated
     enum MetarStatus {
-        NORMAL(0), CORRECTION(1), MISSING(2);
+        NORMAL(0, AviationWeatherMessage.ReportStatus.NORMAL), //
+        CORRECTION(1, AviationWeatherMessage.ReportStatus.CORRECTION), //
+        MISSING(2, AviationWeatherMessage.ReportStatus.NORMAL);
 
         private final int code;
+        private final AviationWeatherMessage.ReportStatus reportStatus;
 
-        MetarStatus(final int code) {
+        MetarStatus(final int code, final AviationWeatherMessage.ReportStatus reportStatus) {
             this.code = code;
+            this.reportStatus = reportStatus;
         }
 
         public static MetarStatus fromInt(final int code) {
@@ -79,10 +84,33 @@ public interface AviationCodeListUser {
             }
         }
 
+        public static MetarStatus fromReportStatus(final AviationWeatherMessage.ReportStatus reportStatus, final boolean missingMessage) {
+            requireNonNull(reportStatus, "reportStatus");
+            if (missingMessage) {
+                return MISSING;
+            }
+            switch (reportStatus) {
+                case CORRECTION:
+                case AMENDMENT:
+                    return CORRECTION;
+                case NORMAL:
+                    return NORMAL;
+                default:
+                    throw new IllegalArgumentException("Unknown reportStatus: " + reportStatus);
+            }
+        }
+
         public int getCode() {
             return this.code;
         }
 
+        public AviationWeatherMessage.ReportStatus getReportStatus() {
+            return reportStatus;
+        }
+
+        public boolean isMissingMessage() {
+            return this == MISSING;
+        }
     }
 
     @Deprecated

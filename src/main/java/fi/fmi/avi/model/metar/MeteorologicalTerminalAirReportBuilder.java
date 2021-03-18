@@ -898,28 +898,97 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
      * @throws IllegalStateException
      *         if the field has not been set
      */
+    @Deprecated
     default B mapStatus(final UnaryOperator<AviationCodeListUser.MetarStatus> mapper) {
         Objects.requireNonNull(mapper);
         return setStatus(mapper.apply(getStatus()));
     }
 
     /**
-     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getStatus()}.
+     * Provides the current builder value of the status property.
      *
-     * @throws IllegalStateException
-     *         if the field has not been set
+     * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+     * explicitly stored. This implementation uses {@link AviationCodeListUser.MetarStatus#fromReportStatus(AviationWeatherMessage.ReportStatus, boolean)}
+     * instead to determine the returned value on-the-fly.
+     *
+     * @return the message status
+     *
+     * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isMissingMessage()} instead
      */
-    AviationCodeListUser.MetarStatus getStatus();
+    @Deprecated
+    default AviationCodeListUser.MetarStatus getStatus() {
+        return AviationCodeListUser.MetarStatus.fromReportStatus(getReportStatus().orElse(AviationWeatherMessage.ReportStatus.NORMAL), isMissingMessage());
+    }
 
     /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getStatus()}.
+     * Sets the METAR-specific message status.
+     *
+     * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+     * explicitly stored. Instead, this method sets other property values with the following logic:
+     * <dl>
+     *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.MetarStatus#MISSING MISSING}</dt>
+     *     <dd>
+     *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+     *         <code>missingMessage = {@code true}</code>
+     *     </dd>
+     *
+     *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.MetarStatus#NORMAL NORMAL}</dt>
+     *     <dd>
+     *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+     *         <code>missingMessage = {@code false}</code>
+     *     </dd>
+     *
+     *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.MetarStatus#CORRECTION CORRECTION}</dt>
+     *     <dd>
+     *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#CORRECTION CORRECTION}</code><br>
+     *         <code>missingMessage = {@code false}</code>
+     *     </dd>
+     * </dl>
+     *
+     * @param status
+     *         the status to set
+     *
+     * @return builder
+     *
+     * @deprecated migrate to using a combination of {@link #setReportStatus(AviationWeatherMessage.ReportStatus)} and {@link #setMissingMessage(boolean)}.
+     */
+    @Deprecated
+    default B setStatus(final AviationCodeListUser.MetarStatus status) {
+        requireNonNull(status);
+        return setMissingMessage(status.isMissingMessage())//
+                .setReportStatus(status.getReportStatus());
+    }
+
+    /**
+     * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#isMissingMessage()} by applying
+     * {@code mapper} to it and using the result.
      *
      * @return this {@code Builder} object
      *
      * @throws NullPointerException
-     *         if {@code status} is null
+     *         if {@code mapper} is null or returns null
+     * @throws IllegalStateException
+     *         if the field has not been set
      */
-    B setStatus(AviationCodeListUser.MetarStatus status);
+    default B mapMissingMessage(final UnaryOperator<Boolean> mapper) {
+        Objects.requireNonNull(mapper);
+        return setMissingMessage(mapper.apply(isMissingMessage()));
+    }
+
+    /**
+     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#isMissingMessage()}.
+     *
+     * @throws IllegalStateException
+     *         if the field has not been set
+     */
+    boolean isMissingMessage();
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#isMissingMessage()}.
+     *
+     * @return this {@code Builder} object
+     */
+    B setMissingMessage(boolean missingMessage);
 
     /**
      * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#isCeilingAndVisibilityOk()} by

@@ -1,5 +1,5 @@
 {
-  "status": "NORMAL",
+  "reportStatus": "NORMAL",
   "issueTime": {
     "partialTime": "--01T24:00Z"
   },
