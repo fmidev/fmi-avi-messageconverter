@@ -61,6 +61,7 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
     public static class Builder extends GenericAviationWeatherMessageImpl_Builder {
         @Deprecated
         public Builder() {
+            setReportStatus(ReportStatus.NORMAL);
         }
 
         public static Builder from(final GenericAviationWeatherMessage value) {
