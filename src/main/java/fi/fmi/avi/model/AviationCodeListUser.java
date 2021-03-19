@@ -651,13 +651,17 @@ public interface AviationCodeListUser {
 
     }
 
+    @Deprecated
     enum SigmetAirmetReportStatus {
-        NORMAL(0), CANCELLATION(1);
+        NORMAL(0, AviationWeatherMessage.ReportStatus.NORMAL), //
+        CANCELLATION(1, AviationWeatherMessage.ReportStatus.NORMAL);
 
         private final int code;
+        private final AviationWeatherMessage.ReportStatus reportStatus;
 
-        SigmetAirmetReportStatus(final int code) {
+        SigmetAirmetReportStatus(final int code, final AviationWeatherMessage.ReportStatus reportStatus) {
             this.code = code;
+            this.reportStatus = reportStatus;
         }
 
         public static SigmetAirmetReportStatus fromInt(final int code) {
@@ -671,8 +675,21 @@ public interface AviationCodeListUser {
             }
         }
 
+        public static SigmetAirmetReportStatus fromReportStatus(final AviationWeatherMessage.ReportStatus reportStatus, final boolean cancelMessage) {
+            requireNonNull(reportStatus, "reportStatus");
+            return cancelMessage ? CANCELLATION : NORMAL;
+        }
+
         public int getCode() {
             return this.code;
+        }
+
+        public AviationWeatherMessage.ReportStatus getReportStatus() {
+            return reportStatus;
+        }
+
+        public boolean isCancelMessage() {
+            return this == CANCELLATION;
         }
     }
 

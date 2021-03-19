@@ -33,19 +33,19 @@ public final class SIGMETAIRMETBuilderHelper {
      *         setter for validityPeriod
      * @param setAirspace
      *         setter for airspace
-     * @param setStatus
-     *         setter for status
+     * @param setCancelMessage
+     *         setter for cancelMessage
      */
     public static <T extends SIGMETAIRMET, B> void copyFrom(final B builder, final T value,  //
             final BiConsumer<B, String> setSequenceNumber, //
             final BiConsumer<B, PartialOrCompleteTimePeriod> setValidityPeriod, //
             final BiConsumer<B, Airspace> setAirspace, //
-            final BiConsumer<B, AviationCodeListUser.SigmetAirmetReportStatus> setStatus) {
+            final BiConsumer<B, Boolean> setCancelMessage) {
         requireNonNull(value, "value");
         requireNonNull(builder, "builder");
         setSequenceNumber.accept(builder, value.getSequenceNumber());
         setValidityPeriod.accept(builder, value.getValidityPeriod());
         setAirspace.accept(builder, AirspaceImpl.immutableCopyOf(value.getAirspace()));
-        setStatus.accept(builder, value.getStatus());
+        setCancelMessage.accept(builder, value.isCancelMessage());
     }
 }

@@ -1,9 +1,12 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -33,8 +36,8 @@ import fi.fmi.avi.model.sigmet.AirmetWind;
 @FreeBuilder
 @JsonDeserialize(builder = AIRMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "status", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime", "validityPeriod", "airspace",
-        "movingDirection", "movingSpeed", "analysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
+@JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime",
+        "validityPeriod", "airspace", "movingDirection", "movingSpeed", "analysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
         "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
         "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class AIRMETImpl implements AIRMET, Serializable {
@@ -51,9 +54,16 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         }
     }
 
-    public static Optional<AIRMETImpl> immutableCopyOf(final Optional<AIRMET> sigmet) {
-        Objects.requireNonNull(sigmet);
-        return sigmet.map(AIRMETImpl::immutableCopyOf);
+    public static Optional<AIRMETImpl> immutableCopyOf(final Optional<AIRMET> airmet) {
+        Objects.requireNonNull(airmet);
+        return airmet.map(AIRMETImpl::immutableCopyOf);
+    }
+
+    @Override
+    @JsonIgnore
+    @Deprecated
+    public SigmetAirmetReportStatus getStatus() {
+        return AIRMET.super.getStatus();
     }
 
     public abstract Builder toBuilder();
@@ -80,6 +90,8 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         @Deprecated
         public Builder() {
             setTranslated(false);
+            this.setReportStatus(ReportStatus.NORMAL);
+            this.setCancelMessage(false);
         }
 
         public static Builder from(final AIRMET value) {
@@ -108,7 +120,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                         Builder::setSequenceNumber, //
                         Builder::setValidityPeriod, //
                         Builder::setAirspace, //
-                        Builder::setStatus);
+                        Builder::setCancelMessage);
                 return builder//
                         .setAirmetPhenomenon(value.getAirmetPhenomenon())//
                         .setCloudLevels(AirmetCloudLevelsImpl.immutableCopyOf(value.getCloudLevels()))//
@@ -191,6 +203,61 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         @JsonDeserialize(as = AirmetWindImpl.class)
         public Builder setWind(final AirmetWind windInfo) {
             return super.setWind(AirmetWindImpl.immutableCopyOf(windInfo));
+        }
+
+        @Deprecated
+        public Builder mapStatus(final UnaryOperator<SigmetAirmetReportStatus> mapper) {
+            requireNonNull(mapper, "mapper");
+            return setStatus(mapper.apply(getStatus()));
+        }
+
+        /**
+         * Provides the current builder value of the status property.
+         *
+         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+         * explicitly stored. This implementation uses {@link SigmetAirmetReportStatus#fromReportStatus(ReportStatus, boolean)} instead to determine the
+         * returned value on-the-fly.
+         *
+         * @return the message status
+         *
+         * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
+         */
+        @Deprecated
+        public SigmetAirmetReportStatus getStatus() {
+            return SigmetAirmetReportStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage());
+        }
+
+        /**
+         * Sets the SIGMET-specific message status.
+         *
+         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+         * explicitly stored. Instead, this method sets other property values with the following logic:
+         * <dl>
+         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#CANCELLATION CANCELLATION}</dt>
+         *     <dd>
+         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         *         <code>cancelMessage = true</code><br>
+         *     </dd>
+         *
+         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#NORMAL NORMAL}</dt>
+         *     <dd>
+         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         *         <code>cancelMessage = false</code><br>
+         *     </dd>
+         * </dl>
+         *
+         * @param status
+         *         the status to set
+         *
+         * @return builder
+         *
+         * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)} and {@link #setCancelMessage(boolean)} instead
+         */
+        @Deprecated
+        public Builder setStatus(final SigmetAirmetReportStatus status) {
+            requireNonNull(status);
+            return setReportStatus(status.getReportStatus())//
+                    .setCancelMessage(status.isCancelMessage());
         }
     }
 }
