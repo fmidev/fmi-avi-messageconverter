@@ -4,9 +4,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fi.fmi.avi.model.AviationWeatherMessageOrCollection;
-
-public interface SpaceWeatherRegion extends AviationWeatherMessageOrCollection {
+public interface SpaceWeatherRegion {
 
     Optional<AirspaceVolume> getAirSpaceVolume();
 

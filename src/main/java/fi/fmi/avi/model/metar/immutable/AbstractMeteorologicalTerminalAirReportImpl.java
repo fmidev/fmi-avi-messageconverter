@@ -9,6 +9,12 @@ import fi.fmi.avi.model.metar.RunwayVisualRange;
 import fi.fmi.avi.model.metar.TrendForecast;
 
 public abstract class AbstractMeteorologicalTerminalAirReportImpl implements MeteorologicalTerminalAirReport {
+    @Override
+    @JsonIgnore
+    @Deprecated
+    public MetarStatus getStatus() {
+        return MeteorologicalTerminalAirReport.super.getStatus();
+    }
 
     /**
      * Returns true if issue time, valid time and all other time references contained in this

@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -27,6 +26,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.AerodromeWeatherMessageBuilderHelper;
+import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
+import fi.fmi.avi.model.BuilderHelper;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
@@ -45,8 +47,8 @@ import fi.fmi.avi.model.taf.TAFReference;
 @FreeBuilder
 @JsonDeserialize(builder = TAFImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts", "isCancelledMessage", "isMissingMessage",
-        "referredReportValidPeriod", "reportStatus", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+@JsonPropertyOrder({ "reportStatus", "cancelMessage", "missingMessage", "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts",
+        "referredReportValidPeriod", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class TAFImpl implements TAF, Serializable {
 
@@ -85,7 +87,7 @@ public abstract class TAFImpl implements TAF, Serializable {
     @JsonIgnore
     @Deprecated
     public TAFStatus getStatus() {
-        return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
+        return TAF.super.getStatus();
     }
 
     /**
@@ -106,10 +108,7 @@ public abstract class TAFImpl implements TAF, Serializable {
     @JsonIgnore
     @Deprecated
     public Optional<TAFReference> getReferredReport() {
-        return getReferredReportValidPeriod().map(referredReportValidPeriod -> TAFReferenceImpl.builder()
-                .setAerodrome(AerodromeImpl.immutableCopyOf(this.getAerodrome()))
-                .setValidityTime(referredReportValidPeriod)
-                .build());
+        return TAF.super.getReferredReport();
     }
 
     public abstract Builder toBuilder();
@@ -160,36 +159,30 @@ public abstract class TAFImpl implements TAF, Serializable {
             if (value instanceof TAFImpl) {
                 return ((TAFImpl) value).toBuilder();
             } else {
-                //From AviationWeatherMessage:
-                final Builder retval = builder()//
-                        .setReportStatus(value.getReportStatus())
-                        .setPermissibleUsage(value.getPermissibleUsage())
-                        .setPermissibleUsageReason(value.getPermissibleUsageReason())
-                        .setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary())
-                        .setTranslated(value.isTranslated())
-                        .setTranslatedBulletinID(value.getTranslatedBulletinID())
-                        .setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime())
-                        .setTranslationCentreDesignator(value.getTranslationCentreDesignator())
-                        .setTranslationCentreName(value.getTranslationCentreName())
-                        .setTranslationTime(value.getTranslationTime())
-                        .setTranslatedTAC(value.getTranslatedTAC());
-
-                value.getRemarks().map(remarks -> retval.setRemarks(Collections.unmodifiableList(remarks)));
-
-                //From AerodromeWeatherMessage:
-                retval.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()))//
-                        .setIssueTime(value.getIssueTime());
-
-                //From TAF:
-                retval.setCancelMessage(value.isCancelMessage())//
+                final Builder builder = builder();
+                AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
+                        Builder::setReportStatus, //
+                        Builder::setIssueTime, //
+                        Builder::setRemarks, //
+                        Builder::setPermissibleUsage, //
+                        Builder::setPermissibleUsageReason, //
+                        Builder::setPermissibleUsageSupplementary, //
+                        Builder::setTranslated, //
+                        Builder::setTranslatedBulletinID, //
+                        Builder::setTranslatedBulletinReceptionTime, //
+                        Builder::setTranslationCentreDesignator, //
+                        Builder::setTranslationCentreName, //
+                        Builder::setTranslationTime, //
+                        Builder::setTranslatedTAC);
+                AerodromeWeatherMessageBuilderHelper.copyFrom(builder, value,  //
+                        Builder::setAerodrome);
+                return builder//
                         .setValidityTime(value.getValidityTime())//
                         .setBaseForecast(TAFBaseForecastImpl.immutableCopyOf(value.getBaseForecast()))//
+                        .setChangeForecasts(value.getChangeForecasts()//
+                                .map(changeForecasts -> BuilderHelper.toImmutableList(changeForecasts, TAFChangeForecastImpl::immutableCopyOf)))//
+                        .setCancelMessage(value.isCancelMessage())//
                         .setReferredReportValidPeriod(value.getReferredReportValidPeriod());
-
-                value.getChangeForecasts()
-                        .map(forecasts -> retval.setChangeForecasts(
-                                Collections.unmodifiableList(forecasts.stream().map(TAFChangeForecastImpl::immutableCopyOf).collect(Collectors.toList()))));
-                return retval;
             }
         }
 
@@ -290,7 +283,7 @@ public abstract class TAFImpl implements TAF, Serializable {
          */
         @Deprecated
         public TAFStatus getStatus() {
-            return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
+            return TAFStatus.fromReportStatus(getReportStatus(), isCancelMessage(), isMissingMessage());
         }
 
         /**

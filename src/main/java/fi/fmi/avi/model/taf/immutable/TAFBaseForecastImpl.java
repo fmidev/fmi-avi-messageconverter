@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import fi.fmi.avi.model.BuilderHelper;
 import fi.fmi.avi.model.CloudForecast;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.SurfaceWind;
@@ -95,7 +96,7 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
             if (value instanceof TAFBaseForecast) {
                 final TAFBaseForecast fromBaseForecast = (TAFBaseForecast) value;
                 setTemperatures(fromBaseForecast.getTemperatures()//
-                        .map(list -> TAFForecastBuilderHelper.toImmutableList(list, TAFAirTemperatureForecastImpl::immutableCopyOf)));
+                        .map(list -> BuilderHelper.toImmutableList(list, TAFAirTemperatureForecastImpl::immutableCopyOf)));
             }
             return this;
         }
@@ -106,7 +107,7 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
             if (value instanceof TAFBaseForecast) {
                 final TAFBaseForecast fromBaseForecast = (TAFBaseForecast) value;
                 fromBaseForecast.getTemperatures()//
-                        .map(list -> TAFForecastBuilderHelper.toImmutableList(list, TAFAirTemperatureForecastImpl::immutableCopyOf))//
+                        .map(list -> BuilderHelper.toImmutableList(list, TAFAirTemperatureForecastImpl::immutableCopyOf))//
                         .ifPresent(this::setTemperatures);
             }
             return this;
