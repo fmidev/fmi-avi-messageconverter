@@ -28,6 +28,10 @@ public final class AviationWeatherMessageBuilderHelper {
      *         builder to copy properties to
      * @param value
      *         value object to copy properties from
+     * @param setReportStatus
+     *         setter for reportStatus
+     * @param setIssueTime
+     *         setter for issueTime
      * @param setRemarks
      *         setter for remarks
      * @param setPermissibleUsage
@@ -39,7 +43,7 @@ public final class AviationWeatherMessageBuilderHelper {
      * @param setTranslated
      *         setter for translated
      * @param setTranslatedBulletinID
-     *         stter for translatedBulletinID
+     *         setter for translatedBulletinID
      * @param setTranslatedBulletinReceptionTime
      *         setter for translatedBulletinReceptionTime
      * @param setTranslationCentreDesignator
@@ -50,12 +54,10 @@ public final class AviationWeatherMessageBuilderHelper {
      *         setter for translationTime
      * @param setTranslatedTAC
      *         setter for translatedTAC
-     * @param setIssueTime
-     *         setter for issueTime
-     * @param setReportStatus
-     *         setter for reportStatus
      */
     public static <T extends AviationWeatherMessage, B> void copyFrom(final B builder, final T value,  //
+            final BiConsumer<B, AviationWeatherMessage.ReportStatus> setReportStatus, //
+            final BiConsumer<B, Optional<PartialOrCompleteTimeInstant>> setIssueTime, //
             final BiConsumer<B, Optional<List<String>>> setRemarks, //
             final BiConsumer<B, Optional<AviationCodeListUser.PermissibleUsage>> setPermissibleUsage, //
             final BiConsumer<B, Optional<AviationCodeListUser.PermissibleUsageReason>> setPermissibleUsageReason, //
@@ -66,9 +68,7 @@ public final class AviationWeatherMessageBuilderHelper {
             final BiConsumer<B, Optional<String>> setTranslationCentreDesignator, //
             final BiConsumer<B, Optional<String>> setTranslationCentreName, //
             final BiConsumer<B, Optional<ZonedDateTime>> setTranslationTime, //
-            final BiConsumer<B, Optional<String>> setTranslatedTAC, //
-            final BiConsumer<B, Optional<PartialOrCompleteTimeInstant>> setIssueTime, //
-            final BiConsumer<B, AviationWeatherMessage.ReportStatus> setReportStatus) {
+            final BiConsumer<B, Optional<String>> setTranslatedTAC) {
         requireNonNull(value, "value");
         requireNonNull(builder, "builder");
         setRemarks.accept(builder, value.getRemarks().map(BuilderHelper::toImmutableList));

@@ -99,7 +99,9 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                 return ((AIRMETImpl) value).toBuilder();
             } else {
                 final Builder builder = builder();
-                AviationWeatherMessageBuilderHelper.copyFrom(builder, value,  //
+                AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
+                        Builder::setReportStatus, //
+                        Builder::setIssueTime, //
                         Builder::setRemarks, //
                         Builder::setPermissibleUsage, //
                         Builder::setPermissibleUsageReason, //
@@ -110,9 +112,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                         Builder::setTranslationCentreDesignator, //
                         Builder::setTranslationCentreName, //
                         Builder::setTranslationTime, //
-                        Builder::setTranslatedTAC, //
-                        Builder::setIssueTime, //
-                        Builder::setReportStatus);
+                        Builder::setTranslatedTAC);
                 AirTrafficServicesUnitWeatherMessageBuilderHelper.copyFrom(builder, value, //
                         Builder::setIssuingAirTrafficServicesUnit, //
                         Builder::setMeteorologicalWatchOffice);

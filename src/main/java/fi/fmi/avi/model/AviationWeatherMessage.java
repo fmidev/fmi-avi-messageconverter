@@ -15,6 +15,29 @@ import fi.fmi.avi.model.AviationCodeListUser.PermissibleUsageReason;
 public interface AviationWeatherMessage extends AviationWeatherMessageOrCollection {
 
     /**
+     * See https://schemas.wmo.int/iwxxm/3.0/common.xsd
+     *
+     * @return report status
+     */
+    ReportStatus getReportStatus();
+
+    /**
+     * Returns the issue time of the message.
+     * The returned {@link PartialOrCompleteTimeInstant} may or may not contain
+     * a completely resolved date time depending on which information it was
+     * created with.
+     *
+     * Note: For valid AviationWeatherMessages the issue time is an important field and
+     * should exist in most cases. This field is optional to allow handling
+     * of incomplete messages without the issue time information.
+     *
+     * @return the fully resolved issue time
+     *
+     * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
+     */
+    Optional<PartialOrCompleteTimeInstant> getIssueTime();
+
+    /**
      * Returns the remarks, if included in the message.
      * in TAC remarks are provided at the end of the message
      * after the 'RMK' token.
@@ -100,30 +123,6 @@ public interface AviationWeatherMessage extends AviationWeatherMessageOrCollecti
      * @return true if all time references are complete, false otherwise
      */
     boolean areAllTimeReferencesComplete();
-
-
-    /**
-     * Returns the issue time of the message.
-     * The returned {@link PartialOrCompleteTimeInstant} may or may not contain
-     * a completely resolved date time depending on which information it was
-     * created with.
-     *
-     * Note: For valid AviationWeatherMessages the issue time is an important field and
-     * should exist in most cases. This field is optional to allow handling
-     * of incomplete messages without the issue time information.
-     *
-     * @return the fully resolved issue time
-     *
-     * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
-     */
-    Optional<PartialOrCompleteTimeInstant> getIssueTime();
-
-    /**
-     * See https://schemas.wmo.int/iwxxm/3.0/common.xsd
-     *
-     * @return report status
-     */
-    ReportStatus getReportStatus();
 
     enum ReportStatus {
         CORRECTION, AMENDMENT, NORMAL

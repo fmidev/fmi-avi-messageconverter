@@ -39,7 +39,9 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
         requireNonNull(builder, "builder");
         requireNonNull(value, "value");
 
-        AviationWeatherMessageBuilderHelper.copyFrom(builder, value,  //
+        AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
+                MeteorologicalTerminalAirReportBuilder::setReportStatus, //
+                MeteorologicalTerminalAirReportBuilder::setIssueTime, //
                 MeteorologicalTerminalAirReportBuilder::setRemarks, //
                 MeteorologicalTerminalAirReportBuilder::setPermissibleUsage, //
                 MeteorologicalTerminalAirReportBuilder::setPermissibleUsageReason, //
@@ -50,9 +52,7 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
                 MeteorologicalTerminalAirReportBuilder::setTranslationCentreDesignator, //
                 MeteorologicalTerminalAirReportBuilder::setTranslationCentreName, //
                 MeteorologicalTerminalAirReportBuilder::setTranslationTime, //
-                MeteorologicalTerminalAirReportBuilder::setTranslatedTAC, //
-                MeteorologicalTerminalAirReportBuilder::setIssueTime, //
-                MeteorologicalTerminalAirReportBuilder::setReportStatus);
+                MeteorologicalTerminalAirReportBuilder::setTranslatedTAC);
         AerodromeWeatherMessageBuilderHelper.copyFrom(builder, value,  //
                 MeteorologicalTerminalAirReportBuilder::setAerodrome);
         builder//
