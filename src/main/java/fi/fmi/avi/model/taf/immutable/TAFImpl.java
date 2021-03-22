@@ -47,8 +47,8 @@ import fi.fmi.avi.model.taf.TAFReference;
 @FreeBuilder
 @JsonDeserialize(builder = TAFImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts", "isCancelledMessage", "isMissingMessage",
-        "referredReportValidPeriod", "reportStatus", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+@JsonPropertyOrder({ "reportStatus", "cancelMessage", "missingMessage", "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts",
+        "referredReportValidPeriod", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class TAFImpl implements TAF, Serializable {
 
@@ -87,7 +87,7 @@ public abstract class TAFImpl implements TAF, Serializable {
     @JsonIgnore
     @Deprecated
     public TAFStatus getStatus() {
-        return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
+        return TAF.super.getStatus();
     }
 
     /**
@@ -108,10 +108,7 @@ public abstract class TAFImpl implements TAF, Serializable {
     @JsonIgnore
     @Deprecated
     public Optional<TAFReference> getReferredReport() {
-        return getReferredReportValidPeriod().map(referredReportValidPeriod -> TAFReferenceImpl.builder()
-                .setAerodrome(AerodromeImpl.immutableCopyOf(this.getAerodrome()))
-                .setValidityTime(referredReportValidPeriod)
-                .build());
+        return TAF.super.getReferredReport();
     }
 
     public abstract Builder toBuilder();

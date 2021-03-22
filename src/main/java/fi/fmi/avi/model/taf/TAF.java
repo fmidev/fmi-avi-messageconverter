@@ -7,6 +7,8 @@ import fi.fmi.avi.model.AerodromeWeatherMessage;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.taf.immutable.TAFReferenceImpl;
 
 /**
  * Created by rinne on 30/01/15.
@@ -18,11 +20,14 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
      * Returns the TAF message status.
      *
      * @return the status of the TAF message
+     *
      * @deprecated migrate to using a combination of {@link AviationWeatherMessage#getReportStatus()}, {@link #isCancelMessage()} and
      * {@link #isMissingMessage()} instead
      */
     @Deprecated
-    TAFStatus getStatus();
+    default TAFStatus getStatus() {
+        return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
+    }
 
     Optional<PartialOrCompleteTimePeriod> getValidityTime();
 
@@ -37,7 +42,12 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
      * @return the reference to the previously issued, amended message
      */
     @Deprecated
-    Optional<TAFReference> getReferredReport();
+    default Optional<TAFReference> getReferredReport() {
+        return getReferredReportValidPeriod().map(referredReportValidPeriod -> TAFReferenceImpl.builder()
+                .setAerodrome(AerodromeImpl.immutableCopyOf(this.getAerodrome()))
+                .setValidityTime(referredReportValidPeriod)
+                .build());
+    }
 
     boolean isCancelMessage();
 
