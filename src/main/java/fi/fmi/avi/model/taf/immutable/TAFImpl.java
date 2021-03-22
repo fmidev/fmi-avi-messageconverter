@@ -283,7 +283,7 @@ public abstract class TAFImpl implements TAF, Serializable {
          */
         @Deprecated
         public TAFStatus getStatus() {
-            return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
+            return TAFStatus.fromReportStatus(getReportStatus(), isCancelMessage(), isMissingMessage());
         }
 
         /**

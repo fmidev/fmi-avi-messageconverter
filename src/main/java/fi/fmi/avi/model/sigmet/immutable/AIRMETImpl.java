@@ -224,7 +224,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
          */
         @Deprecated
         public SigmetAirmetReportStatus getStatus() {
-            return SigmetAirmetReportStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage());
+            return SigmetAirmetReportStatus.fromReportStatus(getReportStatus(), isCancelMessage());
         }
 
         /**

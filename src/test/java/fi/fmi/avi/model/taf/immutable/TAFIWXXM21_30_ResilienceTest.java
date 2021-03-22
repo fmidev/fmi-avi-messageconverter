@@ -36,6 +36,7 @@ import fi.fmi.avi.model.taf.TAFReference;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
+@SuppressWarnings("deprecation")
 @RunWith(JUnitParamsRunner.class)
 public class TAFIWXXM21_30_ResilienceTest {
     private static final AerodromeImpl AERODROME = AerodromeImpl.builder()//
@@ -68,8 +69,7 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
                 .buildPartial();
         assertEquals(TAFStatus.NORMAL, t.getStatus());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
         assertFalse(t.getReferredReportValidPeriod().isPresent());
@@ -80,8 +80,7 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
                 .buildPartial();
         assertEquals(TAFStatus.CANCELLATION, t.getStatus());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus());
         assertTrue(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
         assertFalse(t.getReferredReportValidPeriod().isPresent());
@@ -92,8 +91,7 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
                 .buildPartial();
         assertEquals(TAFStatus.AMENDMENT, t.getStatus());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
         assertFalse(t.getReferredReportValidPeriod().isPresent());
@@ -102,8 +100,7 @@ public class TAFIWXXM21_30_ResilienceTest {
         t = TAFImpl.builder().setStatus(TAFStatus.CORRECTION).setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
                 .buildPartial();
         assertEquals(TAFStatus.CORRECTION, t.getStatus());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
         assertFalse(t.getReferredReportValidPeriod().isPresent());
@@ -139,8 +136,7 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)//
                 .buildPartial();
         assertEquals(TAFStatus.NORMAL, t.getStatus());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
         assertFalse(t.getReferredReportValidPeriod().isPresent());
@@ -151,8 +147,7 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setReportStatus(AviationWeatherMessage.ReportStatus.AMENDMENT)//
                 .buildPartial();
         assertEquals(TAFStatus.AMENDMENT, t.getStatus());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
         assertFalse(t.getReferredReportValidPeriod().isPresent());
@@ -163,8 +158,7 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setReportStatus(AviationWeatherMessage.ReportStatus.CORRECTION)//
                 .buildPartial();
         assertEquals(TAFStatus.CORRECTION, t.getStatus());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus());
         assertFalse(t.isCancelMessage());
         assertFalse(t.isMissingMessage());
         assertFalse(t.getReferredReportValidPeriod().isPresent());
@@ -177,38 +171,32 @@ public class TAFIWXXM21_30_ResilienceTest {
         TAFImpl.Builder t = TAFImpl.builder().setCancelMessage(true).setReportStatus(AviationWeatherMessage.ReportStatus.AMENDMENT);
         assertEquals(TAFStatus.CANCELLATION, t.getStatus());
         assertTrue(t.isCancelMessage());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus());
 
         t = TAFImpl.builder().setReportStatus(AviationWeatherMessage.ReportStatus.AMENDMENT).setCancelMessage(true);
         assertEquals(TAFStatus.CANCELLATION, t.getStatus());
         assertTrue(t.isCancelMessage());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus());
 
         t = TAFImpl.builder().setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL).setCancelMessage(true);
         assertEquals(TAFStatus.CANCELLATION, t.getStatus());
         assertTrue(t.isCancelMessage());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus());
 
         t = TAFImpl.builder().setCancelMessage(true).setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL);
         assertEquals(TAFStatus.CANCELLATION, t.getStatus());
         assertTrue(t.isCancelMessage());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus());
 
         t = TAFImpl.builder().setReportStatus(AviationWeatherMessage.ReportStatus.CORRECTION).setCancelMessage(true);
         assertEquals(TAFStatus.CANCELLATION, t.getStatus());
         assertTrue(t.isCancelMessage());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus());
 
         t = TAFImpl.builder().setCancelMessage(true).setReportStatus(AviationWeatherMessage.ReportStatus.CORRECTION);
         assertEquals(TAFStatus.CANCELLATION, t.getStatus());
         assertTrue(t.isCancelMessage());
-        assertTrue(t.getReportStatus().isPresent());
-        assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus().get());
+        assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus());
     }
 
     /*
@@ -302,19 +290,23 @@ public class TAFIWXXM21_30_ResilienceTest {
         t = TAFImpl.builder().setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build()).buildPartial();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
 
-        t = TAFImpl.builder().setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build()).setStatus(TAFStatus.CANCELLATION)
+        t = TAFImpl.builder()//
+                .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())//
+                .setStatus(TAFStatus.CANCELLATION)//
                 .buildPartial();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
         assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
-        t = TAFImpl.builder().setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build()).setStatus(TAFStatus.AMENDMENT)
+        t = TAFImpl.builder()//
+                .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())//
+                .setStatus(TAFStatus.AMENDMENT)//
                 .buildPartial();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
         assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
-        t = TAFImpl.builder()
-                .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())
-                .setStatus(TAFStatus.CORRECTION)
+        t = TAFImpl.builder()//
+                .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())//
+                .setStatus(TAFStatus.CORRECTION)//
                 .buildPartial();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
         assertEquals(tp1, t.getReferredReportValidPeriod().get());
@@ -349,8 +341,7 @@ public class TAFIWXXM21_30_ResilienceTest {
     @Parameters(source = TAFIWXXM21_30_ResilienceTest.StatusesProvider.class)
     @Test
     public void testSetStatusMultipleInvocations(final List<TAFStatus> statusesFirst, final List<TAFStatus> statusesLast) {
-        final TAFIWXXM21_30_ResilienceTest.StatusAssertion assertion = TAFIWXXM21_30_ResilienceTest.StatusAssertion.of(
-                last(statusesFirst, statusesLast).orElse(TAFStatus.NORMAL));
+        final TAFIWXXM21_30_ResilienceTest.StatusAssertion assertion = TAFIWXXM21_30_ResilienceTest.StatusAssertion.of(last(statusesFirst, statusesLast).orElse(TAFStatus.NORMAL));
         final TAFImpl.Builder builder = TAFImpl.builder();
         statusesFirst.forEach(builder::setStatus);
         builder//
@@ -365,8 +356,7 @@ public class TAFIWXXM21_30_ResilienceTest {
     @Parameters(source = TAFIWXXM21_30_ResilienceTest.StatusesProvider.class)
     @Test
     public void testSetStatusMultipleInvocationsWithoutReferredReport(final List<TAFStatus> statusesFirst, final List<TAFStatus> statusesLast) {
-        final TAFIWXXM21_30_ResilienceTest.StatusAssertion assertion = TAFIWXXM21_30_ResilienceTest.StatusAssertion.of(
-                last(statusesFirst, statusesLast).orElse(TAFStatus.NORMAL));
+        final TAFIWXXM21_30_ResilienceTest.StatusAssertion assertion = TAFIWXXM21_30_ResilienceTest.StatusAssertion.of(last(statusesFirst, statusesLast).orElse(TAFStatus.NORMAL));
         final TAFImpl.Builder builder = TAFImpl.builder();
         statusesFirst.forEach(builder::setStatus);
         builder.setBaseForecast(BASE_FORECAST);
@@ -379,12 +369,11 @@ public class TAFIWXXM21_30_ResilienceTest {
     private enum StatusAssertion {
         NORMAL(TAFStatus.NORMAL) {
             @Override
-            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport,
-                    final TAFBaseForecastImpl baseForecast) {
+            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport, final TAFBaseForecastImpl baseForecast) {
                 assertEquals("status: " + message, TAFStatus.NORMAL, taf.getStatus());
                 assertEquals("referredReport: " + message, expectedReferredReport, taf.getReferredReport().orElse(null));
 
-                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.NORMAL, taf.getReportStatus().orElse(null));
+                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.NORMAL, taf.getReportStatus());
                 assertFalse("cancelMessage: " + message, taf.isCancelMessage());
                 final PartialOrCompleteTimePeriod expectedReferredReportValidPeriod = Optional.ofNullable(expectedReferredReport)
                         .flatMap(TAFReference::getValidityTime)
@@ -395,12 +384,11 @@ public class TAFIWXXM21_30_ResilienceTest {
         },//
         AMENDMENT(TAFStatus.AMENDMENT) {
             @Override
-            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport,
-                    final TAFBaseForecastImpl baseForecast) {
+            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport, final TAFBaseForecastImpl baseForecast) {
                 assertEquals("status: " + message, TAFStatus.AMENDMENT, taf.getStatus());
                 assertEquals("referredReport: " + message, expectedReferredReport, taf.getReferredReport().orElse(null));
 
-                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.AMENDMENT, taf.getReportStatus().orElse(null));
+                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.AMENDMENT, taf.getReportStatus());
                 assertFalse("cancelMessage: " + message, taf.isCancelMessage());
                 final PartialOrCompleteTimePeriod expectedReferredReportValidPeriod = Optional.ofNullable(expectedReferredReport)
                         .flatMap(TAFReference::getValidityTime)
@@ -411,12 +399,11 @@ public class TAFIWXXM21_30_ResilienceTest {
         },//
         CANCELLATION(TAFStatus.CANCELLATION) {
             @Override
-            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport,
-                    final TAFBaseForecastImpl baseForecast) {
+            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport, final TAFBaseForecastImpl baseForecast) {
                 assertEquals("status: " + message, TAFStatus.CANCELLATION, taf.getStatus());
                 assertEquals("referredReport: " + message, expectedReferredReport, taf.getReferredReport().orElse(null));
 
-                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.AMENDMENT, taf.getReportStatus().orElse(null));
+                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.AMENDMENT, taf.getReportStatus());
                 assertTrue("cancelMessage: " + message, taf.isCancelMessage());
                 final PartialOrCompleteTimePeriod expectedReferredReportValidPeriod = Optional.ofNullable(expectedReferredReport)
                         .flatMap(TAFReference::getValidityTime)
@@ -427,12 +414,11 @@ public class TAFIWXXM21_30_ResilienceTest {
         },//
         CORRECTION(TAFStatus.CORRECTION) {
             @Override
-            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport,
-                    final TAFBaseForecastImpl baseForecast) {
+            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport, final TAFBaseForecastImpl baseForecast) {
                 assertEquals("status: " + message, TAFStatus.CORRECTION, taf.getStatus());
                 assertEquals("referredReport: " + message, expectedReferredReport, taf.getReferredReport().orElse(null));
 
-                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.CORRECTION, taf.getReportStatus().orElse(null));
+                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.CORRECTION, taf.getReportStatus());
                 assertFalse("cancelMessage: " + message, taf.isCancelMessage());
                 final PartialOrCompleteTimePeriod expectedReferredReportValidPeriod = Optional.ofNullable(expectedReferredReport)
                         .flatMap(TAFReference::getValidityTime)
@@ -443,12 +429,11 @@ public class TAFIWXXM21_30_ResilienceTest {
         },//
         MISSING(TAFStatus.MISSING) {
             @Override
-            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport,
-                    final TAFBaseForecastImpl baseForecast) {
+            public void assertStatus(final String message, final TAF taf, final TAFReferenceImpl expectedReferredReport, final TAFBaseForecastImpl baseForecast) {
                 assertEquals("status: " + message, TAFStatus.MISSING, taf.getStatus());
                 assertEquals("referredReport: " + message, expectedReferredReport, taf.getReferredReport().orElse(null));
 
-                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.NORMAL, taf.getReportStatus().orElse(null));
+                assertEquals("reportStatus: " + message, AviationWeatherMessage.ReportStatus.NORMAL, taf.getReportStatus());
                 assertFalse("cancelMessage: " + message, taf.isCancelMessage());
                 final PartialOrCompleteTimePeriod expectedReferredReportValidPeriod = Optional.ofNullable(expectedReferredReport)
                         .flatMap(TAFReference::getValidityTime)
@@ -458,11 +443,10 @@ public class TAFIWXXM21_30_ResilienceTest {
             }
         };//
 
-        private static final Map<TAFStatus, TAFIWXXM21_30_ResilienceTest.StatusAssertion> ASSERTIONS_BY_STATUS = Collections.unmodifiableMap(
-                Arrays.stream(TAFIWXXM21_30_ResilienceTest.StatusAssertion.values())//
-                        .collect(Collectors.toMap(TAFIWXXM21_30_ResilienceTest.StatusAssertion::getStatus, Function.identity(), (a, b) -> {
-                            throw new IllegalArgumentException("Duplicate " + a);
-                        }, () -> new EnumMap<>(TAFStatus.class))));
+        private static final Map<TAFStatus, TAFIWXXM21_30_ResilienceTest.StatusAssertion> ASSERTIONS_BY_STATUS = Collections.unmodifiableMap(Arrays.stream(TAFIWXXM21_30_ResilienceTest.StatusAssertion.values())//
+                .collect(Collectors.toMap(TAFIWXXM21_30_ResilienceTest.StatusAssertion::getStatus, Function.identity(), (a, b) -> {
+                    throw new IllegalArgumentException("Duplicate " + a);
+                }, () -> new EnumMap<>(TAFStatus.class))));
 
         private final TAFStatus status;
 

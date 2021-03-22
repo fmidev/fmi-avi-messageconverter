@@ -68,7 +68,7 @@ public final class AviationWeatherMessageBuilderHelper {
             final BiConsumer<B, Optional<ZonedDateTime>> setTranslationTime, //
             final BiConsumer<B, Optional<String>> setTranslatedTAC, //
             final BiConsumer<B, Optional<PartialOrCompleteTimeInstant>> setIssueTime, //
-            final BiConsumer<B, Optional<AviationWeatherMessage.ReportStatus>> setReportStatus) {
+            final BiConsumer<B, AviationWeatherMessage.ReportStatus> setReportStatus) {
         requireNonNull(value, "value");
         requireNonNull(builder, "builder");
         setRemarks.accept(builder, value.getRemarks().map(BuilderHelper::toImmutableList));

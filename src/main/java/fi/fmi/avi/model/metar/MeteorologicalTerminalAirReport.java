@@ -18,7 +18,7 @@ public interface MeteorologicalTerminalAirReport extends AerodromeWeatherMessage
 
     @Deprecated
     default MetarStatus getStatus() {
-        return MetarStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isMissingMessage());
+        return MetarStatus.fromReportStatus(getReportStatus(), isMissingMessage());
     }
 
     boolean isMissingMessage();

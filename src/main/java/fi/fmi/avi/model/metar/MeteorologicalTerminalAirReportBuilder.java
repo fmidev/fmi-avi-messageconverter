@@ -759,45 +759,22 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
     B setIssueTime(Optional<? extends PartialOrCompleteTimeInstant> issueTime);
 
     /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
-     *
-     * @return this {@code Builder} object
-     */
-    default B setNullableReportStatus(final AviationWeatherMessage.ReportStatus reportStatus) {
-        if (reportStatus != null) {
-            return setReportStatus(reportStatus);
-        } else {
-            return clearReportStatus();
-        }
-    }
-
-    /**
-     * If the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()} is present, replaces it by
-     * applying {@code mapper} to it and using the result.
-     *
-     * <p>If the result is null, clears the value.
+     * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()} by applying {@code
+     * mapper} to it and using the result.
      *
      * @return this {@code Builder} object
      *
      * @throws NullPointerException
-     *         if {@code mapper} is null
+     *         if {@code mapper} is null or returns null
      */
     default B mapReportStatus(final UnaryOperator<AviationWeatherMessage.ReportStatus> mapper) {
-        return setReportStatus(getReportStatus().map(mapper));
+        return setReportStatus(mapper.apply(getReportStatus()));
     }
-
-    /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()} to {@link Optional#empty()
-     * Optional.empty()}.
-     *
-     * @return this {@code Builder} object
-     */
-    B clearReportStatus();
 
     /**
      * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
      */
-    Optional<AviationWeatherMessage.ReportStatus> getReportStatus();
+    AviationWeatherMessage.ReportStatus getReportStatus();
 
     /**
      * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
@@ -808,19 +785,6 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
      *         if {@code reportStatus} is null
      */
     B setReportStatus(AviationWeatherMessage.ReportStatus reportStatus);
-
-    /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
-     *
-     * @return this {@code Builder} object
-     */
-    default B setReportStatus(final Optional<? extends AviationWeatherMessage.ReportStatus> reportStatus) {
-        if (reportStatus.isPresent()) {
-            return setReportStatus(reportStatus.get());
-        } else {
-            return clearReportStatus();
-        }
-    }
 
     /**
      * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#getAerodrome()} by applying {@code
@@ -917,7 +881,7 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
      */
     @Deprecated
     default AviationCodeListUser.MetarStatus getStatus() {
-        return AviationCodeListUser.MetarStatus.fromReportStatus(getReportStatus().orElse(AviationWeatherMessage.ReportStatus.NORMAL), isMissingMessage());
+        return AviationCodeListUser.MetarStatus.fromReportStatus(getReportStatus(), isMissingMessage());
     }
 
     /**

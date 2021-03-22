@@ -26,7 +26,7 @@ public interface TAF extends AerodromeWeatherMessage, AviationCodeListUser {
      */
     @Deprecated
     default TAFStatus getStatus() {
-        return TAFStatus.fromReportStatus(getReportStatus().orElse(ReportStatus.NORMAL), isCancelMessage(), isMissingMessage());
+        return TAFStatus.fromReportStatus(getReportStatus(), isCancelMessage(), isMissingMessage());
     }
 
     Optional<PartialOrCompleteTimePeriod> getValidityTime();
