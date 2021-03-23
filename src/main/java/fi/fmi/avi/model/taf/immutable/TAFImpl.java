@@ -124,6 +124,7 @@ public abstract class TAFImpl implements TAF, Serializable {
     public boolean areAllTimeReferencesComplete() {
         if (getIssueTime().isPresent() && !getIssueTime().get().getCompleteTime().isPresent() //
                 || getValidityTime().isPresent() && !getValidityTime().get().isComplete() //
+                || getReferredReportValidPeriod().isPresent() && !getReferredReportValidPeriod().get().isComplete() //
                 || getBaseForecast().isPresent() && !getBaseForecast().get().areAllTimeReferencesComplete()) {
             return false;
         }
@@ -234,6 +235,7 @@ public abstract class TAFImpl implements TAF, Serializable {
         public Builder withCompleteForecastTimes(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             completeValidityTime(reference);
+            completeReferredReportValidPeriod(reference);
             final ZonedDateTime validityStart = getValidityTime()//
                     .flatMap(PartialOrCompleteTimePeriod::getStartTime)//
                     .flatMap(PartialOrCompleteTimeInstant::getCompleteTime)//
@@ -530,6 +532,10 @@ public abstract class TAFImpl implements TAF, Serializable {
 
         private void completeValidityTime(final ZonedDateTime reference) {
             mapValidityTime(validityTime -> validityTime.toBuilder().completePartialStartingNear(reference).build());
+        }
+
+        private void completeReferredReportValidPeriod(final ZonedDateTime reference) {
+            mapReferredReportValidPeriod(validityTime -> validityTime.toBuilder().completePartialStartingNear(reference).build());
         }
 
         private void completeAirTemperatureForecast(final ZonedDateTime reference, final ZonedDateTime validityStart, final ZonedDateTime validityEnd) {
