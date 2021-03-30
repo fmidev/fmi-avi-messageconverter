@@ -18,7 +18,7 @@
     <connection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</connection>
     <developerConnection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</developerConnection>
     <url>https://github.com/fmidev/fmi-avi-messageconverter</url>
-    <tag>fmi-avi-messageconverter-4.0.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencyManagement>
@@ -118,7 +118,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <repositories>
     <!-- Needed to resolve parent pom during deploy -->
     <repository>
@@ -138,7 +138,7 @@
       <url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
     </repository>
   </repositories>
-  
+
   <build>
     <plugins>
       <plugin>
