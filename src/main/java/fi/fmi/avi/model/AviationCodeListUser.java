@@ -5,6 +5,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 
+import fi.fmi.avi.model.taf.TAF;
+
 /**
  * A convenience interface containing references to shared codelists and enums.
  */
@@ -113,6 +115,12 @@ public interface AviationCodeListUser {
         }
     }
 
+    /**
+     * TAF Status.
+     *
+     * @deprecated use {@link AviationWeatherMessage.ReportStatus}, {@link TAF#isCancelMessage()} and {@link TAF#isMissingMessage()} instead.
+     * In future releases this method will be made an internal implementation detail of IWXXM 2.1 conversion.
+     */
     @Deprecated
     enum TAFStatus {
         NORMAL(0, AviationWeatherMessage.ReportStatus.NORMAL),//
