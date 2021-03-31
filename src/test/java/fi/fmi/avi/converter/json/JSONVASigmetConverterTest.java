@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import org.junit.Test;
@@ -94,7 +93,6 @@ public class JSONVASigmetConverterTest {
         final Geometry fpaGeom = om.readValue(fpaGeomString, Geometry.class);
 
         final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
-        final List<Geometry> geoms = Arrays.asList(geom);
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));

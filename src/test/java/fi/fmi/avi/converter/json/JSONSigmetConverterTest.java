@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import org.junit.Test;
@@ -52,11 +51,11 @@ public class JSONSigmetConverterTest {
 
 
     public void testSIGMETParsing() throws Exception {
-        InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("sigmet1.json");
+        final InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("sigmet1.json");
         Objects.requireNonNull(is);
-        String input = IOUtils.toString(is,"UTF-8");
+        final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         System.err.println("SM:"+result.getStatus()+" ==>");
         System.err.println("==>"+result.getConvertedMessage().get().getSequenceNumber());
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
@@ -65,42 +64,41 @@ public class JSONSigmetConverterTest {
 
     @Test
     public void testSIGMETSerialization() throws Exception {
-        ObjectMapper om = new ObjectMapper();
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
 
-        InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("sigmet1.json");
+        final InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("sigmet1.json");
         Objects.requireNonNull(is);
-        String reference = IOUtils.toString(is, "UTF-8");
+        final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
 
-        SIGMETImpl.Builder builder = new SIGMETImpl.Builder();
+        final SIGMETImpl.Builder builder = new SIGMETImpl.Builder();
 
-        UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
+        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
+        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
 
-        Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
-        String geomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
-        Geometry geom = (Geometry) om.readValue(geomString, Geometry.class);
-        String fpaGeomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,53.0,6.0,54.0,4.0,55.0,5.0,53.0]}";
-        Geometry fpaGeom = (Geometry) om.readValue(fpaGeomString, Geometry.class);
+        final String geomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
+        final Geometry geom = om.readValue(geomString, Geometry.class);
+        final String fpaGeomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,53.0,6.0,54.0,4.0,55.0,5.0,53.0]}";
+        final Geometry fpaGeom = om.readValue(fpaGeomString, Geometry.class);
 
-        PartialOrCompleteTimeInstant.Builder issueTimeBuilder = new PartialOrCompleteTimeInstant.Builder();
+        final PartialOrCompleteTimeInstant.Builder issueTimeBuilder = new PartialOrCompleteTimeInstant.Builder();
         issueTimeBuilder.setCompleteTime(ZonedDateTime.parse("2017-08-27T11:30:00Z"));
-        PartialOrCompleteTimePeriod.Builder validPeriod = new PartialOrCompleteTimePeriod.Builder();
+        final PartialOrCompleteTimePeriod.Builder validPeriod = new PartialOrCompleteTimePeriod.Builder();
         validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
         validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
-        PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
+        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
         geomBuilder.setApproximateLocation(false);
-        List<Geometry> geoms = Arrays.asList(geom);
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
         geomBuilder.setUpperLimit(NumericMeasureImpl.of(35,"FL"));
 
-        PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
+        final PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
         fpGeomBuilder.setApproximateLocation(false);
         fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
         fpGeomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
@@ -119,21 +117,20 @@ public class JSONSigmetConverterTest {
                 .setValidityPeriod(validPeriod.build())
                 .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setAnalysisGeometries(Arrays.asList(geomBuilder.build()))
-                .setForecastGeometries(Arrays.asList(fpGeomBuilder.build())
-                );
+                .setForecastGeometries(Arrays.asList(fpGeomBuilder.build()));
 
-        SIGMET sigmet=builder.build();
-        ConversionResult<String> result = converter.convertMessage(sigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final SIGMET sigmet = builder.build();
+        final ConversionResult<String> result = converter.convertMessage(sigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 
-        JsonNode refRoot=om.readTree(reference); 
-        JsonNode convertedRoot=om.readTree(result.getConvertedMessage().get());
-        System.err.println("EQUALS: "+refRoot.equals(convertedRoot));
+        final JsonNode refRoot = om.readTree(reference);
+        final JsonNode convertedRoot = om.readTree(result.getConvertedMessage().get());
+        System.err.println("EQUALS: " + refRoot.equals(convertedRoot));
         assertEquals("constructed and parsed tree not equal", refRoot, convertedRoot);
- //       BufferedReader refReader = new BufferedReader(new StringReader(reference));
- //       BufferedReader resultReader = new BufferedReader(new StringReader(result.getConvertedMessage().get()));
-//        assertEquals("Strings do not match", reference, result.getConvertedMessage().get());
+        //       BufferedReader refReader = new BufferedReader(new StringReader(reference));
+        //       BufferedReader resultReader = new BufferedReader(new StringReader(result.getConvertedMessage().get()));
+        //        assertEquals("Strings do not match", reference, result.getConvertedMessage().get());
 
     }
 }

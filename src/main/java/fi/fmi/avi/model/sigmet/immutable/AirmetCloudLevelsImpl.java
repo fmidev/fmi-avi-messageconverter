@@ -17,7 +17,7 @@ import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
 @FreeBuilder
 @JsonDeserialize(builder = AirmetCloudLevelsImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.USE_DEFAULTS)
-@JsonPropertyOrder({"base", "top", "topabove"})
+@JsonPropertyOrder({ "base", "top", "topabove" })
 public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serializable {
     public static AirmetCloudLevelsImpl immutableCopyOf(final AirmetCloudLevels airmetCloudLevels) {
         Objects.requireNonNull(airmetCloudLevels);
@@ -37,7 +37,7 @@ public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serial
     public static class Builder extends AirmetCloudLevelsImpl_Builder {
 
         public Builder() {
-            this.setCloudBase(NumericMeasureImpl.of(0,""));
+            this.setCloudBase(NumericMeasureImpl.of(0, ""));
             this.setCloudTop(NumericMeasureImpl.of(0, ""));
         }
 
@@ -45,28 +45,27 @@ public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serial
             if (value instanceof AirmetCloudLevelsImpl) {
                 return ((AirmetCloudLevelsImpl) value).toBuilder();
             } else {
-                AirmetCloudLevelsImpl.Builder builder=new AirmetCloudLevelsImpl.Builder();
-                return new AirmetCloudLevelsImpl.Builder()
-                        .setCloudBase(NumericMeasureImpl.immutableCopyOf(value.getCloudBase()))
-                        .setCloudTop(NumericMeasureImpl.immutableCopyOf(value.getCloudTop()))
+                return new AirmetCloudLevelsImpl.Builder()//
+                        .setCloudBase(NumericMeasureImpl.immutableCopyOf(value.getCloudBase()))//
+                        .setCloudTop(NumericMeasureImpl.immutableCopyOf(value.getCloudTop()))//
                         .setTopAbove(value.getTopAbove());
             }
         }
 
         @Override
-        @JsonDeserialize(as=NumericMeasureImpl.class)
-        public Builder setCloudBase(NumericMeasure base) {
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setCloudBase(final NumericMeasure base) {
             return super.setCloudBase(NumericMeasureImpl.immutableCopyOf(base));
         }
 
         @Override
-        @JsonDeserialize(as=NumericMeasureImpl.class)
-        public Builder setCloudTop(NumericMeasure top) {
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setCloudTop(final NumericMeasure top) {
             return super.setCloudTop(NumericMeasureImpl.immutableCopyOf(top));
         }
 
         @Override
-        public Builder setTopAbove(boolean topAbove) {
+        public Builder setTopAbove(final boolean topAbove) {
             return super.setTopAbove(topAbove);
         }
 

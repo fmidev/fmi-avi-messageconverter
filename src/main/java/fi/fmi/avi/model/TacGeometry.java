@@ -1,9 +1,11 @@
 package fi.fmi.avi.model;
 
-public class TacGeometry {
+import java.io.Serializable;
+
+public class TacGeometry implements Serializable {
     String data;
 
-    public TacGeometry(String s) {
-        this.data=s;
+    public TacGeometry(final String s) {
+        this.data = s;
     }
 }
