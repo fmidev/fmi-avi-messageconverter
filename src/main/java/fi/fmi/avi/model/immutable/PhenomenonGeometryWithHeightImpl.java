@@ -17,6 +17,8 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
 @JsonDeserialize(builder = PhenomenonGeometryWithHeightImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeometryWithHeight, Serializable {
+    private static final long serialVersionUID = 3780345549531133901L;
+
     public static PhenomenonGeometryWithHeightImpl immutableCopyOf(final PhenomenonGeometryWithHeight phenomenonGeometry) {
         Objects.requireNonNull(phenomenonGeometry);
         if (phenomenonGeometry instanceof PhenomenonGeometryWithHeightImpl) {

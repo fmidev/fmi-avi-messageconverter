@@ -365,6 +365,8 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator, Serializable {
 
     static class DataTypeDesignatorT2Deserializer extends StdDeserializer<DataTypeDesignatorT2> {
 
+        private static final long serialVersionUID = -2386068303380702837L;
+
         DataTypeDesignatorT2Deserializer() {
             this(null);
         }
@@ -381,6 +383,8 @@ public class DataTypeDesignatorT2 implements DataTypeDesignator, Serializable {
     }
 
     static class DataTypeDesignatorT2Serializer extends StdSerializer<DataTypeDesignatorT2> {
+
+        private static final long serialVersionUID = 3053868891058781836L;
 
         DataTypeDesignatorT2Serializer() {
             this(null);

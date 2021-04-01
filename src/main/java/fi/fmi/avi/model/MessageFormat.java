@@ -51,6 +51,8 @@ public class MessageFormat implements Serializable {
     }
 
     static class Deserializer extends StdDeserializer<MessageFormat> {
+        private static final long serialVersionUID = 3553054094110024174L;
+
         public Deserializer() {
             this(null);
         }
@@ -67,6 +69,7 @@ public class MessageFormat implements Serializable {
     }
 
     static class Serializer extends StdSerializer<MessageFormat> {
+        private static final long serialVersionUID = 1188513911781835496L;
 
         public Serializer() {
             this(null);

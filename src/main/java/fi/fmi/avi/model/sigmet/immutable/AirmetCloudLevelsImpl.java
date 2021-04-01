@@ -19,6 +19,8 @@ import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
 @JsonInclude(JsonInclude.Include.USE_DEFAULTS)
 @JsonPropertyOrder({ "base", "top", "topabove" })
 public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serializable {
+    private static final long serialVersionUID = 9141069296330300504L;
+
     public static AirmetCloudLevelsImpl immutableCopyOf(final AirmetCloudLevels airmetCloudLevels) {
         Objects.requireNonNull(airmetCloudLevels);
         if (airmetCloudLevels instanceof AirmetCloudLevelsImpl) {

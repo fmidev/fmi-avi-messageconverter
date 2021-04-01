@@ -39,7 +39,7 @@ import fi.fmi.avi.model.metar.WindShear;
         "presentWeather", "cloud", "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates",
         "snowClosure", "noSignificantChanges", "trend", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportImpl implements SPECI, Serializable {
+public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportImpl<SPECIImpl, SPECIImpl.Builder> implements SPECI, Serializable {
     private static final long serialVersionUID = 1918131429312289735L;
 
     public static Builder builder() {

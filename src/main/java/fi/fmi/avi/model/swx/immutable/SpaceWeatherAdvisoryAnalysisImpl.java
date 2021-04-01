@@ -44,19 +44,18 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
     public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherAdvisoryAnalysisImpl_Builder {
-        Builder() { }
+        Builder() {
+        }
 
         public static Builder from(final SpaceWeatherAdvisoryAnalysis value) {
             if (value instanceof SpaceWeatherAdvisoryAnalysisImpl) {
                 return ((SpaceWeatherAdvisoryAnalysisImpl) value).toBuilder();
             } else {
-                final Builder retval = builder().setTime(value.getTime())
-                        .setAnalysisType(value.getAnalysisType())
+                return builder()//
+                        .setTime(value.getTime())//
+                        .setAnalysisType(value.getAnalysisType())//
+                        .addAllRegions(value.getRegions().stream().map(SpaceWeatherRegionImpl::immutableCopyOf))//
                         .setNilPhenomenonReason(value.getNilPhenomenonReason());
-
-                value.getRegions().stream().forEach(region -> retval.getRegions().add(region));
-
-                return retval;
             }
         }
 

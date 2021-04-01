@@ -13,12 +13,15 @@ public class AIRMETJSONSerializer extends AbstractJSONSerializer implements AviM
     /**
      * Converts a SIGMET object into JSON.
      *
-     * @param input input message
-     * @param hints parsing hints
+     * @param input
+     *         input message
+     * @param hints
+     *         parsing hints
+     *
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<String> convertMessage(AIRMET input, ConversionHints hints) {
-        return doConvertMessage(input,  hints);
+    public ConversionResult<String> convertMessage(final AIRMET input, final ConversionHints hints) {
+        return doConvertMessage(input, hints);
     }
 }

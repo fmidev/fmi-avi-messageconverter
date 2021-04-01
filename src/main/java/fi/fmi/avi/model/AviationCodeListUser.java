@@ -779,16 +779,16 @@ public interface AviationCodeListUser {
         SFC_WIND("SFC_WIND", AirmetPhenomenonParamInfo.NEEDS_WIND);
 
         private final String text;
-        private final Optional<AirmetPhenomenonParamInfo> info; //does parameter need extra info
+        private final AirmetPhenomenonParamInfo info; //does parameter need extra info
 
         AeronauticalAirmetWeatherPhenomenon(final String phen) {
             this.text = phen;
-            this.info = Optional.empty();
+            this.info = null;
         }
 
         AeronauticalAirmetWeatherPhenomenon(final String phen, final AirmetPhenomenonParamInfo info) {
             this.text = phen;
-            this.info = Optional.of(info);
+            this.info = info;
         }
 
         public String getText() {
@@ -796,7 +796,7 @@ public interface AviationCodeListUser {
         }
 
         public Optional<AirmetPhenomenonParamInfo> getInfo() {
-            return this.info;
+            return Optional.ofNullable(info);
         }
 
         public AeronauticalAirmetWeatherPhenomenon fromString(final String phen) {

@@ -1,6 +1,7 @@
 package fi.fmi.avi.converter.json;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -126,7 +127,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
                 .build();
         airspaceVolume.setHorizontalProjection(geometry);
 
-        final NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(Double.valueOf(350)).build();
+        final NumericMeasure nm = NumericMeasureImpl.builder().setUom("uom").setValue(350.0).build();
         airspaceVolume.setUpperLimit(nm);
 
         return airspaceVolume.build();
@@ -164,7 +165,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
                 .build();
 
         final ConversionResult<String> result = converter.convertMessage(SWXObject, JSONConverter.SWX_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
-        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 
         final JsonNode refRoot = om.readTree(reference);

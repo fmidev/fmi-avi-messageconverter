@@ -43,6 +43,7 @@ import fi.fmi.avi.model.sigmet.VAInfo;
         "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class SIGMETImpl implements SIGMET, Serializable {
+    private static final long serialVersionUID = -5959366555363410747L;
 
     public static Builder builder() {
         return new Builder();

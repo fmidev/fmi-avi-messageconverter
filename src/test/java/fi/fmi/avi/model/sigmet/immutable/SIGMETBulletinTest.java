@@ -12,7 +12,7 @@ public class SIGMETBulletinTest {
 
     @Test
     @Ignore
-    public void testSIGMETBulletin() throws Exception {
+    public void testSIGMETBulletin() {
         final SIGMETBulletinImpl.Builder builder = SIGMETBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//
                         .setGeographicalDesignator("FI")//
