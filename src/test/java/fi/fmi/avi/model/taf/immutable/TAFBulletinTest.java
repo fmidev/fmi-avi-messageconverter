@@ -18,11 +18,11 @@ import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.taf.TAF;
 
-public class TAFBulletinTest {
+public final class TAFBulletinTest {
 
     @Test
     public void testTAFBulletinLengthConsistentLong() throws Exception {
-        final TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
+        final TAF t = JSONTestUtil.readFromJSON(TAFBulletinTest.class.getResourceAsStream("taf1.json"), TAFImpl.class);
         final AerodromeImpl.Builder airportBuilder = AerodromeImpl.builder()//
                 .setDesignator("EETN")//
                 .setName("Vaasa Airport")//

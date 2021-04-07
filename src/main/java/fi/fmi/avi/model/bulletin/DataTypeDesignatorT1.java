@@ -29,6 +29,8 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
     public static final DataTypeDesignatorT1 GRID_POINT_INFORMATION_GRID_1 = new DataTypeDesignatorT1('D');
     public static final DataTypeDesignatorT1 SATELLITE_IMAGERY = new DataTypeDesignatorT1('E');
     public static final DataTypeDesignatorT1 FORECASTS = new DataTypeDesignatorT1('F') {
+        private static final long serialVersionUID = 2507054580265159598L;
+
         @Override
         public Optional<DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2> t2FromCode(final char t2Code) {
             return DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.fromCode(t2Code);
@@ -40,6 +42,8 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
     public static final DataTypeDesignatorT1 FORECAST_INFORMATION_BINARY_BUFR = new DataTypeDesignatorT1('J');
     public static final DataTypeDesignatorT1 CREX = new DataTypeDesignatorT1('K');
     public static final DataTypeDesignatorT1 AVIATION_INFORMATION_IN_XML = new DataTypeDesignatorT1('L') {
+        private static final long serialVersionUID = 9096220264492912246L;
+
         @Override
         public Optional<? extends DataTypeDesignatorT2> t2FromCode(final char t2Code) {
             return DataTypeDesignatorT2.XMLDataTypeDesignatorT2.fromCode(t2Code);
@@ -50,6 +54,8 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
     public static final DataTypeDesignatorT1 PICTORIAL_INFORMATION_BINARY = new DataTypeDesignatorT1('P');
     public static final DataTypeDesignatorT1 PICTORIAL_INFORMATION_REGIONAL_BINARY = new DataTypeDesignatorT1('Q');
     public static final DataTypeDesignatorT1 SURFACE_DATA = new DataTypeDesignatorT1('S') {
+        private static final long serialVersionUID = 1499552240705738940L;
+
         @Override
         public Optional<DataTypeDesignatorT2.SurfaceDataTypeDesignatorT2> t2FromCode(final char t2Code) {
             return DataTypeDesignatorT2.SurfaceDataTypeDesignatorT2.fromCode(t2Code);
@@ -57,6 +63,8 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
     };
     public static final DataTypeDesignatorT1 SATELLITE_DATA = new DataTypeDesignatorT1('T');
     public static final DataTypeDesignatorT1 UPPER_AIR_DATA = new DataTypeDesignatorT1('U') {
+        private static final long serialVersionUID = -197771216336559700L;
+
         @Override
         public Optional<DataTypeDesignatorT2.UpperAirDataTypeDesignatorT2> t2FromCode(final char t2Code) {
             return DataTypeDesignatorT2.UpperAirDataTypeDesignatorT2.fromCode(t2Code);
@@ -64,6 +72,8 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
     };
     public static final DataTypeDesignatorT1 NATIONAL_DATA = new DataTypeDesignatorT1('V');
     public static final DataTypeDesignatorT1 WARNINGS = new DataTypeDesignatorT1('W') {
+        private static final long serialVersionUID = 8490307861589442382L;
+
         @Override
         public Optional<DataTypeDesignatorT2.WarningsDataTypeDesignatorT2> t2FromCode(final char t2Code) {
             return DataTypeDesignatorT2.WarningsDataTypeDesignatorT2.fromCode(t2Code);
@@ -137,6 +147,8 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
 
     static class DataTypeDesignatorT1Deserializer extends StdDeserializer<DataTypeDesignatorT1> {
 
+        private static final long serialVersionUID = -5749661349365050553L;
+
         DataTypeDesignatorT1Deserializer() {
             this(null);
         }
@@ -154,6 +166,8 @@ public class DataTypeDesignatorT1 implements DataTypeDesignator, Serializable {
     }
 
     static class DataTypeDesignatorT1Serializer extends StdSerializer<DataTypeDesignatorT1> {
+
+        private static final long serialVersionUID = -35405077235295237L;
 
         DataTypeDesignatorT1Serializer() {
             this(null);

@@ -41,6 +41,8 @@ import fi.fmi.avi.model.sigmet.AirmetWind;
         "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
         "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class AIRMETImpl implements AIRMET, Serializable {
+    private static final long serialVersionUID = 4726279033666939216L;
+
     public static Builder builder() {
         return new Builder();
     }

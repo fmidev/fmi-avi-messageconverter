@@ -17,14 +17,8 @@ public interface BulletinHeading {
      */
     Type getType();
 
-    /**
-     * @return
-     */
     DataTypeDesignatorT1 getDataTypeDesignatorT1ForTAC();
 
-    /**
-     * @return
-     */
     @JsonIgnore
     default DataTypeDesignatorT1 getDataTypeDesignatorT1ForXML() {
         return DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML;
@@ -32,33 +26,21 @@ public interface BulletinHeading {
 
     DataTypeDesignatorT2 getDataTypeDesignatorT2();
 
-    /**
-     * @return
-     */
     @JsonIgnore
     default String getDataTypeDesignatorsForTAC() {
         return "" + getDataTypeDesignatorT1ForTAC().code() + getDataTypeDesignatorT2().code();
     }
 
-    /**
-     * @return
-     */
     @JsonIgnore
     default String getDataTypeDesignatorsForXML() {
         return "" + getDataTypeDesignatorT1ForXML().code() + getDataTypeDesignatorT2().code();
     }
 
-    /**
-     * @return
-     */
     @JsonIgnore
     default String getDataDesignatorsForTAC() {
         return "" + getDataTypeDesignatorsForTAC() + getGeographicalDesignator() + String.format("%02d", getBulletinNumber());
     }
 
-    /**
-     * @return
-     */
     @JsonIgnore
     default String getDataDesignatorsForXML() {
         return "" + getDataTypeDesignatorsForXML() + getGeographicalDesignator() + String.format("%02d", getBulletinNumber());

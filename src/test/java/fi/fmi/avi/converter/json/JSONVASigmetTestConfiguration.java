@@ -18,24 +18,23 @@ import fi.fmi.avi.model.sigmet.SIGMET;
 @Import(JSONConverter.class)
 public class JSONVASigmetTestConfiguration {
 
+    @Autowired
+    private AviMessageSpecificConverter<SIGMET, String> sigmetJSONSerializer;
+    @Autowired
+    private AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser;
+
     @Bean
-    private static ObjectMapper getObjectMapper() {
+    static ObjectMapper getObjectMapper() {
         System.err.println("ObjectMapper created");
-        ObjectMapper om = new ObjectMapper();
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
         return om;
     }
 
-    @Autowired
-    private AviMessageSpecificConverter<SIGMET, String> sigmetJSONSerializer;
-
-    @Autowired
-    private AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser;
-
     @Bean
     public AviMessageConverter aviMessageConverter() {
-        AviMessageConverter p = new AviMessageConverter();
+        final AviMessageConverter p = new AviMessageConverter();
         p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_SIGMET_POJO, sigmetJSONParser);
         p.setMessageSpecificConverter(JSONConverter.SIGMET_POJO_TO_JSON_STRING, sigmetJSONSerializer);
         return p;

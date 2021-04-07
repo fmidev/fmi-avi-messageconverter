@@ -20,8 +20,8 @@ import fi.fmi.avi.util.BulletinHeadingDecoder;
 @FreeBuilder
 @JsonDeserialize(builder = BulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "geographicalDesignator", "locationIndicator", "bulletinNumber",  "bulletinAugmentationNumber",
-        "issueTime", "type", "dataTypeDesignatorT1ForTAC", "dataTypeDesignatorT2" })
+@JsonPropertyOrder({ "geographicalDesignator", "locationIndicator", "bulletinNumber", "bulletinAugmentationNumber", "issueTime", "type",
+        "dataTypeDesignatorT1ForTAC", "dataTypeDesignatorT2" })
 public abstract class BulletinHeadingImpl implements BulletinHeading, Serializable {
     private static final Pattern ABBREVIATED_HEADING = Pattern.compile(
             "^(?<TT>[A-Z]{2})(?<AA>[A-Z]{2})(?<ii>[0-9]{2})" + "(?<CCCC>[A-Z]{4})(?<YY>[0-9]{2})(?<GG>[0-9]{2})(?<gg>[0-9]{2})(?<BBB>(CC|RR|AA)[A-Z])?$");
@@ -49,11 +49,13 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
      * Tries to determine the intended message type from the bulletin heading.
      *
      * Not detected due to unambiguous use in practice:
-     *    * UA: could be either SPECIAL_AIR_REPORT or WXREP
-     *    * UX: could be LOW_WIND or some other misc upper-air data
-     *    * WX: could be WX_WRNG or some other misc warning
-     *    * FX: could be LOW_WIND or some other misc forecast
-     *    * FV: could be either VOLCANIC_ASH_ADVISORY or SIGMET
+     * <dl>
+     * <dt>UA</dt> <dd>could be either SPECIAL_AIR_REPORT or WXREP</dd>
+     * <dt>UX</dt> <dd>could be LOW_WIND or some other misc upper-air data</dd>
+     * <dt>WX</dt> <dd>could be WX_WRNG or some other misc warning</dd>
+     * <dt>FX</dt> <dd>could be LOW_WIND or some other misc forecast</dd>
+     * <dt>FV</dt> <dd>could be either VOLCANIC_ASH_ADVISORY or SIGMET</dd>
+     * </dl>
      *
      * @return The message type, if one can be unambiguously determined
      */
@@ -93,8 +95,8 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         }
 
         public static Builder from(final String abbreviatedHeading) {
-            return BulletinHeadingImpl.Builder.from(BulletinHeadingDecoder.decode(abbreviatedHeading, new ConversionHints(ConversionHints
-                    .KEY_BULLETIN_HEADING_SPACING, ConversionHints.VALUE_BULLETIN_HEADING_SPACING_NONE)));
+            return BulletinHeadingImpl.Builder.from(BulletinHeadingDecoder.decode(abbreviatedHeading,
+                    new ConversionHints(ConversionHints.KEY_BULLETIN_HEADING_SPACING, ConversionHints.VALUE_BULLETIN_HEADING_SPACING_NONE)));
         }
 
         @Override
@@ -102,7 +104,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
             if (bulletinAugmentationNumber < 1 || bulletinAugmentationNumber > 26) {
                 throw new IllegalArgumentException("Value must be between 1 and 26, value was " + bulletinAugmentationNumber);
             }
-            return super.setBulletinAugmentationNumber(Integer.valueOf(bulletinAugmentationNumber));
+            return super.setBulletinAugmentationNumber(bulletinAugmentationNumber);
         }
 
         /**
@@ -118,7 +120,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
             if (!Character.isAlphabetic(asChar) || asChar < 'A' || asChar > 'Z') {
                 throw new IllegalArgumentException("Value must be between 'A' and 'Z'");
             }
-            return super.setBulletinAugmentationNumber(Integer.valueOf(asChar - 'A' + 1));
+            return super.setBulletinAugmentationNumber(asChar - 'A' + 1);
         }
 
         @Override
@@ -140,9 +142,6 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         public Builder setDataTypeDesignatorT1ForTAC(final DataTypeDesignatorT1 t1) {
             return super.setDataTypeDesignatorT1ForTAC(t1);
         }
-
-
-
 
     }
 }

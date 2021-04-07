@@ -1,6 +1,7 @@
 package fi.fmi.avi.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -8,9 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import fi.fmi.avi.converter.ConversionHints;
@@ -50,14 +49,10 @@ public class BulletinHeadingEncoderTest {
             .setDataTypeDesignatorT2(DataTypeDesignatorT2.WarningsDataTypeDesignatorT2.WRN_SIGMET)//
             .setIssueTime(SIGMET_ISSUE_TIME).build();
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     @Parameters
     public void testEncode(final BulletinHeading heading, final String expected) {
-        final String actual = BulletinHeadingEncoder.encode(heading, MessageFormat.TEXT, ConversionHints.EMPTY);
-        assertEquals(expected, actual);
+        assertThat(BulletinHeadingEncoder.encode(heading, MessageFormat.TEXT, ConversionHints.EMPTY)).isEqualTo(expected);
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -93,22 +88,19 @@ public class BulletinHeadingEncoderTest {
     @Test
     @Parameters(source = BBBIndicatorParametersProvider.class)
     public void testEncodeBBBIndicatorBulletinHeadingTypeString(final BulletinHeading heading, final String expected) {
-        final String actual = BulletinHeadingEncoder.encodeBBBIndicator(heading.getType(), heading.getBulletinAugmentationNumber().orElse(1));
-        assertEquals(expected, actual);
+        assertThat(BulletinHeadingEncoder.encodeBBBIndicator(heading.getType(), heading.getBulletinAugmentationNumber().orElse(1))).isEqualTo(expected);
     }
 
     @Test
     @Parameters(source = BBBIndicatorParametersProvider.class)
     public void testEncodeBBBIndicatorBulletinHeading(final BulletinHeading heading, final String expected) {
-        final String actual = BulletinHeadingEncoder.encodeBBBIndicator(heading);
-        assertEquals(expected, actual);
+        assertThat(BulletinHeadingEncoder.encodeBBBIndicator(heading)).isEqualTo(expected);
     }
 
     @Parameters
     @Test
     public void testEncodeIssueTime(final PartialOrCompleteTimeInstant issueTime, final String expected) {
-        final String actual = BulletinHeadingEncoder.encodeIssueTime(issueTime);
-        assertEquals(expected, actual);
+        assertThat(BulletinHeadingEncoder.encodeIssueTime(issueTime)).isEqualTo(expected);
     }
 
     public Object parametersForTestEncodeIssueTime() {
@@ -121,12 +113,11 @@ public class BulletinHeadingEncoderTest {
     @Parameters
     @Test
     public void testEncodeIssueTimeMissingFields(final PartialOrCompleteTimeInstant issueTime, final Collection<String> expectedMissingFields) {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage(issueTime.toString());
-        for (final String expectedMissingField : expectedMissingFields) {
-            thrown.expectMessage(expectedMissingField);
-        }
-        BulletinHeadingEncoder.encodeIssueTime(issueTime);
+        assertThatIllegalArgumentException()//
+                .isThrownBy(() -> BulletinHeadingEncoder.encodeIssueTime(issueTime))//
+                .withMessageContaining(issueTime.toString())//
+                .satisfies(
+                        exception -> expectedMissingFields.forEach(expectedMissingField -> assertThat(exception).hasMessageContaining(expectedMissingField)));
     }
 
     public Object parametersForTestEncodeIssueTimeMissingFields() {
@@ -144,37 +135,41 @@ public class BulletinHeadingEncoderTest {
 
     @Test
     public void augmentationNumberMaximum_is_26() {
-        assertEquals(26, BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX);
+        assertThat(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX).isEqualTo(26);
     }
 
     @Test
     public void encodeAugmentationNumber_GivenMinimum_ShouldReturnMinimumChar() {
-        assertEquals(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR,
-                BulletinHeadingEncoder.encodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN));
+        assertThat(BulletinHeadingEncoder.encodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN))//
+                .isEqualTo(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR);
     }
 
     @Test
     public void encodeAugmentationNumber_GivenMaximum_ShouldReturnMaximumChar() {
-        assertEquals(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR,
-                BulletinHeadingEncoder.encodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX));
+        assertThat(BulletinHeadingEncoder.encodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX))//
+                .isEqualTo(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR);
     }
 
     @Test
     public void encodeAugmentationNumber_GivenNumberSmallerThanMinimum_ShouldThrowException() {
         final int number = BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN - 1;
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("<" + number + ">");
-        //noinspection ResultOfMethodCallIgnored
-        BulletinHeadingEncoder.encodeAugmentationNumber(number);
+        assertThatIllegalArgumentException()//
+                .isThrownBy(() -> {
+                    //noinspection ResultOfMethodCallIgnored
+                    BulletinHeadingEncoder.encodeAugmentationNumber(number);
+                })//
+                .withMessageContaining("<" + number + ">");
     }
 
     @Test
     public void encodeAugmentationNumber_GivenNumberGreaterThanMaximum_ShouldThrowException() {
         final int number = BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX + 1;
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("<" + number + ">");
-        //noinspection ResultOfMethodCallIgnored
-        BulletinHeadingEncoder.encodeAugmentationNumber(number);
+        assertThatIllegalArgumentException()//
+                .isThrownBy(() -> {
+                    //noinspection ResultOfMethodCallIgnored
+                    BulletinHeadingEncoder.encodeAugmentationNumber(number);
+                })//
+                .withMessageContaining("<" + number + ">");
     }
 
     public static class BBBIndicatorParametersProvider {
