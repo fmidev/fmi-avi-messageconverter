@@ -1,5 +1,7 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -20,9 +22,11 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.PhenomenonGeometry;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
+import fi.fmi.avi.model.TacGeometry;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.immutable.TacGeometryImpl;
 import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
@@ -46,9 +50,13 @@ public class SigmetTest {
             e.printStackTrace();
         }
 
+        TacOrGeoGeometryImpl.Builder builder = TacOrGeoGeometryImpl.builder();
+        builder.setGeoGeometry(anGeometry.get());
+        builder.setTacGeometry(TacGeometryImpl.builder().setData("ENTIRE FIR").build());
+
         PhenomenonGeometryWithHeightImpl.Builder an=new PhenomenonGeometryWithHeightImpl.Builder()
                 .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T13:50:00Z")))
-                .setGeometry(TacOrGeoGeometryImpl.of(anGeometry.get()))
+                .setGeometry(builder.build())
                 .setApproximateLocation(false)
                 ;
         return an.build();
@@ -109,5 +117,6 @@ public class SigmetTest {
         assert(!smNode.isNull());
         assert(smNode.has("status"));
         assert(smNode.get("status").asText().equals("NORMAL"));
+        assertEquals("ENTIRE FIR", smNode.get("analysisGeometries").get(0).get("geometry").get("tacGeometry").get("data").asText());
     }
 }

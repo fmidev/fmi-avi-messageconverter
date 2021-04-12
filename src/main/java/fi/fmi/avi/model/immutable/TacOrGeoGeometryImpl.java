@@ -10,13 +10,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Geometry;
-import fi.fmi.avi.model.PointGeometry;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
 @FreeBuilder
     @JsonDeserialize(builder = TacOrGeoGeometryImpl.Builder.class)
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializable {
+        /**
+     *
+     */
+    private static final long serialVersionUID = 2582240445531208610L;
+
         public static Builder builder() {
             return new Builder();
         }
