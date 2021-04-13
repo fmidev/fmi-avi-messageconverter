@@ -1,4 +1,4 @@
-# Changelog
+# fmi-avi-messageconverter Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -7,9 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Created overview documentation for developers. #76
+
 ### Changed
 
-- The model objects have been adapted for IWXXM 3.0.0 compatibility. The changes are backward compatible, but some features have been deprecated.
+- The model objects have been adapted for IWXXM 3.0.0 compatibility. The changes are backward compatible, but some features have been deprecated. #66
+- `AviationWeatherMessage.getReportStatus()` was made non-`Optional` (backwards-incompatible). #74
+- Code quality enhancements. #80
 
 ### Deprecated
 
@@ -19,6 +25,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Past Changelog
 
-Previous changelog entries are available on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format. 
+Previous changelog entries are available on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-4.0.4...HEAD
+
+[v5.0.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-5.0.0
