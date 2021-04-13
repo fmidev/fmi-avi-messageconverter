@@ -1,18 +1,15 @@
 package fi.fmi.avi.model;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class CoordinateReferenceSystemTest {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void checkSanity_given_empty_name_throws_IllegalStateException() {
         final AbstractTestCoordinateReferenceSystem crs = new AbstractTestCoordinateReferenceSystem() {
@@ -21,9 +18,9 @@ public class CoordinateReferenceSystemTest {
                 return "";
             }
         };
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("name");
-        crs.checkSanity();
+        assertThatIllegalStateException()//
+                .isThrownBy(crs::checkSanity)//
+                .withMessageContaining("name");
     }
 
     @Test
@@ -34,10 +31,10 @@ public class CoordinateReferenceSystemTest {
                 return Optional.of(0);
             }
         };
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("dimension");
-        thrown.expectMessage("0");
-        crs.checkSanity();
+        assertThatIllegalStateException()//
+                .isThrownBy(crs::checkSanity)//
+                .withMessageContaining("dimension")//
+                .withMessageContaining("0");
     }
 
     @Test
@@ -53,12 +50,12 @@ public class CoordinateReferenceSystemTest {
                 return Collections.singletonList("Lat");
             }
         };
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("axisLabels");
-        thrown.expectMessage("dimension");
-        thrown.expectMessage("2");
-        thrown.expectMessage("Lat");
-        crs.checkSanity();
+        assertThatIllegalStateException()//
+                .isThrownBy(crs::checkSanity)//
+                .withMessageContaining("axisLabels")//
+                .withMessageContaining("dimension")//
+                .withMessageContaining("2")//
+                .withMessageContaining("Lat");
     }
 
     @Test
@@ -74,12 +71,12 @@ public class CoordinateReferenceSystemTest {
                 return Collections.singletonList("deg");
             }
         };
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("uomLabels");
-        thrown.expectMessage("dimension");
-        thrown.expectMessage("2");
-        thrown.expectMessage("deg");
-        crs.checkSanity();
+        assertThatIllegalStateException()//
+                .isThrownBy(crs::checkSanity)//
+                .withMessageContaining("uomLabels")//
+                .withMessageContaining("dimension")//
+                .withMessageContaining("2")//
+                .withMessageContaining("deg");
     }
 
     @Test
@@ -95,13 +92,13 @@ public class CoordinateReferenceSystemTest {
                 return Collections.singletonList("deg");
             }
         };
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("axisLabels");
-        thrown.expectMessage("uomLabels");
-        thrown.expectMessage("Lat");
-        thrown.expectMessage("Lon");
-        thrown.expectMessage("deg");
-        crs.checkSanity();
+        assertThatIllegalStateException()//
+                .isThrownBy(crs::checkSanity)//
+                .withMessageContaining("axisLabels")//
+                .withMessageContaining("uomLabels")//
+                .withMessageContaining("Lat")//
+                .withMessageContaining("Lon")//
+                .withMessageContaining("deg");
     }
 
     private static abstract class AbstractTestCoordinateReferenceSystem implements CoordinateReferenceSystem {

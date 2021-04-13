@@ -16,10 +16,11 @@ import fi.fmi.avi.model.VolcanoDescription;
 @FreeBuilder
 @JsonDeserialize(builder = VolcanoDescriptionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"volcanoPosition", "volcanoName"})
+@JsonPropertyOrder({ "volcanoPosition", "volcanoName" })
 public abstract class VolcanoDescriptionImpl implements VolcanoDescription, Serializable {
+    private static final long serialVersionUID = -8358165880683740153L;
 
-     public static VolcanoDescriptionImpl immutableCopyOf(final VolcanoDescription volcanoDescription) {
+    public static VolcanoDescriptionImpl immutableCopyOf(final VolcanoDescription volcanoDescription) {
         Objects.requireNonNull(volcanoDescription);
         if (volcanoDescription instanceof VolcanoDescriptionImpl) {
             return (VolcanoDescriptionImpl) volcanoDescription;

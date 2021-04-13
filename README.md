@@ -110,6 +110,7 @@ The recommended way of configuring the converter is using Spring Java configurat
 
 ```java
 package my.stuff;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -127,11 +128,11 @@ import fi.fmi.avi.model.metar.METAR;
 @Import(fi.fmi.avi.converter.tac.conf.TACConverter.class)
 @Import(fi.fmi.avi.converter.iwxxm.conf.IWXXMConverter.class)
 public class MyMessageConverterConfig {
-    
+
     @Autowired
     @Qualifier("metarJSONSerializer")
     private AviMessageSpecificConverter<METAR, String> metarJSONSerializer;
-    
+
     @Autowired
     @Qualifier("tafJSONSerializer")
     private AviMessageSpecificConverter<TAF, String> tafJSONSerializer();
@@ -139,7 +140,7 @@ public class MyMessageConverterConfig {
     @Autowired
     @Qualifier("tafJSONParser")
     private AviMessageSpecificConverter<String, TAF> tafJSONParser;
-    
+
     @Autowired
     @Qualifier("metarJSONParser")
     private AviMessageSpecificConverter<String, METAR> metarJSONParser;
@@ -147,53 +148,53 @@ public class MyMessageConverterConfig {
     @Autowired
     @Qualifier("metarTACParser")
     private AviMessageSpecificConverter<String, METAR> metarTACParser;
-    
+
     @Autowired
     @Qualifier("tafTACParser")
     private AviMessageSpecificConverter<String, TAF> tafTACParser;
-    
+
     @Autowired
     @Qualifier("metarTACSerializer")
     private AviMessageSpecificConverter<METAR, String> metarTACSerializer;
-    
+
     @Autowired
     @Qualifier("tafTACSerializer")
     private AviMessageSpecificConverter<TAF, String> tafTACSerializer;
-    
+
     @Autowired
     @Qualifier("tafIWXXMDOMSerializer")
     private AviMessageSpecificConverter<TAF, Document> tafIWXXMDOMSerializer;
-    
+
     @Autowired
     @Qualifier("tafIWXXMStringSerializer")
     private AviMessageSpecificConverter<TAF, String> tafIWXXMStringSerializer;
-    
+
     @Autowired
     @Qualifier("tafIWXXMStringParser")
     private AviMessageSpecificConverter<String, TAF> tafIWXXMStringParser;
-    
+
     @Autowired
     @Qualifier("tafIWXXMDOMParser")
     private AviMessageSpecificConverter<Document, TAF> tafIWXXMDOMParser;
-    
+
     @Bean
     public AviMessageConverter aviMessageConverter() {
-        AviMessageConverter p = new AviMessageConverter();
-        p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_METAR_POJO,metarJSONParser);
-        p.setMessageSpecificConverter(JSONConverter.METAR_POJO_TO_JSON_STRING, metarJSONSerializer);
-        p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_TAF_POJO, tafJSONParser);
-        p.setMessageSpecificConverter(JSONConverter.TAF_POJO_TO_JSON_STRING, tafJSONSerializer);
-        
-        p.setMessageSpecificConverter(TACConverter.TAC_TO_METAR_POJO, metarTACParser);
-        p.setMessageSpecificConverter(TACConverter.TAC_TO_TAF_POJO, tafTACParser);
-        p.setMessageSpecificConverter(TACConverter.METAR_POJO_TO_TAC, metarTACSerializer);
-        p.setMessageSpecificConverter(TACConverter.TAF_POJO_TO_TAC, tafTACSerializer);
-        
-        p.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_DOM, tafIWXXMDOMSerializer);
-        p.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_STRING, tafIWXXMStringSerializer);
-        p.setMessageSpecificConverter(IWXXMConverter.IWXXM21_STRING_TO_TAF_POJO, tafIWXXMStringParser);
-        p.setMessageSpecificConverter(IWXXMConverter.IWXXM21_DOM_TO_TAF_POJO, tafIWXXMDOMParser);
-        return p;
+        final AviMessageConverter converter = new AviMessageConverter();
+        converter.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_METAR_POJO, metarJSONParser);
+        converter.setMessageSpecificConverter(JSONConverter.METAR_POJO_TO_JSON_STRING, metarJSONSerializer);
+        converter.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_TAF_POJO, tafJSONParser);
+        converter.setMessageSpecificConverter(JSONConverter.TAF_POJO_TO_JSON_STRING, tafJSONSerializer);
+
+        converter.setMessageSpecificConverter(TACConverter.TAC_TO_METAR_POJO, metarTACParser);
+        converter.setMessageSpecificConverter(TACConverter.TAC_TO_TAF_POJO, tafTACParser);
+        converter.setMessageSpecificConverter(TACConverter.METAR_POJO_TO_TAC, metarTACSerializer);
+        converter.setMessageSpecificConverter(TACConverter.TAF_POJO_TO_TAC, tafTACSerializer);
+
+        converter.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_DOM, tafIWXXMDOMSerializer);
+        converter.setMessageSpecificConverter(IWXXMConverter.TAF_POJO_TO_IWXXM21_STRING, tafIWXXMStringSerializer);
+        converter.setMessageSpecificConverter(IWXXMConverter.IWXXM21_STRING_TO_TAF_POJO, tafIWXXMStringParser);
+        converter.setMessageSpecificConverter(IWXXMConverter.IWXXM21_DOM_TO_TAF_POJO, tafIWXXMDOMParser);
+        return converter;
     }
 
 }

@@ -1,10 +1,16 @@
 package fi.fmi.avi.model;
 
-public interface SIGMETAIRMET  extends AirTrafficServicesUnitWeatherMessage, AviationCodeListUser {
-        String getSequenceNumber();
-        PartialOrCompleteTimePeriod getValidityPeriod();
+public interface SIGMETAIRMET extends AirTrafficServicesUnitWeatherMessage, AviationCodeListUser {
+    String getSequenceNumber();
 
-        Airspace getAirspace();
+    PartialOrCompleteTimePeriod getValidityPeriod();
 
-        SigmetAirmetReportStatus getStatus();
+    Airspace getAirspace();
+
+    @Deprecated
+    default SigmetAirmetReportStatus getStatus() {
+        return SigmetAirmetReportStatus.fromReportStatus(getReportStatus(), isCancelMessage());
+    }
+
+    boolean isCancelMessage();
 }

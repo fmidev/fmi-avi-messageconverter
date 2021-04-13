@@ -4,11 +4,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReport;
+import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReportBuilder;
 import fi.fmi.avi.model.metar.RunwayState;
 import fi.fmi.avi.model.metar.RunwayVisualRange;
 import fi.fmi.avi.model.metar.TrendForecast;
 
-public abstract class AbstractMeteorologicalTerminalAirReportImpl implements MeteorologicalTerminalAirReport {
+public abstract class AbstractMeteorologicalTerminalAirReportImpl<//
+        T extends AbstractMeteorologicalTerminalAirReportImpl<T, B>, //
+        B extends MeteorologicalTerminalAirReportBuilder<T, B>> //
+        implements MeteorologicalTerminalAirReport {
+    @Override
+    @JsonIgnore
+    @Deprecated
+    public MetarStatus getStatus() {
+        return MeteorologicalTerminalAirReport.super.getStatus();
+    }
 
     /**
      * Returns true if issue time, valid time and all other time references contained in this
@@ -71,4 +81,6 @@ public abstract class AbstractMeteorologicalTerminalAirReportImpl implements Met
         return true;
     }
 
+    @Override
+    public abstract B toBuilder();
 }

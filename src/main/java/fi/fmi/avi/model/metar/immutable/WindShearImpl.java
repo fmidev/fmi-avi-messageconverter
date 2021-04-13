@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.metar.immutable;
 
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +24,7 @@ import fi.fmi.avi.model.metar.WindShear;
 @FreeBuilder
 @JsonDeserialize(builder = WindShearImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"runwayDirections", "appliedToAllRunways"})
+@JsonPropertyOrder({ "runwayDirections", "appliedToAllRunways" })
 public abstract class WindShearImpl implements WindShear, Serializable {
 
     private static final long serialVersionUID = 3197842360756947787L;
@@ -61,7 +60,7 @@ public abstract class WindShearImpl implements WindShear, Serializable {
             if (value instanceof WindShearImpl) {
                 return ((WindShearImpl) value).toBuilder();
             } else {
-                Builder retval = WindShearImpl.builder()//
+                final Builder retval = WindShearImpl.builder()//
                         .setAppliedToAllRunways(value.isAppliedToAllRunways());
 
                 value.getRunwayDirections()

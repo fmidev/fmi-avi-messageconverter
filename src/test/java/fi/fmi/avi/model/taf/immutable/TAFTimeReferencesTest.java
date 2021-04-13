@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.taf.impl;
+package fi.fmi.avi.model.taf.immutable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,10 +25,6 @@ import fi.fmi.avi.model.immutable.SurfaceWindImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 import fi.fmi.avi.model.taf.TAFChangeForecast;
-import fi.fmi.avi.model.taf.immutable.TAFAirTemperatureForecastImpl;
-import fi.fmi.avi.model.taf.immutable.TAFBaseForecastImpl;
-import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
-import fi.fmi.avi.model.taf.immutable.TAFImpl;
 
 public class TAFTimeReferencesTest {
 

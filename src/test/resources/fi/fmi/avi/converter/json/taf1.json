@@ -1,5 +1,4 @@
 {
-  "status" : "NORMAL",
   "aerodrome" : {
     "designator" : "EFVA"
   },
@@ -133,31 +132,37 @@
       "uom" : "m"
     }
   }, {
-    "changeIndicator" : "PROBABILITY_40",
-    "periodOfChange" : {
-      "startTime" : {
-        "partialTime" : "--28T02:"
+    "changeIndicator": "PROBABILITY_40",
+    "periodOfChange": {
+      "startTime": {
+        "partialTime": "--28T02:"
       },
-      "endTime" : {
-        "partialTime" : "--28T06:"
+      "endTime": {
+        "partialTime": "--28T06:"
       }
     },
-    "prevailingVisibility" : {
-      "value" : 3000.0,
-      "uom" : "m"
+    "prevailingVisibility": {
+      "value": 3000.0,
+      "uom": "m"
     },
-    "forecastWeather" : [ {
-      "code" : "RASN",
-      "description" : "Precipitation of rain and snow"
-    } ],
-    "cloud" : {
-      "layers" : [ {
-        "amount" : "BKN",
-        "base" : {
-          "value" : 400.0,
-          "uom" : "[ft_i]"
+    "forecastWeather": [
+      {
+        "code": "RASN",
+        "description": "Precipitation of rain and snow"
+      }
+    ],
+    "cloud": {
+      "layers": [
+        {
+          "amount": "BKN",
+          "base": {
+            "value": 400.0,
+            "uom": "[ft_i]"
+          }
         }
-      } ]
+      ]
     }
-  } ]
+  }
+  ],
+  "reportStatus": "NORMAL"
 }

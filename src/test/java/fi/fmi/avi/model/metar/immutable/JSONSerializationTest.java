@@ -12,12 +12,12 @@ import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.metar.METAR;
 
-public class JSONSerializationTest {
+public final class JSONSerializationTest {
 
     @Test
     public void testMETAR() throws IOException {
-        METAR m = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("metar11.json"), METARImpl.class);
-        final METARImpl.Builder mib = METARImpl.immutableCopyOf(m).toBuilder();
+        final METAR metar = JSONTestUtil.readFromJSON(JSONSerializationTest.class.getResourceAsStream("metar11.json"), METARImpl.class);
+        final METARImpl.Builder builder = METARImpl.immutableCopyOf(metar).toBuilder();
         final AerodromeImpl.Builder airportBuilder = AerodromeImpl.builder()
                 .setDesignator("EETN")
                 .setName("Tallinn Airport")
@@ -27,12 +27,10 @@ public class JSONSerializationTest {
                         .setCrs(CoordinateReferenceSystemImpl.wgs84())//
                         .addCoordinates(24.8325, 59.413333)//
                         .build());
-        m = mib.setAerodrome(airportBuilder.build())
+        builder.setAerodrome(airportBuilder.build())
                 .withCompleteIssueTime(YearMonth.of(2017, 7))
                 .withCompleteForecastTimes(YearMonth.of(2017, 7), 11, 11, ZoneId.of("UTC"))
                 .build();
-
-        //printAsJson(m);
     }
 
 }

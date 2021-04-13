@@ -400,5 +400,6 @@
       "completeTime": "2020-02-27T01:00:00Z"
     }
   },
-  "permissibleUsageReason": "TEST"
+  "permissibleUsageReason": "TEST",
+  "reportStatus": "NORMAL"
 }

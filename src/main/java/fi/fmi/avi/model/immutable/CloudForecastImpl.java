@@ -23,7 +23,7 @@ import fi.fmi.avi.model.NumericMeasure;
 @FreeBuilder
 @JsonDeserialize(builder = CloudForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"verticalVisibility", "layers", "noSignificantCloud", "verticalVisibilityMissing"})
+@JsonPropertyOrder({ "verticalVisibility", "layers", "noSignificantCloud", "verticalVisibilityMissing" })
 public abstract class CloudForecastImpl implements CloudForecast, Serializable {
 
     private static final long serialVersionUID = -8501483321135680561L;
@@ -56,11 +56,12 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
             setVerticalVisibilityMissing(false);
             setNoSignificantCloud(false);
         }
+
         public static Builder from(final CloudForecast value) {
             if (value instanceof CloudForecastImpl) {
                 return ((CloudForecastImpl) value).toBuilder();
             } else {
-                CloudForecastImpl.Builder retval = new CloudForecastImpl.Builder()//
+                final CloudForecastImpl.Builder retval = new CloudForecastImpl.Builder()//
                         .setNoSignificantCloud(value.isNoSignificantCloud())//
                         .setVerticalVisibilityMissing(value.isVerticalVisibilityMissing())//
                         .setVerticalVisibility(NumericMeasureImpl.immutableCopyOf(value.getVerticalVisibility()));

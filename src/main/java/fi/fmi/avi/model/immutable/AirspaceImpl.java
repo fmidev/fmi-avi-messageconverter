@@ -19,8 +19,9 @@ import fi.fmi.avi.model.Airspace;
 @FreeBuilder
 @JsonDeserialize(builder = AirspaceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"designator", "name", "part", "type"})
+@JsonPropertyOrder({ "designator", "name", "part", "type" })
 public abstract class AirspaceImpl implements Airspace, Serializable {
+    private static final long serialVersionUID = 3187315517815642938L;
 
     public static AirspaceImpl immutableCopyOf(final Airspace airspace) {
         Objects.requireNonNull(airspace);
@@ -44,10 +45,7 @@ public abstract class AirspaceImpl implements Airspace, Serializable {
                 return ((AirspaceImpl) value).toBuilder();
             } else {
                 return new AirspaceImpl.Builder()//
-                        .setType(value.getType())
-                        .setDesignator(value.getDesignator())
-                        .setPart(value.getPart())
-                        .setName(value.getName());
+                        .setType(value.getType()).setDesignator(value.getDesignator()).setPart(value.getPart()).setName(value.getName());
             }
         }
 

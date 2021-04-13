@@ -1,5 +1,5 @@
 {
-  "status": "NORMAL",
+  "reportStatus": "NORMAL",
   "issuingAirTrafficServicesUnit": {
     "name": "AMSTERDAM",
     "type": "FIR",
@@ -22,14 +22,14 @@
       "completeTime": "2017-08-27T18:00:00Z"
     }
   },
-  "airspace" : {
-    "designator" : "EHAA",
-    "name" : "AMSTERDAM",
-    "type" : "FIR"
+  "airspace": {
+    "designator": "EHAA",
+    "name": "AMSTERDAM",
+    "type": "FIR"
   },
   "airmetPhenomenon": "MOD_ICE",
-  "permissibleUsage":"NON_OPERATIONAL",
-  "permissibleUsageReason":"EXERCISE",
+  "permissibleUsage": "NON_OPERATIONAL",
+  "permissibleUsageReason": "EXERCISE",
   "analysisType": "OBSERVATION",
   "intensityChange": "NO_CHANGE",
   "analysisGeometries": [

@@ -1,23 +1,26 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
+import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
+
+import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import fi.fmi.avi.model.AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.SigmetReference;
-import org.inferred.freebuilder.FreeBuilder;
-
-import java.io.Serializable;
-import java.util.Optional;
 
 @FreeBuilder
 @JsonDeserialize(builder = SigmetReferenceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class SigmetReferenceImpl implements SigmetReference, Serializable {
+    private static final long serialVersionUID = -7590197694737728555L;
+
     public static SigmetReferenceImpl immutableCopyOf(final SigmetReference sigmetReference) {
         Objects.requireNonNull(sigmetReference);
         if (sigmetReference instanceof SigmetReferenceImpl) {

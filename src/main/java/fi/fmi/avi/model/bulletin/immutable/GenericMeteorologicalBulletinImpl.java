@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
+import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.immutable.GenericAviationWeatherMessageImpl;
 
 @FreeBuilder
@@ -53,10 +54,14 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
             if (value instanceof GenericMeteorologicalBulletinImpl) {
                 return ((GenericMeteorologicalBulletinImpl) value).toBuilder();
             } else {
-                return builder()//
-                        .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
-                        .setTimeStamp(value.getTimeStamp()).addAllMessages(value.getMessages()).addAllTimeStampFields(value.getTimeStampFields());
-
+                final Builder builder = builder();
+                MeteorologicalBulletinBuilderHelper.copyFrom(builder, value, //
+                        Builder::setHeading, //
+                        Builder::addAllMessages, //
+                        GenericAviationWeatherMessageImpl::immutableCopyOf, //
+                        Builder::setTimeStamp, //
+                        Builder::addAllTimeStampFields);
+                return builder;
             }
         }
 

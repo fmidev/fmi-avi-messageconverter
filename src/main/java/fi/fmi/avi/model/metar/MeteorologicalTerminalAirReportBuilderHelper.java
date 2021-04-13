@@ -1,6 +1,6 @@
 package fi.fmi.avi.model.metar;
 
-import static fi.fmi.avi.model.taf.TAFForecastBuilderHelper.toImmutableList;
+import static fi.fmi.avi.model.BuilderHelper.toImmutableList;
 import static java.util.Objects.requireNonNull;
 
 import java.time.ZonedDateTime;
@@ -9,20 +9,23 @@ import java.util.Collections;
 import java.util.List;
 
 import fi.fmi.avi.model.Aerodrome;
+import fi.fmi.avi.model.AerodromeWeatherMessageBuilderHelper;
+import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.PartialOrCompleteTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.PartialOrCompleteTimes;
-import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.RunwayDirectionImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
+import fi.fmi.avi.model.metar.immutable.HorizontalVisibilityImpl;
 import fi.fmi.avi.model.metar.immutable.ObservedCloudsImpl;
 import fi.fmi.avi.model.metar.immutable.ObservedSurfaceWindImpl;
 import fi.fmi.avi.model.metar.immutable.RunwayStateImpl;
 import fi.fmi.avi.model.metar.immutable.RunwayVisualRangeImpl;
 import fi.fmi.avi.model.metar.immutable.SeaStateImpl;
 import fi.fmi.avi.model.metar.immutable.TrendForecastImpl;
+import fi.fmi.avi.model.metar.immutable.WindShearImpl;
 
 /**
  * Helper methods for implementations of {@link MeteorologicalTerminalAirReportBuilder}.
@@ -36,41 +39,42 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
         requireNonNull(builder, "builder");
         requireNonNull(value, "value");
 
-        //From AviationWeatherMessage:
-        builder.setPermissibleUsage(value.getPermissibleUsage());
-        builder.setPermissibleUsageReason(value.getPermissibleUsageReason());
-        builder.setPermissibleUsageSupplementary(value.getPermissibleUsageSupplementary());
-        builder.setTranslated(value.isTranslated());
-        builder.setTranslatedBulletinID(value.getTranslatedBulletinID());
-        builder.setTranslatedBulletinReceptionTime(value.getTranslatedBulletinReceptionTime());
-        builder.setTranslationCentreDesignator(value.getTranslationCentreDesignator());
-        builder.setTranslationCentreName(value.getTranslationCentreName());
-        builder.setTranslationTime(value.getTranslationTime());
-        builder.setTranslatedTAC(value.getTranslatedTAC());
-        builder.setRemarks(value.getRemarks());
-
-        //From AerodromeWeatherMessage:
-        builder.setIssueTime(value.getIssueTime().map(issueTime -> PartialOrCompleteTimeInstant.Builder.from(issueTime).build()));
-        builder.setAerodrome(AerodromeImpl.immutableCopyOf(value.getAerodrome()));
-
-        //From MeteorologicalTerminalAirReport:
-        builder.setAutomatedStation(value.isAutomatedStation());
-        builder.setSnowClosure(value.isSnowClosure());
-        builder.setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk());
-        builder.setNoSignificantChanges(value.isNoSignificantChanges());
-        builder.setAirTemperature(NumericMeasureImpl.immutableCopyOf(value.getAirTemperature()));
-        builder.setAltimeterSettingQNH(NumericMeasureImpl.immutableCopyOf(value.getAltimeterSettingQNH()));
-        builder.setClouds(ObservedCloudsImpl.immutableCopyOf(value.getClouds()));
-        builder.setColorState(value.getColorState());
-        builder.setDewpointTemperature(NumericMeasureImpl.immutableCopyOf(value.getDewpointTemperature()));
-        builder.setPresentWeather(value.getPresentWeather().map(list -> toImmutableList(list, WeatherImpl::immutableCopyOf)));
-        builder.setRecentWeather(value.getRecentWeather().map(list -> toImmutableList(list, WeatherImpl::immutableCopyOf)));
-        builder.setRunwayStates(value.getRunwayStates().map(list -> toImmutableList(list, RunwayStateImpl::immutableCopyOf)));
-        builder.setRunwayVisualRanges(value.getRunwayVisualRanges().map(list -> toImmutableList(list, RunwayVisualRangeImpl::immutableCopyOf)));
-        builder.setSeaState(SeaStateImpl.immutableCopyOf(value.getSeaState()));
-        builder.setSurfaceWind(ObservedSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()));
-        builder.setStatus(value.getStatus());
-        builder.setTrends(value.getTrends().map(list -> toImmutableList(list, TrendForecastImpl::immutableCopyOf)));
+        AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
+                MeteorologicalTerminalAirReportBuilder::setReportStatus, //
+                MeteorologicalTerminalAirReportBuilder::setIssueTime, //
+                MeteorologicalTerminalAirReportBuilder::setRemarks, //
+                MeteorologicalTerminalAirReportBuilder::setPermissibleUsage, //
+                MeteorologicalTerminalAirReportBuilder::setPermissibleUsageReason, //
+                MeteorologicalTerminalAirReportBuilder::setPermissibleUsageSupplementary, //
+                MeteorologicalTerminalAirReportBuilder::setTranslated, //
+                MeteorologicalTerminalAirReportBuilder::setTranslatedBulletinID, //
+                MeteorologicalTerminalAirReportBuilder::setTranslatedBulletinReceptionTime, //
+                MeteorologicalTerminalAirReportBuilder::setTranslationCentreDesignator, //
+                MeteorologicalTerminalAirReportBuilder::setTranslationCentreName, //
+                MeteorologicalTerminalAirReportBuilder::setTranslationTime, //
+                MeteorologicalTerminalAirReportBuilder::setTranslatedTAC);
+        AerodromeWeatherMessageBuilderHelper.copyFrom(builder, value,  //
+                MeteorologicalTerminalAirReportBuilder::setAerodrome);
+        builder//
+                .setAutomatedStation(value.isAutomatedStation())//
+                .setMissingMessage(value.isMissingMessage())//
+                .setCeilingAndVisibilityOk(value.isCeilingAndVisibilityOk())//
+                .setAirTemperature(NumericMeasureImpl.immutableCopyOf(value.getAirTemperature()))//
+                .setDewpointTemperature(NumericMeasureImpl.immutableCopyOf(value.getDewpointTemperature()))//
+                .setAltimeterSettingQNH(NumericMeasureImpl.immutableCopyOf(value.getAltimeterSettingQNH()))//
+                .setSurfaceWind(ObservedSurfaceWindImpl.immutableCopyOf(value.getSurfaceWind()))//
+                .setVisibility(HorizontalVisibilityImpl.immutableCopyOf(value.getVisibility()))//
+                .setRunwayVisualRanges(value.getRunwayVisualRanges().map(list -> toImmutableList(list, RunwayVisualRangeImpl::immutableCopyOf)))//
+                .setPresentWeather(value.getPresentWeather().map(list -> toImmutableList(list, WeatherImpl::immutableCopyOf)))//
+                .setClouds(ObservedCloudsImpl.immutableCopyOf(value.getClouds()))//
+                .setRecentWeather(value.getRecentWeather().map(list -> toImmutableList(list, WeatherImpl::immutableCopyOf)))//
+                .setWindShear(WindShearImpl.immutableCopyOf(value.getWindShear()))//
+                .setSeaState(SeaStateImpl.immutableCopyOf(value.getSeaState()))//
+                .setRunwayStates(value.getRunwayStates().map(list -> toImmutableList(list, RunwayStateImpl::immutableCopyOf)))//
+                .setSnowClosure(value.isSnowClosure())//
+                .setNoSignificantChanges(value.isNoSignificantChanges())//
+                .setTrends(value.getTrends().map(list -> toImmutableList(list, TrendForecastImpl::immutableCopyOf)))//
+                .setColorState(value.getColorState());
     }
 
     public static void afterSetAerodrome(final MeteorologicalTerminalAirReportBuilder<?, ?> builder, final Aerodrome aerodrome) {

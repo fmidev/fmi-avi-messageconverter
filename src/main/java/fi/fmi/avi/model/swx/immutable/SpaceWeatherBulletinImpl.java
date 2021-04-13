@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
+import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
 import fi.fmi.avi.model.swx.SpaceWeatherBulletin;
@@ -55,11 +56,14 @@ public abstract class SpaceWeatherBulletinImpl implements SpaceWeatherBulletin, 
             if (value instanceof SpaceWeatherBulletinImpl) {
                 return ((SpaceWeatherBulletinImpl) value).toBuilder();
             } else {
-                return builder()//
-                        .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))//
-                        .setTimeStamp(value.getTimeStamp())//
-                        .addAllTimeStampFields(value.getTimeStampFields())//
-                        .addAllMessages(value.getMessages());
+                final Builder builder = builder();
+                MeteorologicalBulletinBuilderHelper.copyFrom(builder, value, //
+                        Builder::setHeading, //
+                        Builder::addAllMessages, //
+                        SpaceWeatherAdvisoryImpl::immutableCopyOf, //
+                        Builder::setTimeStamp, //
+                        Builder::addAllTimeStampFields);
+                return builder;
             }
         }
 

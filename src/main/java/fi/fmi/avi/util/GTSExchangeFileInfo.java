@@ -109,7 +109,7 @@ public abstract class GTSExchangeFileInfo implements Serializable {
         //BBB:
         final Optional<Integer> augNumber = this.getHeading().getBulletinAugmentationNumber();
         if (augNumber.isPresent()) {
-            int seqNumber = augNumber.get().intValue();
+            int seqNumber = augNumber.get();
             seqNumber = 'A' + seqNumber - 1;
             sb.append(this.getHeading().getType().getPrefix());
             sb.append(Character.toChars(seqNumber));

@@ -11,4 +11,5 @@ public interface ElevatedPoint extends PointGeometry {
 
     Optional<String> getElevationUom();
 
+    Optional<String> getVerticalDatum();
 }

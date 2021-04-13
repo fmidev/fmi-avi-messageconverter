@@ -1,14 +1,12 @@
 package fi.fmi.avi.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import com.google.common.collect.ImmutableMap;
@@ -57,83 +55,89 @@ public class BulletinHeadingDecoderTest {
                 (BulletinHeadingIndicatorInterpreter) key -> AUGMENTATION_INDICATOR_REPLACEMENTS.getOrDefault(key, key));
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     @Parameters
-    public void decode_bulletin_headings(final String input, final BulletinHeading expected, final ConversionHints conversionHints,
-            @Nullable final Class<Throwable> expectedException) {
-        if (expectedException != null) {
-            thrown.expect(expectedException);
-        }
-        assertEquals(BulletinHeadingDecoder.decode(input, conversionHints), expected);
+    public void decode_bulletin_headings(final String input, final BulletinHeading expected, final ConversionHints conversionHints) {
+        assertThat(BulletinHeadingDecoder.decode(input, conversionHints)).isEqualTo(expected);
     }
 
     public Object parametersForDecode_bulletin_headings() {
         return new Object[] {//
-                new Object[] { "FTFI31 EFLK 250200", TAF_BULLETIN_HEADING, ConversionHints.EMPTY, null },//
+                new Object[] { "FTFI31 EFLK 250200", TAF_BULLETIN_HEADING, ConversionHints.EMPTY }, //
                 new Object[] { "FCFI31 EFLK 250200 AAB", TAF_BULLETIN_HEADING.toBuilder()
                         .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT)
                         .setType(BulletinHeading.Type.AMENDED)
-                        .setBulletinAugmentationNumber(2).build(), ConversionHints.EMPTY, null },//
+                        .setBulletinAugmentationNumber(2).build(), ConversionHints.EMPTY }, //
                 new Object[] { "FTFI31 EFLK 250200 CCC",
                         TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.CORRECTED).setBulletinAugmentationNumber(3).build(),
-                        ConversionHints.EMPTY, null },//
+                        ConversionHints.EMPTY }, //
                 new Object[] { "FTFI32 AAAA 250200 RRA", TAF_BULLETIN_HEADING.toBuilder()
                         .setType(BulletinHeading.Type.DELAYED)
                         .setBulletinAugmentationNumber(1)
                         .setBulletinNumber(32)
-                        .setLocationIndicator("AAAA").build(), ConversionHints.EMPTY, null },//
+                        .setLocationIndicator("AAAA").build(), ConversionHints.EMPTY }, //
                 // Extended augmentation indicators
                 new Object[] { "FTFI31 EFLK 250200 COR",
                         TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.CORRECTED).setBulletinAugmentationNumber(1).build(),
-                        EXTENDED_AUGMENTATION_IDENTIFIERS, null },//
+                        EXTENDED_AUGMENTATION_IDENTIFIERS }, //
                 new Object[] { "FTFI31 EFLK 250200 RTD",
                         TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.DELAYED).setBulletinAugmentationNumber(1).build(),
-                        EXTENDED_AUGMENTATION_IDENTIFIERS, null },//
+                        EXTENDED_AUGMENTATION_IDENTIFIERS }, //
                 new Object[] { "FTFI31 EFLK 250200 AMD",
                         TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.AMENDED).setBulletinAugmentationNumber(1).build(),
-                        EXTENDED_AUGMENTATION_IDENTIFIERS, null },//
-                new Object[] { "FTFI31 EFLK 250200 INVALID",
-                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.AMENDED).setBulletinAugmentationNumber(1).build(),
-                        EXTENDED_AUGMENTATION_IDENTIFIERS, IllegalArgumentException.class },//
-                new Object[] { "FTFI31 EFLK 250200 RTD",
-                        TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.DELAYED).setBulletinAugmentationNumber(1).build(), ConversionHints.EMPTY,
-                        IllegalArgumentException.class },//
+                        EXTENDED_AUGMENTATION_IDENTIFIERS }, //
                 // SIGMETs
-                new Object[] { "WSFI31 EFLK 231008", SIGMET_BULLETIN_HEADING, ConversionHints.EMPTY, null },
+                new Object[] { "WSFI31 EFLK 231008", SIGMET_BULLETIN_HEADING, ConversionHints.EMPTY },
                 new Object[] { "WSFI32 AAAA 231008", SIGMET_BULLETIN_HEADING.toBuilder().setBulletinNumber(32).setLocationIndicator("AAAA").build(),
-                        ConversionHints.EMPTY, null } };
+                        ConversionHints.EMPTY } };
+    }
+
+    @Test
+    @Parameters
+    public void decode_bulletin_headings_throws_exception_on_error(final String input, final ConversionHints conversionHints,
+            final Class<Throwable> expectedException) {
+        assertThatExceptionOfType(expectedException).isThrownBy(() -> BulletinHeadingDecoder.decode(input, conversionHints));
+    }
+
+    public Object parametersForDecode_bulletin_headings_throws_exception_on_error() {
+        return new Object[] {//
+                // Extended augmentation indicators
+                new Object[] { "FTFI31 EFLK 250200 INVALID", EXTENDED_AUGMENTATION_IDENTIFIERS, IllegalArgumentException.class }, //
+                new Object[] { "FTFI31 EFLK 250200 RTD", ConversionHints.EMPTY, IllegalArgumentException.class }, //
+        };
     }
 
     @Test
     public void decodeAugmentationNumber_GivenMinimumChar_ShouldReturnMinimumNumber() {
-        assertEquals(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN,
-                BulletinHeadingDecoder.decodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR));
+        assertThat(BulletinHeadingDecoder.decodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR)).isEqualTo(
+                BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN);
     }
 
     @Test
     public void decodeAugmentationNumber_GivenMaximumChar_ShouldReturnMaximumNumber() {
-        assertEquals(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX,
-                BulletinHeadingDecoder.decodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR));
+        assertThat(BulletinHeadingDecoder.decodeAugmentationNumber(BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR)).isEqualTo(
+                BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX);
     }
 
     @Test
     public void decodeAugmentationNumber_GivenCharSmallerThanMinimum_ShouldThrowException() {
         final char tacChar = BulletinHeadingEncoder.AUGMENTATION_NUMBER_MIN_CHAR - 1;
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("'" + tacChar + "'");
-        //noinspection ResultOfMethodCallIgnored
-        BulletinHeadingDecoder.decodeAugmentationNumber(tacChar);
+        assertThatIllegalArgumentException()//
+                .isThrownBy(() -> {
+                    //noinspection ResultOfMethodCallIgnored
+                    BulletinHeadingDecoder.decodeAugmentationNumber(tacChar);
+                })//
+                .withMessageContaining("'" + tacChar + "'");
     }
 
     @Test
     public void decodeAugmentationNumber_GivenCharGreaterThanMaximum_ShouldThrowException() {
         final char tacChar = BulletinHeadingEncoder.AUGMENTATION_NUMBER_MAX_CHAR + 1;
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("'" + tacChar + "'");
-        //noinspection ResultOfMethodCallIgnored
-        BulletinHeadingDecoder.decodeAugmentationNumber(tacChar);
+        assertThatIllegalArgumentException()//
+                .isThrownBy(() -> {
+                    //noinspection ResultOfMethodCallIgnored
+                    BulletinHeadingDecoder.decodeAugmentationNumber(tacChar);
+                })//
+                .withMessageContaining("'" + tacChar + "'");
     }
 }

@@ -9,7 +9,6 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import junitparams.JUnitParamsRunner;
 
-@SuppressWarnings("UnnecessaryLocalVariable")
 @RunWith(JUnitParamsRunner.class)
 public class TAFBaseForecastImpl_Builder_MergeFromTest extends AbstractTAFForecast_Builder_MergeFromTest<TAFBaseForecastImpl, TAFBaseForecastImpl.Builder> {
     @Override
