@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v5.0.0] - 2014-04-13
 
 ### Added
 
@@ -28,7 +28,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Previous changelog entries are available on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
-[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-4.0.4...HEAD
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-5.0.0...HEAD
 
 [v5.0.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-5.0.0
 
