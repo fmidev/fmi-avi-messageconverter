@@ -23,6 +23,7 @@ import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.PhenomenonGeometry;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.TacGeometry;
+import fi.fmi.avi.model.TacOrGeoGeometry;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
@@ -35,7 +36,9 @@ import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 
 public class SigmetTest {
 
-    ObjectMapper om=new ObjectMapper().registerModule(new JavaTimeModule()).registerModule(new Jdk8Module()).enable(SerializationFeature.INDENT_OUTPUT);
+    ObjectMapper om=new ObjectMapper().registerModule(new JavaTimeModule()).registerModule(new Jdk8Module())
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
     static String testGeoJson1 = "{\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
 
@@ -107,6 +110,15 @@ public class SigmetTest {
     }
 
     @Test
+    public void testGeometry() throws IOException {
+        String geom="{\"tacGeometry\":{\"data\": \"ENTIRE FIR\"}, \"geoGeometry\": {\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
+
+        System.err.println("geom:"+ geom);
+        TacOrGeoGeometry gm = om.readValue(geom, TacOrGeoGeometry.class);
+        System.err.println(">>>>"+gm.getTacGeometry().get().getData());
+    }
+
+    @Test
     public void testBuild() throws IOException {
         SIGMET sm=buildSigmet();
         assert(sm.areAllTimeReferencesComplete());
@@ -118,5 +130,8 @@ public class SigmetTest {
         assert(smNode.has("status"));
         assert(smNode.get("status").asText().equals("NORMAL"));
         assertEquals("ENTIRE FIR", smNode.get("analysisGeometries").get(0).get("geometry").get("tacGeometry").get("data").asText());
+
+        SIGMET sm_reread = om.readValue(json, SIGMETImpl.class);
+        System.err.println(">>>>"+sm_reread.getIssueTime());
     }
 }

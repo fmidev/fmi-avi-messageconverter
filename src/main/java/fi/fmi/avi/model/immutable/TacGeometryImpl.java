@@ -9,7 +9,6 @@ import org.inferred.freebuilder.FreeBuilder;
 import fi.fmi.avi.model.TacGeometry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @FreeBuilder
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonDeserialize(builder = TacGeometryImpl.Builder.class)
-@JsonPropertyOrder({"data"})
 public abstract class TacGeometryImpl implements TacGeometry, Serializable {
 
     private static final long serialVersionUID = 1234L;
@@ -61,7 +59,7 @@ public abstract class TacGeometryImpl implements TacGeometry, Serializable {
 
 
         @Override
-        @JsonDeserialize(as = String.class)
+//        @JsonDeserialize(as = String.class)
         public Builder setData(final String data) {
             return super.setData(data);
         }
