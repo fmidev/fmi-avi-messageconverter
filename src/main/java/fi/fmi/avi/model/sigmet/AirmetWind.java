@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import fi.fmi.avi.model.NumericMeasure;
 
-@JsonPropertyOrder({"speed", "direction"})
+@JsonPropertyOrder({ "speed", "direction" })
 public interface AirmetWind {
-    public NumericMeasure getSpeed();
-    public NumericMeasure getDirection();
+    NumericMeasure getSpeed();
+
+    NumericMeasure getDirection();
 }

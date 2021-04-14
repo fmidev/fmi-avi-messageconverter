@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
@@ -20,6 +19,8 @@ import fi.fmi.avi.model.sigmet.AirmetReference;
 @JsonDeserialize(builder = AirmetReferenceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class AirmetReferenceImpl implements AirmetReference, Serializable {
+    private static final long serialVersionUID = 2988230428861993266L;
+
     public static AirmetReferenceImpl immutableCopyOf(final AirmetReference airmetReference) {
         Objects.requireNonNull(airmetReference);
         if (airmetReference instanceof AirmetReferenceImpl) {

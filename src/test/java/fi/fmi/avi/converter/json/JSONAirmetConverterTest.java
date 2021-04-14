@@ -5,8 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 
 import org.junit.Test;
@@ -25,6 +24,7 @@ import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
@@ -44,42 +44,40 @@ import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
 public class JSONAirmetConverterTest {
 
     @Autowired
+    ObjectMapper om;
+    @Autowired
     private AviMessageConverter converter;
 
     @Test
     public void testAIRMETParsing() throws Exception {
-        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
+        final InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
         Objects.requireNonNull(is);
-        String input = IOUtils.toString(is,"UTF-8");
+        final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        ConversionResult<AIRMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_AIRMET_POJO, ConversionHints.EMPTY);
-        System.err.println("SM:"+result.getStatus()+" ==>");
-        System.err.println("==>"+result.getConvertedMessage().get().getSequenceNumber());
+        final ConversionResult<AIRMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_AIRMET_POJO, ConversionHints.EMPTY);
+        System.err.println("SM:" + result.getStatus() + " ==>");
+        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
-
-    @Autowired
-    ObjectMapper om;
-
     @Test
     public void testAIRMETparse() throws Exception {
-        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet_moving.json");
+        final InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet_moving.json");
         Objects.requireNonNull(is);
-        String reference = IOUtils.toString(is,"UTF-8");
+        final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
-        AIRMET am=((AIRMETImpl.Builder)om.readValue(reference, AIRMETImpl.Builder.class)).build();
-        System.err.println("am:"+am);
+        final AIRMET am = om.readValue(reference, AIRMETImpl.Builder.class).build();
+        System.err.println("am:" + am);
     }
 
     @Test
     public void testAIRMETPointparse() throws Exception {
-        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet_point_moving.json");
+        final InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet_point_moving.json");
         Objects.requireNonNull(is);
-        String reference = IOUtils.toString(is,"UTF-8");
+        final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
-        AIRMET am=((AIRMETImpl.Builder)om.readValue(reference, AIRMETImpl.Builder.class)).build();
-        System.err.println("am:"+am);
+        final AIRMET am = om.readValue(reference, AIRMETImpl.Builder.class).build();
+        System.err.println("am:" + am);
     }
 
     @Test
@@ -90,38 +88,38 @@ public class JSONAirmetConverterTest {
         om.registerModule(new JtsModule());
         om.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);*/
 
-        InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
+        final InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
         Objects.requireNonNull(is);
-        String reference = IOUtils.toString(is, "UTF-8");
+        final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
-        AIRMET am = ((AIRMETImpl.Builder) om.readValue(reference, AIRMETImpl.Builder.class)).build();
+        final AIRMET am = om.readValue(reference, AIRMETImpl.Builder.class).build();
         System.err.println("am:" + am);
 
-        AIRMETImpl.Builder builder = new AIRMETImpl.Builder();
+        final AIRMETImpl.Builder builder = AIRMETImpl.builder();
 
-        UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
+        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
+        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
 
-        Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
 
-        String geomString = "{\"type\": \"Polygon\", \"exteriorRingPositions\": [5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
-        Geometry geom = om.readValue(geomString, Geometry.class);
+        final String geomString = "{\"type\": \"Polygon\", \"exteriorRingPositions\": [5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
+        final Geometry geom = om.readValue(geomString, Geometry.class);
 
-        PartialOrCompleteTimeInstant.Builder issueTimeBuilder = new PartialOrCompleteTimeInstant.Builder();
+        final PartialOrCompleteTimeInstant.Builder issueTimeBuilder = PartialOrCompleteTimeInstant.builder();
         issueTimeBuilder.setCompleteTime(ZonedDateTime.parse("2017-08-27T11:30:00Z"));
-        PartialOrCompleteTimePeriod.Builder validPeriod = new PartialOrCompleteTimePeriod.Builder();
+        final PartialOrCompleteTimePeriod.Builder validPeriod = PartialOrCompleteTimePeriod.builder();
         validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
         validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
-        PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
+        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
         geomBuilder.setApproximateLocation(false);
-        List<Geometry> geoms = Arrays.asList(geom);
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
-        geomBuilder.setUpperLimit(NumericMeasureImpl.of(35,"FL"));
+        geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
 
-        builder.setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
+        builder.setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
+                .setCancelMessage(false)
                 .setMeteorologicalWatchOffice(mwo)
                 .setIssuingAirTrafficServicesUnit(fir)
                 .setAirspace(airspace)
@@ -136,29 +134,28 @@ public class JSONAirmetConverterTest {
                 .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 .setValidityPeriod(validPeriod.build())
                 .setAirmetPhenomenon(AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.MOD_ICE)
-                .setAnalysisGeometries(Arrays.asList(geomBuilder.build()))
-                ;
+                .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()));
 
-        AIRMET airmet=builder.build();
+        final AIRMET airmet = builder.build();
 
-        AIRMET airmetCopy = AIRMETImpl.immutableCopyOf(airmet);
+        final AIRMET airmetCopy = AIRMETImpl.immutableCopyOf(airmet);
 
         System.err.println(om.writeValueAsString(airmetCopy));
 
-        ConversionResult<String> result = converter.convertMessage(airmet, JSONConverter.AIRMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
-        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+        final ConversionResult<String> result = converter.convertMessage(airmet, JSONConverter.AIRMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
-        System.err.println("JSON:"+result.getConvertedMessage().get());
+        System.err.println("JSON:" + result.getConvertedMessage().get());
 
-//        JsonNode refRoot=om.readTree(reference);
-//        JsonNode convertedRoot=om.readTree(result.getConvertedMessage().get());
-//        System.err.println("EQUALS: "+refRoot.equals(convertedRoot));
-//        AIRMET convertedAirmet=om.readValue(result.getConvertedMessage().get(), AIRMETImpl.class);
-//        System.err.println("translated: "+convertedAirmet.isTranslated());
+        //        JsonNode refRoot=om.readTree(reference);
+        //        JsonNode convertedRoot=om.readTree(result.getConvertedMessage().get());
+        //        System.err.println("EQUALS: "+refRoot.equals(convertedRoot));
+        //        AIRMET convertedAirmet=om.readValue(result.getConvertedMessage().get(), AIRMETImpl.class);
+        //        System.err.println("translated: "+convertedAirmet.isTranslated());
 
-//        ZonedDateTime now=ZonedDateTime.now();
-//        System.err.println("now: "+now+" "+convertedAirmet.getIssueTime());
-//        assertEquals("constructed and parsed tree not equal", airmet, convertedAirmet);
+        //        ZonedDateTime now=ZonedDateTime.now();
+        //        System.err.println("now: "+now+" "+convertedAirmet.getIssueTime());
+        //        assertEquals("constructed and parsed tree not equal", airmet, convertedAirmet);
 
     }
 }

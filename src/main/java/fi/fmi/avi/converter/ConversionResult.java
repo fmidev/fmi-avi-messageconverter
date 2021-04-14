@@ -13,21 +13,8 @@ import java.util.Optional;
  */
 public class ConversionResult<T> {
 
-    public enum Status {
-        SUCCESS(0), FAIL(3), WITH_ERRORS(2), WITH_WARNINGS(1);
-        private int criticality;
-
-        Status(final int criticality) {
-            this.criticality = criticality;
-        }
-
-        public static boolean isMoreCritical(final Status status, final Status reference) {
-            return status.criticality > reference.criticality;
-        }
-    }
-
+    private final IssueList issues;
     private T convertedMessage;
-    private IssueList issues;
     private Status explicitStatus;
 
     /**
@@ -41,10 +28,11 @@ public class ConversionResult<T> {
      * Constructs a result from the given result. Does a shallow copy
      * of the issue list, the status and the result.
      *
-     * @param source the result to copy
+     * @param source
+     *         the result to copy
      */
     public ConversionResult(final ConversionResult<? extends T> source) {
-        source.getConvertedMessage().ifPresent(this::setConvertedMessage);
+        this.convertedMessage = source.getConvertedMessage().orElse(null);
         this.issues = new IssueList(source.getConversionIssues());
         this.explicitStatus = source.getStatus();
     }
@@ -59,6 +47,7 @@ public class ConversionResult<T> {
      * and {@link Status#SUCCESS} otherwise.
      *
      * @return the status of the finished conversion operation
+     *
      * @see #setStatus(Status)
      */
     public Status getStatus() {
@@ -88,7 +77,8 @@ public class ConversionResult<T> {
     /**
      * Explicitly sets the conversion status.
      *
-     * @param status to set
+     * @param status
+     *         to set
      */
     public void setStatus(final Status status) {
         this.explicitStatus = status;
@@ -96,6 +86,7 @@ public class ConversionResult<T> {
 
     /**
      * Get the resulting message, if available.
+     *
      * @return the result
      */
     public Optional<T> getConvertedMessage() {
@@ -103,7 +94,18 @@ public class ConversionResult<T> {
     }
 
     /**
+     * Sets the result of the conversion.
+     *
+     * @param message
+     *         the conversion output
+     */
+    public void setConvertedMessage(final T message) {
+        this.convertedMessage = message;
+    }
+
+    /**
      * Get a list of issues reported during the conversion.
+     *
      * @return the issue list.
      */
     public List<ConversionIssue> getConversionIssues() {
@@ -111,16 +113,10 @@ public class ConversionResult<T> {
     }
 
     /**
-     * Sets the result of the conversion.
-     * @param message the conversion output
-     */
-    public void setConvertedMessage(final T message) {
-        this.convertedMessage = message;
-    }
-
-    /**
      * Adds a single issue.
-     * @param issue to add
+     *
+     * @param issue
+     *         to add
      */
     public void addIssue(final ConversionIssue issue) {
         if (issue != null) {
@@ -130,11 +126,26 @@ public class ConversionResult<T> {
 
     /**
      * Adds a collection of issues.
-     * @param issues issue collecion
+     *
+     * @param issues
+     *         issue collecion
      */
     public void addIssue(final Collection<ConversionIssue> issues) {
         if (issues != null && !issues.isEmpty()) {
             this.issues.addAll(issues);
+        }
+    }
+
+    public enum Status {
+        SUCCESS(0), FAIL(3), WITH_ERRORS(2), WITH_WARNINGS(1);
+        private final int criticality;
+
+        Status(final int criticality) {
+            this.criticality = criticality;
+        }
+
+        public static boolean isMoreCritical(final Status status, final Status reference) {
+            return status.criticality > reference.criticality;
         }
     }
 

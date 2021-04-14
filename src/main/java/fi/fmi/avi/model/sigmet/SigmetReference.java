@@ -5,9 +5,13 @@ import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 
 public interface SigmetReference<T> {
-    public UnitPropertyGroup getIssuingAirTrafficServicesUnit();
-    public UnitPropertyGroup getMeteorologicalWatchOffice();
-    public AeronauticalSignificantWeatherPhenomenon getPhenomenon();
-    public String getSequenceNumber();
-    public PartialOrCompleteTimePeriod getValidityPeriod();
+    UnitPropertyGroup getIssuingAirTrafficServicesUnit();
+
+    UnitPropertyGroup getMeteorologicalWatchOffice();
+
+    AeronauticalSignificantWeatherPhenomenon getPhenomenon();
+
+    String getSequenceNumber();
+
+    PartialOrCompleteTimePeriod getValidityPeriod();
 }

@@ -17,8 +17,10 @@ import fi.fmi.avi.model.sigmet.AirmetWind;
 @FreeBuilder
 @JsonDeserialize(builder = AirmetWindImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"speed", "direction"})
+@JsonPropertyOrder({ "speed", "direction" })
 public abstract class AirmetWindImpl implements AirmetWind, Serializable {
+    private static final long serialVersionUID = -7056053439475425396L;
+
     public static AirmetWindImpl immutableCopyOf(final AirmetWind airmetWind) {
         Objects.requireNonNull(airmetWind);
         if (airmetWind instanceof AirmetWindImpl) {
@@ -47,20 +49,19 @@ public abstract class AirmetWindImpl implements AirmetWind, Serializable {
                 return ((AirmetWindImpl) value).toBuilder();
             } else {
                 return new AirmetWindImpl.Builder()//
-                        .setSpeed(NumericMeasureImpl.immutableCopyOf(value.getSpeed()))
-                        .setDirection(NumericMeasureImpl.immutableCopyOf(value.getDirection()));
+                        .setSpeed(NumericMeasureImpl.immutableCopyOf(value.getSpeed())).setDirection(NumericMeasureImpl.immutableCopyOf(value.getDirection()));
             }
         }
 
         @Override
-        @JsonDeserialize(as=NumericMeasureImpl.class)
-        public Builder setSpeed(NumericMeasure speed) {
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setSpeed(final NumericMeasure speed) {
             return super.setSpeed(NumericMeasureImpl.immutableCopyOf(speed));
         }
 
         @Override
-        @JsonDeserialize(as=NumericMeasureImpl.class)
-        public Builder setDirection(NumericMeasure direction) {
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setDirection(final NumericMeasure direction) {
             return super.setDirection(NumericMeasureImpl.immutableCopyOf(direction));
         }
 

@@ -1,5 +1,4 @@
 {
-  "status": "NORMAL",
   "aerodrome": {
     "designator": "EFVA"
   },
@@ -11,7 +10,7 @@
       "partialTime": "--27T12:"
     },
     "endTime": {
-      "partialTime": "--28T00:"
+      "partialTime": "--28T12:"
     }
   },
   "baseForecast": {
@@ -180,5 +179,6 @@
         ]
       }
     }
-  ]
+  ],
+  "reportStatus": "NORMAL"
 }

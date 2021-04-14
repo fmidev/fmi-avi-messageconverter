@@ -17,15 +17,13 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
 @JsonDeserialize(builder = TacOrGeoGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializable {
-    /**
- *
- */
-private static final long serialVersionUID = 2582240445531208610L;
+    private static final long serialVersionUID = 2582240445531208610L;
 
     public static Builder builder() {
         return new Builder();
     }
-    public static  TacOrGeoGeometryImpl of(final Geometry value) {
+
+    public static TacOrGeoGeometryImpl of(final Geometry value) {
         return new Builder().setGeoGeometry(value).build();
     }
 

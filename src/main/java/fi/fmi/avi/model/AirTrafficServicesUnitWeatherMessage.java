@@ -14,6 +14,7 @@ public interface AirTrafficServicesUnitWeatherMessage extends AviationWeatherMes
      * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
      */
 
-    public UnitPropertyGroup getIssuingAirTrafficServicesUnit();
-    public UnitPropertyGroup getMeteorologicalWatchOffice();
+    UnitPropertyGroup getIssuingAirTrafficServicesUnit();
+
+    UnitPropertyGroup getMeteorologicalWatchOffice();
 }

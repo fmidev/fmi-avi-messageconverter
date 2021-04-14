@@ -35,11 +35,11 @@ import fi.fmi.avi.model.metar.WindShear;
 @FreeBuilder
 @JsonDeserialize(builder = METARImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "status", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility", "runwayVisualRanges", "presentWeather", "cloud",
-        "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates", "snowClosure",
-        "noSignificantChanges", "trend", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
+@JsonPropertyOrder({ "reportStatus", "missingMessage", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility", "runwayVisualRanges",
+        "presentWeather", "cloud", "airTemperature", "dewpointTemperature", "altimeterSettingQNH", "recentWeather", "windShear", "seaState", "runwayStates",
+        "snowClosure", "noSignificantChanges", "trend", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportImpl implements METAR, Serializable {
+public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportImpl<METARImpl, METARImpl.Builder> implements METAR, Serializable {
 
     private static final long serialVersionUID = 5959988117998705772L;
 
@@ -70,6 +70,8 @@ public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportI
         @Deprecated
         public Builder() {
             setTranslated(false);
+            setReportStatus(ReportStatus.NORMAL);
+            setMissingMessage(false);
             setAutomatedStation(false);
             setCeilingAndVisibilityOk(false);
             setRoutineDelayed(false);

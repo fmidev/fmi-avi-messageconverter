@@ -2,6 +2,7 @@ package fi.fmi.avi.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,8 @@ public class GTSExchangeFileInfoTest {
         final GTSExchangeFileInfo info = new GTSExchangeFileInfo.Builder().setPFlag(GTSExchangeFileInfo.GTSExchangePFlag.A)
                 .setMetadataFile(true)
                 .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.METADATA)
-                .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP).setHeading(BulletinHeadingImpl.builder()//
+                .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP)
+                .setHeading(BulletinHeadingImpl.builder()//
                         .setLocationIndicator("ABCD")//
                         .setBulletinAugmentationNumber('A')//
                         .setGeographicalDesignator("FI")//
@@ -43,7 +45,8 @@ public class GTSExchangeFileInfoTest {
     @Test
     public void testFileNameParser() {
         final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
-        final BulletinHeading expectedHeading = BulletinHeadingImpl.builder().setLocationIndicator("ABCD")
+        final BulletinHeading expectedHeading = BulletinHeadingImpl.builder()
+                .setLocationIndicator("ABCD")
                 .setBulletinAugmentationNumber('A')
                 .setGeographicalDesignator("FI")
                 .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
@@ -53,11 +56,11 @@ public class GTSExchangeFileInfoTest {
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
                 .build();
 
-        assertTrue(GTSExchangeFileInfo.GTSExchangePFlag.A == info.getPFlag());
+        assertSame(GTSExchangeFileInfo.GTSExchangePFlag.A, info.getPFlag());
         assertTrue(info.isMetadataFile());
-        assertTrue(GTSExchangeFileInfo.GTSExchangeFileType.METADATA == info.getFileType());
+        assertSame(GTSExchangeFileInfo.GTSExchangeFileType.METADATA, info.getFileType());
         assertTrue(info.getCompressionType().isPresent());
-        assertTrue(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP == info.getCompressionType().get());
+        assertSame(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP, info.getCompressionType().get());
         assertEquals(expectedHeading, info.getHeading());
 
         assertTrue(info.getFreeFormPart().isPresent());

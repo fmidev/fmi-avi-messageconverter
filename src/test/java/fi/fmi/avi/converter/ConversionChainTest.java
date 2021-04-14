@@ -1,5 +1,6 @@
 package fi.fmi.avi.converter;
 
+import static junit.framework.TestCase.assertSame;
 import static junit.framework.TestCase.assertTrue;
 
 import java.io.InputStream;
@@ -53,7 +54,7 @@ public class ConversionChainTest {
                 .withConversionStep(JSONConverter.JSON_STRING_TO_TAF_POJO)//
                 .build(JSONConverter.TAF_POJO_TO_JSON_STRING)//
                 .convertMessage(input, ConversionHints.EMPTY);
-        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
         assertTrue(result.getConvertedMessage().get().contains("\"name\" : \"Tallinn Airport\""));
     }
@@ -68,7 +69,7 @@ public class ConversionChainTest {
                 .withMutator(bulletin -> bulletin.getMessages().get(0), TAFBulletin.class, TAF.class)//
                 .build(JSONConverter.TAF_POJO_TO_JSON_STRING)//
                 .convertMessage(input, ConversionHints.EMPTY);
-        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
     }
 

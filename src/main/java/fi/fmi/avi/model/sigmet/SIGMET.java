@@ -10,19 +10,22 @@ import fi.fmi.avi.model.SIGMETAIRMET;
 
 public interface SIGMET extends SIGMETAIRMET {
     AeronauticalSignificantWeatherPhenomenon getSigmetPhenomenon();
+
     Optional<SigmetReference> getCancelledReference();
 
-    public SigmetAnalysisType getAnalysisType();
-    public Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
+    SigmetAnalysisType getAnalysisType();
 
-    public Optional<NumericMeasure> getMovingSpeed();
-    public Optional<NumericMeasure> getMovingDirection();
+    Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
 
-    public Optional<SigmetIntensityChange> getIntensityChange();
+    Optional<NumericMeasure> getMovingSpeed();
 
-    public Optional<List<PhenomenonGeometry>> getForecastGeometries();
+    Optional<NumericMeasure> getMovingDirection();
 
-    public Optional<Boolean> getNoVaExpected(); //Only applicable to ForecastPositionAnalysis
+    Optional<SigmetIntensityChange> getIntensityChange();
+
+    Optional<List<PhenomenonGeometry>> getForecastGeometries();
+
+    Optional<Boolean> getNoVaExpected(); //Only applicable to ForecastPositionAnalysis
 
     Optional<VAInfo> getVAInfo(); //If this is present this is a VASigmet
 }

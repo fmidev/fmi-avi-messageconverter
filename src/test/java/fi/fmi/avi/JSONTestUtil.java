@@ -1,5 +1,7 @@
 package fi.fmi.avi;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,24 +15,21 @@ import fi.fmi.avi.model.AviationWeatherMessage;
 
 public class JSONTestUtil {
 
-    public static <T extends AviationWeatherMessage> T readFromJSON(final InputStream is, final Class<T> clz) throws IOException {
-        T retval = null;
+    public static <T extends AviationWeatherMessage> T readFromJSON(final InputStream inputStream, final Class<T> clz) throws IOException {
+        requireNonNull(inputStream, "inputStream");
         final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
-        if (is != null) {
-            retval = om.readValue(is, clz);
-        } else {
-            throw new NullPointerException("InputStream is null");
-        }
-        return retval;
+        return om.readValue(inputStream, clz);
     }
 
-    public static void printAsJson(final AviationWeatherMessage msg, final OutputStream out) throws IOException {
+    public static void printAsJson(final AviationWeatherMessage message, final OutputStream outputStream) throws IOException {
+        requireNonNull(message, "message");
+        requireNonNull(outputStream, "outputStream");
         final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
         final ObjectWriter writer = om.writerWithDefaultPrettyPrinter();
-        writer.writeValue(out, msg);
+        writer.writeValue(outputStream, message);
     }
 }

@@ -12,16 +12,18 @@ package fi.fmi.avi.converter;
  */
 public class ConversionSpecification<S, T> {
 
-    private Class<S> inputClass;
-    private Class<T> outputClass;
-    private Object inputSpecifier;
-    private Object outputSpecifier;
+    private final Class<S> inputClass;
+    private final Class<T> outputClass;
+    private final Object inputSpecifier;
+    private final Object outputSpecifier;
 
     /**
      * Constructor for a conversion specified fully by the input and output Classes.
      *
-     * @param input Java class of the input message type
-     * @param output Java class of the output message type
+     * @param input
+     *         Java class of the input message type
+     * @param output
+     *         Java class of the output message type
      */
     public ConversionSpecification(final Class<S> input, final Class<T> output) {
         this(input, output, null, null);
@@ -78,7 +80,9 @@ public class ConversionSpecification<S, T> {
      *
      * @return detailed specifier of the output message type, or null if not given
      */
-    public Object getOutputSpecifier() { return outputSpecifier; }
+    public Object getOutputSpecifier() {
+        return outputSpecifier;
+    }
 
     @Override
     public int hashCode() {
@@ -93,32 +97,42 @@ public class ConversionSpecification<S, T> {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        final ConversionSpecification<?,?> other = (ConversionSpecification<?,?>) obj;
+        }
+        final ConversionSpecification<?, ?> other = (ConversionSpecification<?, ?>) obj;
         if (inputClass == null) {
-            if (other.inputClass != null)
+            if (other.inputClass != null) {
                 return false;
-        } else if (!inputClass.equals(other.inputClass))
+            }
+        } else if (!inputClass.equals(other.inputClass)) {
             return false;
+        }
         if (outputClass == null) {
-            if (other.outputClass != null)
+            if (other.outputClass != null) {
                 return false;
-        } else if (!outputClass.equals(other.outputClass))
+            }
+        } else if (!outputClass.equals(other.outputClass)) {
             return false;
+        }
         if (inputSpecifier == null) {
-            if (other.inputSpecifier != null)
+            if (other.inputSpecifier != null) {
                 return false;
-        } else if (!inputSpecifier.equals(other.inputSpecifier))
+            }
+        } else if (!inputSpecifier.equals(other.inputSpecifier)) {
             return false;
+        }
         if (outputSpecifier == null) {
             return other.outputSpecifier == null;
-        } else
+        } else {
             return outputSpecifier.equals(other.outputSpecifier);
+        }
     }
 
     public String toString() {

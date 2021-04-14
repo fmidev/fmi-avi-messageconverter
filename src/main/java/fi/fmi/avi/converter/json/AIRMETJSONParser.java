@@ -14,12 +14,15 @@ public class AIRMETJSONParser extends AbstractJSONParser implements AviMessageSp
     /**
      * Converts a JSON TAF message into TAF Object.
      *
-     * @param input input message
-     * @param hints parsing hints
+     * @param input
+     *         input message
+     * @param hints
+     *         parsing hints
+     *
      * @return the {@link ConversionResult} with the converter message and the possible conversion issues
      */
     @Override
-    public ConversionResult<AIRMET> convertMessage(String input, ConversionHints hints) {
+    public ConversionResult<AIRMET> convertMessage(final String input, final ConversionHints hints) {
         return doConvertMessage(input, AIRMET.class, AIRMETImpl.class, hints);
     }
 }
