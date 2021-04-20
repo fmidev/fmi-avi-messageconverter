@@ -1,6 +1,5 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import fi.fmi.avi.model.PartialDateTime;
@@ -9,9 +8,7 @@ import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
 public class SIGMETBulletinTest {
-
     @Test
-    @Ignore
     public void testSIGMETBulletin() {
         final SIGMETBulletinImpl.Builder builder = SIGMETBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//

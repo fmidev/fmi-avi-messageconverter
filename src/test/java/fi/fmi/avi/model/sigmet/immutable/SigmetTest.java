@@ -1,11 +1,8 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -20,12 +17,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.PhenomenonGeometry;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.TacGeometry;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
@@ -91,7 +88,7 @@ public class SigmetTest {
                 .setMeteorologicalWatchOffice(new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
                 .setAirspace(airspace)
                 .setSequenceNumber("1")
-                .setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
+                .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
                 .setValidityPeriod(PartialOrCompleteTimePeriod.builder()
                         .setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T14:00:00Z")))
                         .setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T18:00:00Z")))
@@ -111,9 +108,7 @@ public class SigmetTest {
     public void testGeometry() throws IOException {
         String geom="{\"tacGeometry\":{\"data\": \"ENTIRE FIR\"}, \"geoGeometry\": {\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
 
-        System.err.println("geom:"+ geom);
         TacOrGeoGeometry gm = om.readValue(geom, TacOrGeoGeometry.class);
-        System.err.println(">>>>"+gm.getTacGeometry().get().getData());
     }
 
     @Test
@@ -130,6 +125,5 @@ public class SigmetTest {
         assertEquals("ENTIRE FIR", smNode.get("analysisGeometries").get(0).get("geometry").get("tacGeometry").get("data").asText());
 
         SIGMET sm_reread = om.readValue(json, SIGMETImpl.class);
-        System.err.println(">>>>"+sm_reread.getIssueTime());
     }
 }
