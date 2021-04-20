@@ -30,7 +30,6 @@
   "sigmetPhenomenon": "EMBD_TS",
   "permissibleUsage": "NON_OPERATIONAL",
   "permissibleUsageReason": "EXERCISE",
-  "analysisType": "OBSERVATION",
   "analysisGeometries": [
     {
       "time": {
@@ -45,6 +44,7 @@
         "uom": "FL"
       },
       "intensityChange": "NO_CHANGE",
+      "analysisType": "OBSERVATION",
       "approximateLocation": false,
       "geometry": {
         "geoGeometry": {

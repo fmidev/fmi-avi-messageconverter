@@ -98,6 +98,7 @@ public class JSONSigmetConverterTest {
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
         geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
         geomBuilder.setIntensityChange(SigmetIntensityChange.NO_CHANGE);
+        geomBuilder.setAnalysisType(SigmetAnalysisType.OBSERVATION);
 
         final PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
         fpGeomBuilder.setApproximateLocation(false);
@@ -115,7 +116,6 @@ public class JSONSigmetConverterTest {
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
                 .setSequenceNumber("1")
 
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 .setValidityPeriod(validPeriod.build())
                 .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()))

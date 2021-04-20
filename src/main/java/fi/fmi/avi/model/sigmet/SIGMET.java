@@ -12,8 +12,6 @@ public interface SIGMET extends SIGMETAIRMET {
 
     Optional<SigmetReference> getCancelledReference();
 
-    SigmetAnalysisType getAnalysisType();
-
     Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
 
     Optional<List<PhenomenonGeometry>> getForecastGeometries();

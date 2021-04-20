@@ -60,6 +60,7 @@ public class SigmetTest {
                 .setGeometry(builder.build())
                 .setApproximateLocation(false)
                 .setIntensityChange(SigmetIntensityChange.WEAKENING)
+                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 ;
         return an.build();
     }
@@ -96,7 +97,6 @@ public class SigmetTest {
                         .build())
                 .setAnalysisGeometries(Collections.singletonList(getAnalysis()))
                 .setForecastGeometries(Collections.singletonList(getForecast()))
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
 
 
                 //                .setAnalysis(Collections.singletonList(getAnalysis()))

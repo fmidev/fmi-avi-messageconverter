@@ -20,14 +20,5 @@ public interface AIRMET extends SIGMETAIRMET {
 
     Optional<AirmetReference> getCancelledReference();
 
-    SigmetAnalysisType getAnalysisType();
-
     Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
-
-    Optional<NumericMeasure> getMovingSpeed();
-
-    Optional<NumericMeasure> getMovingDirection();
-
-    Optional<SigmetIntensityChange> getIntensityChange();
-
 }

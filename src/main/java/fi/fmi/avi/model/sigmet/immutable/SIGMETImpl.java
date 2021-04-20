@@ -133,7 +133,6 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                 return builder//
                         .setSigmetPhenomenon(value.getSigmetPhenomenon())//
                         .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))//
-                        .setAnalysisType(value.getAnalysisType())//
                         .setAnalysisGeometries(value.getAnalysisGeometries()//
                                 .map(analysisGeometries -> BuilderHelper.toImmutableList(analysisGeometries,
                                         PhenomenonGeometryWithHeightImpl::immutableCopyOf)))//

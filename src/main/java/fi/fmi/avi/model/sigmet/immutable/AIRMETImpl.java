@@ -37,7 +37,7 @@ import fi.fmi.avi.model.sigmet.AirmetWind;
 @JsonDeserialize(builder = AIRMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime",
-        "validityPeriod", "airspace", "movingDirection", "movingSpeed", "analysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
+        "validityPeriod", "airspace", "analysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
         "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
         "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class AIRMETImpl implements AIRMET, Serializable {
@@ -131,13 +131,10 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                                 .map(BuilderHelper::toImmutableList))//
                         .setVisibility(NumericMeasureImpl.immutableCopyOf(value.getVisibility()))//
                         .setCancelledReference(AirmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))//
-                        .setAnalysisType(value.getAnalysisType())//
                         .setAnalysisGeometries(value.getAnalysisGeometries()//
                                 .map(analysisGeometries -> BuilderHelper.toImmutableList(analysisGeometries,
-                                        PhenomenonGeometryWithHeightImpl::immutableCopyOf)))//
-                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()))//
-                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))//
-                        .setIntensityChange(value.getIntensityChange());
+                                        PhenomenonGeometryWithHeightImpl::immutableCopyOf))//
+                        );
             }
         }
 
@@ -181,18 +178,6 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         @JsonDeserialize(as = AirspaceImpl.class)
         public Builder setAirspace(final Airspace airspace) {
             return super.setAirspace(airspace);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingSpeed(final NumericMeasure speed) {
-            return super.setMovingSpeed(speed);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingDirection(final NumericMeasure direction) {
-            return super.setMovingDirection(direction);
         }
 
         @Override

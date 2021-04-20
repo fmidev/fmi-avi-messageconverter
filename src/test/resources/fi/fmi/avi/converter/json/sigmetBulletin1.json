@@ -42,7 +42,6 @@
       "sigmetPhenomenon": "EMBD_TS",
       "permissibleUsage": "NON_OPERATIONAL",
       "permissibleUsageReason": "EXERCISE",
-      "analysisType": "OBSERVATION",
       "analysisGeometries": [
         {
           "time": {
@@ -58,6 +57,7 @@
           },
           "intensityChange": "NO_CHANGE",
           "approximateLocation": false,
+          "analysisType": "OBSERVATION",
           "geometry": {
             "geoGeometry": {
               "type": "Polygon",
@@ -132,7 +132,6 @@
       "sigmetPhenomenon": "EMBD_TS",
       "permissibleUsage": "NON_OPERATIONAL",
       "permissibleUsageReason": "EXERCISE",
-      "analysisType": "OBSERVATION",
       "analysisGeometries": [
         {
           "time": {
@@ -148,6 +147,7 @@
           },
           "intensityChange": "NO_CHANGE",
           "approximateLocation": false,
+          "analysisType": "OBSERVATION",
           "geometry": {
             "geoGeometry": {
               "type": "Polygon",

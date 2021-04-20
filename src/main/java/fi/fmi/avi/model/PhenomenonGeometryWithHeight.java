@@ -2,6 +2,7 @@ package fi.fmi.avi.model;
 
 import java.util.Optional;
 
+import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 
 public interface PhenomenonGeometryWithHeight extends PhenomenonGeometry{
@@ -16,4 +17,6 @@ public interface PhenomenonGeometryWithHeight extends PhenomenonGeometry{
     Optional<NumericMeasure> getMovingDirection();
 
     Optional<SigmetIntensityChange> getIntensityChange();
+    SigmetAnalysisType getAnalysisType();
+
 }

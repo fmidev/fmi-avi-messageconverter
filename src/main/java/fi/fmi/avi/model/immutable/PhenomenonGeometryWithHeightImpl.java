@@ -51,6 +51,7 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
                         .setMovingDirection(value.getMovingDirection())
                         .setMovingSpeed(value.getMovingSpeed())
                         .setIntensityChange(value.getIntensityChange())
+                        .setAnalysisType(value.getAnalysisType())
                         .setTime(value.getTime());
             }
         }

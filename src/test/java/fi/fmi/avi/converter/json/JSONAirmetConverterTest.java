@@ -117,6 +117,10 @@ public class JSONAirmetConverterTest {
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
         geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
+        geomBuilder.setMovingDirection(NumericMeasureImpl.of(180, "deg"))
+        .setMovingSpeed(NumericMeasureImpl.of(10, "[kn_i]"))
+        .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
+        .setAnalysisType(SigmetAnalysisType.OBSERVATION);
 
         builder.setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
                 .setCancelMessage(false)
@@ -128,10 +132,6 @@ public class JSONAirmetConverterTest {
                 .setPermissibleUsage(AviationCodeListUser.PermissibleUsage.NON_OPERATIONAL)
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
                 .setSequenceNumber("1")
-                .setMovingDirection(NumericMeasureImpl.of(180, "deg"))
-                .setMovingSpeed(NumericMeasureImpl.of(10, "[kn_i]"))
-                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 .setValidityPeriod(validPeriod.build())
                 .setAirmetPhenomenon(AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.MOD_ICE)
                 .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()));

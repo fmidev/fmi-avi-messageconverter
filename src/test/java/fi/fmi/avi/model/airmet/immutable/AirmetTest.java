@@ -20,6 +20,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
@@ -31,7 +32,6 @@ import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
-import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.AirmetCloudLevelsImpl;
 
@@ -55,7 +55,9 @@ public class AirmetTest {
         final PhenomenonGeometryWithHeightImpl.Builder an = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
                 PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T13:50:00Z")))
                 .setGeometry(TacOrGeoGeometryImpl.of(anGeometry.get()))
-                .setApproximateLocation(false);
+                .setApproximateLocation(false)
+                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
+                ;
         return an.build();
     }
 
@@ -71,16 +73,13 @@ public class AirmetTest {
                 .setMeteorologicalWatchOffice(new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
                 .setAirspace(airspace)
                 .setSequenceNumber("1")
-                .setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
+                .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
                 .setValidityPeriod(PartialOrCompleteTimePeriod.builder()
                         .setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T14:00:00Z")))
                         .setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T18:00:00Z")))
                         .build())
                 .setAnalysisGeometries(Collections.singletonList(getAnalysis()))
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
-                .setIntensityChange(SigmetIntensityChange.WEAKENING)
 
-                //                .setAnalysis(Collections.singletonList(getAnalysis()))
                 .setAirmetPhenomenon(AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.BKN_CLD)
                 .setCloudLevels(levels.build())
                 .setTranslated(false);
