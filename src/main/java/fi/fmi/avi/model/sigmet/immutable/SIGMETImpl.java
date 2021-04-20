@@ -27,7 +27,6 @@ import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SIGMETAIRMETBuilderHelper;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
-import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
@@ -39,7 +38,7 @@ import fi.fmi.avi.model.sigmet.VAInfo;
 @JsonDeserialize(builder = SIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime",
-        "validityPeriod", "airspace", "analysisGeometries", "forecastGeometries", "movingSpeed", "movingDirection", "volcano", "noVolcanicAshExpected",
+        "validityPeriod", "airspace", "analysisGeometries", "forecastGeometries", "volcano", "noVolcanicAshExpected",
         "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class SIGMETImpl implements SIGMET, Serializable {
@@ -138,9 +137,6 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                         .setAnalysisGeometries(value.getAnalysisGeometries()//
                                 .map(analysisGeometries -> BuilderHelper.toImmutableList(analysisGeometries,
                                         PhenomenonGeometryWithHeightImpl::immutableCopyOf)))//
-                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()))//
-                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))//
-                        .setIntensityChange(value.getIntensityChange())//
                         .setForecastGeometries(value.getForecastGeometries()//
                                 .map(forecastGeometries -> BuilderHelper.toImmutableList(forecastGeometries, PhenomenonGeometryImpl::immutableCopyOf)))//
                         .setNoVaExpected(value.getNoVaExpected())//
@@ -197,18 +193,6 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         @JsonDeserialize(as = PartialOrCompleteTimePeriod.class)
         public Builder setValidityPeriod(final PartialOrCompleteTimePeriod validityPeriod) {
             return super.setValidityPeriod(validityPeriod);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingSpeed(final NumericMeasure speed) {
-            return super.setMovingSpeed(speed);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingDirection(final NumericMeasure direction) {
-            return super.setMovingDirection(direction);
         }
 
         @Override

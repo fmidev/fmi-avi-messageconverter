@@ -59,6 +59,7 @@ public class SigmetTest {
                 .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T13:50:00Z")))
                 .setGeometry(builder.build())
                 .setApproximateLocation(false)
+                .setIntensityChange(SigmetIntensityChange.WEAKENING)
                 ;
         return an.build();
     }
@@ -96,7 +97,7 @@ public class SigmetTest {
                 .setAnalysisGeometries(Collections.singletonList(getAnalysis()))
                 .setForecastGeometries(Collections.singletonList(getForecast()))
                 .setAnalysisType(SigmetAnalysisType.OBSERVATION)
-                .setIntensityChange(SigmetIntensityChange.WEAKENING)
+
 
                 //                .setAnalysis(Collections.singletonList(getAnalysis()))
                 .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)

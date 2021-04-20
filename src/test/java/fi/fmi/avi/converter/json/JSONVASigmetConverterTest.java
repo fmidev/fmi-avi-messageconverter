@@ -101,6 +101,7 @@ public class JSONVASigmetConverterTest {
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
         geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
         geomBuilder.setApproximateLocation(false);
+        geomBuilder.setIntensityChange(SigmetIntensityChange.NO_CHANGE);
 
         final PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
         fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
@@ -135,7 +136,7 @@ public class JSONVASigmetConverterTest {
                 .setTranslated(false)
                 .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setValidityPeriod(validPeriod.build())
-                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
+
                 .setAnalysisType(SigmetAnalysisType.OBSERVATION)
                 .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()))
                 .setForecastGeometries(Collections.singletonList(fpGeomBuilder.build()))

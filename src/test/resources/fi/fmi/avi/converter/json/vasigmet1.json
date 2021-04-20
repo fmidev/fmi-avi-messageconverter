@@ -31,7 +31,6 @@
   "permissibleUsage": "NON_OPERATIONAL",
   "permissibleUsageReason": "EXERCISE",
   "analysisType": "OBSERVATION",
-  "intensityChange": "NO_CHANGE",
   "analysisGeometries": [
     {
       "time": {
@@ -45,6 +44,7 @@
         "value": 35.0,
         "uom": "FL"
       },
+      "intensityChange": "NO_CHANGE",
       "approximateLocation": false,
       "geometry": {
         "geoGeometry": {

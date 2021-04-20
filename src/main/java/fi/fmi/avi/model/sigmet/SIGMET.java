@@ -3,7 +3,6 @@ package fi.fmi.avi.model.sigmet;
 import java.util.List;
 import java.util.Optional;
 
-import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PhenomenonGeometry;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SIGMETAIRMET;
@@ -16,12 +15,6 @@ public interface SIGMET extends SIGMETAIRMET {
     SigmetAnalysisType getAnalysisType();
 
     Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
-
-    Optional<NumericMeasure> getMovingSpeed();
-
-    Optional<NumericMeasure> getMovingDirection();
-
-    Optional<SigmetIntensityChange> getIntensityChange();
 
     Optional<List<PhenomenonGeometry>> getForecastGeometries();
 

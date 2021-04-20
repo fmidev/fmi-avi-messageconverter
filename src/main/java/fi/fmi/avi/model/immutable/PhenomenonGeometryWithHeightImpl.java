@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
@@ -47,6 +48,9 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
                         .setUpperLimitOperator(value.getUpperLimitOperator())
                         .setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(value.getGeometry()))
                         .setApproximateLocation(value.getApproximateLocation())
+                        .setMovingDirection(value.getMovingDirection())
+                        .setMovingSpeed(value.getMovingSpeed())
+                        .setIntensityChange(value.getIntensityChange())
                         .setTime(value.getTime());
             }
         }
@@ -68,6 +72,18 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
         public Builder setGeometry(final TacOrGeoGeometry geom) {
             return super.setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(geom));
         }
-    }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMovingSpeed(final NumericMeasure speed) {
+            return super.setMovingSpeed(NumericMeasureImpl.immutableCopyOf(speed));
+        }
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMovingDirection(final NumericMeasure dir) {
+            return super.setMovingSpeed(NumericMeasureImpl.immutableCopyOf(dir));
+
+        }
+     }
 }
 
