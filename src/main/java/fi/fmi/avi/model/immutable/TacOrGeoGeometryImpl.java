@@ -51,7 +51,8 @@ public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializ
             } else {
                 return new Builder()
                 .setGeoGeometry(value.getGeoGeometry())
-                .setTacGeometry(value.getTacGeometry());
+                .setTacGeometry(value.getTacGeometry())
+                .setEntireArea(value.getEntireArea());
             }
         }
 

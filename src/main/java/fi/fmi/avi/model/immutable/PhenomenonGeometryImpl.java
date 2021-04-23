@@ -40,7 +40,9 @@ public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Seri
             if (value instanceof PhenomenonGeometryImpl) {
                 return ((PhenomenonGeometryImpl) value).toBuilder();
             } else {
-                return new Builder().setGeometry(value.getGeometry()).setTime(value.getTime()).setApproximateLocation(value.getApproximateLocation());
+                return new Builder().setGeometry(value.getGeometry())
+                .setTime(value.getTime())
+                .setApproximateLocation(value.getApproximateLocation());
 
             }
         }
