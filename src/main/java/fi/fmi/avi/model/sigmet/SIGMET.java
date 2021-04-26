@@ -8,7 +8,7 @@ import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SIGMETAIRMET;
 
 public interface SIGMET extends SIGMETAIRMET {
-    AeronauticalSignificantWeatherPhenomenon getSigmetPhenomenon();
+    Optional<AeronauticalSignificantWeatherPhenomenon> getSigmetPhenomenon();
 
     Optional<SigmetReference> getCancelledReference();
 

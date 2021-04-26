@@ -9,7 +9,6 @@ import org.inferred.freebuilder.FreeBuilder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
@@ -58,12 +57,6 @@ public abstract class SigmetReferenceImpl implements SigmetReference, Serializab
         @JsonDeserialize(as = UnitPropertyGroupImpl.class)
         public Builder setMeteorologicalWatchOffice(final UnitPropertyGroup meteorologicalWatchOffice) {
             return super.setMeteorologicalWatchOffice(meteorologicalWatchOffice);
-        }
-
-        @Override
-        @JsonDeserialize(as = AeronauticalSignificantWeatherPhenomenon.class)
-        public Builder setPhenomenon(final AeronauticalSignificantWeatherPhenomenon sigmetPhenomenon) {
-            return super.setPhenomenon(sigmetPhenomenon);
         }
 
         @Override

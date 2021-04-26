@@ -19,7 +19,6 @@ import fi.fmi.avi.model.AirTrafficServicesUnitWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.BuilderHelper;
-import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.PhenomenonGeometry;

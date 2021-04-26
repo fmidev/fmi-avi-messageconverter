@@ -8,7 +8,7 @@ import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SIGMETAIRMET;
 
 public interface AIRMET extends SIGMETAIRMET {
-    AeronauticalAirmetWeatherPhenomenon getAirmetPhenomenon();
+    Optional<AeronauticalAirmetWeatherPhenomenon> getAirmetPhenomenon();
 
     Optional<AirmetCloudLevels> getCloudLevels();
 
