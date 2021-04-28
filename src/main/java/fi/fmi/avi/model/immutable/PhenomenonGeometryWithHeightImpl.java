@@ -82,7 +82,7 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setMovingDirection(final NumericMeasure dir) {
-            return super.setMovingSpeed(NumericMeasureImpl.immutableCopyOf(dir));
+            return super.setMovingDirection(NumericMeasureImpl.immutableCopyOf(dir));
 
         }
      }
