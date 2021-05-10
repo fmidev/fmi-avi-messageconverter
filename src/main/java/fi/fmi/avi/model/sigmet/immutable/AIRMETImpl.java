@@ -157,7 +157,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(as = AirmetReference.class)
+        @JsonDeserialize(as = AirmetReferenceImpl.class)
         public Builder setCancelledReference(final AirmetReference cancelledReference) {
             return super.setCancelledReference(cancelledReference);
         }
