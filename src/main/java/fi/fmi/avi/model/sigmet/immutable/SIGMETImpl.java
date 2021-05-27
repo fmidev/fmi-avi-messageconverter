@@ -12,6 +12,7 @@ import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -139,15 +140,6 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                                 .map(forecastGeometries -> BuilderHelper.toImmutableList(forecastGeometries, PhenomenonGeometryImpl::immutableCopyOf)))//
                         .setNoVaExpected(value.getNoVaExpected())//
                         .setVAInfo(VAInfoImpl.immutableCopyOf(value.getVAInfo()));
-
- /*               if (value instanceof VASIGMET) {
-                    //From VASigmet
-                    VASIGMET va=(VASIGMET)value;
-                    builder.setVolcano(VolcanoDescriptionImpl.immutableCopyOf((va.getVolcano())));
-                    if (va.getNoVolcanicAshExpected().isPresent()) builder.setNoVolcanicAshExpected(va.getNoVolcanicAshExpected().get());
-                    if (va.getVolcanicAshMovedToFIR().isPresent()) builder.setVolcanicAshMovedToFIR(va.getVolcanicAshMovedToFIR().get());
-                }
-*/
             }
         }
 
@@ -195,21 +187,18 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
 
         @Override
         @JsonDeserialize(as = VAInfoImpl.class)
+        @JsonProperty("VAInfo")
         public Builder setVAInfo(final VAInfo vaInfo) {
             return super.setVAInfo(vaInfo);
         }
 
-/*        @Override
+        @Override
+        @JsonIgnore
         @JsonDeserialize(as = VAInfoImpl.class)
         public Builder setVAInfo(final Optional<? extends VAInfo> vaInfo) {
             return super.setVAInfo(vaInfo);
-        }*/
+        }
 
-        /*       @Override
-               public Builder setTranslated(boolean translated) {
-                   return super.setTranslated(translated);
-               }
-       */
         @Override
         @JsonDeserialize(as = AirspaceImpl.class)
         public Builder setAirspace(final Airspace airspace) {
