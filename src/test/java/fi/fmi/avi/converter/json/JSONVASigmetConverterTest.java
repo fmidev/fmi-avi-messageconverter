@@ -71,6 +71,20 @@ public class JSONVASigmetConverterTest {
         System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
+    @Test
+    public void testSIGMETParsingNOVAEXP() throws Exception {
+        final InputStream is = JSONVASigmetConverterTest.class.getResourceAsStream("vasigmet_novaexp.json");
+        Objects.requireNonNull(is);
+        final String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        for (final ConversionIssue iss : result.getConversionIssues()) {
+            System.err.println("  ISS:" + iss.getMessage() + " " + iss.getCause());
+        }
+        System.err.println("SM:" + result.getStatus() + " ==>");
+        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
+    }
 
     @Test
     public void testVASIGMETSerialization() throws Exception {

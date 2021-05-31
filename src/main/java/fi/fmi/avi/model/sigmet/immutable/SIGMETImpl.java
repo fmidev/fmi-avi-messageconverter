@@ -138,7 +138,6 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                                         PhenomenonGeometryWithHeightImpl::immutableCopyOf)))//
                         .setForecastGeometries(value.getForecastGeometries()//
                                 .map(forecastGeometries -> BuilderHelper.toImmutableList(forecastGeometries, PhenomenonGeometryImpl::immutableCopyOf)))//
-                        .setNoVaExpected(value.getNoVaExpected())//
                         .setVAInfo(VAInfoImpl.immutableCopyOf(value.getVAInfo()));
             }
         }

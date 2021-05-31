@@ -42,7 +42,8 @@ public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Seri
             } else {
                 return new Builder().setGeometry(value.getGeometry())
                 .setTime(value.getTime())
-                .setApproximateLocation(value.getApproximateLocation());
+                .setApproximateLocation(value.getApproximateLocation())
+                .setNoVaExpected(value.getNoVaExpected());
 
             }
         }

@@ -16,7 +16,5 @@ public interface SIGMET extends SIGMETAIRMET {
 
     Optional<List<PhenomenonGeometry>> getForecastGeometries();
 
-    Optional<Boolean> getNoVaExpected(); //Only applicable to ForecastPositionAnalysis
-
     Optional<VAInfo> getVAInfo(); //If this is present this is a VASigmet
 }
