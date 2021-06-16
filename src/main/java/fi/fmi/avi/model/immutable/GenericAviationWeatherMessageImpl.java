@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -83,19 +84,19 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
                         Builder::setTranslationCentreName, //
                         Builder::setTranslationTime, //
                         Builder::setTranslatedTAC);
+
                 return builder//
                         .setOriginalMessage(value.getOriginalMessage())//
                         .setMessageType(value.getMessageType())//
                         .setMessageFormat(value.getMessageFormat())//
                         .setValidityTime(value.getValidityTime())//
-                        .setTargetAerodrome(value.getTargetAerodrome());
+                        .setLocationIndicators(value.getLocationIndicators());
             }
         }
 
-        @Override
-        @JsonDeserialize(as = AerodromeImpl.class)
-        public Builder setTargetAerodrome(final Aerodrome aerodrome) {
-            return super.setTargetAerodrome(aerodrome);
+        public Builder setLocationIndicators(Map<LocationIndicatorType, String> locationIndicators) {
+            getLocationIndicators().putAll(locationIndicators);
+            return this;
         }
     }
 }
