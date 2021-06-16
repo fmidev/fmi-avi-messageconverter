@@ -1,7 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
 
@@ -90,13 +88,8 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
                         .setMessageType(value.getMessageType())//
                         .setMessageFormat(value.getMessageFormat())//
                         .setValidityTime(value.getValidityTime())//
-                        .setLocationIndicators(value.getLocationIndicators());
+                        .putAllLocationIndicators(value.getLocationIndicators());
             }
-        }
-
-        public Builder setLocationIndicators(Map<LocationIndicatorType, String> locationIndicators) {
-            getLocationIndicators().putAll(locationIndicators);
-            return this;
         }
     }
 }
