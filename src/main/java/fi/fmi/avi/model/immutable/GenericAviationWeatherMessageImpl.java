@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
 
@@ -83,19 +82,14 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
                         Builder::setTranslationCentreName, //
                         Builder::setTranslationTime, //
                         Builder::setTranslatedTAC);
+
                 return builder//
                         .setOriginalMessage(value.getOriginalMessage())//
                         .setMessageType(value.getMessageType())//
                         .setMessageFormat(value.getMessageFormat())//
                         .setValidityTime(value.getValidityTime())//
-                        .setTargetAerodrome(value.getTargetAerodrome());
+                        .putAllLocationIndicators(value.getLocationIndicators());
             }
-        }
-
-        @Override
-        @JsonDeserialize(as = AerodromeImpl.class)
-        public Builder setTargetAerodrome(final Aerodrome aerodrome) {
-            return super.setTargetAerodrome(aerodrome);
         }
     }
 }
