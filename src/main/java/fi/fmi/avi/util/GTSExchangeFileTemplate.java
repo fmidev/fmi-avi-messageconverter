@@ -1,22 +1,35 @@
 package fi.fmi.avi.util;
 
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.CARRIAGE_RETURN;
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.END_OF_TEXT;
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.LINE_FEED;
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.START_OF_HEADING;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
 
+import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
+
 @FreeBuilder
 public abstract class GTSExchangeFileTemplate {
-    // TODO: declare using MeteorologicalBulletinSpecialCharacter constants
-    public static final String STARTING_LINE_PREFIX = "????";
-    public static final String HEADING_PREFIX = "???";
-    public static final String TEXT_PREFIX = "???";
-    public static final String END_OF_MESSAGE_SIGNALS = "????";
+    public static final String STARTING_LINE_PREFIX = stringOf(START_OF_HEADING, CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
+    public static final String HEADING_PREFIX = stringOf(CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
+    public static final String TEXT_PREFIX = stringOf(CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
+    public static final String END_OF_MESSAGE_SIGNALS = stringOf(CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED, END_OF_TEXT);
+
+    private static String stringOf(final MeteorologicalBulletinSpecialCharacter... specialCharacters) {
+        return Arrays.stream(specialCharacters)//
+                .map(MeteorologicalBulletinSpecialCharacter::getContent)//
+                .collect(Collectors.joining());
+    }
 
     public static Builder builder() {
         return new Builder();
