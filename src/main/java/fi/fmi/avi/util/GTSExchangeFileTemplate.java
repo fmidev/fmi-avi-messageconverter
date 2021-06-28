@@ -12,11 +12,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
+import org.inferred.freebuilder.shaded.com.google.common.annotations.VisibleForTesting;
 
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
+import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
 
 @FreeBuilder
 public abstract class GTSExchangeFileTemplate {
@@ -25,7 +29,17 @@ public abstract class GTSExchangeFileTemplate {
     public static final String TEXT_PREFIX = stringOf(CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
     public static final String END_OF_MESSAGE_SIGNALS = stringOf(CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED, END_OF_TEXT);
 
-    private static String stringOf(final MeteorologicalBulletinSpecialCharacter... specialCharacters) {
+    private static final int MESSAGE_FORMAT_LONG = 0;
+    private static final int MESSAGE_FORMAT_SHORT = 1;
+
+    /**
+     * Number of characters in message length and format identifier preceding the message.
+     * This is not included in the message length.
+     */
+    private static final int MESSAGE_LENGTH_AND_FORMAT_CHARS = 8 + 2;
+
+    @VisibleForTesting
+    static String stringOf(final MeteorologicalBulletinSpecialCharacter... specialCharacters) {
         return Arrays.stream(specialCharacters)//
                 .map(MeteorologicalBulletinSpecialCharacter::getContent)//
                 .collect(Collectors.joining());
@@ -35,22 +49,32 @@ public abstract class GTSExchangeFileTemplate {
         return new Builder();
     }
 
+    public static GTSExchangeFileTemplate parse(final String data) {
+        requireNonNull(data, "data");
+        return builder().parse(data).build();
+    }
+
+    public static GTSExchangeFileTemplate parseHeadingAndText(final String data) {
+        requireNonNull(data, "data");
+        return builder().parseHeadingAndText(data).build();
+    }
+
+    public static GTSExchangeFileTemplate parseHeadingAndTextLenient(final String data) {
+        requireNonNull(data, "data");
+        return builder().parseHeadingAndTextLenient(data).build();
+    }
+
     public static List<GTSExchangeFileTemplate> parseAll(final String data) {
         requireNonNull(data, "data");
         final List<GTSExchangeFileTemplate> templates = new ArrayList<>();
         String remainingData = data;
-        while (!remainingData.isEmpty()) {
+        while (!remainingData.trim().isEmpty()) {
             final GTSExchangeFileTemplate template = parse(remainingData);
             templates.add(template);
-            final int nextMessageIndex = template.getMessageLength() + 10; // add message length 8 chars + format identifier 2 chars
+            final int nextMessageIndex = MESSAGE_LENGTH_AND_FORMAT_CHARS + template.getMessageLength();
             remainingData = nextMessageIndex > remainingData.length() ? "" : remainingData.substring(nextMessageIndex);
         }
         return Collections.unmodifiableList(templates);
-    }
-
-    private static GTSExchangeFileTemplate parse(final String data) {
-        requireNonNull(data, "data");
-        return builder().parse(data).build();
     }
 
     private static Optional<Integer> transmissionSequenceNumberToInt(final String transmissionSequenceNumber) {
@@ -65,9 +89,13 @@ public abstract class GTSExchangeFileTemplate {
                 });
     }
 
+    private static String illegalFormatIdentifierMsg(final int formatIdentifier) {
+        return String.format(Locale.ROOT, "Illegal formatIdentifier: <%02d>", formatIdentifier);
+    }
+
     public int getMessageLength() {
         final int formatIdentifier = getFormatIdentifier();
-        if (formatIdentifier == 0) {
+        if (formatIdentifier == MESSAGE_FORMAT_LONG) {
             return STARTING_LINE_PREFIX.length() //
                     + getTransmissionSequenceNumber().length() //
                     + HEADING_PREFIX.length() //
@@ -75,18 +103,18 @@ public abstract class GTSExchangeFileTemplate {
                     + TEXT_PREFIX.length() //
                     + getText().length() //
                     + END_OF_MESSAGE_SIGNALS.length();
-        } else if (formatIdentifier == 1) {
+        } else if (formatIdentifier == MESSAGE_FORMAT_SHORT) {
             return HEADING_PREFIX.length() //
                     + getHeading().length() //
                     + TEXT_PREFIX.length() //
                     + getText().length();
         } else {
-            throw new IllegalStateException("Illegal formatIdentifier: " + formatIdentifier);
+            throw new IllegalStateException(illegalFormatIdentifierMsg(formatIdentifier));
         }
     }
 
     public int getFormatIdentifier() {
-        return getTransmissionSequenceNumber().isEmpty() ? 1 : 0;
+        return getTransmissionSequenceNumber().isEmpty() ? MESSAGE_FORMAT_SHORT : MESSAGE_FORMAT_LONG;
     }
 
     public abstract String getTransmissionSequenceNumber();
@@ -112,7 +140,7 @@ public abstract class GTSExchangeFileTemplate {
 
     public String toString() {
         final int formatIdentifier = getFormatIdentifier();
-        if (formatIdentifier == 0) {
+        if (formatIdentifier == MESSAGE_FORMAT_LONG) {
             return String.format(Locale.ROOT, "%08d%02d%s%s%s%s%s%s%s", //
                     getMessageLength(), //
                     getFormatIdentifier(), //
@@ -123,7 +151,7 @@ public abstract class GTSExchangeFileTemplate {
                     TEXT_PREFIX, //
                     getText(), //
                     END_OF_MESSAGE_SIGNALS);
-        } else if (formatIdentifier == 1) {
+        } else if (formatIdentifier == MESSAGE_FORMAT_SHORT) {
             return String.format(Locale.ROOT, "%08d%02d%s%s%s%s", //
                     getMessageLength(), //
                     getFormatIdentifier(), //
@@ -132,97 +160,202 @@ public abstract class GTSExchangeFileTemplate {
                     TEXT_PREFIX, //
                     getText());
         } else {
-            throw new IllegalStateException("Illegal formatIdentifier: " + formatIdentifier);
+            throw new IllegalStateException(illegalFormatIdentifierMsg(formatIdentifier));
         }
     }
 
     public static class Builder extends GTSExchangeFileTemplate_Builder {
+        private static final int MESSAGE_LENGTH_LENGTH = 8;
+        private static final int FORMAT_IDENTIFIER_LENGTH = 2;
 
-        private static final int MESSAGE_LENGTH_START_INDEX = 0;
-        private static final int MESSAGE_LENGTH_END_INDEX = MESSAGE_LENGTH_START_INDEX + 8;
-        private static final int FORMAT_IDENTIFIER_START_INDEX = MESSAGE_LENGTH_END_INDEX;
-        private static final int FORMAT_IDENTIFIER_END_INDEX = FORMAT_IDENTIFIER_START_INDEX + 2;
-        private static final int TRANSMISSION_SEQUENCE_NUMBER_START_INDEX = FORMAT_IDENTIFIER_END_INDEX + STARTING_LINE_PREFIX.length();
+        private static final Pattern ANY_SEQUENCE_OF_LINE_BREAKS = Pattern.compile(
+                String.format(Locale.ROOT, "[%s]+", Pattern.quote(stringOf(CARRIAGE_RETURN, LINE_FEED))));
 
         Builder() {
+            setTransmissionSequenceNumber("");
         }
 
-        private static String truncate(final String data) {
-            return data.length() <= 256 ? data : data.substring(0, 253) + "...";
+        private static int indexOfAnyLineBreak(final CharSequence content) {
+            final Matcher matcher = ANY_SEQUENCE_OF_LINE_BREAKS.matcher(content);
+            if (matcher.find()) {
+                return matcher.start();
+            } else {
+                return -1;
+            }
         }
 
         /**
-         * Parses provided string for a GTS exchange file content and populates this builder with parsed data.
-         * The string is read up to message length stated in the beginning of the string. Any remaining part of the string is simply ignored
+         * Parses provided string for a GTS exchange file content and populates this builder with parsed message.
+         * The string is read up to message length stated in the beginning of the string. Any remaining part of the string is simply ignored.
          *
-         * @param data
+         * <p>
+         * This method does a string parsing considering the GTS exchange file structure and the signal sequences within it. It does not however look into the
+         * contents of the heading or text part in any way, except for checking that heading does not contain any line break (CR and LF) characters.
+         * The heading and text are only stored as is.
+         * </p>
+         *
+         * @param fileContent
          *         string to parse
          *
          * @return this builder
          *
-         * @throws IllegalArgumentException
-         *         if provided {@code data} cannot be parsed or does not meet requirements of WMO Doc. 386 specification.
+         * @throws GTSExchangeFileParseException
+         *         if provided {@code message} cannot be parsed or does not meet requirements of WMO Doc. 386 specification.
          */
-        public Builder parse(final String data) {
-            requireNonNull(data, "data");
+        public Builder parse(final String fileContent) {
+            requireNonNull(fileContent, "message");
+            return parse(fileContent, 0);
+        }
 
-            final int messageLength = Integer.parseInt(data.substring(MESSAGE_LENGTH_START_INDEX, MESSAGE_LENGTH_END_INDEX));
-            final int formatIdentifier = Integer.parseInt(data.substring(FORMAT_IDENTIFIER_START_INDEX, FORMAT_IDENTIFIER_END_INDEX));
+        public Builder parse(final String fileContent, final int offset) {
+            // parse message length
+            int currentIndex = offset;
+            final String messageLengthString;
+            try {
+                messageLengthString = fileContent.substring(currentIndex, currentIndex + MESSAGE_LENGTH_LENGTH);
+            } catch (final IndexOutOfBoundsException e) {
+                throw new GTSExchangeFileParseException(ParseErrorCode.UNEXPECTED_END_OF_MESSAGE_LENGTH, currentIndex, fileContent, e);
+            }
+            final int messageLength;
+            try {
+                messageLength = Integer.parseInt(messageLengthString);
+            } catch (final NumberFormatException e) {
+                throw new GTSExchangeFileParseException(ParseErrorCode.INVALID_MESSAGE_LENGTH, currentIndex, fileContent, e);
+            }
+            currentIndex += MESSAGE_LENGTH_LENGTH;
+
+            // parse format identifier
+            final int formatIdentifier;
+            final String formatIdentifierString;
+            try {
+                formatIdentifierString = fileContent.substring(currentIndex, currentIndex + FORMAT_IDENTIFIER_LENGTH);
+            } catch (final IndexOutOfBoundsException e) {
+                throw new GTSExchangeFileParseException(ParseErrorCode.UNEXPECTED_END_OF_FORMAT_IDENTIFIER, currentIndex, fileContent, e);
+            }
+            try {
+                formatIdentifier = Integer.parseInt(formatIdentifierString);
+            } catch (final NumberFormatException e) {
+                throw new GTSExchangeFileParseException(ParseErrorCode.INVALID_FORMAT_IDENTIFIER, currentIndex, fileContent, e);
+            }
+            if (formatIdentifier != MESSAGE_FORMAT_LONG && formatIdentifier != MESSAGE_FORMAT_SHORT) {
+                throw new GTSExchangeFileParseException(ParseErrorCode.INVALID_FORMAT_IDENTIFIER, currentIndex, fileContent);
+            }
+            currentIndex += FORMAT_IDENTIFIER_LENGTH;
+            final int messageEndIndex = currentIndex + messageLength;
+
             final String transmissionSequenceNumber;
-            final int headingStartIndex;
-            if (formatIdentifier == 0) {
-                if (!data.startsWith(STARTING_LINE_PREFIX, TRANSMISSION_SEQUENCE_NUMBER_START_INDEX - STARTING_LINE_PREFIX.length())) {
-                    throw new IllegalArgumentException("Starting line is not preceded by expected prefix in <" + truncate(data) + ">");
+            if (formatIdentifier == MESSAGE_FORMAT_LONG) {
+                // parse transmission sequence number
+                if (!fileContent.startsWith(STARTING_LINE_PREFIX, currentIndex)) {
+                    throw new GTSExchangeFileParseException(ParseErrorCode.MISSING_STARTING_LINE_PREFIX, currentIndex, fileContent);
                 }
-                final int seqNoEndIndex = data.indexOf(HEADING_PREFIX, TRANSMISSION_SEQUENCE_NUMBER_START_INDEX);
+                currentIndex += STARTING_LINE_PREFIX.length();
+                final int seqNoEndIndex = fileContent.indexOf(HEADING_PREFIX, currentIndex);
                 if (seqNoEndIndex < 0) {
-                    throw new IllegalArgumentException("Unable to parse transmission sequence number from data <" + truncate(data) + ">");
+                    throw new GTSExchangeFileParseException(ParseErrorCode.UNEXPECTED_END_OF_TRANSMISSION_SEQUENCE_NUMBER, currentIndex, fileContent);
                 }
-                transmissionSequenceNumber = data.substring(seqNoEndIndex, seqNoEndIndex);
-                headingStartIndex = seqNoEndIndex + HEADING_PREFIX.length();
-            } else if (formatIdentifier == 1) {
-                transmissionSequenceNumber = "";
-                headingStartIndex = FORMAT_IDENTIFIER_END_INDEX + HEADING_PREFIX.length();
+                transmissionSequenceNumber = fileContent.substring(currentIndex, seqNoEndIndex);
+                final int lineBreakIndex = indexOfAnyLineBreak(transmissionSequenceNumber);
+                if (lineBreakIndex >= 0) {
+                    throw new GTSExchangeFileParseException(ParseErrorCode.UNEXPECTED_LINE_BREAKS_IN_TRANSMISSION_SEQUENCE_NUMBER,
+                            currentIndex + lineBreakIndex, fileContent);
+                }
+                currentIndex = seqNoEndIndex;
             } else {
-                throw new IllegalStateException("Illegal formatIdentifier: " + formatIdentifier);
+                transmissionSequenceNumber = "";
+                if (!fileContent.startsWith(HEADING_PREFIX, currentIndex)) {
+                    throw new GTSExchangeFileParseException(ParseErrorCode.MISSING_HEADING_PREFIX, currentIndex, fileContent);
+                }
             }
-            if (!data.startsWith(HEADING_PREFIX, headingStartIndex - HEADING_PREFIX.length())) {
-                throw new IllegalArgumentException("Heading is not preceded by expected prefix in <" + truncate(data) + ">");
+            currentIndex += HEADING_PREFIX.length();
+            final int headingStartIndex = currentIndex;
+            final int textEndIndex;
+            if (formatIdentifier == MESSAGE_FORMAT_LONG) {
+                textEndIndex = messageEndIndex - END_OF_MESSAGE_SIGNALS.length();
+                if (!fileContent.startsWith(END_OF_MESSAGE_SIGNALS, textEndIndex)) {
+                    throw new GTSExchangeFileParseException(ParseErrorCode.MISSING_END_OF_MESSAGE_SIGNALS, textEndIndex, fileContent);
+                }
+            } else {
+                textEndIndex = messageEndIndex;
             }
-            final int messageEndIndex = FORMAT_IDENTIFIER_END_INDEX + messageLength;
-            if (formatIdentifier == 0 && !data.startsWith(END_OF_MESSAGE_SIGNALS, messageEndIndex - END_OF_MESSAGE_SIGNALS.length())) {
-                throw new IllegalArgumentException("Message does not end with expected signals: <" + truncate(data) + ">");
-            }
-            parseHeadingAndText(data.substring(headingStartIndex, messageEndIndex));
-            setTransmissionSequenceNumber(transmissionSequenceNumber);
-            return this;
+            // parseHeadingAndText() must be the first method to change the state of this builder,
+            // as it does some error checking before populating properties.
+            return parseHeadingAndText(fileContent, headingStartIndex, textEndIndex)//
+                    .setTransmissionSequenceNumber(transmissionSequenceNumber);
         }
 
         /**
-         * Parses provided string for bulletin heading and text content and populates this builder with parsed data.
-         * The whole remaining part of the string after heading is interpreted as text content.
+         * Parses provided string for bulletin heading and text content and populates this builder with parsed headingAndText.
+         * This parsing method is strict. The start of provided {@code headingAndText} is until {@link #TEXT_PREFIX}
+         * is interpreted as the heading. It must not contain any other line break (CR and LF) characters. The remaining part of the {@code headingAndText} is
+         * interpreted as text content as is.
+         *
+         * <p>
+         * Note that this method does not affect any other property of this builder than {@code heading} and {@code text}. In case of a parsing error this
+         * builder is not modified.
+         * </p>
+         *
+         * @param headingAndText
+         *         string to parse
+         *
+         * @return this builder
+         *
+         * @throws GTSExchangeFileParseException
+         *         if provided {@code headingAndText} cannot be parsed or does not meet requirements of WMO Doc. 386 specification. This builder is not modified.
+         */
+        public Builder parseHeadingAndText(final String headingAndText) {
+            requireNonNull(headingAndText, "headingAndText");
+            return parseHeadingAndText(headingAndText, 0, headingAndText.length());
+        }
+
+        private Builder parseHeadingAndText(final String fileContent, final int offset, final int endIndex) {
+            final String truncatedFileContent = fileContent.substring(0, Math.min(fileContent.length(), offset + endIndex));
+            int currentIndex = offset;
+            final int textPrefixIndex = truncatedFileContent.indexOf(TEXT_PREFIX, currentIndex);
+            if (textPrefixIndex < 0) {
+                throw new GTSExchangeFileParseException(ParseErrorCode.NO_SEPARATION_OF_HEADING_AND_TEXT, currentIndex, fileContent);
+            }
+            final String heading = fileContent.substring(currentIndex, textPrefixIndex);
+            final int headingLineBreaksIndex = indexOfAnyLineBreak(heading);
+            if (headingLineBreaksIndex >= 0) {
+                throw new GTSExchangeFileParseException(ParseErrorCode.UNEXPECTED_LINE_BREAKS_IN_HEADING, currentIndex + headingLineBreaksIndex, fileContent);
+            }
+            currentIndex = textPrefixIndex + TEXT_PREFIX.length();
+            final String text;
+            try {
+                text = fileContent.substring(currentIndex, endIndex);
+            } catch (final IndexOutOfBoundsException e) {
+                throw new GTSExchangeFileParseException(ParseErrorCode.UNEXPECTED_END_OF_TEXT, currentIndex, fileContent, e);
+            }
+            return setHeading(heading)//
+                    .setText(text);
+        }
+
+        /**
+         * Parses provided string for bulletin heading and text content and populates this builder with parsed headingAndText.
+         * This parsing method is lenient. The first line of provided {@code headingAndText} is interpreted as the heading. Then any sequence of CR and LF characters
+         * is skipped, and the remaining part of the {@code headingAndText} string is interpreted as text content as is. If provided {@code headingAndText} contains no CR or LF
+         * characters, the whole string is interpreted as heading and text will be empty. If provided {@code headingAndText} is an empty string, both heading and text
+         * will be empty.
          *
          * <p>
          * Note that this method does not affect any other property of this builder than {@code heading} and {@code text}.
          * </p>
          *
-         * @param data
+         * @param headingAndText
          *         string to parse
          *
          * @return this builder
-         *
-         * @throws IllegalArgumentException
-         *         if provided {@code data} cannot be parsed
          */
-        public Builder parseHeadingAndText(final String data) {
-            requireNonNull(data, "data");
-            final int textPrefixIndex = data.indexOf(TEXT_PREFIX);
-            if (textPrefixIndex < 0) {
-                throw new IllegalStateException("Data not recognized as heading and text: <" + truncate(data) + ">");
-            }
-            setHeading(data.substring(0, textPrefixIndex));
-            setText(data.substring(textPrefixIndex + TEXT_PREFIX.length()));
-            return this;
+        public Builder parseHeadingAndTextLenient(final String headingAndText) {
+            requireNonNull(headingAndText, "headingAndText");
+            final String[] splitHeadingAndText = ANY_SEQUENCE_OF_LINE_BREAKS.split(headingAndText, 2);
+            return setHeading(splitHeadingAndText.length > 0 ? splitHeadingAndText[0] : "")//
+                    .setText(splitHeadingAndText.length > 1 ? splitHeadingAndText[1] : "");
+        }
+
+        public Builder clearTransmissionSequenceNumber() {
+            return setTransmissionSequenceNumber("");
         }
 
         public Optional<Integer> getTransmissionSequenceNumberAsInt() {
