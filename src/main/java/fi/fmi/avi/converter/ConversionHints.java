@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import fi.fmi.avi.model.MessageType;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.util.BulletinHeadingIndicatorInterpreter;
 
 /**
@@ -318,6 +319,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      */
     public static final ConversionHints ALLOW_ERRORS;
 
+    public static final Key KEY_BULLETING_HEADING;
+
     public static final ConversionHints EMPTY;
 
     static {
@@ -368,6 +371,18 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
 
         KEY_WHITESPACE_SERIALIZATION_MODE = new KeyImpl(14, "Controls message white space serialization in TAC bulletins",
                 VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM, VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH);
+
+        KEY_BULLETING_HEADING = new Key(15) {
+            @Override
+            public boolean isCompatibleValue(final Object value) {
+                return value instanceof BulletinHeading;
+            }
+
+            @Override
+            public String toString() {
+                return "Bulletin heading";
+            }
+        };
 
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
