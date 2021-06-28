@@ -37,6 +37,7 @@ public class GTSExchangeFileTemplateTest {
     private static final int MESSAGE_SEQ_NUMBER = 13;
     private static final int MESSAGE_LONG_LENGTH = 80;
     private static final int MESSAGE_SHORT_LENGTH = 69;
+    private static final GTSExchangeFileTemplate EMPTY = builder().setHeading("").setText("").build();
 
     private static String checkMessageLength(final String gtsMessage) {
         final int reportedMessageLength = Integer.parseInt(gtsMessage.substring(0, 8));
@@ -48,6 +49,7 @@ public class GTSExchangeFileTemplateTest {
     }
 
     private static void assertMessageLongProperties(final GTSExchangeFileTemplate message) {
+        assertThat(message).as("message").isNotNull();
         assertThat(message.getMessageLength()).as("getMessageLength").isEqualTo(MESSAGE_LONG_LENGTH);
         assertThat(message.getFormatIdentifier()).as("getFormatIdentifier").isEqualTo(0);
         assertThat(message.getTransmissionSequenceNumber()).as("getTransmissionSequenceNumber").isEqualTo(MESSAGE_SEQ_NUMBER_STRING);
@@ -57,6 +59,7 @@ public class GTSExchangeFileTemplateTest {
     }
 
     private static void assertMessageLongProperties(final GTSExchangeFileTemplate.Builder message) {
+        assertThat(message).as("message").isNotNull();
         assertThat(message.getTransmissionSequenceNumber()).as("getTransmissionSequenceNumber").isEqualTo(MESSAGE_SEQ_NUMBER_STRING);
         assertThat(message.getTransmissionSequenceNumberAsInt()).as("getTransmissionSequenceNumberAsInt").hasValue(MESSAGE_SEQ_NUMBER);
         assertThat(message.getHeading()).as("getHeading").isEqualTo(MESSAGE_HEADING);
@@ -345,22 +348,70 @@ public class GTSExchangeFileTemplateTest {
 
     @Test
     public void parseAll_returns_empty_list_given_empty_string() {
-        final List<GTSExchangeFileTemplate> messages = GTSExchangeFileTemplate.parseAll("");
+        final List<GTSExchangeFileTemplate.ParseResult> messages = GTSExchangeFileTemplate.parseAll("");
         assertThat(messages).isEmpty();
     }
 
     @Test
     public void parseAll_parses_multiple_messages_in_supported_formats() {
-        final Iterator<GTSExchangeFileTemplate> messages = GTSExchangeFileTemplate.parseAll(MESSAGE_LONG + MESSAGE_SHORT).iterator();
-        assertMessageLongProperties(messages.next());
-        assertMessageShortProperties(messages.next());
+        final Iterator<GTSExchangeFileTemplate.ParseResult> messages = GTSExchangeFileTemplate.parseAll(MESSAGE_LONG + MESSAGE_SHORT).iterator();
+        assertMessageLongProperties(messages.next().getResult().orElse(EMPTY));
+        assertMessageShortProperties(messages.next().getResult().orElse(EMPTY));
         assertThat(messages.hasNext()).as("Expect no more messages").isFalse();
     }
 
     @Test
     public void parseAll_ignores_trailing_whitespace() {
-        final Iterator<GTSExchangeFileTemplate> messages = GTSExchangeFileTemplate.parseAll(MESSAGE_LONG + " \r\n").iterator();
-        assertMessageLongProperties(messages.next());
+        final Iterator<GTSExchangeFileTemplate.ParseResult> messages = GTSExchangeFileTemplate.parseAll(MESSAGE_LONG + " \r\n").iterator();
+        assertMessageLongProperties(messages.next().getResult().orElse(EMPTY));
+        assertThat(messages.hasNext()).as("Expect no more messages").isFalse();
+    }
+
+    @Test
+    public void parseAll_returns_single_error() {
+        final String inputMessage = "000";
+        final Iterator<GTSExchangeFileTemplate.ParseResult> messages = GTSExchangeFileTemplate.parseAll(inputMessage).iterator();
+        assertThat(messages.next()).satisfies(result -> {
+            assertThat(result.getStartIndex()).isEqualTo(0);
+            assertThat(result.getResult()).isEmpty();
+            assertThat(result.getError())//
+                    .hasValueSatisfying(e -> assertGTSExchangeFileParseException(ParseErrorCode.UNEXPECTED_END_OF_MESSAGE_LENGTH, 0, inputMessage, e));
+        });
+        assertThat(messages.hasNext()).as("Expect no more messages").isFalse();
+    }
+
+    @Test
+    public void parseAll_returns_whitespaces_between_messages_as_errors() {
+        final String inputMessage = MESSAGE_LONG + "\n" + MESSAGE_SHORT;
+        final Iterator<GTSExchangeFileTemplate.ParseResult> messages = GTSExchangeFileTemplate.parseAll(inputMessage).iterator();
+        assertMessageLongProperties(messages.next().getResult().orElse(EMPTY));
+        assertThat(messages.next()).satisfies(result -> {
+            assertThat(result.getStartIndex()).isEqualTo(MESSAGE_LONG.length());
+            assertThat(result.getResult()).isEmpty();
+            assertThat(result.getError())//
+                    .hasValueSatisfying(
+                            e -> assertGTSExchangeFileParseException(ParseErrorCode.INVALID_MESSAGE_LENGTH, MESSAGE_LONG.length(), inputMessage, e));
+        });
+        assertMessageShortProperties(messages.next().getResult().orElse(EMPTY));
+        assertThat(messages.hasNext()).as("Expect no more messages").isFalse();
+    }
+
+    @Test
+    public void parseAll_continues_after_error() {
+        final String inputMessage1 = "00000100" + "00" + "\u0001\r\r\n" //
+                + "013" + "\r\r\n"//
+                + "FTYU31 YUDO 160000" + "\r\r\n" //
+                + "TAF YUDO 160000Z NIL=\r\r\n" //
+                + "TAF YUDD 160000Z NIL=" + "\r\r\n\u0003";
+        final String inputMessage = inputMessage1 + MESSAGE_LONG;
+        final Iterator<GTSExchangeFileTemplate.ParseResult> messages = GTSExchangeFileTemplate.parseAll(inputMessage).iterator();
+        assertThat(messages.next()).satisfies(result -> {
+            assertThat(result.getStartIndex()).isEqualTo(0);
+            assertThat(result.getResult()).isEmpty();
+            assertThat(result.getError())//
+                    .hasValueSatisfying(e -> assertGTSExchangeFileParseException(ParseErrorCode.MISSING_END_OF_MESSAGE_SIGNALS, 106, inputMessage, e));
+        });
+        assertMessageLongProperties(messages.next().getResult().orElse(EMPTY));
         assertThat(messages.hasNext()).as("Expect no more messages").isFalse();
     }
 

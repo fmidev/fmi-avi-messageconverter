@@ -32,6 +32,9 @@ public abstract class GTSExchangeFileTemplate {
     private static final int MESSAGE_FORMAT_LONG = 0;
     private static final int MESSAGE_FORMAT_SHORT = 1;
 
+    private static final Pattern MESSAGE_START_PATTERN = Pattern.compile(
+            String.format(Locale.ROOT, "[0-9]{8}(00%s|01%s)", Pattern.quote(STARTING_LINE_PREFIX), Pattern.quote(HEADING_PREFIX)));
+
     /**
      * Number of characters in message length and format identifier preceding the message.
      * This is not included in the message length.
@@ -49,14 +52,14 @@ public abstract class GTSExchangeFileTemplate {
         return new Builder();
     }
 
-    public static GTSExchangeFileTemplate parse(final String data) {
-        requireNonNull(data, "data");
-        return builder().parse(data).build();
+    public static GTSExchangeFileTemplate parse(final String fileContent) {
+        requireNonNull(fileContent, "fileContent");
+        return builder().parse(fileContent).build();
     }
 
-    public static GTSExchangeFileTemplate parseHeadingAndText(final String data) {
-        requireNonNull(data, "data");
-        return builder().parseHeadingAndText(data).build();
+    public static GTSExchangeFileTemplate parseHeadingAndText(final String fileContent) {
+        requireNonNull(fileContent, "fileContent");
+        return builder().parseHeadingAndText(fileContent).build();
     }
 
     public static GTSExchangeFileTemplate parseHeadingAndTextLenient(final String data) {
@@ -64,17 +67,42 @@ public abstract class GTSExchangeFileTemplate {
         return builder().parseHeadingAndTextLenient(data).build();
     }
 
-    public static List<GTSExchangeFileTemplate> parseAll(final String data) {
-        requireNonNull(data, "data");
-        final List<GTSExchangeFileTemplate> templates = new ArrayList<>();
-        String remainingData = data;
-        while (!remainingData.trim().isEmpty()) {
-            final GTSExchangeFileTemplate template = parse(remainingData);
-            templates.add(template);
-            final int nextMessageIndex = MESSAGE_LENGTH_AND_FORMAT_CHARS + template.getMessageLength();
-            remainingData = nextMessageIndex > remainingData.length() ? "" : remainingData.substring(nextMessageIndex);
+    public static List<ParseResult> parseAll(final String fileContent) {
+        requireNonNull(fileContent, "fileContent");
+        final List<ParseResult> results = new ArrayList<>();
+        int nextIndex = 0;
+        while (hasNonWhitepaceContent(fileContent, nextIndex)) {
+            final int currentIndex = nextIndex;
+            final ParseResult.Builder builder = new ParseResult.Builder()//
+                    .setStartIndex(currentIndex);
+            try {
+                builder.setResult(builder().parse(fileContent, currentIndex).build());
+            } catch (final GTSExchangeFileParseException e) {
+                builder.setError(e);
+            }
+            final ParseResult result = builder.build();
+            results.add(result);
+            nextIndex = result.getResult()//
+                    .map(template -> currentIndex + MESSAGE_LENGTH_AND_FORMAT_CHARS + template.getMessageLength())//
+                    .orElseGet(() -> {
+                        final Matcher matcher = MESSAGE_START_PATTERN.matcher(fileContent);
+                        if (matcher.find(currentIndex + 1)) {
+                            return matcher.start();
+                        } else {
+                            return fileContent.length();
+                        }
+                    });
         }
-        return Collections.unmodifiableList(templates);
+        return Collections.unmodifiableList(results);
+    }
+
+    private static boolean hasNonWhitepaceContent(final String fileContent, final int offset) {
+        for (int i = offset; i < fileContent.length(); i++) {
+            if (!Character.isWhitespace(fileContent.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Optional<Integer> transmissionSequenceNumberToInt(final String transmissionSequenceNumber) {
@@ -378,6 +406,23 @@ public abstract class GTSExchangeFileTemplate {
                 throw new IllegalArgumentException("number greater than maximum of " + numberOfDigits + " digits: " + number);
             }
             return setTransmissionSequenceNumber(sequenceNumberString);
+        }
+    }
+
+    @FreeBuilder
+    public static abstract class ParseResult {
+        ParseResult() {
+        }
+
+        public abstract int getStartIndex();
+
+        public abstract Optional<GTSExchangeFileTemplate> getResult();
+
+        public abstract Optional<GTSExchangeFileParseException> getError();
+
+        public static class Builder extends GTSExchangeFileTemplate_ParseResult_Builder {
+            Builder() {
+            }
         }
     }
 }
