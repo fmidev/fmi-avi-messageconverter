@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.inferred.freebuilder.FreeBuilder;
-import org.inferred.freebuilder.shaded.com.google.common.annotations.VisibleForTesting;
 
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
 import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
@@ -44,7 +43,6 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
 
     private static final long serialVersionUID = -5436642326236868652L;
 
-    @VisibleForTesting
     static String stringOf(final MeteorologicalBulletinSpecialCharacter... specialCharacters) {
         return Arrays.stream(specialCharacters)//
                 .map(MeteorologicalBulletinSpecialCharacter::getContent)//
