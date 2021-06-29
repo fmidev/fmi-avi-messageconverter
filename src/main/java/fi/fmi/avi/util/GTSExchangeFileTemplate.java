@@ -6,6 +6,7 @@ import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.L
 import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.START_OF_HEADING;
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +24,7 @@ import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
 import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
 
 @FreeBuilder
-public abstract class GTSExchangeFileTemplate {
+public abstract class GTSExchangeFileTemplate implements Serializable {
     public static final String STARTING_LINE_PREFIX = stringOf(START_OF_HEADING, CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
     public static final String HEADING_PREFIX = stringOf(CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
     public static final String TEXT_PREFIX = stringOf(CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
@@ -40,6 +41,8 @@ public abstract class GTSExchangeFileTemplate {
      * This is not included in the message length.
      */
     private static final int MESSAGE_LENGTH_AND_FORMAT_CHARS = 8 + 2;
+
+    private static final long serialVersionUID = -5436642326236868652L;
 
     @VisibleForTesting
     static String stringOf(final MeteorologicalBulletinSpecialCharacter... specialCharacters) {
