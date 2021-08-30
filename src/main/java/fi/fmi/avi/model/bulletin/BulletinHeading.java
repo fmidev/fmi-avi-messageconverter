@@ -1,12 +1,11 @@
 package fi.fmi.avi.model.bulletin;
 
-import java.time.YearMonth;
-import java.util.Optional;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import fi.fmi.avi.model.MessageType;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+
+import java.time.YearMonth;
+import java.util.Optional;
 
 public interface BulletinHeading {
 
@@ -75,13 +74,23 @@ public interface BulletinHeading {
     Optional<Integer> getBulletinAugmentationNumber();
 
     /**
+     * Corresponds to the 'BBB' part of the abbreviated heading.
+     * <p>
+     * An empty String indicates that the bulletin heading {@link BulletinHeading.Type} is
+     * {@link BulletinHeading.Type#NORMAL}. The parsed interpretations of a non-empty string are available using
+     * {@link #getType()} and {@link #getBulletinAugmentationNumber()}.
+     *
+     * @return the bulletin augmentation indicator
+     */
+    String getBulletinAugmentationIndicator();
+
+    /**
      * Returns the issue time of the bulletin.
      * The returned {@link PartialOrCompleteTimeInstant} may or may not contain
      * a completely resolved date time depending on which information it was
      * created with.
      *
      * @return the issue time
-     *
      * @see PartialOrCompleteTimeInstant.Builder#completePartialAt(YearMonth)
      */
     PartialOrCompleteTimeInstant getIssueTime();

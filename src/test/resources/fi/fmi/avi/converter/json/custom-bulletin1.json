@@ -1,14 +1,15 @@
 {
   "heading" : {
-    "locationIndicator" : "EFPP",
-    "geographicalDesignator" : "FI",
-    "bulletinNumber" : 33,
-    "issueTime" : {
-      "partialTime" : "--02T05:00"
+    "locationIndicator": "EFPP",
+    "geographicalDesignator": "FI",
+    "bulletinNumber": 33,
+    "bulletinAugmentationIndicator": "",
+    "issueTime": {
+      "partialTime": "--02T05:00"
     },
-    "type" : "NORMAL",
-    "dataTypeDesignatorT1ForTAC" : "EXTENSION_M",
-    "dataTypeDesignatorT2" : "EXTENSION_F"
+    "type": "NORMAL",
+    "dataTypeDesignatorT1ForTAC": "EXTENSION_M",
+    "dataTypeDesignatorT2": "EXTENSION_F"
   },
   "messages" : [ {
     "originalMessage" : "TAF EFKE 020532Z 0206/0312 05005KT 9999 -SHRA BKN004 BECMG\n0206/0208 FEW005 BKN020 TEMPO 0206/0215 4000 SHRA\nBKN010 SCT030CB=",

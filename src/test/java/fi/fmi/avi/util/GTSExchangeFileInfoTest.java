@@ -1,21 +1,17 @@
 package fi.fmi.avi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.time.LocalDateTime;
-import java.time.Month;
-
-import org.junit.Test;
-
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
+import org.junit.Test;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+
+import static org.junit.Assert.*;
 
 public class GTSExchangeFileInfoTest {
     @Test
@@ -31,6 +27,7 @@ public class GTSExchangeFileInfoTest {
                         .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
                         .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
                         .setType(BulletinHeading.Type.CORRECTED)//
+                        .setBulletinAugmentationIndicator("CCA")
                         .setBulletinNumber(12)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
                         .build())
@@ -52,6 +49,7 @@ public class GTSExchangeFileInfoTest {
                 .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
                 .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
                 .setType(BulletinHeading.Type.CORRECTED)
+                .setBulletinAugmentationIndicator("CCA")
                 .setBulletinNumber(12)
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
                 .build();

@@ -1,12 +1,5 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
 import fi.fmi.avi.JSONTestUtil;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
@@ -17,6 +10,12 @@ import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.taf.TAF;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public final class TAFBulletinTest {
 
@@ -46,6 +45,7 @@ public final class TAFBulletinTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
+                        .setBulletinAugmentationIndicator("")
                         .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
                         .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//
