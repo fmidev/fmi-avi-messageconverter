@@ -1,21 +1,19 @@
 package fi.fmi.avi.model.bulletin.immutable;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Pattern;
-
-import org.inferred.freebuilder.FreeBuilder;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.model.MessageType;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.util.BulletinHeadingDecoder;
+import org.inferred.freebuilder.FreeBuilder;
+
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 @FreeBuilder
 @JsonDeserialize(builder = BulletinHeadingImpl.Builder.class)
@@ -76,6 +74,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         @Deprecated
         public Builder() {
             setType(Type.NORMAL);
+            setBulletinAugmentationIndicator("");
         }
 
         public static Builder from(final BulletinHeading value) {
