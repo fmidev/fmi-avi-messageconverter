@@ -71,18 +71,22 @@ public interface BulletinHeading {
      *
      * @return the augmentation number
      */
-    Optional<Integer> getBulletinAugmentationNumber();
+    Optional<Integer> getAugmentationNumber();
 
     /**
      * Corresponds to the 'BBB' part of the abbreviated heading.
      * <p>
      * An empty String indicates that the bulletin heading {@link BulletinHeading.Type} is
      * {@link BulletinHeading.Type#NORMAL}. The parsed interpretations of a non-empty string are available using
-     * {@link #getType()} and {@link #getBulletinAugmentationNumber()}.
+     * {@link #getType()} and {@link #getAugmentationNumber()}.
+     * <p>
+     * <strong>Note:</strong> This represents the original parsed value and <strong>may</strong> differ from the
+     * augmentation indicator that can be reconstructed using
+     * {@link fi.fmi.avi.util.BulletinHeadingEncoder#encodeBBBIndicator(Type, int)}.
      *
      * @return the bulletin augmentation indicator
      */
-    String getBulletinAugmentationIndicator();
+    String getOriginalAugmentationIndicator();
 
     /**
      * Returns the issue time of the bulletin.

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import static fi.fmi.avi.model.bulletin.BulletinHeading.Type.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -27,7 +28,6 @@ public class BulletinHeadingEncoderTest {
     private static final String GEOGRAPHICAL_DESIGNATOR = "FI";
     private static final int DEFAULT_BULLETIN_NUMBER = 31;
     private static final String DEFAULT_LOCATION_INDICATOR = "EFLK";
-    private static final String DEFAULT_AUGMENTATION_INDICATOR = "";
     private static final PartialOrCompleteTimeInstant ISSUE_TIME = PartialOrCompleteTimeInstant.createDayHourInstant("250200");
     private static final PartialOrCompleteTimeInstant SIGMET_ISSUE_TIME = PartialOrCompleteTimeInstant.createDayHourInstant("231008");
 
@@ -35,18 +35,14 @@ public class BulletinHeadingEncoderTest {
             .setGeographicalDesignator(GEOGRAPHICAL_DESIGNATOR)//
             .setLocationIndicator(DEFAULT_LOCATION_INDICATOR)//
             .setBulletinNumber(DEFAULT_BULLETIN_NUMBER)//
-            .setType(BulletinHeading.Type.NORMAL)//
-            .setBulletinAugmentationIndicator(DEFAULT_AUGMENTATION_INDICATOR)//
             .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)//
             .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
             .setIssueTime(ISSUE_TIME).build();
     private static final BulletinHeadingImpl SIGMET_BULLETIN_HEADING = BulletinHeadingImpl.builder()//
             .setDataTypeDesignatorT2(DataTypeDesignatorT2.WarningsDataTypeDesignatorT2.WRN_SIGMET)//
             .setGeographicalDesignator(GEOGRAPHICAL_DESIGNATOR)//
-            .setType(BulletinHeading.Type.NORMAL)//
             .setLocationIndicator(DEFAULT_LOCATION_INDICATOR)//
             .setBulletinNumber(DEFAULT_BULLETIN_NUMBER)//
-            .setBulletinAugmentationIndicator(DEFAULT_AUGMENTATION_INDICATOR)//
             .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.WARNINGS)//
             .setDataTypeDesignatorT2(DataTypeDesignatorT2.WarningsDataTypeDesignatorT2.WRN_SIGMET)//
             .setIssueTime(SIGMET_ISSUE_TIME).build();
@@ -69,18 +65,18 @@ public class BulletinHeadingEncoderTest {
                 new Object[]{TAF_BULLETIN_HEADING.toBuilder()
                         .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_SHORT)
                         .setIssueTime(issueTime2)//
-                        .setType(BulletinHeading.Type.AMENDED)
-                        .setBulletinAugmentationNumber(2).build(), "FCFI31 EFLK 251400 AAB"},//
+                        .setAugmentationIndicator(AMENDED, 2)
+                        .build(), "FCFI31 EFLK 251400 AAB"},//
                 new Object[]{TAF_BULLETIN_HEADING.toBuilder()
-                        .setType(BulletinHeading.Type.CORRECTED)
-                        .setBulletinAugmentationNumber(3)
-                        .setIssueTime(issuetime1).build(), "FTFI31 EFLK 251200 CCC"},//
-                new Object[]{TAF_BULLETIN_HEADING.toBuilder()
-                        .setType(BulletinHeading.Type.DELAYED)
-                        .setBulletinAugmentationNumber(1)
-                        .setBulletinNumber(32)
                         .setIssueTime(issuetime1)
-                        .setLocationIndicator("AAAA").build(), "FTFI32 AAAA 251200 RRA"},//
+                        .setAugmentationIndicator(CORRECTED, 3)
+                        .build(), "FTFI31 EFLK 251200 CCC"},//
+                new Object[]{TAF_BULLETIN_HEADING.toBuilder()
+                        .setIssueTime(issuetime1)
+                        .setAugmentationIndicator(DELAYED, 1)
+                        .setBulletinNumber(32)
+                        .setLocationIndicator("AAAA")
+                        .build(), "FTFI32 AAAA 251200 RRA"},//
                 // SIGMETs
                 new Object[]{SIGMET_BULLETIN_HEADING.toBuilder().setIssueTime(issueTime3).build(), "WSFI31 EFLK 251400"},
                 new Object[]{SIGMET_BULLETIN_HEADING.toBuilder().setBulletinNumber(32).setLocationIndicator("AAAA").setIssueTime(issuetime1).build(),
@@ -90,7 +86,7 @@ public class BulletinHeadingEncoderTest {
     @Test
     @Parameters(source = BBBIndicatorParametersProvider.class)
     public void testEncodeBBBIndicatorBulletinHeadingTypeString(final BulletinHeading heading, final String expected) {
-        assertThat(BulletinHeadingEncoder.encodeBBBIndicator(heading.getType(), heading.getBulletinAugmentationNumber().orElse(1))).isEqualTo(expected);
+        assertThat(BulletinHeadingEncoder.encodeBBBIndicator(heading.getType(), heading.getAugmentationNumber().orElse(1))).isEqualTo(expected);
     }
 
     @Test
@@ -178,9 +174,9 @@ public class BulletinHeadingEncoderTest {
         public static Object[][] provideBBBIndicatorParameters() {
             return new Object[][]{//
                     new Object[]{TAF_BULLETIN_HEADING, ""}, //
-                    new Object[]{TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.AMENDED).setBulletinAugmentationNumber(3).build(), "AAC"}, //
-                    new Object[]{TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.CORRECTED).setBulletinAugmentationNumber(2).build(), "CCB"},//
-                    new Object[]{TAF_BULLETIN_HEADING.toBuilder().setType(BulletinHeading.Type.DELAYED).setBulletinAugmentationNumber(4).build(), "RRD"}, //
+                    new Object[]{TAF_BULLETIN_HEADING.toBuilder().setAugmentationIndicator(AMENDED, 3).build(), "AAC"}, //
+                    new Object[]{TAF_BULLETIN_HEADING.toBuilder().setAugmentationIndicator(CORRECTED, 2).build(), "CCB"},//
+                    new Object[]{TAF_BULLETIN_HEADING.toBuilder().setAugmentationIndicator(DELAYED, 4).build(), "RRD"}, //
             };
         }
     }

@@ -2,7 +2,6 @@ package fi.fmi.avi.model.taf.immutable;
 
 import fi.fmi.avi.JSONTestUtil;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
@@ -41,7 +40,6 @@ public final class TAFBulletinTest {
 
         final TAFBulletinImpl.Builder bulletinBuilder = TAFBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//
-                        .setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
@@ -77,7 +75,6 @@ public final class TAFBulletinTest {
 
         final TAFBulletinImpl.Builder bulletinBuilder = TAFBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//
-                        .setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//

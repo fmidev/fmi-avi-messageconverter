@@ -34,26 +34,27 @@ public final class BulletinHeadingDecoder {
         BulletinHeading.Type type = BulletinHeading.Type.NORMAL;
         Integer bulletinAugmentationNumber = null;
 
-        String bbb = m.group("BBB");
-        if (bbb != null) {
+        String originalBbb = m.group("BBB");
+        if (originalBbb != null) {
+            String interpretedBbb = originalBbb;
             if (hints != null && hints.containsKey(ConversionHints.KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION)) {
                 final Object value = hints.get(ConversionHints.KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION);
                 if (value instanceof BulletinHeadingIndicatorInterpreter) {
-                    bbb = ((BulletinHeadingIndicatorInterpreter) value).apply(bbb);
+                    interpretedBbb = ((BulletinHeadingIndicatorInterpreter) value).apply(originalBbb);
                 }
             }
 
-            if (!bbb.isEmpty()) {
-                final Matcher bbbMatcher = AUGMENTATION_INDICATOR.matcher(bbb);
+            if (!interpretedBbb.isEmpty()) {
+                final Matcher bbbMatcher = AUGMENTATION_INDICATOR.matcher(interpretedBbb);
                 if (!bbbMatcher.matches()) {
                     throw new IllegalArgumentException(illegalInputMessage);
                 }
 
-                type = BulletinHeading.Type.fromCode(bbb.substring(0, 2));
-                bulletinAugmentationNumber = decodeAugmentationNumber(bbb.charAt(2));
+                type = BulletinHeading.Type.fromCode(interpretedBbb.substring(0, 2));
+                bulletinAugmentationNumber = decodeAugmentationNumber(interpretedBbb.charAt(2));
             }
         } else {
-            bbb = "";
+            originalBbb = "";
         }
 
         final DataTypeDesignatorT1 t1 = DataTypeDesignatorT1.fromCode(m.group("TT").charAt(0));
@@ -67,8 +68,8 @@ public final class BulletinHeadingDecoder {
                 .setGeographicalDesignator(m.group("AA"))//
                 .setBulletinNumber(Integer.parseInt(m.group("ii")))//
                 .setType(type)//
-                .setBulletinAugmentationNumber(Optional.ofNullable(bulletinAugmentationNumber))//
-                .setBulletinAugmentationIndicator(bbb)//
+                .setAugmentationNumber(Optional.ofNullable(bulletinAugmentationNumber))//
+                .setOriginalAugmentationIndicator(originalBbb)//
                 .setDataTypeDesignatorT1ForTAC(t1)//
                 .setDataTypeDesignatorT2(t2)//
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.parse(issueTime)))//

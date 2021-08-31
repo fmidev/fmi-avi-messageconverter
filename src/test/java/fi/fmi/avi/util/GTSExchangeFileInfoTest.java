@@ -22,12 +22,10 @@ public class GTSExchangeFileInfoTest {
                 .setCompressionType(GTSExchangeFileInfo.GTSExchangeCompressionType.GZIP)
                 .setHeading(BulletinHeadingImpl.builder()//
                         .setLocationIndicator("ABCD")//
-                        .setBulletinAugmentationNumber('A')//
+                        .setAugmentationIndicator(BulletinHeading.Type.CORRECTED, 1)
                         .setGeographicalDesignator("FI")//
                         .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
                         .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
-                        .setType(BulletinHeading.Type.CORRECTED)//
-                        .setBulletinAugmentationIndicator("CCA")
                         .setBulletinNumber(12)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
                         .build())
@@ -44,12 +42,10 @@ public class GTSExchangeFileInfoTest {
         final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
         final BulletinHeading expectedHeading = BulletinHeadingImpl.builder()
                 .setLocationIndicator("ABCD")
-                .setBulletinAugmentationNumber('A')
+                .setAugmentationIndicator(BulletinHeading.Type.CORRECTED, 1)
                 .setGeographicalDesignator("FI")
                 .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
                 .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
-                .setType(BulletinHeading.Type.CORRECTED)
-                .setBulletinAugmentationIndicator("CCA")
                 .setBulletinNumber(12)
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
                 .build();

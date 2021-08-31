@@ -3,8 +3,6 @@
     "locationIndicator": "EFKL",
     "geographicalDesignator": "FI",
     "bulletinNumber": 31,
-    "bulletinAugmentationIndicator": "",
-    "type": "NORMAL",
     "dataTypeDesignatorT2": "WRN_SIGMET",
     "issueTime": {
       "partialTime": "--02T05:00"

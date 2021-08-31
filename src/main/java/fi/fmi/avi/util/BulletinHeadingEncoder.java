@@ -1,15 +1,15 @@
 package fi.fmi.avi.util;
 
-import static java.util.Objects.requireNonNull;
+import fi.fmi.avi.converter.ConversionHints;
+import fi.fmi.avi.model.MessageFormat;
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.bulletin.BulletinHeading;
 
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import fi.fmi.avi.converter.ConversionHints;
-import fi.fmi.avi.model.MessageFormat;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.bulletin.BulletinHeading;
+import static java.util.Objects.requireNonNull;
 
 public final class BulletinHeadingEncoder {
     static final char AUGMENTATION_NUMBER_MIN_CHAR = 'A';
@@ -48,7 +48,7 @@ public final class BulletinHeadingEncoder {
             if (useSpaces) {
                 sb.append(' ');
             }
-            appendBBBIndicator(sb, input.getType(), input.getBulletinAugmentationNumber().orElse(1));
+            appendBBBIndicator(sb, input.getType(), input.getAugmentationNumber().orElse(1));
         }
         return sb.toString();
     }
@@ -90,7 +90,7 @@ public final class BulletinHeadingEncoder {
 
     private static void checkBBBIndicatorDataConsistency(final BulletinHeading input) {
         final boolean encodesBBBIndicator = encodesBBBIndicator(input.getType());
-        final boolean hasAugmentationNumber = input.getBulletinAugmentationNumber().isPresent();
+        final boolean hasAugmentationNumber = input.getAugmentationNumber().isPresent();
         if (encodesBBBIndicator && !hasAugmentationNumber) {
             throw new IllegalArgumentException("Missing bulletinAugmentationNumber; is required with type " + input.getType());
         } else if (!encodesBBBIndicator && hasAugmentationNumber) {
@@ -105,7 +105,7 @@ public final class BulletinHeadingEncoder {
     public static String encodeBBBIndicator(final BulletinHeading input) {
         requireNonNull(input, "input");
         checkBBBIndicatorDataConsistency(input);
-        return encodeBBBIndicator(input.getType(), input.getBulletinAugmentationNumber().orElse(1));
+        return encodeBBBIndicator(input.getType(), input.getAugmentationNumber().orElse(1));
     }
 
     public static String encodeBBBIndicator(final BulletinHeading.Type bulletinHeadingType, final int augmentationNumber) {

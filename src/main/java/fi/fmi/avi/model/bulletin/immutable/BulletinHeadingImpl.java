@@ -8,21 +8,19 @@ import fi.fmi.avi.model.MessageType;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.util.BulletinHeadingDecoder;
+import fi.fmi.avi.util.BulletinHeadingEncoder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @FreeBuilder
 @JsonDeserialize(builder = BulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "geographicalDesignator", "locationIndicator", "bulletinNumber", "bulletinAugmentationNumber", "issueTime", "type",
-        "dataTypeDesignatorT1ForTAC", "dataTypeDesignatorT2" })
+@JsonPropertyOrder({"geographicalDesignator", "locationIndicator", "bulletinNumber", "bulletinAugmentationNumber", "issueTime", "type",
+        "dataTypeDesignatorT1ForTAC", "dataTypeDesignatorT2"})
 public abstract class BulletinHeadingImpl implements BulletinHeading, Serializable {
-    private static final Pattern ABBREVIATED_HEADING = Pattern.compile(
-            "^(?<TT>[A-Z]{2})(?<AA>[A-Z]{2})(?<ii>[0-9]{2})" + "(?<CCCC>[A-Z]{4})(?<YY>[0-9]{2})(?<GG>[0-9]{2})(?<gg>[0-9]{2})(?<BBB>(CC|RR|AA)[A-Z])?$");
     private static final long serialVersionUID = -7537001968102122857L;
 
     public static Builder builder() {
@@ -45,7 +43,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
 
     /**
      * Tries to determine the intended message type from the bulletin heading.
-     *
+     * <p>
      * Not detected due to unambiguous use in practice:
      * <dl>
      * <dt>UA</dt> <dd>could be either SPECIAL_AIR_REPORT or WXREP</dd>
@@ -74,7 +72,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         @Deprecated
         public Builder() {
             setType(Type.NORMAL);
-            setBulletinAugmentationIndicator("");
+            setOriginalAugmentationIndicator("");
         }
 
         public static Builder from(final BulletinHeading value) {
@@ -86,7 +84,8 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                         .setGeographicalDesignator(value.getGeographicalDesignator())//
                         .setBulletinNumber(value.getBulletinNumber())//
                         .setType(value.getType())//
-                        .setBulletinAugmentationNumber(value.getBulletinAugmentationNumber())//
+                        .setAugmentationNumber(value.getAugmentationNumber())//
+                        .setOriginalAugmentationIndicator(value.getOriginalAugmentationIndicator())//
                         .setDataTypeDesignatorT2(value.getDataTypeDesignatorT2())//
                         .setDataTypeDesignatorT1ForTAC(value.getDataTypeDesignatorT1ForTAC())//
                         .setIssueTime(value.getIssueTime());
@@ -99,27 +98,39 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         }
 
         @Override
-        public Builder setBulletinAugmentationNumber(final int bulletinAugmentationNumber) {
+        public Builder setAugmentationNumber(final int bulletinAugmentationNumber) {
             if (bulletinAugmentationNumber < 1 || bulletinAugmentationNumber > 26) {
                 throw new IllegalArgumentException("Value must be between 1 and 26, value was " + bulletinAugmentationNumber);
             }
-            return super.setBulletinAugmentationNumber(bulletinAugmentationNumber);
+            return super.setAugmentationNumber(bulletinAugmentationNumber);
         }
 
         /**
          * Convenience method for setting the bulletin augmentation number as a
          * character used in the GTS abbreviated heading syntax.
          *
-         * @param asChar
-         *         character between 'A' and 'Z'
-         *
+         * @param asChar character between 'A' and 'Z'
          * @return the builder
          */
-        public Builder setBulletinAugmentationNumber(final char asChar) {
+        public Builder setAugmentationNumber(final char asChar) {
             if (!Character.isAlphabetic(asChar) || asChar < 'A' || asChar > 'Z') {
                 throw new IllegalArgumentException("Value must be between 'A' and 'Z'");
             }
-            return super.setBulletinAugmentationNumber(asChar - 'A' + 1);
+            return super.setAugmentationNumber(asChar - 'A' + 1);
+        }
+
+        /**
+         * Convenience method for setting the bulletin heading type, augmentation number and
+         * the indicator string encoded from the given type and augmentation number.
+         *
+         * @param type               type
+         * @param augmentationNumber augmentation number
+         * @return the builder
+         */
+        public Builder setAugmentationIndicator(final Type type, final int augmentationNumber) {
+            return setAugmentationNumber(augmentationNumber)
+                    .setType(type)
+                    .setOriginalAugmentationIndicator(BulletinHeadingEncoder.encodeBBBIndicator(type, augmentationNumber));
         }
 
         @Override
