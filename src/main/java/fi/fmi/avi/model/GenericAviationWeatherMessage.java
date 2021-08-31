@@ -4,15 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
-    enum Format { TAC, IWXXM }
-
-    enum LocationIndicatorType {
-        AERODROME,
-        ISSUING_CENTRE,
-        ISSUING_AIR_TRAFFIC_SERVICES_UNIT,
-        ISSUING_AIR_TRAFFIC_SERVICES_REGION,
-        ORIGINATING_METEOROLOGICAL_WATCH_OFFICE
-    }
+    Optional<String> getXMLNamespace();
 
     String getOriginalMessage();
 
@@ -24,4 +16,15 @@ public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
 
     Map<LocationIndicatorType, String> getLocationIndicators();
 
+    enum Format {
+        TAC, IWXXM
+    }
+
+    enum LocationIndicatorType {
+        AERODROME, //
+        ISSUING_CENTRE, //
+        ISSUING_AIR_TRAFFIC_SERVICES_UNIT, //
+        ISSUING_AIR_TRAFFIC_SERVICES_REGION, //
+        ORIGINATING_METEOROLOGICAL_WATCH_OFFICE
+    }
 }
