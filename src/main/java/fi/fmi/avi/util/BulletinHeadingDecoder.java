@@ -68,7 +68,7 @@ public final class BulletinHeadingDecoder {
                 .setGeographicalDesignator(m.group("AA"))//
                 .setBulletinNumber(Integer.parseInt(m.group("ii")))//
                 .setType(type)//
-                .setAugmentationNumber(Optional.ofNullable(bulletinAugmentationNumber))//
+                .setNullableAugmentationNumber(bulletinAugmentationNumber)//
                 .setOriginalAugmentationIndicator(originalBbb)//
                 .setDataTypeDesignatorT1ForTAC(t1)//
                 .setDataTypeDesignatorT2(t2)//
