@@ -45,7 +45,6 @@ public final class TAFBulletinTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setBulletinAugmentationIndicator("")
                         .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.FORECASTS)
                         .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.now()))//

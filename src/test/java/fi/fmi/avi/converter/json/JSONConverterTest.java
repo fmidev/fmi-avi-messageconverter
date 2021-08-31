@@ -207,7 +207,6 @@ public class JSONConverterTest {
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
-                        .setBulletinAugmentationIndicator("")
                         .setDataTypeDesignatorT1ForTAC(DataTypeDesignatorT1.WARNINGS)
                         .setDataTypeDesignatorT2(DataTypeDesignatorT2.WarningsDataTypeDesignatorT2.WRN_SIGMET)//
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
