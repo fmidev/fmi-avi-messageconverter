@@ -1,26 +1,17 @@
 package fi.fmi.avi.util;
 
-import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.CARRIAGE_RETURN;
-import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.END_OF_TEXT;
-import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.LINE_FEED;
-import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.START_OF_HEADING;
-import static java.util.Objects.requireNonNull;
+import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
+import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
+import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.inferred.freebuilder.FreeBuilder;
-
-import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
-import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.*;
+import static java.util.Objects.requireNonNull;
 
 @FreeBuilder
 public abstract class GTSExchangeFileTemplate implements Serializable {
@@ -53,21 +44,52 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
         return new Builder();
     }
 
+    /**
+     * Parses the provided string into a GTS exchange file template.
+     *
+     * @param fileContent file content
+     * @return parsed GTS exchange file template
+     * @see Builder#parse(String)
+     */
     public static GTSExchangeFileTemplate parse(final String fileContent) {
         requireNonNull(fileContent, "fileContent");
         return builder().parse(fileContent).build();
     }
 
+    /**
+     * Parses the provided string into a GTS exchange file template.
+     * The string is interpreted as a bulletin heading and text content.
+     *
+     * @param fileContent file content
+     * @return parsed GTS exchange file template
+     * @see Builder#parseHeadingAndText(String)
+     */
     public static GTSExchangeFileTemplate parseHeadingAndText(final String fileContent) {
         requireNonNull(fileContent, "fileContent");
         return builder().parseHeadingAndText(fileContent).build();
     }
 
+    /**
+     * Parses the provided string into a GTS exchange file template.
+     * The string is leniently interpreted as a bulletin heading and text content.
+     *
+     * @param data data to parse
+     * @return parsed GTS exchange file template
+     * @see Builder#parseHeadingAndTextLenient(String)
+     */
     public static GTSExchangeFileTemplate parseHeadingAndTextLenient(final String data) {
         requireNonNull(data, "data");
         return builder().parseHeadingAndTextLenient(data).build();
     }
 
+    /**
+     * Parses the provided string into GTS exchange file templates.
+     * The string can contain multiple bulletins.
+     *
+     * @param fileContent file content
+     * @return a list of parse results
+     * @see Builder#parse(String)
+     */
     public static List<ParseResult> parseAll(final String fileContent) {
         requireNonNull(fileContent, "fileContent");
         final List<ParseResult> results = new ArrayList<>();
@@ -223,13 +245,9 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
          * The heading and text are only stored as is.
          * </p>
          *
-         * @param fileContent
-         *         string to parse
-         *
+         * @param fileContent string to parse
          * @return this builder
-         *
-         * @throws GTSExchangeFileParseException
-         *         if provided {@code message} cannot be parsed or does not meet requirements of WMO Doc. 386 specification.
+         * @throws GTSExchangeFileParseException if provided {@code message} cannot be parsed or does not meet requirements of WMO Doc. 386 specification.
          */
         public Builder parse(final String fileContent) {
             requireNonNull(fileContent, "message");
@@ -324,13 +342,9 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
          * builder is not modified.
          * </p>
          *
-         * @param headingAndText
-         *         string to parse
-         *
+         * @param headingAndText string to parse
          * @return this builder
-         *
-         * @throws GTSExchangeFileParseException
-         *         if provided {@code headingAndText} cannot be parsed or does not meet requirements of WMO Doc. 386 specification. This builder is not modified.
+         * @throws GTSExchangeFileParseException if provided {@code headingAndText} cannot be parsed or does not meet requirements of WMO Doc. 386 specification. This builder is not modified.
          */
         public Builder parseHeadingAndText(final String headingAndText) {
             requireNonNull(headingAndText, "headingAndText");
@@ -371,9 +385,7 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
          * Note that this method does not affect any other property of this builder than {@code heading} and {@code text}.
          * </p>
          *
-         * @param headingAndText
-         *         string to parse
-         *
+         * @param headingAndText string to parse
          * @return this builder
          */
         public Builder parseHeadingAndTextLenient(final String headingAndText) {
@@ -417,8 +429,20 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
 
         public abstract int getStartIndex();
 
+        /**
+         * Returns the GTS exchange file template.
+         * When this is present, {@link ParseResult#getError()} will return an empty optional.
+         *
+         * @return GTS exchange file template or an empty Optional
+         */
         public abstract Optional<GTSExchangeFileTemplate> getResult();
 
+        /**
+         * Returns the parse error.
+         * When this is present, {@link ParseResult#getResult()} will return an empty optional.
+         *
+         * @return exception providing details of the parse error or an empty optional
+         */
         public abstract Optional<GTSExchangeFileParseException> getError();
 
         public static class Builder extends GTSExchangeFileTemplate_ParseResult_Builder {
