@@ -170,7 +170,6 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
 
         final JsonNode refRoot = om.readTree(reference);
         final JsonNode convertedRoot = om.readTree(result.getConvertedMessage().get());
-        System.err.println("EQUALS: " + refRoot.equals(convertedRoot));
         assertEquals("constructed and parsed tree not equal", refRoot, convertedRoot);
     }
 }

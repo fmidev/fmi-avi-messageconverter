@@ -26,7 +26,6 @@ public class JSONAirmetTestConfiguration {
 
     @Bean
     static ObjectMapper getObjectMapper() {
-        System.err.println("ObjectMapper created");
         final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());

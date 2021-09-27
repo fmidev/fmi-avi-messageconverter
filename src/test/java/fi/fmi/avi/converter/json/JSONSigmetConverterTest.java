@@ -57,8 +57,6 @@ public class JSONSigmetConverterTest {
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
         final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
-        System.err.println("SM:" + result.getStatus() + " ==>");
-        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
@@ -128,11 +126,6 @@ public class JSONSigmetConverterTest {
 
         final JsonNode refRoot = om.readTree(reference);
         final JsonNode convertedRoot = om.readTree(result.getConvertedMessage().get());
-        System.err.println("EQUALS: " + refRoot.equals(convertedRoot));
         assertEquals("constructed and parsed tree not equal", refRoot, convertedRoot);
-        //       BufferedReader refReader = new BufferedReader(new StringReader(reference));
-        //       BufferedReader resultReader = new BufferedReader(new StringReader(result.getConvertedMessage().get()));
-        //        assertEquals("Strings do not match", reference, result.getConvertedMessage().get());
-
     }
 }

@@ -38,7 +38,6 @@ import fi.fmi.avi.model.sigmet.immutable.AirmetCloudLevelsImpl;
 public class AirmetTest {
 
     private static final String TEST_GEO_JSON_1 = "{\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
-    private static final String TEST_GEO_JSON_2 = "{\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,5,60,5,52,0,52]}}";
     private final ObjectMapper om = new ObjectMapper().registerModule(new JavaTimeModule())
             .registerModule(new Jdk8Module())
             .enable(SerializationFeature.INDENT_OUTPUT);
@@ -91,16 +90,13 @@ public class AirmetTest {
     public void testBuild() throws IOException {
         final AIRMET sm = buildAirmet();
         assertTrue(sm.areAllTimeReferencesComplete());
-        System.err.println("TAC: " + sm.toString());
         final String json = om.writeValueAsString(sm);
-        System.err.println("JSON: " + json);
         final JsonNode smNode = om.readTree(json.getBytes(StandardCharsets.UTF_8));
         assertFalse(smNode.isNull());
         assertTrue(smNode.has("reportStatus"));
         assertEquals("NORMAL", smNode.get("reportStatus").asText());
         assertTrue(!smNode.has("cancelMessage") || smNode.get("cancelMessage").asBoolean() == false);
 
-        final AIRMET readBackAirmet = om.readValue(json, AIRMETImpl.class);
-        System.err.println("bottom: " + readBackAirmet.getCloudLevels().get().getCloudBase().getValue());
+        om.readValue(json, AIRMETImpl.class);
     }
 }

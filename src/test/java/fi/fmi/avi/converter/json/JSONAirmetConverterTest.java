@@ -55,8 +55,6 @@ public class JSONAirmetConverterTest {
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
         final ConversionResult<AIRMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_AIRMET_POJO, ConversionHints.EMPTY);
-        System.err.println("SM:" + result.getStatus() + " ==>");
-        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
@@ -66,8 +64,7 @@ public class JSONAirmetConverterTest {
         Objects.requireNonNull(is);
         final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
-        final AIRMET am = om.readValue(reference, AIRMETImpl.Builder.class).build();
-        System.err.println("am:" + am);
+        om.readValue(reference, AIRMETImpl.Builder.class).build();
     }
 
     @Test
@@ -76,24 +73,16 @@ public class JSONAirmetConverterTest {
         Objects.requireNonNull(is);
         final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
-        final AIRMET am = om.readValue(reference, AIRMETImpl.Builder.class).build();
-        System.err.println("am:" + am);
+        om.readValue(reference, AIRMETImpl.Builder.class).build();
     }
 
     @Test
     public void testAIRMETSerialization() throws Exception {
-/*        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new Jdk8Module());
-        om.registerModule(new JavaTimeModule());
-        om.registerModule(new JtsModule());
-        om.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);*/
-
         final InputStream is = JSONAirmetConverterTest.class.getResourceAsStream("airmet2.json");
         Objects.requireNonNull(is);
         final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
-        final AIRMET am = om.readValue(reference, AIRMETImpl.Builder.class).build();
-        System.err.println("am:" + am);
+        om.readValue(reference, AIRMETImpl.Builder.class).build();
 
         final AIRMETImpl.Builder builder = AIRMETImpl.builder();
 
@@ -138,24 +127,8 @@ public class JSONAirmetConverterTest {
 
         final AIRMET airmet = builder.build();
 
-        final AIRMET airmetCopy = AIRMETImpl.immutableCopyOf(airmet);
-
-        System.err.println(om.writeValueAsString(airmetCopy));
-
         final ConversionResult<String> result = converter.convertMessage(airmet, JSONConverter.AIRMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
-        System.err.println("JSON:" + result.getConvertedMessage().get());
-
-        //        JsonNode refRoot=om.readTree(reference);
-        //        JsonNode convertedRoot=om.readTree(result.getConvertedMessage().get());
-        //        System.err.println("EQUALS: "+refRoot.equals(convertedRoot));
-        //        AIRMET convertedAirmet=om.readValue(result.getConvertedMessage().get(), AIRMETImpl.class);
-        //        System.err.println("translated: "+convertedAirmet.isTranslated());
-
-        //        ZonedDateTime now=ZonedDateTime.now();
-        //        System.err.println("now: "+now+" "+convertedAirmet.getIssueTime());
-        //        assertEquals("constructed and parsed tree not equal", airmet, convertedAirmet);
-
     }
 }

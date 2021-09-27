@@ -67,8 +67,6 @@ public class JSONVASigmetConverterTest {
         for (final ConversionIssue iss : result.getConversionIssues()) {
             System.err.println("  ISS:" + iss.getMessage() + " " + iss.getCause());
         }
-        System.err.println("SM:" + result.getStatus() + " ==>");
-        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
     @Test
@@ -81,8 +79,6 @@ public class JSONVASigmetConverterTest {
         for (final ConversionIssue iss : result.getConversionIssues()) {
             System.err.println("  ISS:" + iss.getMessage() + " " + iss.getCause());
         }
-        System.err.println("SM:" + result.getStatus() + " ==>");
-        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
@@ -162,24 +158,15 @@ public class JSONVASigmetConverterTest {
         final ConversionResult<String> result = converter.convertMessage(vaSigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
-        System.err.println("Converted: " + result.getConvertedMessage().get());
 
         final SIGMET refVaSigmet = om.readValue(reference, SIGMETImpl.class);
-        System.err.println("refVaSigmet: " + refVaSigmet);
 
         final SIGMET newVaSigmet = om.readValue(result.getConvertedMessage().get(), SIGMETImpl.class);
 
         final JsonNode refTree = om.readTree(reference);
         final JsonNode newTree = om.readTree(result.getConvertedMessage().get());
-        try {
-            System.err.println("REF: " + om.writerWithDefaultPrettyPrinter().writeValueAsString(refTree));
-            System.err.println("NEW: " + om.writerWithDefaultPrettyPrinter().writeValueAsString(newTree));
-        } catch (final Exception e) {
-            System.err.println("EXCEPTION: " + e);
-        }
 
-        System.err.println("ref=new: " + refVaSigmet.equals(newVaSigmet));
-        System.err.println("EQTREE: " + refTree.equals(newTree));
+        assertEquals("Strings do not match ", refVaSigmet, newVaSigmet);
 
         assertEquals("Strings do not match ", refTree, newTree);
 

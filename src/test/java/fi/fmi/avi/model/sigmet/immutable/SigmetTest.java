@@ -109,22 +109,20 @@ public class SigmetTest {
     public void testGeometry() throws IOException {
         String geom="{\"tacGeometry\":{\"data\": \"ENTIRE FIR\"}, \"geoGeometry\": {\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
 
-        TacOrGeoGeometry gm = om.readValue(geom, TacOrGeoGeometry.class);
+        om.readValue(geom, TacOrGeoGeometry.class);
     }
 
     @Test
     public void testBuild() throws IOException {
         SIGMET sm=buildSigmet();
         assert(sm.areAllTimeReferencesComplete());
-        System.err.println("TAC: "+sm.toString());
         String json=om.writeValueAsString(sm);
-        System.err.println("JSON: "+json);
         JsonNode smNode=om.readTree(json.getBytes());
         assert(!smNode.isNull());
         assert(smNode.has("reportStatus"));
         assert(smNode.get("reportStatus").asText().equals("NORMAL"));
         assertEquals("ENTIRE FIR", smNode.get("analysisGeometries").get(0).get("geometry").get("tacGeometry").get("data").asText());
 
-        SIGMET sm_reread = om.readValue(json, SIGMETImpl.class);
+        om.readValue(json, SIGMETImpl.class);
     }
 }
