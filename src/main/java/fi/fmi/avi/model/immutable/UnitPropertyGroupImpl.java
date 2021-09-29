@@ -1,21 +1,25 @@
 package fi.fmi.avi.model.immutable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fi.fmi.avi.model.UnitPropertyGroup;
-import org.inferred.freebuilder.FreeBuilder;
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.inferred.freebuilder.FreeBuilder;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fi.fmi.avi.model.UnitPropertyGroup;
+
 @FreeBuilder
 @JsonDeserialize(builder = UnitPropertyGroupImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"name", "type", "designator"})
+@JsonPropertyOrder({ "name", "type", "designator" })
 public abstract class UnitPropertyGroupImpl implements UnitPropertyGroup, Serializable {
+    private static final long serialVersionUID = -7914479154941829999L;
+
     public static UnitPropertyGroupImpl immutableCopyOf(final UnitPropertyGroup unitPropertyGroup) {
         Objects.requireNonNull(unitPropertyGroup);
         if (unitPropertyGroup instanceof UnitPropertyGroupImpl) {
@@ -39,13 +43,13 @@ public abstract class UnitPropertyGroupImpl implements UnitPropertyGroup, Serial
             } else {
                 return new UnitPropertyGroupImpl.Builder()//
                         .setName(value.getName())//
-                        .setDesignator(value.getDesignator())
+                        .setDesignator(value.getDesignator())//
                         .setType(value.getType());
             }
         }
 
         @JsonIgnore
-        public Builder setPropertyGroup(String name, String designator, String type) {
+        public Builder setPropertyGroup(final String name, final String designator, final String type) {
             return super.setName(name).setDesignator(designator).setType(type);
         }
     }

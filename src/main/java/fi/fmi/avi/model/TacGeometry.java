@@ -1,9 +1,10 @@
 package fi.fmi.avi.model;
 
-public class TacGeometry {
-    String data;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-    public TacGeometry(String s) {
-        this.data=s;
-    }
+import fi.fmi.avi.model.immutable.TacGeometryImpl;
+
+@JsonDeserialize(builder = TacGeometryImpl.Builder.class)
+public interface TacGeometry{
+    String getData();
 }

@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.Weather;
@@ -702,6 +703,48 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
      * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
      *
      * @return this {@code Builder} object
+     */
+    default B setNullableIssueTime(@Nullable final PartialOrCompleteTimeInstant issueTime) {
+        if (issueTime != null) {
+            return setIssueTime(issueTime);
+        } else {
+            return clearIssueTime();
+        }
+    }
+
+    /**
+     * If the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} is present, replaces it by
+     * applying {@code mapper} to it and using the result.
+     *
+     * <p>If the result is null, clears the value.
+     *
+     * @return this {@code Builder} object
+     *
+     * @throws NullPointerException
+     *         if {@code mapper} is null
+     */
+    default B mapIssueTime(final UnaryOperator<PartialOrCompleteTimeInstant> mapper) {
+        Objects.requireNonNull(mapper);
+        return setIssueTime(getIssueTime().map(mapper));
+    }
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} to {@link Optional#empty()
+     * Optional.empty()}.
+     *
+     * @return this {@code Builder} object
+     */
+    B clearIssueTime();
+
+    /**
+     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     */
+    Optional<PartialOrCompleteTimeInstant> getIssueTime();
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     *
+     * @return this {@code Builder} object
      *
      * @throws NullPointerException
      *         if {@code issueTime} is null
@@ -716,46 +759,32 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
     B setIssueTime(Optional<? extends PartialOrCompleteTimeInstant> issueTime);
 
     /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()} by applying {@code
+     * mapper} to it and using the result.
      *
      * @return this {@code Builder} object
-     */
-    default B setNullableIssueTime(@Nullable PartialOrCompleteTimeInstant issueTime){
-        if (issueTime != null) {
-            return setIssueTime(issueTime);
-        } else {
-            return clearIssueTime();
-        }
-    }
-
-
-    /**
-     * If the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} is present, replaces it by
-     * applying {@code mapper} to it and using the result.
      *
-     * <p>If the result is null, clears the value.
-     *
-     * @return this {@code Builder} object
-     * @throws NullPointerException if {@code mapper} is null
+     * @throws NullPointerException
+     *         if {@code mapper} is null or returns null
      */
-    default B mapIssueTime(UnaryOperator<PartialOrCompleteTimeInstant> mapper){
-        Objects.requireNonNull(mapper);
-        return setIssueTime(getIssueTime().map(mapper));
+    default B mapReportStatus(final UnaryOperator<AviationWeatherMessage.ReportStatus> mapper) {
+        return setReportStatus(mapper.apply(getReportStatus()));
     }
 
     /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()} to {@link Optional#empty()
-     * Optional.empty()}.
-     *
-     * @return this {@code Builder} object
+     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
      */
-    B clearIssueTime();
-
+    AviationWeatherMessage.ReportStatus getReportStatus();
 
     /**
-     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getIssueTime()}.
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getReportStatus()}.
+     *
+     * @return this {@code Builder} object
+     *
+     * @throws NullPointerException
+     *         if {@code reportStatus} is null
      */
-    Optional<PartialOrCompleteTimeInstant> getIssueTime();
+    B setReportStatus(AviationWeatherMessage.ReportStatus reportStatus);
 
     /**
      * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#getAerodrome()} by applying {@code
@@ -833,28 +862,97 @@ public interface MeteorologicalTerminalAirReportBuilder<T extends Meteorological
      * @throws IllegalStateException
      *         if the field has not been set
      */
+    @Deprecated
     default B mapStatus(final UnaryOperator<AviationCodeListUser.MetarStatus> mapper) {
         Objects.requireNonNull(mapper);
         return setStatus(mapper.apply(getStatus()));
     }
 
     /**
-     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#getStatus()}.
+     * Provides the current builder value of the status property.
      *
-     * @throws IllegalStateException
-     *         if the field has not been set
+     * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+     * explicitly stored. This implementation uses {@link AviationCodeListUser.MetarStatus#fromReportStatus(AviationWeatherMessage.ReportStatus, boolean)}
+     * instead to determine the returned value on-the-fly.
+     *
+     * @return the message status
+     *
+     * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isMissingMessage()} instead
      */
-    AviationCodeListUser.MetarStatus getStatus();
+    @Deprecated
+    default AviationCodeListUser.MetarStatus getStatus() {
+        return AviationCodeListUser.MetarStatus.fromReportStatus(getReportStatus(), isMissingMessage());
+    }
 
     /**
-     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#getStatus()}.
+     * Sets the METAR-specific message status.
+     *
+     * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
+     * explicitly stored. Instead, this method sets other property values with the following logic:
+     * <dl>
+     *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.MetarStatus#MISSING MISSING}</dt>
+     *     <dd>
+     *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+     *         <code>missingMessage = {@code true}</code>
+     *     </dd>
+     *
+     *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.MetarStatus#NORMAL NORMAL}</dt>
+     *     <dd>
+     *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+     *         <code>missingMessage = {@code false}</code>
+     *     </dd>
+     *
+     *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.MetarStatus#CORRECTION CORRECTION}</dt>
+     *     <dd>
+     *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#CORRECTION CORRECTION}</code><br>
+     *         <code>missingMessage = {@code false}</code>
+     *     </dd>
+     * </dl>
+     *
+     * @param status
+     *         the status to set
+     *
+     * @return builder
+     *
+     * @deprecated migrate to using a combination of {@link #setReportStatus(AviationWeatherMessage.ReportStatus)} and {@link #setMissingMessage(boolean)}.
+     */
+    @Deprecated
+    default B setStatus(final AviationCodeListUser.MetarStatus status) {
+        requireNonNull(status);
+        return setMissingMessage(status.isMissingMessage())//
+                .setReportStatus(status.getReportStatus());
+    }
+
+    /**
+     * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#isMissingMessage()} by applying
+     * {@code mapper} to it and using the result.
      *
      * @return this {@code Builder} object
      *
      * @throws NullPointerException
-     *         if {@code status} is null
+     *         if {@code mapper} is null or returns null
+     * @throws IllegalStateException
+     *         if the field has not been set
      */
-    B setStatus(AviationCodeListUser.MetarStatus status);
+    default B mapMissingMessage(final UnaryOperator<Boolean> mapper) {
+        Objects.requireNonNull(mapper);
+        return setMissingMessage(mapper.apply(isMissingMessage()));
+    }
+
+    /**
+     * Returns the value that will be returned by {@link MeteorologicalTerminalAirReport#isMissingMessage()}.
+     *
+     * @throws IllegalStateException
+     *         if the field has not been set
+     */
+    boolean isMissingMessage();
+
+    /**
+     * Sets the value to be returned by {@link MeteorologicalTerminalAirReport#isMissingMessage()}.
+     *
+     * @return this {@code Builder} object
+     */
+    B setMissingMessage(boolean missingMessage);
 
     /**
      * Replaces the value to be returned by {@link MeteorologicalTerminalAirReport#isCeilingAndVisibilityOk()} by

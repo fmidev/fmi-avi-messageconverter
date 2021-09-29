@@ -16,6 +16,8 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
 @JsonDeserialize(builder = PhenomenonGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Serializable {
+    private static final long serialVersionUID = -5756409149372825343L;
+
     public static PhenomenonGeometryImpl immutableCopyOf(final PhenomenonGeometry phenomenonGeometry) {
         Objects.requireNonNull(phenomenonGeometry);
         if (phenomenonGeometry instanceof PhenomenonGeometryImpl) {
@@ -38,7 +40,10 @@ public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Seri
             if (value instanceof PhenomenonGeometryImpl) {
                 return ((PhenomenonGeometryImpl) value).toBuilder();
             } else {
-                return new Builder().setGeometry(value.getGeometry()).setTime(value.getTime()).setApproximateLocation(value.getApproximateLocation());
+                return new Builder().setGeometry(value.getGeometry())
+                .setTime(value.getTime())
+                .setApproximateLocation(value.getApproximateLocation())
+                .setNoVaExpected(value.getNoVaExpected());
 
             }
         }

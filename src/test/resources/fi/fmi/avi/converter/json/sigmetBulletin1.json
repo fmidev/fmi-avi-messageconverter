@@ -11,7 +11,7 @@
   },
   "messages": [
     {
-      "status": "NORMAL",
+      "reportStatus": "NORMAL",
       "issuingAirTrafficServicesUnit": {
         "name": "AMSTERDAM FIR",
         "type": "FIR",
@@ -27,9 +27,9 @@
         "completeTime": "2017-08-27T11:30:00Z"
       },
       "airspace": {
-        "designator":"EHAA",
-        "name":"AMSTERDAM",
-        "type":"FIR"
+        "designator": "EHAA",
+        "name": "AMSTERDAM",
+        "type": "FIR"
       },
       "validityPeriod": {
         "startTime": {
@@ -40,10 +40,8 @@
         }
       },
       "sigmetPhenomenon": "EMBD_TS",
-      "permissibleUsage":"NON_OPERATIONAL",
-      "permissibleUsageReason":"EXERCISE",
-      "analysisType": "OBSERVATION",
-      "intensityChange": "NO_CHANGE",
+      "permissibleUsage": "NON_OPERATIONAL",
+      "permissibleUsageReason": "EXERCISE",
       "analysisGeometries": [
         {
           "time": {
@@ -57,7 +55,9 @@
             "value": 35.0,
             "uom": "FL"
           },
+          "intensityChange": "NO_CHANGE",
           "approximateLocation": false,
+          "analysisType": "OBSERVATION",
           "geometry": {
             "geoGeometry": {
               "type": "Polygon",
@@ -75,32 +75,33 @@
           }
         }
       ],
-      "forecastGeometries":[{
-        "time":  {
-          "completeTime": "2017-08-27T18:00:00Z"
-        },
-        "approximateLocation": false,
-        "geometry": {
-          "geoGeometry": {
-            "type": "Polygon",
-            "exteriorRingPositions": [
-              5.0,
-              53.0,
-              6.0,
-              54.0,
-              4.0,
-              55.0,
-              5.0,
-              53.0
-            ]
+      "forecastGeometries": [
+        {
+          "time": {
+            "completeTime": "2017-08-27T18:00:00Z"
+          },
+          "approximateLocation": false,
+          "geometry": {
+            "geoGeometry": {
+              "type": "Polygon",
+              "exteriorRingPositions": [
+                5.0,
+                53.0,
+                6.0,
+                54.0,
+                4.0,
+                55.0,
+                5.0,
+                53.0
+              ]
+            }
           }
         }
-      }
       ],
       "translated": true
     },
     {
-      "status": "NORMAL",
+      "reportStatus": "NORMAL",
       "issuingAirTrafficServicesUnit": {
         "name": "AMSTERDAM",
         "type": "FIR",
@@ -129,10 +130,8 @@
         "type": "FIR"
       },
       "sigmetPhenomenon": "EMBD_TS",
-      "permissibleUsage":"NON_OPERATIONAL",
-      "permissibleUsageReason":"EXERCISE",
-      "analysisType": "OBSERVATION",
-      "intensityChange": "NO_CHANGE",
+      "permissibleUsage": "NON_OPERATIONAL",
+      "permissibleUsageReason": "EXERCISE",
       "analysisGeometries": [
         {
           "time": {
@@ -146,7 +145,9 @@
             "value": 35.0,
             "uom": "FL"
           },
+          "intensityChange": "NO_CHANGE",
           "approximateLocation": false,
+          "analysisType": "OBSERVATION",
           "geometry": {
             "geoGeometry": {
               "type": "Polygon",
@@ -164,27 +165,28 @@
           }
         }
       ],
-      "forecastGeometries":[{
-        "time":  {
-          "completeTime": "2017-08-27T18:00:00Z"
-        },
-        "approximateLocation": false,
-        "geometry": {
-          "geoGeometry": {
-            "type": "Polygon",
-            "exteriorRingPositions": [
-              5.0,
-              53.0,
-              6.0,
-              54.0,
-              4.0,
-              55.0,
-              5.0,
-              53.0
-            ]
+      "forecastGeometries": [
+        {
+          "time": {
+            "completeTime": "2017-08-27T18:00:00Z"
+          },
+          "approximateLocation": false,
+          "geometry": {
+            "geoGeometry": {
+              "type": "Polygon",
+              "exteriorRingPositions": [
+                5.0,
+                53.0,
+                6.0,
+                54.0,
+                4.0,
+                55.0,
+                5.0,
+                53.0
+              ]
+            }
           }
         }
-      }
       ],
       "VAInfo": {
         "volcano": {

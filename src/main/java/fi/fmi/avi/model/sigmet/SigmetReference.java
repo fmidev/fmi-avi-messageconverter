@@ -1,13 +1,14 @@
 package fi.fmi.avi.model.sigmet;
 
-import fi.fmi.avi.model.AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 
 public interface SigmetReference<T> {
-    public UnitPropertyGroup getIssuingAirTrafficServicesUnit();
-    public UnitPropertyGroup getMeteorologicalWatchOffice();
-    public AeronauticalSignificantWeatherPhenomenon getPhenomenon();
-    public String getSequenceNumber();
-    public PartialOrCompleteTimePeriod getValidityPeriod();
+    UnitPropertyGroup getIssuingAirTrafficServicesUnit();
+
+    UnitPropertyGroup getMeteorologicalWatchOffice();
+
+    String getSequenceNumber();
+
+    PartialOrCompleteTimePeriod getValidityPeriod();
 }

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
@@ -17,6 +18,8 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
 @JsonDeserialize(builder = PhenomenonGeometryWithHeightImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeometryWithHeight, Serializable {
+    private static final long serialVersionUID = 3780345549531133901L;
+
     public static PhenomenonGeometryWithHeightImpl immutableCopyOf(final PhenomenonGeometryWithHeight phenomenonGeometry) {
         Objects.requireNonNull(phenomenonGeometry);
         if (phenomenonGeometry instanceof PhenomenonGeometryWithHeightImpl) {
@@ -45,6 +48,10 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
                         .setUpperLimitOperator(value.getUpperLimitOperator())
                         .setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(value.getGeometry()))
                         .setApproximateLocation(value.getApproximateLocation())
+                        .setMovingDirection(value.getMovingDirection())
+                        .setMovingSpeed(value.getMovingSpeed())
+                        .setIntensityChange(value.getIntensityChange())
+                        .setAnalysisType(value.getAnalysisType())
                         .setTime(value.getTime());
             }
         }
@@ -66,6 +73,18 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
         public Builder setGeometry(final TacOrGeoGeometry geom) {
             return super.setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(geom));
         }
-    }
+
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMovingSpeed(final NumericMeasure speed) {
+            return super.setMovingSpeed(NumericMeasureImpl.immutableCopyOf(speed));
+        }
+        @Override
+        @JsonDeserialize(as = NumericMeasureImpl.class)
+        public Builder setMovingDirection(final NumericMeasure dir) {
+            return super.setMovingDirection(NumericMeasureImpl.immutableCopyOf(dir));
+
+        }
+     }
 }
 

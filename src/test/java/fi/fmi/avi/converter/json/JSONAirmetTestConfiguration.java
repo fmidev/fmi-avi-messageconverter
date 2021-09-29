@@ -19,25 +19,23 @@ import fi.fmi.avi.model.sigmet.AIRMET;
 @Import(JSONConverter.class)
 public class JSONAirmetTestConfiguration {
 
+    @Autowired
+    private AviMessageSpecificConverter<AIRMET, String> airmetJSONSerializer;
+    @Autowired
+    private AviMessageSpecificConverter<String, AIRMET> airmetJSONParser;
+
     @Bean
-    private static ObjectMapper getObjectMapper() {
-        System.err.println("ObjectMapper created");
-        ObjectMapper om = new ObjectMapper();
+    static ObjectMapper getObjectMapper() {
+        final ObjectMapper om = new ObjectMapper();
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
         om.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
         return om;
     }
 
-    @Autowired
-    private AviMessageSpecificConverter<AIRMET, String> airmetJSONSerializer;
-
-    @Autowired
-    private AviMessageSpecificConverter<String, AIRMET> airmetJSONParser;
-
     @Bean
     public AviMessageConverter aviMessageConverter() {
-        AviMessageConverter p = new AviMessageConverter();
+        final AviMessageConverter p = new AviMessageConverter();
         p.setMessageSpecificConverter(JSONConverter.JSON_STRING_TO_AIRMET_POJO, airmetJSONParser);
         p.setMessageSpecificConverter(JSONConverter.AIRMET_POJO_TO_JSON_STRING, airmetJSONSerializer);
         return p;

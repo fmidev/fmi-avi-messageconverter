@@ -1,10 +1,7 @@
 package fi.fmi.avi.model;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.time.DateTimeException;
 import java.time.Instant;
@@ -22,19 +19,15 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.hamcrest.FeatureMatcher;
-import org.hamcrest.Matcher;
-import org.junit.Rule;
+import org.assertj.core.description.Description;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import com.google.common.collect.Maps;
@@ -48,7 +41,6 @@ import fi.fmi.avi.model.PartialDateTime.ReferenceCondition;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
-@SuppressWarnings("Duplicates")
 @RunWith(JUnitParamsRunner.class)
 public final class PartialDateTimeTest {
     private static final int TEST_DAY = 2;
@@ -61,16 +53,13 @@ public final class PartialDateTimeTest {
     private static final ZonedDateTime MIDNIGHT_ZONED_DATE_TIME = SAMPLE_ZONED_DATE_TIME.with(LocalTime.MIDNIGHT);
     private static final PartialDateTime EMPTY_INSTANCE = PartialDateTime.of(-1, -1, -1, null);
 
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
-
     private static Map<PartialField, Integer> createTestFieldValues() {
         final EnumMap<PartialField, Integer> map = new EnumMap<>(PartialField.class);
         map.put(PartialField.DAY, TEST_DAY);
         map.put(PartialField.HOUR, TEST_HOUR);
         map.put(PartialField.MINUTE, TEST_MINUTE);
 
-        assertEquals(EnumSet.allOf(PartialField.class), map.keySet());
+        assertThat(map.keySet()).containsExactlyInAnyOrder(PartialField.values());
 
         return Maps.immutableEnumMap(map);
     }
@@ -133,15 +122,6 @@ public final class PartialDateTimeTest {
         }
     }
 
-    private static <T, U> Matcher<T> feature(final String featureName, final Function<T, U> getFeature, final Matcher<U> subMatcher) {
-        return new FeatureMatcher<T, U>(subMatcher, featureName, featureName) {
-            @Override
-            protected U featureValueOf(final T actual) {
-                return getFeature.apply(actual);
-            }
-        };
-    }
-
     @Test
     public void testNulls() {
         final NullPointerTester tester = new NullPointerTester()//
@@ -200,9 +180,11 @@ public final class PartialDateTimeTest {
     @Parameters
     @Test
     public void testBuildFailOnNonContinuousFields(final Map<PartialField, Integer> testFieldValues) {
-        thrown.expect(DateTimeException.class);
-        thrown.expectMessage(testFieldValues.keySet().toString());
-        createPartialDateTime(testFieldValues);
+        final Class<DateTimeException> expectedException = DateTimeException.class;
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(createPartialDateTime(testFieldValues)))//
+                .withMessageContaining(testFieldValues.keySet().toString());
     }
 
     public List<Map<PartialField, Integer>> parametersForTestBuildFailOnNonContinuousFields() {
@@ -217,7 +199,9 @@ public final class PartialDateTimeTest {
     public void testGetPresentFields(final Map<PartialField, Integer> testFieldValues) {
         final PartialDateTime partialDateTime = createPartialDateTime(testFieldValues);
 
-        assertEquals("expected to contain fields that were set", testFieldValues.keySet(), partialDateTime.getPresentFields());
+        assertThat(partialDateTime.getPresentFields())//
+                .as("expected to contain fields that were set")//
+                .containsExactlyInAnyOrderElementsOf(testFieldValues.keySet());
     }
 
     @Parameters(source = TestFieldValuesProvider.class)
@@ -225,10 +209,14 @@ public final class PartialDateTimeTest {
     public void testGet(final Map<PartialField, Integer> testFieldValues) {
         final PartialDateTime partialDateTime = createPartialDateTime(testFieldValues);
 
-        testFieldValues//
-                .forEach((field, value) -> assertEquals("expect existing field " + field, OptionalInt.of(value), partialDateTime.get(field)));
-        complementOf(testFieldValues.keySet())//
-                .forEach(field -> assertEquals("expect nonexistent field " + field, OptionalInt.empty(), partialDateTime.get(field)));
+        assertThat(testFieldValues)//
+                .allSatisfy((field, value) -> assertThat(partialDateTime.get(field))//
+                        .as("expect existing field %s", field)//
+                        .hasValue(value));
+        assertThat(complementOf(testFieldValues.keySet()))//
+                .allSatisfy(field -> assertThat(partialDateTime.get(field))//
+                        .as("expect nonexistent field %s", field)//
+                        .isNotPresent());
     }
 
     @Parameters(source = TestFieldValuesProvider.class)
@@ -239,11 +227,11 @@ public final class PartialDateTimeTest {
             partialDateTime = partialDateTime.with(entry.getKey(), entry.getValue());
         }
         final PartialDateTime expected = createPartialDateTime(testFieldValues);
-        assertEquals(expected, partialDateTime);
+        assertThat(partialDateTime).isEqualTo(expected);
         for (final Map.Entry<PartialField, Integer> entry : testFieldValues.entrySet()) {
             partialDateTime = partialDateTime.with(entry.getKey(), entry.getValue());
         }
-        assertEquals(expected, partialDateTime);
+        assertThat(partialDateTime).isEqualTo(expected);
     }
 
     @Parameters
@@ -256,8 +244,8 @@ public final class PartialDateTimeTest {
             final EnumSet<PartialField> expectedFields = EnumSet.copyOf(partialDateTime.getPresentFields());
             expectedFields.remove(field);
 
-            assertFalse(field.toString(), withFieldCleared.get(field).isPresent());
-            assertEquals(field.toString(), expectedFields, withFieldCleared.getPresentFields());
+            assertThat(withFieldCleared.get(field)).as(field.toString()).isNotPresent();
+            assertThat(withFieldCleared.getPresentFields()).as(field.toString()).containsExactlyInAnyOrderElementsOf(expectedFields);
         }
     }
 
@@ -271,7 +259,7 @@ public final class PartialDateTimeTest {
 
     @Test
     public void testGetMinuteEmpty() {
-        assertEquals(OptionalInt.empty(), EMPTY_INSTANCE.getMinute());
+        assertThat(EMPTY_INSTANCE.getMinute()).isNotPresent();
     }
 
     @Test
@@ -279,7 +267,7 @@ public final class PartialDateTimeTest {
         final PartialField field = PartialField.MINUTE;
         final int value = TEST_FIELD_VALUES.get(field);
         final PartialDateTime partialDateTime = EMPTY_INSTANCE.with(field, value);
-        assertEquals(value, partialDateTime.getMinute().orElseThrow(() -> new AssertionError("empty " + field)));
+        assertThat(partialDateTime.getMinute()).hasValue(value);
     }
 
     @Test
@@ -287,19 +275,19 @@ public final class PartialDateTimeTest {
         final PartialField field = PartialField.MINUTE;
         final int value = TEST_FIELD_VALUES.get(field);
         final PartialDateTime partialDateTime = EMPTY_INSTANCE.withMinute(value);
-        assertEquals(value, partialDateTime.get(field).orElseThrow(() -> new AssertionError("empty " + field)));
-        assertEquals(partialDateTime, partialDateTime.withMinute(value));
+        assertThat(partialDateTime.get(field)).hasValue(value);
+        assertThat(partialDateTime.withMinute(value)).isEqualTo(partialDateTime);
     }
 
     @Test
     public void testWithoutMinute() {
         final PartialField field = PartialField.MINUTE;
-        assertFalse(field.toString(), SAMPLE_INSTANCE.withoutMinute().get(field).isPresent());
+        assertThat(SAMPLE_INSTANCE.withoutMinute().get(field)).as(field.toString()).isNotPresent();
     }
 
     @Test
     public void testGetHourEmpty() {
-        assertEquals(OptionalInt.empty(), EMPTY_INSTANCE.getHour());
+        assertThat(EMPTY_INSTANCE.getHour()).isNotPresent();
     }
 
     @Test
@@ -307,7 +295,7 @@ public final class PartialDateTimeTest {
         final PartialField field = PartialField.HOUR;
         final int value = TEST_FIELD_VALUES.get(field);
         final PartialDateTime partialDateTime = EMPTY_INSTANCE.with(field, value);
-        assertEquals(value, partialDateTime.getHour().orElseThrow(() -> new AssertionError("empty " + field)));
+        assertThat(partialDateTime.getHour()).hasValue(value);
     }
 
     @Test
@@ -315,20 +303,20 @@ public final class PartialDateTimeTest {
         final PartialField field = PartialField.HOUR;
         final int value = TEST_FIELD_VALUES.get(field);
         final PartialDateTime partialDateTime = EMPTY_INSTANCE.withHour(value);
-        assertEquals(value, partialDateTime.get(field).orElseThrow(() -> new AssertionError("empty " + field)));
-        assertEquals(partialDateTime, partialDateTime.withHour(value));
+        assertThat(partialDateTime.get(field)).hasValue(value);
+        assertThat(partialDateTime.withHour(value)).isEqualTo(partialDateTime);
     }
 
     @Test
     public void testWithoutHour() {
         final PartialField field = PartialField.HOUR;
         final PartialDateTime partialDateTime = SAMPLE_INSTANCE.without(PartialField.DAY);
-        assertFalse(field.toString(), partialDateTime.withoutHour().get(field).isPresent());
+        assertThat(partialDateTime.withoutHour().get(field)).as(field.toString()).isNotPresent();
     }
 
     @Test
     public void testGetDayEmpty() {
-        assertEquals(OptionalInt.empty(), EMPTY_INSTANCE.getDay());
+        assertThat(EMPTY_INSTANCE.getDay()).isNotPresent();
     }
 
     @Test
@@ -336,7 +324,7 @@ public final class PartialDateTimeTest {
         final PartialField field = PartialField.DAY;
         final int value = TEST_FIELD_VALUES.get(field);
         final PartialDateTime partialDateTime = EMPTY_INSTANCE.with(field, value);
-        assertEquals(value, partialDateTime.getDay().orElseThrow(() -> new AssertionError("empty " + field)));
+        assertThat(partialDateTime.getDay()).hasValue(value);
     }
 
     @Test
@@ -344,31 +332,31 @@ public final class PartialDateTimeTest {
         final PartialField field = PartialField.DAY;
         final int value = TEST_FIELD_VALUES.get(field);
         final PartialDateTime partialDateTime = EMPTY_INSTANCE.withDay(value);
-        assertEquals(value, partialDateTime.get(field).orElseThrow(() -> new AssertionError("empty " + field)));
-        assertEquals(partialDateTime, partialDateTime.withDay(value));
+        assertThat(partialDateTime.get(field)).hasValue(value);
+        assertThat(partialDateTime.withDay(value)).isEqualTo(partialDateTime);
     }
 
     @Test
     public void testWithoutDay() {
         final PartialField field = PartialField.DAY;
-        assertFalse(field.toString(), SAMPLE_INSTANCE.withoutDay().get(field).isPresent());
+        assertThat(SAMPLE_INSTANCE.withoutDay().get(field)).as(field.toString()).isNotPresent();
     }
 
     @Test
     public void testGetZoneEmpty() {
-        assertEquals(Optional.empty(), EMPTY_INSTANCE.getZone());
+        assertThat(EMPTY_INSTANCE.getZone()).isNotPresent();
     }
 
     @Test
     public void testGetZone() {
         final ZoneId zone = ZoneOffset.UTC;
         final PartialDateTime partialDateTime = EMPTY_INSTANCE.withZone(zone);
-        assertEquals(zone, partialDateTime.getZone().orElseThrow(() -> new AssertionError("empty zone")));
+        assertThat(partialDateTime.getZone()).hasValue(zone);
     }
 
     @Test
     public void testWithoutZone() {
-        assertFalse(SAMPLE_INSTANCE.withoutZone().getZone().isPresent());
+        assertThat(SAMPLE_INSTANCE.withoutZone().getZone()).isNotPresent();
     }
 
     @Parameters({ //
@@ -378,7 +366,7 @@ public final class PartialDateTimeTest {
     @Test
     public void testIsMidnight(final boolean expectedResult, final String partialDateTimeString) {
         final PartialDateTime partialDateTime = PartialDateTime.parse(partialDateTimeString);
-        assertEquals(partialDateTime.toString(), expectedResult, partialDateTime.isMidnight());
+        assertThat(partialDateTime.isMidnight()).as(partialDateTime.toString()).isEqualTo(expectedResult);
     }
 
     @Parameters({ //
@@ -388,7 +376,7 @@ public final class PartialDateTimeTest {
     @Test
     public void testIsMidnight24h(final boolean expectedResult, final String partialDateTimeString) {
         final PartialDateTime partialDateTime = PartialDateTime.parse(partialDateTimeString);
-        assertEquals(partialDateTime.toString(), expectedResult, partialDateTime.isMidnight24h());
+        assertThat(partialDateTime.isMidnight24h()).as(partialDateTime.toString()).isEqualTo(expectedResult);
     }
 
     @Parameters({ //
@@ -408,7 +396,7 @@ public final class PartialDateTimeTest {
     }
 
     private void testWithMidnight00h(final PartialDateTime expected, final PartialDateTime partialDateTime, final YearMonth reference) {
-        assertEquals(String.format("%s.withMidnight00h(%s)", partialDateTime, reference), expected, partialDateTime.withMidnight00h(reference));
+        assertThat(partialDateTime.withMidnight00h(reference)).as("%s.withMidnight00h(%s)", partialDateTime, reference).isEqualTo(expected);
     }
 
     @Parameters({ //
@@ -428,13 +416,13 @@ public final class PartialDateTimeTest {
     }
 
     private void testWithMidnight24h(final PartialDateTime expected, final PartialDateTime partialDateTime, final YearMonth reference) {
-        assertEquals(String.format("%s.withMidnight24h(%s)", partialDateTime, reference), expected, partialDateTime.withMidnight24h(reference));
+        assertThat(partialDateTime.withMidnight24h(reference)).as("%s.withMidnight24h(%s)", partialDateTime, reference).isEqualTo(expected);
     }
 
     @Parameters
     @Test
     public void testRepresentsStrictly(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
-        assertEquals(String.format("%s.representsStrict(%s)", partialDateTime, temporal), expected, partialDateTime.representsStrict(temporal));
+        assertThat(partialDateTime.representsStrict(temporal)).as("%s.representsStrict(%s)", partialDateTime, temporal).isEqualTo(expected);
     }
 
     public List<Object[]> parametersForTestRepresentsStrictly() {
@@ -493,7 +481,7 @@ public final class PartialDateTimeTest {
     @Parameters
     @Test
     public void testRepresentsLoosely(final boolean expected, final PartialDateTime partialDateTime, final Temporal temporal) {
-        assertEquals(String.format("%s.represents(%s)", partialDateTime, temporal), expected, partialDateTime.represents(temporal));
+        assertThat(partialDateTime.represents(temporal)).as("%s.represents(%s)", partialDateTime, temporal).isEqualTo(expected);
     }
 
     public List<Object[]> parametersForTestRepresentsLoosely() {
@@ -560,14 +548,14 @@ public final class PartialDateTimeTest {
     @Test
     public void testToTACString(final String expected, final int day, final int hour, final int minute, final String zoneId) {
         final PartialDateTime partialDateTime = createPartialDateTime(day, hour, minute, zoneId);
-        assertEquals(expected, partialDateTime.toTACString());
+        assertThat(partialDateTime.toTACString()).isEqualTo(expected);
     }
 
     @Parameters(source = PartialDateTimeStringProvider.class)
     @Test
     public void testToString(final String expected, final int day, final int hour, final int minute, final String zoneId) {
         final PartialDateTime partialDateTime = createPartialDateTime(day, hour, minute, zoneId);
-        assertEquals(expected, partialDateTime.toString());
+        assertThat(partialDateTime.toString()).isEqualTo(expected);
     }
 
     @Parameters({ //
@@ -580,7 +568,7 @@ public final class PartialDateTimeTest {
     }
 
     private void testToZonedDateTimeYearMonth(final ZonedDateTime expected, final PartialDateTime partialDateTime, final YearMonth issueDate) {
-        assertEquals(String.format("%s.toZonedDateTime(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
+        assertThat(partialDateTime.toZonedDateTime(issueDate)).as("%s.toZonedDateTime(%s)", partialDateTime, issueDate).isEqualTo(expected);
     }
 
     @Parameters({ //
@@ -598,14 +586,16 @@ public final class PartialDateTimeTest {
     }
 
     private void testToZonedDateTimeYearMonthInvalid(final PartialDateTime partialDateTime, final YearMonth issueDate) {
-        final Class<? extends Throwable> expectedException = DateTimeException.class;
-        thrown.expect(expectedException);
-        thrown.expectMessage(partialDateTime.toString());
-        if (partialDateTime.getDay().isPresent()) {
-            thrown.expectMessage(issueDate.toString());
-        }
-        final ZonedDateTime result = partialDateTime.toZonedDateTime(issueDate);
-        fail(String.format("Expected %s but got result: %s", expectedException, result));
+        final Class<DateTimeException> expectedException = DateTimeException.class;
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(partialDateTime.toZonedDateTime(issueDate)))//
+                .withMessageContaining(partialDateTime.toString())//
+                .satisfies(exception -> {
+                    if (partialDateTime.getDay().isPresent()) {
+                        assertThat(exception).hasMessageContaining(issueDate.toString());
+                    }
+                });
     }
 
     @Parameters({ //
@@ -625,7 +615,7 @@ public final class PartialDateTimeTest {
     }
 
     private void testToZonedDateTimeLocalDate(final ZonedDateTime expected, final PartialDateTime partialDateTime, final LocalDate issueDate) {
-        assertEquals(String.format("%s.toZonedDateTime(%s)", partialDateTime, issueDate), expected, partialDateTime.toZonedDateTime(issueDate));
+        assertThat(partialDateTime.toZonedDateTime(issueDate)).as("%s.toZonedDateTime(%s)", partialDateTime, issueDate).isEqualTo(expected);
     }
 
     @Parameters({ //
@@ -643,13 +633,15 @@ public final class PartialDateTimeTest {
 
     private void testToZonedDateTimeLocalDateInvalid(final PartialDateTime partialDateTime, final LocalDate issueDate) {
         final Class<? extends Throwable> expectedException = DateTimeException.class;
-        thrown.expect(expectedException);
-        thrown.expectMessage(partialDateTime.toString());
-        if (partialDateTime.getHour().isPresent()) {
-            thrown.expectMessage(issueDate.toString());
-        }
-        final ZonedDateTime result = partialDateTime.toZonedDateTime(issueDate);
-        fail(String.format("Expected %s but got result: %s", expectedException, result));
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(partialDateTime.toZonedDateTime(issueDate)))//
+                .withMessageContaining(partialDateTime.toString())//
+                .satisfies(exception -> {
+                    if (partialDateTime.getHour().isPresent()) {
+                        assertThat(exception).hasMessageContaining(issueDate.toString());
+                    }
+                });
     }
 
     @Parameters({ //
@@ -889,8 +881,8 @@ public final class PartialDateTimeTest {
 
     private void testToZonedDateTimeCondition(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
             final ReferenceCondition condition) {
-        assertEquals(String.format("%s.toZonedDateTime(%s, %s)", partialDateTime, referenceTime, condition), expected,
-                partialDateTime.toZonedDateTime(referenceTime, condition));
+        assertThat(partialDateTime.toZonedDateTime(referenceTime, condition)).as("%s.toZonedDateTime(%s, %s)", partialDateTime, referenceTime, condition)
+                .isEqualTo(expected);
     }
 
     @Parameters({ //
@@ -1241,10 +1233,10 @@ public final class PartialDateTimeTest {
 
     private void testToZonedDateTimeConditionRange(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
             final ReferenceCondition condition, final boolean strictCondition, final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
-        assertEquals(String.format("%s.toZonedDateTime(%s, %s, %s, %s, %s)", partialDateTime, referenceTime, condition, strictCondition, rangeStartInclusive,
-                rangeEndExclusive), //
-                expected, //
-                partialDateTime.toZonedDateTime(referenceTime, condition, strictCondition, rangeStartInclusive, rangeEndExclusive));
+        assertThat(partialDateTime.toZonedDateTime(referenceTime, condition, strictCondition, rangeStartInclusive, rangeEndExclusive))//
+                .as("%s.toZonedDateTime(%s, %s, %s, %s, %s)", partialDateTime, referenceTime, condition, strictCondition, rangeStartInclusive,
+                        rangeEndExclusive)//
+                .isEqualTo(expected);
     }
 
     @Parameters({//
@@ -1444,15 +1436,19 @@ public final class PartialDateTimeTest {
     private void testToZonedDateTimeConditionRangeInvalid(final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
             final ReferenceCondition condition, final boolean strictCondition, final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
         final Class<? extends Throwable> expectedException = DateTimeException.class;
-        thrown.expect(expectedException);
-        if (PartialDateTime.DateTimeRanges.isValid(rangeStartInclusive, rangeEndExclusive)) {
-            thrown.expectMessage(partialDateTime.toString());
-            thrown.expectMessage(referenceTime.toString());
-        }
-        thrown.expectMessage(rangeStartInclusive.toString());
-        thrown.expectMessage(rangeEndExclusive.toString());
-        final ZonedDateTime result = partialDateTime.toZonedDateTime(referenceTime, condition, strictCondition, rangeStartInclusive, rangeEndExclusive);
-        fail(String.format("Expected %s but got result: %s", expectedException, result));
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(
+                        partialDateTime.toZonedDateTime(referenceTime, condition, strictCondition, rangeStartInclusive, rangeEndExclusive)))//
+                .satisfies(exception -> {
+                    if (PartialDateTime.DateTimeRanges.isValid(rangeStartInclusive, rangeEndExclusive)) {
+                        assertThat(exception)//
+                                .hasMessageContaining(partialDateTime.toString())//
+                                .hasMessageContaining(referenceTime.toString());
+                    }
+                })//
+                .withMessageContaining(rangeStartInclusive.toString())//
+                .withMessageContaining(rangeEndExclusive.toString());
     }
 
     @Parameters({ //
@@ -1558,7 +1554,7 @@ public final class PartialDateTimeTest {
     }
 
     private void testToZonedDateTimeNear(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
-        assertEquals(String.format("%s.toZonedDateTimeNear(%s)", partialDateTime, referenceTime), expected, partialDateTime.toZonedDateTimeNear(referenceTime));
+        assertThat(partialDateTime.toZonedDateTimeNear(referenceTime)).as("%s.toZonedDateTimeNear(%s)", partialDateTime, referenceTime).isEqualTo(expected);
     }
 
     @Parameters({ //
@@ -1573,11 +1569,11 @@ public final class PartialDateTimeTest {
 
     private void testToZonedDateTimeNearInvalid(final PartialDateTime partialDateTime, final ZonedDateTime referenceTime) {
         final Class<? extends Throwable> expectedException = DateTimeException.class;
-        thrown.expect(expectedException);
-        thrown.expectMessage(partialDateTime.toString());
-        thrown.expectMessage(referenceTime.toString());
-        final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(referenceTime);
-        fail(String.format("Expected %s but got result: %s", expectedException, result));
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(partialDateTime.toZonedDateTimeNear(referenceTime)))//
+                .withMessageContaining(partialDateTime.toString())//
+                .withMessageContaining(referenceTime.toString());
     }
 
     @Parameters({ //
@@ -1674,8 +1670,9 @@ public final class PartialDateTimeTest {
 
     public void testToZonedDateTimeNearWithinRange(final ZonedDateTime expected, final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
             final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
-        assertEquals(String.format("%s.toZonedDateTimeNear(%s, %s, %s)", partialDateTime, referenceTime, rangeStartInclusive, rangeEndExclusive), //
-                expected, partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive));
+        assertThat(partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive))//
+                .as("%s.toZonedDateTimeNear(%s, %s, %s)", partialDateTime, referenceTime, rangeStartInclusive, rangeEndExclusive)//
+                .isEqualTo(expected);
     }
 
     @Parameters({ //
@@ -1709,15 +1706,18 @@ public final class PartialDateTimeTest {
     private void testToZonedDateTimeNearWithinRangeInvalid(final PartialDateTime partialDateTime, final ZonedDateTime referenceTime,
             final ZonedDateTime rangeStartInclusive, final ZonedDateTime rangeEndExclusive) {
         final Class<? extends Throwable> expectedException = DateTimeException.class;
-        thrown.expect(expectedException);
-        if (PartialDateTime.DateTimeRanges.isValid(rangeStartInclusive, rangeEndExclusive)) {
-            thrown.expectMessage(partialDateTime.toString());
-            thrown.expectMessage(referenceTime.toString());
-        }
-        thrown.expectMessage(rangeStartInclusive.toString());
-        thrown.expectMessage(rangeEndExclusive.toString());
-        final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive);
-        fail(String.format("Expected %s but got result: %s", expectedException, result));
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(partialDateTime.toZonedDateTimeNear(referenceTime, rangeStartInclusive, rangeEndExclusive)))//
+                .satisfies(exception -> {
+                    if (PartialDateTime.DateTimeRanges.isValid(rangeStartInclusive, rangeEndExclusive)) {
+                        assertThat(exception)//
+                                .hasMessageContaining(partialDateTime.toString())//
+                                .hasMessageContaining(referenceTime.toString());
+                    }
+                })//
+                .withMessageContaining(rangeStartInclusive.toString())//
+                .withMessageContaining(rangeEndExclusive.toString());
     }
 
     @Test
@@ -1732,18 +1732,17 @@ public final class PartialDateTimeTest {
         // Different zones may cause range bounds over LocalDateTime.MIN/MAX. This should not cause completion fail.
         final ZonedDateTime result = partialDateTime.toZonedDateTimeNear(reference, rangeStart, rangeEnd);
 
-        final ZonedDateTime expected = reference;
-        assertEquals(reference + " in " + targetZone, expected, result);
+        assertThat(result).as("%s in %s", reference, targetZone).isEqualTo(reference);
     }
 
     @Test
     public void testOfDayHourMinuteZoneInts() {
         final PartialDateTime partialDateTime = PartialDateTime.ofDayHourMinuteZone(TEST_DAY, TEST_HOUR, TEST_MINUTE, TEST_ZONE);
 
-        assertEquals("day", OptionalInt.of(TEST_DAY), partialDateTime.getDay());
-        assertEquals("hour", OptionalInt.of(TEST_HOUR), partialDateTime.getHour());
-        assertEquals("minute", OptionalInt.of(TEST_MINUTE), partialDateTime.getMinute());
-        assertEquals("zone", Optional.of(TEST_ZONE), partialDateTime.getZone());
+        assertThat(partialDateTime.getDay()).as("day").hasValue(TEST_DAY);
+        assertThat(partialDateTime.getHour()).as("hour").hasValue(TEST_HOUR);
+        assertThat(partialDateTime.getMinute()).as("minute").hasValue(TEST_MINUTE);
+        assertThat(partialDateTime.getZone()).as("zone").hasValue(TEST_ZONE);
     }
 
     @Parameters({//
@@ -1755,7 +1754,7 @@ public final class PartialDateTimeTest {
     @Test
     public void testOfDayHourMinuteZoneTemporal(final String expected, final String zonedDateTime, final boolean midnight24h) {
         final ZonedDateTime dateTime = ZonedDateTime.parse(zonedDateTime);
-        assertEquals(PartialDateTime.parse(expected), PartialDateTime.ofDayHourMinuteZone(dateTime.toLocalDateTime(), midnight24h, dateTime.getZone()));
+        assertThat(PartialDateTime.ofDayHourMinuteZone(dateTime.toLocalDateTime(), midnight24h, dateTime.getZone())).isEqualTo(PartialDateTime.parse(expected));
     }
 
     @Parameters({//
@@ -1766,12 +1765,12 @@ public final class PartialDateTimeTest {
     })
     @Test
     public void testOfDayHourMinuteZoneZonedDateTime(final String expected, final String zonedDateTime, final boolean midnight24h) {
-        assertEquals(PartialDateTime.parse(expected), PartialDateTime.ofDayHourMinuteZone(ZonedDateTime.parse(zonedDateTime), midnight24h));
+        assertThat(PartialDateTime.ofDayHourMinuteZone(ZonedDateTime.parse(zonedDateTime), midnight24h)).isEqualTo(PartialDateTime.parse(expected));
     }
 
     @Test
     public void testOfDayHourMinuteInts() {
-        assertEquals(PartialDateTime.parse("--02T03:04"), PartialDateTime.ofDayHourMinute(TEST_DAY, TEST_HOUR, TEST_MINUTE));
+        assertThat(PartialDateTime.ofDayHourMinute(TEST_DAY, TEST_HOUR, TEST_MINUTE)).isEqualTo(PartialDateTime.parse("--02T03:04"));
     }
 
     @Parameters({//
@@ -1782,12 +1781,12 @@ public final class PartialDateTimeTest {
     })
     @Test
     public void testOfDayHourMinuteTemporal(final String expected, final String zonedDateTime, final boolean midnight24h) {
-        assertEquals(PartialDateTime.parse(expected), PartialDateTime.ofDayHourMinute(LocalDateTime.parse(zonedDateTime), midnight24h));
+        assertThat(PartialDateTime.ofDayHourMinute(LocalDateTime.parse(zonedDateTime), midnight24h)).isEqualTo(PartialDateTime.parse(expected));
     }
 
     @Test
     public void testOfDayHourInts() {
-        assertEquals(PartialDateTime.parse("--02T03:"), PartialDateTime.ofDayHour(TEST_DAY, TEST_HOUR));
+        assertThat(PartialDateTime.ofDayHour(TEST_DAY, TEST_HOUR)).isEqualTo(PartialDateTime.parse("--02T03:"));
     }
 
     @Parameters({//
@@ -1798,12 +1797,12 @@ public final class PartialDateTimeTest {
     })
     @Test
     public void testOfDayHourTemporal(final String expected, final String zonedDateTime, final boolean midnight24h) {
-        assertEquals(PartialDateTime.parse(expected), PartialDateTime.ofDayHour(LocalDateTime.parse(zonedDateTime), midnight24h));
+        assertThat(PartialDateTime.ofDayHour(LocalDateTime.parse(zonedDateTime), midnight24h)).isEqualTo(PartialDateTime.parse(expected));
     }
 
     @Test
     public void testOfHourMinuteInts() {
-        assertEquals(PartialDateTime.parse("--T03:04"), PartialDateTime.ofHourMinute(TEST_HOUR, TEST_MINUTE));
+        assertThat(PartialDateTime.ofHourMinute(TEST_HOUR, TEST_MINUTE)).isEqualTo(PartialDateTime.parse("--T03:04"));
     }
 
     @Parameters({//
@@ -1814,12 +1813,12 @@ public final class PartialDateTimeTest {
     })
     @Test
     public void testOfHourMinuteTemporal(final String expected, final String zonedDateTime, final boolean midnight24h) {
-        assertEquals(PartialDateTime.parse(expected), PartialDateTime.ofHourMinute(LocalDateTime.parse(zonedDateTime), midnight24h));
+        assertThat(PartialDateTime.ofHourMinute(LocalDateTime.parse(zonedDateTime), midnight24h)).isEqualTo(PartialDateTime.parse(expected));
     }
 
     @Test
     public void testOfHourInts() {
-        assertEquals(PartialDateTime.parse("--T03:"), PartialDateTime.ofHour(TEST_HOUR));
+        assertThat(PartialDateTime.ofHour(TEST_HOUR)).isEqualTo(PartialDateTime.parse("--T03:"));
     }
 
     @Parameters({//
@@ -1830,13 +1829,13 @@ public final class PartialDateTimeTest {
     })
     @Test
     public void testOfHourTemporal(final String expected, final String zonedDateTime, final boolean midnight24h) {
-        assertEquals(PartialDateTime.parse(expected), PartialDateTime.ofHour(LocalDateTime.parse(zonedDateTime), midnight24h));
+        assertThat(PartialDateTime.ofHour(LocalDateTime.parse(zonedDateTime), midnight24h)).isEqualTo(PartialDateTime.parse(expected));
     }
 
     @Parameters
     @Test
     public void testOfFieldInt(final PartialField field, final int value) {
-        assertEquals(OptionalInt.of(value), PartialDateTime.of(field, value).get(field));
+        assertThat(PartialDateTime.of(field, value).get(field)).hasValue(value);
     }
 
     public List<Object[]> parametersForTestOfFieldInt() {
@@ -1852,7 +1851,7 @@ public final class PartialDateTimeTest {
         final Set<PartialField> fields = testFieldValues.keySet();
         final int[] values = testFieldValues.values().stream().mapToInt(Integer::intValue).toArray();
 
-        assertEquals(expected, PartialDateTime.of(fields, values));
+        assertThat(PartialDateTime.of(fields, values)).isEqualTo(expected);
     }
 
     @Parameters({//
@@ -1904,17 +1903,17 @@ public final class PartialDateTimeTest {
 
     private void testOfZonedDateTime(final PartialDateTime expected, final ZonedDateTime zonedDateTime, final Set<PartialField> fields, final boolean useZone,
             final int midnightHour) {
-        assertEquals(expected, PartialDateTime.of(zonedDateTime, fields, useZone, midnightHour));
+        assertThat(PartialDateTime.of(zonedDateTime, fields, useZone, midnightHour)).isEqualTo(expected);
     }
 
     @Parameters(source = PartialDateTimeStringProvider.class)
     @Test
     public void testParse(final String partialDateTimeString, final int day, final int hour, final int minute, final String zoneId) {
         final PartialDateTime partialDateTime = PartialDateTime.parse(partialDateTimeString);
-        assertEquals("day", day, partialDateTime.getDay().orElse(-1));
-        assertEquals("hour", hour, partialDateTime.getHour().orElse(-1));
-        assertEquals("minute", minute, partialDateTime.getMinute().orElse(-1));
-        assertEquals("zone", createZone(zoneId), partialDateTime.getZone());
+        assertThat(partialDateTime.getDay().orElse(-1)).as("day").isEqualTo(day);
+        assertThat(partialDateTime.getHour().orElse(-1)).as("hour").isEqualTo(hour);
+        assertThat(partialDateTime.getMinute().orElse(-1)).as("minute").isEqualTo(minute);
+        assertThat(partialDateTime.getZone()).as("zone").isEqualTo(createZone(zoneId));
     }
 
     @Parameters({ //
@@ -1936,9 +1935,11 @@ public final class PartialDateTimeTest {
     })
     @Test
     public void testParseInvalid(final String partialDateTimeString) {
-        thrown.expect(DateTimeParseException.class);
-        thrown.expectMessage(partialDateTimeString);
-        PartialDateTime.parse(partialDateTimeString);
+        final Class<DateTimeParseException> expectedException = DateTimeParseException.class;
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(PartialDateTime.parse(partialDateTimeString)))//
+                .withMessageContaining(partialDateTimeString);
     }
 
     @Parameters(source = TACStringProvider.class)
@@ -1946,10 +1947,10 @@ public final class PartialDateTimeTest {
     public void testParseTACString(final String tacString, final int day, final int hour, final int minute, final String zoneId) {
         final Optional<ZoneId> zone = createZone(zoneId);
         final PartialDateTime partialDateTime = PartialDateTime.parseTACString(tacString, precision(day, hour, minute));
-        assertEquals("day", day, partialDateTime.getDay().orElse(-1));
-        assertEquals("hour", hour, partialDateTime.getHour().orElse(-1));
-        assertEquals("minute", minute, partialDateTime.getMinute().orElse(-1));
-        assertEquals("zone", zone, partialDateTime.getZone());
+        assertThat(partialDateTime.getDay().orElse(-1)).as("day").isEqualTo(day);
+        assertThat(partialDateTime.getHour().orElse(-1)).as("hour").isEqualTo(hour);
+        assertThat(partialDateTime.getMinute().orElse(-1)).as("minute").isEqualTo(minute);
+        assertThat(partialDateTime.getZone()).as("zone").isEqualTo(zone);
     }
 
     @Parameters({ //
@@ -1976,18 +1977,20 @@ public final class PartialDateTimeTest {
     public void testParseTACStringWithPrecision(final String expectedPartialDateTimeString, final String tacString, final PartialField precision) {
         final PartialDateTime partialDateTime = PartialDateTime.parseTACString(tacString, precision);
         final PartialDateTime expected = PartialDateTime.parse(expectedPartialDateTimeString);
-        assertEquals(expected, partialDateTime);
+        assertThat(partialDateTime).isEqualTo(expected);
     }
 
     @Parameters({ "0, 0", "0, 0Z", "0, 2", "0, 2Z", "2, 000", "2, 000Z", "2, 023", "2, 023Z", "4, 00000", "4, 00000Z", "4, 02034", "4, 02034Z", "6, 02030405",
             "6, 02030405Z", "0, 0b", "0, b2", "2, 020b", "2, 02b3" })
     @Test
     public void testParseTACStringInvalid(final int errorIndex, final String tacString) {
-        thrown.expect(DateTimeParseException.class);
-        thrown.expectMessage(tacString);
-        thrown.expect(feature("parsedString", DateTimeParseException::getParsedString, is(equalTo(tacString))));
-        thrown.expect(feature("errorIndex", DateTimeParseException::getErrorIndex, is(equalTo(errorIndex))));
-        PartialDateTime.parseTACString(tacString, PartialField.MINUTE);
+        final Class<DateTimeParseException> expectedException = DateTimeParseException.class;
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(PartialDateTime.parseTACString(tacString, PartialField.MINUTE)))//
+                .withMessageContaining(tacString)//
+                .satisfies(exception -> assertThat(exception.getParsedString()).as("parsedString").isEqualTo(tacString))//
+                .satisfies(exception -> assertThat(exception.getErrorIndex()).as("errorIndex").isEqualTo(errorIndex));
     }
 
     @Parameters(source = TACStringProvider.class)
@@ -1995,10 +1998,10 @@ public final class PartialDateTimeTest {
     public void testParseTACStringStrict(final String tacString, final int day, final int hour, final int minute, final String zoneId) {
         final Optional<ZoneId> zone = createZone(zoneId);
         final PartialDateTime partialDateTime = PartialDateTime.parseTACStringStrict(tacString, existingFields(day, hour, minute), zone.isPresent());
-        assertEquals("day", day, partialDateTime.getDay().orElse(-1));
-        assertEquals("hour", hour, partialDateTime.getHour().orElse(-1));
-        assertEquals("minute", minute, partialDateTime.getMinute().orElse(-1));
-        assertEquals("zone", zone, partialDateTime.getZone());
+        assertThat(partialDateTime.getDay().orElse(-1)).as("day").isEqualTo(day);
+        assertThat(partialDateTime.getHour().orElse(-1)).as("hour").isEqualTo(hour);
+        assertThat(partialDateTime.getMinute().orElse(-1)).as("minute").isEqualTo(minute);
+        assertThat(partialDateTime.getZone()).as("zone").isEqualTo(zone);
     }
 
     @Parameters({ //
@@ -2027,11 +2030,31 @@ public final class PartialDateTimeTest {
                 .filter(fieldName -> !fieldName.isEmpty())//
                 .map(PartialField::valueOf)//
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(PartialField.class)));
-        thrown.expect(DateTimeParseException.class);
-        thrown.expectMessage(tacString);
-        thrown.expect(feature("parsedString", DateTimeParseException::getParsedString, is(equalTo(tacString))));
-        thrown.expect(feature("errorIndex", DateTimeParseException::getErrorIndex, is(equalTo(errorIndex))));
-        PartialDateTime.parseTACStringStrict(tacString, hasFields, hasZone);
+        final Class<DateTimeParseException> expectedException = DateTimeParseException.class;
+        final ExpectedExceptionDescription description = new ExpectedExceptionDescription(expectedException);
+        assertThatExceptionOfType(expectedException).as(description)//
+                .isThrownBy(() -> description.setUnexpectedResult(PartialDateTime.parseTACStringStrict(tacString, hasFields, hasZone)))//
+                .withMessageContaining(tacString)//
+                .satisfies(exception -> assertThat(exception.getParsedString()).as("parsedString").isEqualTo(tacString))//
+                .satisfies(exception -> assertThat(exception.getErrorIndex()).as("errorIndex").isEqualTo(errorIndex));
+    }
+
+    private static final class ExpectedExceptionDescription extends Description {
+        private final Class<? extends Throwable> expectedException;
+        private Object unexpectedResult;
+
+        private ExpectedExceptionDescription(final Class<? extends Throwable> expectedException) {
+            this.expectedException = expectedException;
+        }
+
+        @Override
+        public String value() {
+            return String.format(Locale.US, "Expected %s but got result: %s", expectedException, unexpectedResult);
+        }
+
+        public void setUnexpectedResult(final Object unexpectedResult) {
+            this.unexpectedResult = unexpectedResult;
+        }
     }
 
     public static final class TestFieldValuesProvider {

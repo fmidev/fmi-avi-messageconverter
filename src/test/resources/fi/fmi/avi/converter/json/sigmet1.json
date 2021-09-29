@@ -1,5 +1,5 @@
 {
-  "status": "NORMAL",
+  "reportStatus": "NORMAL",
   "issuingAirTrafficServicesUnit": {
     "name": "AMSTERDAM FIR",
     "type": "FIR",
@@ -15,9 +15,9 @@
     "completeTime": "2017-08-27T11:30:00Z"
   },
   "airspace": {
-    "designator":"EHAA",
-    "name":"AMSTERDAM",
-    "type":"FIR"
+    "designator": "EHAA",
+    "name": "AMSTERDAM",
+    "type": "FIR"
   },
   "validityPeriod": {
     "startTime": {
@@ -28,10 +28,8 @@
     }
   },
   "sigmetPhenomenon": "EMBD_TS",
-  "permissibleUsage":"NON_OPERATIONAL",
-  "permissibleUsageReason":"EXERCISE",
-  "analysisType": "OBSERVATION",
-  "intensityChange": "NO_CHANGE",
+  "permissibleUsage": "NON_OPERATIONAL",
+  "permissibleUsageReason": "EXERCISE",
   "analysisGeometries": [
     {
       "time": {
@@ -45,6 +43,8 @@
         "value": 35.0,
         "uom": "FL"
       },
+      "analysisType": "OBSERVATION",
+      "intensityChange": "NO_CHANGE",
       "approximateLocation": false,
       "geometry": {
         "geoGeometry": {
@@ -63,8 +63,9 @@
       }
     }
   ],
-  "forecastGeometries":[{
-      "time":  {
+  "forecastGeometries": [
+    {
+      "time": {
         "completeTime": "2017-08-27T18:00:00Z"
       },
       "approximateLocation": false,

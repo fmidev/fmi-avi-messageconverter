@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.taf.impl;
+package fi.fmi.avi.model.taf.immutable;
 
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -17,14 +17,12 @@ import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.taf.TAF;
-import fi.fmi.avi.model.taf.immutable.TAFBulletinImpl;
-import fi.fmi.avi.model.taf.immutable.TAFImpl;
 
-public class TAFBulletinTest {
+public final class TAFBulletinTest {
 
     @Test
     public void testTAFBulletinLengthConsistentLong() throws Exception {
-        final TAF t = JSONTestUtil.readFromJSON(this.getClass().getResourceAsStream("taf1.json"), TAFImpl.class);
+        final TAF t = JSONTestUtil.readFromJSON(TAFBulletinTest.class.getResourceAsStream("taf1.json"), TAFImpl.class);
         final AerodromeImpl.Builder airportBuilder = AerodromeImpl.builder()//
                 .setDesignator("EETN")//
                 .setName("Vaasa Airport")//

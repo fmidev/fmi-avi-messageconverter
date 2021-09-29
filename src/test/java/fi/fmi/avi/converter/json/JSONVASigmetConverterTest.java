@@ -1,12 +1,13 @@
 package fi.fmi.avi.converter.json;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 
 import org.junit.Test;
@@ -29,6 +30,7 @@ import fi.fmi.avi.converter.ConversionResult;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
@@ -65,9 +67,19 @@ public class JSONVASigmetConverterTest {
         for (final ConversionIssue iss : result.getConversionIssues()) {
             System.err.println("  ISS:" + iss.getMessage() + " " + iss.getCause());
         }
-        System.err.println("SM:" + result.getStatus() + " ==>");
-        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
-        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
+    }
+    @Test
+    public void testSIGMETParsingNOVAEXP() throws Exception {
+        final InputStream is = JSONVASigmetConverterTest.class.getResourceAsStream("vasigmet_novaexp.json");
+        Objects.requireNonNull(is);
+        final String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        for (final ConversionIssue iss : result.getConversionIssues()) {
+            System.err.println("  ISS:" + iss.getMessage() + " " + iss.getCause());
+        }
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
     @Test
@@ -81,7 +93,7 @@ public class JSONVASigmetConverterTest {
         final String reference = IOUtils.toString(is, "UTF-8");
         is.close();
 
-        final SIGMETImpl.Builder builder = new SIGMETImpl.Builder();
+        final SIGMETImpl.Builder builder = SIGMETImpl.builder();
 
         final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
         final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build();
@@ -94,21 +106,22 @@ public class JSONVASigmetConverterTest {
         final Geometry fpaGeom = om.readValue(fpaGeomString, Geometry.class);
 
         final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
-        final List<Geometry> geoms = Arrays.asList(geom);
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
         geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
         geomBuilder.setApproximateLocation(false);
+        geomBuilder.setIntensityChange(SigmetIntensityChange.NO_CHANGE);
+        geomBuilder.setAnalysisType(SigmetAnalysisType.OBSERVATION);
 
         final PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
         fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
         fpGeomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
         fpGeomBuilder.setApproximateLocation(false);
 
-        final PartialOrCompleteTimeInstant.Builder issueTimeBuilder = new PartialOrCompleteTimeInstant.Builder();
+        final PartialOrCompleteTimeInstant.Builder issueTimeBuilder = PartialOrCompleteTimeInstant.builder();
         issueTimeBuilder.setCompleteTime(ZonedDateTime.parse("2017-08-27T11:30:00Z"));
-        final PartialOrCompleteTimePeriod.Builder validPeriod = new PartialOrCompleteTimePeriod.Builder();
+        final PartialOrCompleteTimePeriod.Builder validPeriod = PartialOrCompleteTimePeriod.builder();
         validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
         validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
@@ -122,7 +135,8 @@ public class JSONVASigmetConverterTest {
         final VAInfoImpl.Builder vaInfoBuilder = new VAInfoImpl.Builder();
         vaInfoBuilder.setVolcano(volcanoBuilder.build());
 
-        builder.setStatus(AviationCodeListUser.SigmetAirmetReportStatus.NORMAL)
+        builder.setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
+                .setCancelMessage(false)
                 .setMeteorologicalWatchOffice(mwo)
                 .setIssuingAirTrafficServicesUnit(fir)
                 .setAirspace(airspace)
@@ -133,35 +147,26 @@ public class JSONVASigmetConverterTest {
                 .setTranslated(false)
                 .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setValidityPeriod(validPeriod.build())
-                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
-                .setAnalysisGeometries(Arrays.asList(geomBuilder.build()))
-                .setForecastGeometries(Arrays.asList(fpGeomBuilder.build()))
+
+
+                .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()))
+                .setForecastGeometries(Collections.singletonList(fpGeomBuilder.build()))
                 .setVAInfo(vaInfoBuilder.build());
 
         final SIGMET vaSigmet = builder.build();
 
         final ConversionResult<String> result = converter.convertMessage(vaSigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
-        assertTrue(ConversionResult.Status.SUCCESS == result.getStatus());
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
-        System.err.println("Converted: " + result.getConvertedMessage().get());
 
         final SIGMET refVaSigmet = om.readValue(reference, SIGMETImpl.class);
-        System.err.println("refVaSigmet: " + refVaSigmet);
 
         final SIGMET newVaSigmet = om.readValue(result.getConvertedMessage().get(), SIGMETImpl.class);
 
         final JsonNode refTree = om.readTree(reference);
         final JsonNode newTree = om.readTree(result.getConvertedMessage().get());
-        try {
-            System.err.println("REF: " + om.writerWithDefaultPrettyPrinter().writeValueAsString(refTree));
-            System.err.println("NEW: " + om.writerWithDefaultPrettyPrinter().writeValueAsString(newTree));
-        } catch (final Exception e) {
-            System.err.println("EXCEPTION: " + e);
-        }
 
-        System.err.println("ref=new: " + refVaSigmet.equals(newVaSigmet));
-        System.err.println("EQTREE: " + refTree.equals(newTree));
+        assertEquals("Strings do not match ", refVaSigmet, newVaSigmet);
 
         assertEquals("Strings do not match ", refTree, newTree);
 

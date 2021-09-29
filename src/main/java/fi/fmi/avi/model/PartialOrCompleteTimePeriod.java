@@ -89,15 +89,10 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     public boolean isComplete() {
         final Optional<PartialOrCompleteTimeInstant> start = getStartTime();
         final Optional<PartialOrCompleteTimeInstant> end = getEndTime();
-        if (start.isPresent()) {
-            if (!start.get().getCompleteTime().isPresent()) {
-                return false;
-            }
+        if (start.isPresent() && !start.get().getCompleteTime().isPresent()) {
+            return false;
         }
-        if (end.isPresent()) {
-            return end.get().getCompleteTime().isPresent();
-        }
-        return true;
+        return end.map(partialOrCompleteTimeInstant -> partialOrCompleteTimeInstant.getCompleteTime().isPresent()).orElse(true);
     }
 
     /**

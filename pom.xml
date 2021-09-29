@@ -12,13 +12,13 @@
   <description>Aviation weather message conversions</description>
   <groupId>fi.fmi.avi.converter</groupId>
   <artifactId>fmi-avi-messageconverter</artifactId>
-  <version>4.0.4.K-SNAPSHOT</version>
+  <version>6.0.10.KNMI-add-sigmet-tac-2-SNAPSHOT</version>
 
   <scm>
     <connection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</connection>
     <developerConnection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</developerConnection>
     <url>https://github.com/fmidev/fmi-avi-messageconverter</url>
-    <tag>fmi-avi-messageconverter-4.0.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencyManagement>
@@ -87,6 +87,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.15.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.unitils</groupId>
       <artifactId>unitils-core</artifactId>
       <version>3.4.6</version>
@@ -95,7 +101,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.8.9</version>
+      <version>2.28.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -107,18 +113,18 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>26.0-jre</version>
+      <version>28.1-jre</version>
       <type>bundle</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava-testlib</artifactId>
-      <version>26.0-jre</version>
+      <version>28.1-jre</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <repositories>
     <!-- Needed to resolve parent pom during deploy -->
     <repository>
@@ -138,7 +144,7 @@
       <url>${env.CI_SERVER_URL}/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
     </repository>
   </repositories>
-  
+
   <build>
     <plugins>
       <plugin>

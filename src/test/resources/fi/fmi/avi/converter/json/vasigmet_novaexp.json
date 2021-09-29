@@ -1,0 +1,96 @@
+{
+  "reportStatus": "NORMAL",
+  "issuingAirTrafficServicesUnit": {
+    "name": "AMSTERDAM",
+    "type": "FIR",
+    "designator": "EHAA"
+  },
+  "meteorologicalWatchOffice": {
+    "name": "De Bilt",
+    "type": "MWO",
+    "designator": "EHDB"
+  },
+  "sequenceNumber": "1",
+  "issueTime": {
+    "completeTime": "2017-08-27T11:30:00Z"
+  },
+  "validityPeriod": {
+    "startTime": {
+      "completeTime": "2017-08-27T11:30:00Z"
+    },
+    "endTime": {
+      "completeTime": "2017-08-27T18:00:00Z"
+    }
+  },
+  "airspace": {
+    "designator": "EHAA",
+    "name": "AMSTERDAM",
+    "type": "FIR"
+  },
+  "sigmetPhenomenon": "EMBD_TS",
+  "permissibleUsage": "NON_OPERATIONAL",
+  "permissibleUsageReason": "EXERCISE",
+  "analysisGeometries": [
+    {
+      "time": {
+        "completeTime": "2017-08-27T12:00:00Z"
+      },
+      "lowerLimit": {
+        "value": 10.0,
+        "uom": "FL"
+      },
+      "upperLimit": {
+        "value": 35.0,
+        "uom": "FL"
+      },
+      "intensityChange": "NO_CHANGE",
+      "analysisType": "OBSERVATION",
+      "approximateLocation": false,
+      "geometry": {
+        "geoGeometry": {
+          "type": "Polygon",
+          "exteriorRingPositions": [
+            5.0,
+            52.0,
+            6.0,
+            53.0,
+            4.0,
+            54.0,
+            5.0,
+            52.0
+          ]
+        }
+      }
+    }
+  ],
+  "forecastGeometries": [
+    {
+      "time": {
+        "completeTime": "2017-08-27T18:00:00Z"
+      },
+      "approximateLocation": false,
+      "geometry": {},
+      "noVaExpected": true
+    }
+  ],
+  "VAInfo": {
+    "volcano": {
+      "volcanoPosition": {
+        "type": "ElevatedPoint",
+        "crs": {
+          "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+          "dimension": 2,
+          "axisLabels": [
+            "Lat",
+            "Lon"
+          ]
+        },
+        "coordinates": [
+          52.0,
+          5.2
+        ]
+      },
+      "volcanoName": "GRIMSVOTN"
+    }
+  }
+}

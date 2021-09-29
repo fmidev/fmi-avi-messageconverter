@@ -1,12 +1,9 @@
 package fi.fmi.avi.model.taf;
 
+import static fi.fmi.avi.model.BuilderHelper.toImmutableList;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.immutable.CloudForecastImpl;
@@ -121,27 +118,5 @@ public final class TAFForecastBuilderHelper {
                     .map(CloudForecastImpl::immutableCopyOf)//
                     .ifPresent(builder::setCloud);
         }
-    }
-
-    /**
-     * Return an immutable copy of provided list converting each element to immutable.
-     *
-     * @param list
-     *         source list
-     * @param toImmutable
-     *         function converting element to immutable
-     * @param <T>
-     *         base type of elements
-     * @param <I>
-     *         immutable type of elements
-     *
-     * @return immutable copy
-     */
-    public static <T, I extends T> List<T> toImmutableList(final List<T> list, final Function<T, I> toImmutable) {
-        requireNonNull(list, "list");
-        requireNonNull(toImmutable, "toImmutable");
-        return list.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(list.stream()//
-                .map(toImmutable)//
-                .collect(Collectors.toList()));
     }
 }
