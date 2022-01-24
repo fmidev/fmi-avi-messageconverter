@@ -1,6 +1,9 @@
 package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.PolygonGeometry;
+import fi.fmi.avi.util.geoutil.GeoUtils;
 
 @FreeBuilder
 @JsonDeserialize(builder = PolygonGeometryImpl.Builder.class)
@@ -61,5 +65,28 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
         public Builder setCrs(final CoordinateReferenceSystem crs) {
             return super.setCrs(crs);
         }
+
+        @Override
+        public List<Double> getExteriorRingPositions() {
+            return getExteriorRingPositions(true);
+        }
+
+        public List<Double> getExteriorRingPositions(boolean CW) {
+            //Make sure returned polygon has returned winding
+            ArrayList<Double> points = new ArrayList<>(super.getExteriorRingPositions());
+            if (CW) {
+              if (GeoUtils.getWinding(getExteriorRingPositions())==GeoUtils.Winding.CCW) {
+                Collections.reverse(points);
+                return points;
+              }
+            } else {
+              if (GeoUtils.getWinding(getExteriorRingPositions())==GeoUtils.Winding.CW) {
+                Collections.reverse(points);
+                return points;
+              }
+            }
+            return points;
+        }
+
     }
 }

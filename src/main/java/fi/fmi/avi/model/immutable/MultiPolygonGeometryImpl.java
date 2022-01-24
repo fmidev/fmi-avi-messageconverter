@@ -1,6 +1,9 @@
 package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.MultiPolygonGeometry;
+import fi.fmi.avi.util.geoutil.GeoUtils;
 
 @FreeBuilder
 @JsonDeserialize(builder = MultiPolygonGeometryImpl.Builder.class)
@@ -61,6 +65,31 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
         @Override
         public Builder setCrs(final CoordinateReferenceSystem crs) {
             return super.setCrs(crs);
+        }
+
+        @Override
+        public List<List<Double>> getExteriorRingPositions() {
+            return getExteriorRingPositions(true);
+        }
+
+       // @Override
+        public List<List<Double>> getExteriorRingPositions(boolean CW) {
+            ArrayList<List<Double>> partPolygons = new ArrayList<>();
+            for (List<Double>partPolygon: super.getExteriorRingPositions()) {
+                ArrayList<Double> positions = new ArrayList<>(partPolygon);
+                if (CW) {
+                  if (GeoUtils.getWinding(positions)==GeoUtils.Winding.CCW) {
+                    Collections.reverse(positions);
+                  }
+                  partPolygons.add(positions);
+                } else {
+                  if (GeoUtils.getWinding(positions)==GeoUtils.Winding.CW) {
+                    Collections.reverse(positions);
+                  }
+                  partPolygons.add(positions);
+                }
+            }
+            return partPolygons;
         }
     }
 }
