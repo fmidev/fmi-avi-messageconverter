@@ -1,8 +1,6 @@
 package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,6 +40,17 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
         return polygonsGeometry.map(PolygonGeometryImpl::immutableCopyOf);
     }
 
+    @Override
+    public Winding getExteriorRingWinding() {
+        List<Double>positions = getExteriorRingPositions();
+        return GeoUtils.getWinding(positions);
+    }
+
+    @Override
+    public List<Double> getExteriorRingPositions(Winding winding) {
+        return GeoUtils.enforceWinding(getExteriorRingPositions(), winding);
+    }
+
     public abstract Builder toBuilder();
 
     public static class Builder extends PolygonGeometryImpl_Builder {
@@ -64,28 +73,6 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
         @Override
         public Builder setCrs(final CoordinateReferenceSystem crs) {
             return super.setCrs(crs);
-        }
-
-        @Override
-        public List<Double> getExteriorRingPositions() {
-            return getExteriorRingPositions(true);
-        }
-
-        public List<Double> getExteriorRingPositions(boolean CW) {
-            //Make sure returned polygon has returned winding
-            ArrayList<Double> points = new ArrayList<>(super.getExteriorRingPositions());
-            if (CW) {
-              if (GeoUtils.getWinding(getExteriorRingPositions())==GeoUtils.Winding.CCW) {
-                Collections.reverse(points);
-                return points;
-              }
-            } else {
-              if (GeoUtils.getWinding(getExteriorRingPositions())==GeoUtils.Winding.CW) {
-                Collections.reverse(points);
-                return points;
-              }
-            }
-            return points;
         }
 
     }

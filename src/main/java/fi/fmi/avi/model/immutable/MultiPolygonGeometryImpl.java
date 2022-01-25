@@ -42,6 +42,16 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
         return polygonsGeometry.map(MultiPolygonGeometryImpl::immutableCopyOf);
     }
 
+    @Override
+    public List<List<Double>> getExteriorRingPositions(Winding winding) {
+        List<List<Double>> newPolygons = new ArrayList<>();
+        for (List<Double> partPolygon: getExteriorRingPositions()) {
+            List<Double> polygon = GeoUtils.enforceWinding(partPolygon, winding);
+            newPolygons.add(polygon);
+        }
+        return newPolygons;
+    }
+
     public abstract Builder toBuilder();
 
     public static class Builder extends MultiPolygonGeometryImpl_Builder {
@@ -67,29 +77,5 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
             return super.setCrs(crs);
         }
 
-        @Override
-        public List<List<Double>> getExteriorRingPositions() {
-            return getExteriorRingPositions(true);
-        }
-
-       // @Override
-        public List<List<Double>> getExteriorRingPositions(boolean CW) {
-            ArrayList<List<Double>> partPolygons = new ArrayList<>();
-            for (List<Double>partPolygon: super.getExteriorRingPositions()) {
-                ArrayList<Double> positions = new ArrayList<>(partPolygon);
-                if (CW) {
-                  if (GeoUtils.getWinding(positions)==GeoUtils.Winding.CCW) {
-                    Collections.reverse(positions);
-                  }
-                  partPolygons.add(positions);
-                } else {
-                  if (GeoUtils.getWinding(positions)==GeoUtils.Winding.CW) {
-                    Collections.reverse(positions);
-                  }
-                  partPolygons.add(positions);
-                }
-            }
-            return partPolygons;
-        }
     }
 }

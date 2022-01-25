@@ -2,6 +2,7 @@ package fi.fmi.avi.util.geoutil;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,6 +20,8 @@ import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.fmi.avi.model.Geometry.Winding;
+
 public class GeoUtils {
   private static final Logger log = LoggerFactory.getLogger(GeoUtils.class);
 
@@ -26,8 +29,6 @@ public class GeoUtils {
   private static ObjectMapper om;
   private static GeoJsonReader reader;
   private static GeoJsonWriter writer;
-
-  public enum Winding { CW, CCW};
 
   private static GeometryFactory getGeometryFactory() {
     if (gf == null) {
@@ -88,9 +89,31 @@ public class GeoUtils {
     return f;
   }
 
+  public static List<Double> enforceWinding(List<Double> positions, Winding winding) {
+    List<Coordinate> coords = new ArrayList<>();
+    for (int i=0; i<positions.size(); i=i+2) {
+      coords.add(new Coordinate(positions.get(i), positions.get(i+1)));
+    }
+    if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
+        if (winding.equals(Winding.CW)) {
+          Collections.reverse(coords);
+        }
+    } else {
+        if (winding.equals(Winding.CCW)) {
+            Collections.reverse(coords);
+        }
+    }
+    List<Double> newPositions = new ArrayList<>();
+    for (Coordinate c: coords) {
+        newPositions.add(c.x);
+        newPositions.add(c.y);
+    }
+    return newPositions;
+  }
+
   public static Winding getWinding(List<Double> positions){
     List<Coordinate> coords = new ArrayList<>();
-    for (int i=0; i<positions.size()/2; i++) {
+    for (int i=0; i<positions.size(); i=i+2) {
       coords.add(new Coordinate(positions.get(i), positions.get(i+1)));
     }
     if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
