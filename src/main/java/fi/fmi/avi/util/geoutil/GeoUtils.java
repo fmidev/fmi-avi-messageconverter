@@ -89,24 +89,24 @@ public class GeoUtils {
     return f;
   }
 
-  public static List<Double> enforceWinding(List<Double> positions, Winding winding) {
+  public static List<Double> enforceWinding(List<Double> positions, Winding requestedWinding) {
     List<Coordinate> coords = new ArrayList<>();
     for (int i=0; i<positions.size(); i=i+2) {
-      coords.add(new Coordinate(positions.get(i), positions.get(i+1)));
+      coords.add(new Coordinate(positions.get(i+1), positions.get(i)));
     }
     if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
-        if (winding.equals(Winding.CW)) {
+        if (requestedWinding.equals(Winding.CW)) {
           Collections.reverse(coords);
         }
     } else {
-        if (winding.equals(Winding.CCW)) {
+        if (requestedWinding.equals(Winding.CCW)) {
             Collections.reverse(coords);
         }
     }
     List<Double> newPositions = new ArrayList<>();
     for (Coordinate c: coords) {
-        newPositions.add(c.x);
         newPositions.add(c.y);
+        newPositions.add(c.x);
     }
     return newPositions;
   }
@@ -114,7 +114,7 @@ public class GeoUtils {
   public static Winding getWinding(List<Double> positions){
     List<Coordinate> coords = new ArrayList<>();
     for (int i=0; i<positions.size(); i=i+2) {
-      coords.add(new Coordinate(positions.get(i), positions.get(i+1)));
+      coords.add(new Coordinate(positions.get(i+1), positions.get(i)));
     }
     if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
       return Winding.CCW;
