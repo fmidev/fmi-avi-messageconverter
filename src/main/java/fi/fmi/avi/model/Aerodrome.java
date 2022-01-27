@@ -19,5 +19,4 @@ public interface Aerodrome {
 
     Optional<ElevatedPoint> getReferencePoint();
 
-
 }
