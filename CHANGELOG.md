@@ -35,9 +35,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Added a utility and a model to parse and serialize GTS exchange file structure. [#83]
+- Added a utility and a model to parse and serialize GTS exchange file structure. [#83], [#93]
 - Enabled invalid BBB augmentation indicator handling in bulletin heading. [#90]
-- Added Javadoc to the public static methods in GTSExchangeFileTemplate. [#93]
+- Add xmlNamespace in GenericAviationWeatherMessage [#92]
+- Dependency updates [#98]
 
 ### Changed
 
