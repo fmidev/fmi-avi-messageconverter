@@ -1,15 +1,7 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
 import fi.fmi.avi.JSONTestUtil;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
@@ -17,6 +9,12 @@ import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.ElevatedPointImpl;
 import fi.fmi.avi.model.taf.TAF;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public final class TAFBulletinTest {
 
@@ -42,7 +40,6 @@ public final class TAFBulletinTest {
 
         final TAFBulletinImpl.Builder bulletinBuilder = TAFBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//
-                        .setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//
@@ -78,7 +75,6 @@ public final class TAFBulletinTest {
 
         final TAFBulletinImpl.Builder bulletinBuilder = TAFBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//
-                        .setType(BulletinHeading.Type.NORMAL)//
                         .setGeographicalDesignator("FI")//
                         .setLocationIndicator("EFKL")//
                         .setBulletinNumber(31)//

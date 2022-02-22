@@ -1,21 +1,16 @@
 package fi.fmi.avi.util;
 
+import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
+import org.inferred.freebuilder.FreeBuilder;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.inferred.freebuilder.FreeBuilder;
-
-import fi.fmi.avi.model.bulletin.BulletinHeading;
-import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
 @FreeBuilder
 public abstract class GTSExchangeFileInfo implements Serializable {
@@ -107,7 +102,7 @@ public abstract class GTSExchangeFileInfo implements Serializable {
         sb.append(String.format("%02d", minute.getAsInt()));
 
         //BBB:
-        final Optional<Integer> augNumber = this.getHeading().getBulletinAugmentationNumber();
+        final Optional<Integer> augNumber = this.getHeading().getAugmentationNumber();
         if (augNumber.isPresent()) {
             int seqNumber = augNumber.get();
             seqNumber = 'A' + seqNumber - 1;
