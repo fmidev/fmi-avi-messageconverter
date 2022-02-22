@@ -88,3 +88,7 @@ Previous changelog entries are available on [GitHub releases page](https://githu
 [#90]: https://github.com/fmidev/fmi-avi-messageconverter/issues/90
 
 [#93]: https://github.com/fmidev/fmi-avi-messageconverter/issues/93
+
+[#92]: https://github.com/fmidev/fmi-avi-messageconverter/pull/92
+
+[#98]: https://github.com/fmidev/fmi-avi-messageconverter/pull/98
