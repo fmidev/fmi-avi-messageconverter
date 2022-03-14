@@ -273,6 +273,21 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH = "WHITESPACE_SERIALIZATION_PASSTHROUGH";
 
     /**
+     * Controls if zero values for the minute part of point coordinates are dropped (default) or not
+     */
+    public static final Key KEY_SPECIFY_ZERO_MINUTES_IN_COORDINATES;
+
+    /**
+     * Drop zero value for the minute part of point coordinates, i.e. E002 for 2 degrees East
+     */
+    public static final Object VALUE_DROP_ZERO_MINUTES="DROP_ZERO_MINUTES";
+
+    /**
+     * Always specify zero value for the minute part of point coordinates, i.e. E00200 for 2 degrees East (for KNMI SIGMET/AIRMET)
+     */
+    public static final Object VALUE_SPECIFY_ZERO_MINUTES="SPECIFY_ZERO_MINUTES";
+
+    /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#METAR}.
      */
     public static final ConversionHints METAR;
@@ -368,6 +383,9 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
 
         KEY_WHITESPACE_SERIALIZATION_MODE = new KeyImpl(14, "Controls message white space serialization in TAC bulletins",
                 VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM, VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH);
+
+        KEY_SPECIFY_ZERO_MINUTES_IN_COORDINATES = new KeyImpl(20, "Controls whether a zero value for minutes in coordinates is dropped",
+                VALUE_DROP_ZERO_MINUTES, VALUE_SPECIFY_ZERO_MINUTES) ;
 
         METAR = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.METAR);
         TAF = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.TAF);
