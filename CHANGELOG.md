@@ -31,7 +31,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ...
 
-## [v5.0.0] - 2014-04-13
+## [v6.0.0] - 2022-02-22
+
+### Added
+
+- Added a utility and a model to parse and serialize GTS exchange file structure. [#83], [#93]
+- Enabled invalid BBB augmentation indicator handling in bulletin heading. [#90]
+- Add xmlNamespace in GenericAviationWeatherMessage [#92]
+- Dependency updates [#98]
+
+### Changed
+
+- Replaced GenericAviationMessage targetAerodrome property with a map of location indicators. [#85]
+
+## [v5.0.0] - 2021-04-13
 
 ### Added
 
@@ -54,7 +67,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Previous changelog entries are available on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
-[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-5.0.0...HEAD
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.0.0...HEAD
+
+[v6.0.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.0.0
 
 [v5.0.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-5.0.0
 
@@ -65,3 +80,15 @@ Previous changelog entries are available on [GitHub releases page](https://githu
 [#76]: https://github.com/fmidev/fmi-avi-messageconverter/issues/76
 
 [#80]: https://github.com/fmidev/fmi-avi-messageconverter/issues/80
+
+[#83]: https://github.com/fmidev/fmi-avi-messageconverter/issues/83
+
+[#85]: https://github.com/fmidev/fmi-avi-messageconverter/issues/85
+
+[#90]: https://github.com/fmidev/fmi-avi-messageconverter/issues/90
+
+[#93]: https://github.com/fmidev/fmi-avi-messageconverter/issues/93
+
+[#92]: https://github.com/fmidev/fmi-avi-messageconverter/pull/92
+
+[#98]: https://github.com/fmidev/fmi-avi-messageconverter/pull/98
