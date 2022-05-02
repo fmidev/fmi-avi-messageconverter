@@ -44,7 +44,15 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
 
     /**
      * Message type METAR.
-     *parent>Type#TAF} as the value instead
+     *
+     * @deprecated use {@link MessageType#METAR} as the value instead
+     */
+    public static final Object VALUE_MESSAGE_TYPE_METAR = "METAR";
+
+    /**
+     * Message type TAF.
+     *
+     * @deprecated use {@link MessageType#TAF} as the value instead
      */
     public static final Object VALUE_MESSAGE_TYPE_TAF = "TAF";
 
