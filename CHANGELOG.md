@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- ...
+- Add support for GTS socket protocol. [#101]
 
 ### Changed
 
@@ -92,3 +92,5 @@ Previous changelog entries are available on [GitHub releases page](https://githu
 [#92]: https://github.com/fmidev/fmi-avi-messageconverter/pull/92
 
 [#98]: https://github.com/fmidev/fmi-avi-messageconverter/pull/98
+
+[#101]: https://github.com/fmidev/fmi-avi-messageconverter/issues/101
