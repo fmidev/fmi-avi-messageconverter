@@ -17,6 +17,12 @@ import org.junit.Test;
 
 import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
 
+/**
+ * Deprecated.
+ *
+ * @deprecated along with {@link GTSExchangeFileTemplate}
+ */
+@Deprecated
 public class GTSExchangeFileTemplateTest {
     private static final String MESSAGE_LONG = "00000080" + "00" + "\u0001\r\r\n" //
             + "013" + "\r\r\n"//
@@ -108,11 +114,11 @@ public class GTSExchangeFileTemplateTest {
     @Test
     public void parseHeadingAndText_fails_when_heading_contains_line_break_characters() {
         final Stream<String> inputMessages = Stream.of(//
-                stringOf(CARRIAGE_RETURN), //
-                stringOf(LINE_FEED), //
-                stringOf(CARRIAGE_RETURN, LINE_FEED), //
-                stringOf(LINE_FEED, CARRIAGE_RETURN), //
-                stringOf(LINE_FEED, CARRIAGE_RETURN, LINE_FEED, LINE_FEED, CARRIAGE_RETURN, LINE_FEED))// Contains no CR+CR+LF sequence
+                        stringOf(CARRIAGE_RETURN), //
+                        stringOf(LINE_FEED), //
+                        stringOf(CARRIAGE_RETURN, LINE_FEED), //
+                        stringOf(LINE_FEED, CARRIAGE_RETURN), //
+                        stringOf(LINE_FEED, CARRIAGE_RETURN, LINE_FEED, LINE_FEED, CARRIAGE_RETURN, LINE_FEED))// Contains no CR+CR+LF sequence
                 .map(separator -> MESSAGE_HEADING + separator + MESSAGE_TEXT);
         assertThat(inputMessages)//
                 .allSatisfy(inputMessage -> assertThatExceptionOfType(GTSExchangeFileParseException.class)//
@@ -138,12 +144,12 @@ public class GTSExchangeFileTemplateTest {
     @Test
     public void parseHeadingAndTextLenient_interprets_any_combination_of_CR_and_LF_chars_as_heading_and_text_separator() {
         final Stream<String> inputMessages = Stream.of(//
-                GTSExchangeFileTemplate.TEXT_PREFIX, //
-                stringOf(CARRIAGE_RETURN), //
-                stringOf(LINE_FEED), //
-                stringOf(CARRIAGE_RETURN, LINE_FEED), //
-                stringOf(LINE_FEED, CARRIAGE_RETURN), //
-                stringOf(LINE_FEED, CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED, LINE_FEED, CARRIAGE_RETURN, CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED))//
+                        GTSExchangeFileTemplate.TEXT_PREFIX, //
+                        stringOf(CARRIAGE_RETURN), //
+                        stringOf(LINE_FEED), //
+                        stringOf(CARRIAGE_RETURN, LINE_FEED), //
+                        stringOf(LINE_FEED, CARRIAGE_RETURN), //
+                        stringOf(LINE_FEED, CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED, LINE_FEED, CARRIAGE_RETURN, CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED))//
                 .map(separator -> MESSAGE_HEADING + separator + MESSAGE_TEXT);
         assertThat(inputMessages).allSatisfy(message -> {
             final GTSExchangeFileTemplate.Builder builder = builder().parseHeadingAndTextLenient(message);
@@ -274,11 +280,11 @@ public class GTSExchangeFileTemplateTest {
     @Test
     public void parse_fails_on_format_00_message_when_heading_contains_line_break_characters() {
         final Stream<String> inputMessages = Stream.of(//
-                stringOf(CARRIAGE_RETURN), //
-                stringOf(LINE_FEED), //
-                stringOf(CARRIAGE_RETURN, LINE_FEED), //
-                stringOf(LINE_FEED, CARRIAGE_RETURN), //
-                stringOf(LINE_FEED, CARRIAGE_RETURN, LINE_FEED, LINE_FEED, CARRIAGE_RETURN, LINE_FEED))// Contains no CR+CR+LF sequence
+                        stringOf(CARRIAGE_RETURN), //
+                        stringOf(LINE_FEED), //
+                        stringOf(CARRIAGE_RETURN, LINE_FEED), //
+                        stringOf(LINE_FEED, CARRIAGE_RETURN), //
+                        stringOf(LINE_FEED, CARRIAGE_RETURN, LINE_FEED, LINE_FEED, CARRIAGE_RETURN, LINE_FEED))// Contains no CR+CR+LF sequence
                 .map(separator -> {
                     final String message = "\u0001\r\r\n" //
                             + "013" + "\r\r\n"//
@@ -296,11 +302,11 @@ public class GTSExchangeFileTemplateTest {
     @Test
     public void parse_fails_on_format_01_message_when_heading_contains_line_break_characters() {
         final Stream<String> inputMessages = Stream.of(//
-                stringOf(CARRIAGE_RETURN), //
-                stringOf(LINE_FEED), //
-                stringOf(CARRIAGE_RETURN, LINE_FEED), //
-                stringOf(LINE_FEED, CARRIAGE_RETURN), //
-                stringOf(LINE_FEED, CARRIAGE_RETURN, LINE_FEED, LINE_FEED, CARRIAGE_RETURN, LINE_FEED))// Contains no CR+CR+LF sequence
+                        stringOf(CARRIAGE_RETURN), //
+                        stringOf(LINE_FEED), //
+                        stringOf(CARRIAGE_RETURN, LINE_FEED), //
+                        stringOf(LINE_FEED, CARRIAGE_RETURN), //
+                        stringOf(LINE_FEED, CARRIAGE_RETURN, LINE_FEED, LINE_FEED, CARRIAGE_RETURN, LINE_FEED))// Contains no CR+CR+LF sequence
                 .map(separator -> {
                     final String message = "\r\r\n"//
                             + "FTYU31 YUDO 160000" + separator //
