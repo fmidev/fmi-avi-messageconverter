@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Add support for GTS socket protocol. [#101]
+- ...
 
 ### Changed
 
@@ -30,6 +30,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Security
 
 - ...
+
+## [v6.1.0] - 2022-06-06
+
+### Added
+
+- Add support for GTS socket protocol. [#101]
 
 ## [v6.0.0] - 2022-02-22
 
@@ -58,16 +64,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Deprecated
 
-- Deprecated TAFStatus, MetarStatus and SigmetAirmetReportStatus enums. AviationWeatherMessage.ReportStatus should be used instead. See the Javadocs on the
-  deprecated enums and methods that use them for more details.
+- Deprecated TAFStatus, MetarStatus and SigmetAirmetReportStatus enums. AviationWeatherMessage.ReportStatus should be
+  used instead. See the Javadocs on the deprecated enums and methods that use them for more details.
 - Deprecated TAFReference class.
 
 ## Past Changelog
 
-Previous changelog entries are available on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
+Previous changelog entries are available
+on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
-[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.0.0...HEAD
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.1.0...HEAD
+
+[v6.1.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.1.0
 
 [v6.0.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.0.0
 
