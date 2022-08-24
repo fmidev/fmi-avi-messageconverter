@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Add a general supertype AviationWeatherMessageCollection for MeteorologicalBulletin [#103]
+- ...
 
 ### Changed
 
@@ -30,6 +30,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Security
 
 - ...
+
+## [v6.2.0] - 2022-08-24
+
+### Added
+
+- Add a general supertype AviationWeatherMessageCollection for MeteorologicalBulletin [#103]
 
 ## [v6.1.0] - 2022-06-06
 
@@ -74,7 +80,9 @@ Previous changelog entries are available
 on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
-[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.1.0...HEAD
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.2.0...HEAD
+
+[v6.2.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.2.0
 
 [v6.1.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.1.0
 
