@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Add a general supertype AviationWeatherMessageCollection for MeteorologicalBulletin
+- Add a general supertype AviationWeatherMessageCollection for MeteorologicalBulletin [#103]
 
 ### Changed
 
@@ -103,3 +103,5 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 [#98]: https://github.com/fmidev/fmi-avi-messageconverter/pull/98
 
 [#101]: https://github.com/fmidev/fmi-avi-messageconverter/issues/101
+
+[#103]: https://github.com/fmidev/fmi-avi-messageconverter/pull/103
