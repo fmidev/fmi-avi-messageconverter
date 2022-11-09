@@ -124,19 +124,19 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>org.locationtech.jts.io</groupId>
-        <artifactId>jts-io-common</artifactId>
-        <version>1.18.1</version>
+      <groupId>org.locationtech.jts.io</groupId>
+      <artifactId>jts-io-common</artifactId>
+      <version>1.18.1</version>
     </dependency>
     <dependency>
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>20200518</version>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20200518</version>
     </dependency>
     <dependency>
-        <groupId>de.grundid.opendatalab</groupId>
-        <artifactId>geojson-jackson</artifactId>
-        <version>1.14</version>
+      <groupId>de.grundid.opendatalab</groupId>
+      <artifactId>geojson-jackson</artifactId>
+      <version>1.14</version>
     </dependency>
   </dependencies>
 
@@ -152,7 +152,7 @@
       <releases>
         <enabled>false</enabled>
       </releases>
-   </repository>
+    </repository>
 
     <repository>
       <id>gitlab-maven</id>
@@ -169,7 +169,7 @@
       </plugin>
     </plugins>
 
-     <!-- Overriding settings from parent pom: -->
+    <!-- Overriding settings from parent pom: -->
     <pluginManagement>
       <plugins>
         <plugin>
