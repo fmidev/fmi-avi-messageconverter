@@ -22,34 +22,30 @@ public class GeometryWindingTest {
 
     @Test
     public void testPolygonWinding() throws JsonProcessingException {
-        Double cwCoords[]={90.,-180., 90.,180., 60.,180., 60.,-180., 90.,-180.};
-        List<Double> cwCoordsList = Arrays.asList(cwCoords); //Y,X As they come out of getExteriorPoints
-        Double ccwCoords[]={90.,-180., 60.,-180., 60.,180., 90.,180., 90.,-180.};
-        List<Double> ccwCoordsList = Arrays.asList(ccwCoords);
+        // Y,X as they come out of getExteriorPoints
+        List<Double> cwCoordsList = Arrays.asList(90.0, -180.0, 90.0, 180.0, 60.0, 180.0, 60.0, -180.0, 90.0, -180.0);
+        List<Double> ccwCoordsList = Arrays.asList(90.0, -180.0, 60.0, -180.0, 60.0, 180.0, 90.0, 180.0, 90.0, -180.0);
 
-        PolygonGeometryImpl.Builder builder =  PolygonGeometryImpl.builder().addAllExteriorRingPositions(cwCoordsList);
+        PolygonGeometryImpl.Builder builder = PolygonGeometryImpl.builder().addAllExteriorRingPositions(cwCoordsList);
         PolygonGeometry ccmGeom = builder.build();
         assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions());
-        assertEquals(Winding.CW, ccmGeom.getExteriorRingWinding()); //Unchanged
+        assertEquals(Winding.CW, ccmGeom.getExteriorRingWinding()); // Unchanged
         assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CW));
         assertEquals(ccwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CCW));
     }
 
     @Test
     public void testMultiPolygonWinding() throws JsonProcessingException {
-        Double ccwCoords[][]={{1.,1., 2.,2., 2.,1., 1.,1.}, {10.,10., 12.,12., 15.,10., 10.,10.}};
-        List<List<Double>> ccwCoordsList = new ArrayList<>();
-        for (Double []partCoords: ccwCoords ) {
-            ccwCoordsList.add(Arrays.asList(partCoords));
-        }
+        final List<List<Double>> ccwCoordsList = Arrays.asList(
+                Arrays.asList(1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
+                Arrays.asList(10.0, 10.0, 12.0, 12.0, 15.0, 10.0, 10.0, 10.0));
 
-        Double cwCoords[][]={{1.,1., 2.,1., 2.,2., 1.,1.}, {10.,10., 15.,10., 12.,12., 10.,10.}};
-        List<List<Double>> cwCoordsList = new ArrayList<>();
-        for (Double []partCoords: cwCoords ) {
-            cwCoordsList.add(Arrays.asList(partCoords));
-        }
+        final List<List<Double>> cwCoordsList = Arrays.asList(
+                Arrays.asList(1.0, 1.0, 2.0, 1.0, 2.0, 2.0, 1.0, 1.0),
+                Arrays.asList(10.0, 10.0, 15.0, 10.0, 12.0, 12.0, 10.0, 10.0));
 
-        MultiPolygonGeometryImpl.Builder builder =  MultiPolygonGeometryImpl.builder().addAllExteriorRingPositions(cwCoordsList);
+        MultiPolygonGeometryImpl.Builder builder = MultiPolygonGeometryImpl.builder()
+                .addAllExteriorRingPositions(cwCoordsList);
         MultiPolygonGeometry ccmGeom = builder.build();
         assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions());
         assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CW));
