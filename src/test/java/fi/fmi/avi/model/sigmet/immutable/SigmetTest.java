@@ -55,13 +55,12 @@ public class SigmetTest {
         builder.setGeoGeometry(anGeometry.get());
         builder.setTacGeometry(TacGeometryImpl.builder().setData("ENTIRE FIR").build());
 
-        PhenomenonGeometryWithHeightImpl.Builder an=new PhenomenonGeometryWithHeightImpl.Builder()
+        PhenomenonGeometryWithHeightImpl.Builder an = new PhenomenonGeometryWithHeightImpl.Builder()
                 .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T13:50:00Z")))
                 .setGeometry(builder.build())
                 .setApproximateLocation(false)
                 .setIntensityChange(SigmetIntensityChange.WEAKENING)
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
-                ;
+                .setAnalysisType(SigmetAnalysisType.OBSERVATION);
         return an.build();
     }
 
@@ -82,12 +81,15 @@ public class SigmetTest {
     }
 
     public SIGMET buildSigmet() {
-        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR)
+                .setName("AMSTERDAM").build();
 
         final SIGMETImpl.Builder sm = SIGMETImpl.builder()
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T14:00:00Z")))
-                .setIssuingAirTrafficServicesUnit(new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAM", "FIR").build())
-                .setMeteorologicalWatchOffice(new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
+                .setIssuingAirTrafficServicesUnit(
+                        new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAM", "FIR").build())
+                .setMeteorologicalWatchOffice(
+                        new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
                 .setAirspace(airspace)
                 .setSequenceNumber("1")
                 .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
@@ -98,30 +100,30 @@ public class SigmetTest {
                 .setAnalysisGeometries(Collections.singletonList(getAnalysis()))
                 .setForecastGeometries(Collections.singletonList(getForecast()))
 
-
-                //                .setAnalysis(Collections.singletonList(getAnalysis()))
-                .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+                // .setAnalysis(Collections.singletonList(getAnalysis()))
+                .setPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setTranslated(false);
         return sm.build();
     }
 
     @Test
     public void testGeometry() throws IOException {
-        String geom="{\"tacGeometry\":{\"data\": \"ENTIRE FIR\"}, \"geoGeometry\": {\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
+        String geom = "{\"tacGeometry\":{\"data\": \"ENTIRE FIR\"}, \"geoGeometry\": {\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
 
         om.readValue(geom, TacOrGeoGeometry.class);
     }
 
     @Test
     public void testBuild() throws IOException {
-        SIGMET sm=buildSigmet();
-        assert(sm.areAllTimeReferencesComplete());
-        String json=om.writeValueAsString(sm);
-        JsonNode smNode=om.readTree(json.getBytes());
-        assert(!smNode.isNull());
-        assert(smNode.has("reportStatus"));
-        assert(smNode.get("reportStatus").asText().equals("NORMAL"));
-        assertEquals("ENTIRE FIR", smNode.get("analysisGeometries").get(0).get("geometry").get("tacGeometry").get("data").asText());
+        SIGMET sm = buildSigmet();
+        assert (sm.areAllTimeReferencesComplete());
+        String json = om.writeValueAsString(sm);
+        JsonNode smNode = om.readTree(json.getBytes());
+        assert (!smNode.isNull());
+        assert (smNode.has("reportStatus"));
+        assert (smNode.get("reportStatus").asText().equals("NORMAL"));
+        assertEquals("ENTIRE FIR",
+                smNode.get("analysisGeometries").get(0).get("geometry").get("tacGeometry").get("data").asText());
 
         om.readValue(json, SIGMETImpl.class);
     }

@@ -56,7 +56,8 @@ public class JSONSigmetConverterTest {
         Objects.requireNonNull(is);
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        final ConversionResult<SIGMET> result = converter.convertMessage(input,
+                JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
@@ -73,10 +74,13 @@ public class JSONSigmetConverterTest {
 
         final SIGMETImpl.Builder builder = SIGMETImpl.builder();
 
-        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
+        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO")
+                .build();
+        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder()
+                .setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
 
-        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR)
+                .setName("AMSTERDAM").build();
 
         final String geomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
         final Geometry geom = om.readValue(geomString, Geometry.class);
@@ -115,12 +119,13 @@ public class JSONSigmetConverterTest {
                 .setSequenceNumber("1")
 
                 .setValidityPeriod(validPeriod.build())
-                .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+                .setPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()))
                 .setForecastGeometries(Collections.singletonList(fpGeomBuilder.build()));
 
         final SIGMET sigmet = builder.build();
-        final ConversionResult<String> result = converter.convertMessage(sigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> result = converter.convertMessage(sigmet,
+                JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 

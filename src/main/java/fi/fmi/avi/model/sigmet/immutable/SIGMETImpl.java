@@ -37,10 +37,13 @@ import fi.fmi.avi.model.sigmet.VAInfo;
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime",
+@JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice",
+        "sequenceNumber", "issueTime",
         "validityPeriod", "airspace", "analysisGeometries", "forecastGeometries", "volcano", "noVolcanicAshExpected",
-        "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
-        "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
+        "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
+        "permissibleUsageSupplementary", "translated",
+        "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
+        "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class SIGMETImpl implements SIGMET, Serializable {
     private static final long serialVersionUID = -5959366555363410747L;
 
@@ -79,7 +82,8 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         }
         if (this.getAnalysisGeometries().isPresent()) {
             for (final PhenomenonGeometryWithHeight geometryWithHeight : this.getAnalysisGeometries().get()) {
-                if (geometryWithHeight.getTime().isPresent() && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
+                if (geometryWithHeight.getTime().isPresent()
+                        && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
@@ -91,7 +95,8 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                 }
             }
         }
-        return !this.getCancelledReference().isPresent() || (this.getCancelledReference().get().getValidityPeriod().isComplete());
+        return !this.getCancelledReference().isPresent()
+                || (this.getCancelledReference().get().getValidityPeriod().isComplete());
     }
 
     public static class Builder extends SIGMETImpl_Builder {
@@ -131,13 +136,14 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                         Builder::setAirspace, //
                         Builder::setCancelMessage);
                 return builder//
-                        .setSigmetPhenomenon(value.getSigmetPhenomenon())//
+                        .setPhenomenon(value.getPhenomenon())//
                         .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))//
                         .setAnalysisGeometries(value.getAnalysisGeometries()//
                                 .map(analysisGeometries -> BuilderHelper.toImmutableList(analysisGeometries,
                                         PhenomenonGeometryWithHeightImpl::immutableCopyOf)))//
                         .setForecastGeometries(value.getForecastGeometries()//
-                                .map(forecastGeometries -> BuilderHelper.toImmutableList(forecastGeometries, PhenomenonGeometryImpl::immutableCopyOf)))//
+                                .map(forecastGeometries -> BuilderHelper.toImmutableList(forecastGeometries,
+                                        PhenomenonGeometryImpl::immutableCopyOf)))//
                         .setVAInfo(VAInfoImpl.immutableCopyOf(value.getVAInfo()));
             }
         }
@@ -213,13 +219,17 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         /**
          * Provides the current builder value of the status property.
          *
-         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
-         * explicitly stored. This implementation uses {@link SigmetAirmetReportStatus#fromReportStatus(ReportStatus, boolean)} instead to determine the
+         * Note, this method is provided for backward compatibility with previous
+         * versions of the API. The <code>status</code> is no longer
+         * explicitly stored. This implementation uses
+         * {@link SigmetAirmetReportStatus#fromReportStatus(ReportStatus, boolean)}
+         * instead to determine the
          * returned value on-the-fly.
          *
          * @return the message status
          *
-         * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
+         * @deprecated migrate to using a combination of {@link #getReportStatus()} and
+         *             {@link #isCancelMessage()} instead
          */
         @Deprecated
         public SigmetAirmetReportStatus getStatus() {
@@ -229,28 +239,34 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         /**
          * Sets the SIGMET-specific message status.
          *
-         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
-         * explicitly stored. Instead, this method sets other property values with the following logic:
+         * Note, this method is provided for backward compatibility with previous
+         * versions of the API. The <code>status</code> is no longer
+         * explicitly stored. Instead, this method sets other property values with the
+         * following logic:
          * <dl>
-         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#CANCELLATION CANCELLATION}</dt>
-         *     <dd>
-         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
-         *         <code>cancelMessage = true</code><br>
-         *     </dd>
+         * <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#CANCELLATION
+         * CANCELLATION}</dt>
+         * <dd>
+         * <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         * <code>cancelMessage = true</code><br>
+         * </dd>
          *
-         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#NORMAL NORMAL}</dt>
-         *     <dd>
-         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
-         *         <code>cancelMessage = false</code><br>
-         *     </dd>
+         * <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#NORMAL
+         * NORMAL}</dt>
+         * <dd>
+         * <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         * <code>cancelMessage = false</code><br>
+         * </dd>
          * </dl>
          *
          * @param status
-         *         the status to set
+         *               the status to set
          *
          * @return builder
          *
-         * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)} and {@link #setCancelMessage(boolean)} instead
+         * @deprecated migrate to using a combination of
+         *             {@link #setReportStatus(ReportStatus)} and
+         *             {@link #setCancelMessage(boolean)} instead
          */
         @Deprecated
         public Builder setStatus(final SigmetAirmetReportStatus status) {

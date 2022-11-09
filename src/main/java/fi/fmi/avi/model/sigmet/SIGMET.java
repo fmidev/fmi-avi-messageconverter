@@ -8,7 +8,7 @@ import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SIGMETAIRMET;
 
 public interface SIGMET extends SIGMETAIRMET {
-    Optional<AeronauticalSignificantWeatherPhenomenon> getSigmetPhenomenon();
+    Optional<AeronauticalSignificantWeatherPhenomenon> getPhenomenon();
 
     Optional<SigmetReference> getCancelledReference();
 
@@ -16,5 +16,5 @@ public interface SIGMET extends SIGMETAIRMET {
 
     Optional<List<PhenomenonGeometry>> getForecastGeometries();
 
-    Optional<VAInfo> getVAInfo(); //If this is present this is a VASigmet
+    Optional<VAInfo> getVAInfo(); // If this is present this is a VASigmet
 }
