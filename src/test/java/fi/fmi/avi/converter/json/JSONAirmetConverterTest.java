@@ -54,7 +54,8 @@ public class JSONAirmetConverterTest {
         Objects.requireNonNull(is);
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        final ConversionResult<AIRMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_AIRMET_POJO, ConversionHints.EMPTY);
+        final ConversionResult<AIRMET> result = converter.convertMessage(input,
+                JSONConverter.JSON_STRING_TO_AIRMET_POJO, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
@@ -86,10 +87,13 @@ public class JSONAirmetConverterTest {
 
         final AIRMETImpl.Builder builder = AIRMETImpl.builder();
 
-        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
+        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO")
+                .build();
+        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder()
+                .setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
 
-        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR)
+                .setName("AMSTERDAM").build();
 
         final String geomString = "{\"type\": \"Polygon\", \"exteriorRingPositions\": [5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
         final Geometry geom = om.readValue(geomString, Geometry.class);
@@ -107,9 +111,9 @@ public class JSONAirmetConverterTest {
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
         geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
         geomBuilder.setMovingDirection(NumericMeasureImpl.of(180, "deg"))
-        .setMovingSpeed(NumericMeasureImpl.of(10, "[kn_i]"))
-        .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
-        .setAnalysisType(SigmetAnalysisType.OBSERVATION);
+                .setMovingSpeed(NumericMeasureImpl.of(10, "[kn_i]"))
+                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
+                .setAnalysisType(SigmetAnalysisType.OBSERVATION);
 
         builder.setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
                 .setCancelMessage(false)
@@ -122,12 +126,13 @@ public class JSONAirmetConverterTest {
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
                 .setSequenceNumber("1")
                 .setValidityPeriod(validPeriod.build())
-                .setAirmetPhenomenon(AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.MOD_ICE)
+                .setPhenomenon(AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.MOD_ICE)
                 .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()));
 
         final AIRMET airmet = builder.build();
 
-        final ConversionResult<String> result = converter.convertMessage(airmet, JSONConverter.AIRMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> result = converter.convertMessage(airmet,
+                JSONConverter.AIRMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
     }

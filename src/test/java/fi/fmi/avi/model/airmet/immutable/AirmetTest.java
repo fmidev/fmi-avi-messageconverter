@@ -55,21 +55,24 @@ public class AirmetTest {
                 PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T13:50:00Z")))
                 .setGeometry(TacOrGeoGeometryImpl.of(anGeometry.get()))
                 .setApproximateLocation(false)
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
-                ;
+                .setAnalysisType(SigmetAnalysisType.OBSERVATION);
         return an.build();
     }
 
     public AIRMET buildAirmet() {
-        final AirmetCloudLevelsImpl.Builder levels = new AirmetCloudLevelsImpl.Builder().setCloudBase(NumericMeasureImpl.of(0, "SFC"))
+        final AirmetCloudLevelsImpl.Builder levels = new AirmetCloudLevelsImpl.Builder()
+                .setCloudBase(NumericMeasureImpl.of(0, "SFC"))
                 .setCloudTop(NumericMeasureImpl.of(7000, "[ft_i]"));
 
-        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR)
+                .setName("AMSTERDAM").build();
 
         final AIRMETImpl.Builder sm = AIRMETImpl.builder()
                 .setIssueTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T14:00:00Z")))
-                .setIssuingAirTrafficServicesUnit(new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build())
-                .setMeteorologicalWatchOffice(new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
+                .setIssuingAirTrafficServicesUnit(
+                        new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build())
+                .setMeteorologicalWatchOffice(
+                        new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build())
                 .setAirspace(airspace)
                 .setSequenceNumber("1")
                 .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
@@ -79,7 +82,7 @@ public class AirmetTest {
                         .build())
                 .setAnalysisGeometries(Collections.singletonList(getAnalysis()))
 
-                .setAirmetPhenomenon(AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.BKN_CLD)
+                .setPhenomenon(AviationCodeListUser.AeronauticalAirmetWeatherPhenomenon.BKN_CLD)
                 .setCloudLevels(levels.build())
                 .setTranslated(false);
 
