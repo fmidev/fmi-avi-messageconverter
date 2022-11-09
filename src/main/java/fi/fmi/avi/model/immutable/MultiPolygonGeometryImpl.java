@@ -56,8 +56,7 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
 
     public static class Builder extends MultiPolygonGeometryImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final MultiPolygonGeometry value) {

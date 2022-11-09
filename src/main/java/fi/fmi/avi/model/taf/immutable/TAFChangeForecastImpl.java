@@ -58,8 +58,7 @@ public abstract class TAFChangeForecastImpl implements TAFChangeForecast, Serial
 
     public static class Builder extends TAFChangeForecastImpl_Builder implements TAFForecast.Builder<TAFChangeForecastImpl, Builder> {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);
         }

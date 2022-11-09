@@ -49,8 +49,7 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
 
     public static class Builder extends TAFBulletinImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final TAFBulletin value) {

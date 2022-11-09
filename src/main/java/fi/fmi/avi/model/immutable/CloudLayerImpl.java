@@ -48,8 +48,7 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
 
     public static class Builder extends CloudLayerImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final CloudLayer value) {

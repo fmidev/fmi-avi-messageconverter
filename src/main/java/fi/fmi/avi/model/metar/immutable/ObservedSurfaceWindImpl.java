@@ -50,8 +50,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
 
     public static class Builder extends ObservedSurfaceWindImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setVariableDirection(false);
         }
 

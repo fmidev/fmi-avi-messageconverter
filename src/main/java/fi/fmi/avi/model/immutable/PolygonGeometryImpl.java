@@ -55,8 +55,7 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
 
     public static class Builder extends PolygonGeometryImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final PolygonGeometry value) {

@@ -47,8 +47,7 @@ public abstract class AIRMETBulletinImpl implements AIRMETBulletin, Serializable
 
     public static class Builder extends AIRMETBulletinImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final AIRMETBulletin value) {

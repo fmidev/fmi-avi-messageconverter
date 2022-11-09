@@ -67,8 +67,7 @@ public abstract class METARImpl extends AbstractMeteorologicalTerminalAirReportI
 
     public static class Builder extends METARImpl_Builder implements MeteorologicalTerminalAirReportBuilder<METARImpl, Builder> {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setTranslated(false);
             setReportStatus(ReportStatus.NORMAL);
             setMissingMessage(false);

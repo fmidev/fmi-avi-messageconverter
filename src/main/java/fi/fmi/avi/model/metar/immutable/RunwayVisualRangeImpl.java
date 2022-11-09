@@ -62,8 +62,7 @@ public abstract class RunwayVisualRangeImpl implements RunwayVisualRange, Serial
 
     public static class Builder extends RunwayVisualRangeImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final RunwayVisualRange value) {

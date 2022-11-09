@@ -51,8 +51,7 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
 
     public static class Builder extends CloudForecastImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setVerticalVisibilityMissing(false);
             setNoSignificantCloud(false);
         }

@@ -49,8 +49,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
 
     public static class Builder extends ObservedCloudLayerImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setAmountNotDetectedByAutoSystem(false);
             setAmountUnobservableByAutoSystem(false);
             setHeightNotDetectedByAutoSystem(false);

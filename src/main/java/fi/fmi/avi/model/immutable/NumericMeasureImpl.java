@@ -55,8 +55,7 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
 
     public static class Builder extends NumericMeasureImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final NumericMeasure value) {

@@ -101,8 +101,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
 
     public static class Builder extends SIGMETImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             this.setTranslated(false);
             this.setReportStatus(ReportStatus.NORMAL);
             this.setCancelMessage(false);

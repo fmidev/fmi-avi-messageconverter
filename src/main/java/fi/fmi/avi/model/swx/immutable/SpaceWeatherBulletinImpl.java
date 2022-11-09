@@ -48,8 +48,7 @@ public abstract class SpaceWeatherBulletinImpl implements SpaceWeatherBulletin, 
     public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherBulletinImpl_Builder {
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final SpaceWeatherBulletin value) {

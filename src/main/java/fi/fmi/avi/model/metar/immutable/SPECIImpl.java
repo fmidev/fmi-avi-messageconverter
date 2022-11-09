@@ -66,8 +66,7 @@ public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportI
 
     public static class Builder extends SPECIImpl_Builder implements MeteorologicalTerminalAirReportBuilder<SPECIImpl, Builder> {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setTranslated(false);
             setReportStatus(ReportStatus.NORMAL);
             setMissingMessage(false);

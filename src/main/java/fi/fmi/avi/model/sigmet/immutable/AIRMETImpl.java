@@ -94,8 +94,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
 
     public static class Builder extends AIRMETImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setTranslated(false);
             this.setReportStatus(ReportStatus.NORMAL);
             this.setCancelMessage(false);

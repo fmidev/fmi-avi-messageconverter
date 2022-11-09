@@ -45,8 +45,8 @@ public abstract class TacGeometryImpl implements TacGeometry, Serializable {
     @SuppressWarnings("EmptyMethod")
     public static class Builder extends TacGeometryImpl_Builder {
 
-        @Deprecated
-        public Builder() {}
+        Builder() {
+        }
 
         public static Builder from(final TacGeometry value) {
             if (value instanceof TacGeometryImpl) {

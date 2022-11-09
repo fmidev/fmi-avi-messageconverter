@@ -47,8 +47,7 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
 
     public static class Builder extends AerodromeImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final Aerodrome value) {

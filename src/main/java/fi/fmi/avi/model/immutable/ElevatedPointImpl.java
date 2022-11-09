@@ -46,8 +46,7 @@ public abstract class ElevatedPointImpl implements ElevatedPoint, Serializable {
 
     public static class Builder extends ElevatedPointImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final ElevatedPoint value) {

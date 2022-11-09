@@ -66,8 +66,7 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
 
     public static class Builder extends TAFReferenceImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final TAFReference value) {

@@ -53,8 +53,7 @@ public abstract class CoordinateReferenceSystemImpl implements CoordinateReferen
     public abstract Builder toBuilder();
 
     public static class Builder extends CoordinateReferenceSystemImpl_Builder {
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final CoordinateReferenceSystem value) {

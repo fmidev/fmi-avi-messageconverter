@@ -51,8 +51,7 @@ public abstract class WindShearImpl implements WindShear, Serializable {
 
     public static class Builder extends WindShearImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setAppliedToAllRunways(false);
         }
 

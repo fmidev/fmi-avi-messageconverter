@@ -47,8 +47,7 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
 
     public static class Builder extends SIGMETBulletinImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final SIGMETBulletin value) {
