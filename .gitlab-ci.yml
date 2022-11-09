@@ -11,7 +11,7 @@ cache:
 build:
   stage: build
   script:
-    - "mvn compile -P fmidev -s ./ci_settings.xml  --batch-mode"
+    - "mvn clean compile -P fmidev -s ./ci_settings.xml  --batch-mode"
 
 test:
   stage: test

@@ -12,15 +12,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.sigmet.AirmetReference;
+import fi.fmi.avi.model.sigmet.Reference;
 
 @FreeBuilder
 @JsonDeserialize(builder = AirmetReferenceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class AirmetReferenceImpl implements AirmetReference, Serializable {
+public abstract class AirmetReferenceImpl implements Reference, Serializable {
     private static final long serialVersionUID = 2988230428861993266L;
 
-    public static AirmetReferenceImpl immutableCopyOf(final AirmetReference airmetReference) {
+    public static AirmetReferenceImpl immutableCopyOf(final Reference airmetReference) {
         Objects.requireNonNull(airmetReference);
         if (airmetReference instanceof AirmetReferenceImpl) {
             return (AirmetReferenceImpl) airmetReference;
@@ -29,7 +29,7 @@ public abstract class AirmetReferenceImpl implements AirmetReference, Serializab
         }
     }
 
-    public static Optional<AirmetReferenceImpl> immutableCopyOf(final Optional<AirmetReference> airmetReference) {
+    public static Optional<AirmetReferenceImpl> immutableCopyOf(final Optional<Reference> airmetReference) {
         Objects.requireNonNull(airmetReference);
         return airmetReference.map(AirmetReferenceImpl::immutableCopyOf);
     }
@@ -38,7 +38,7 @@ public abstract class AirmetReferenceImpl implements AirmetReference, Serializab
 
     public static class Builder extends AirmetReferenceImpl_Builder {
 
-        public static Builder from(final AirmetReference value) {
+        public static Builder from(final Reference value) {
             if (value instanceof AirmetReferenceImpl) {
                 return ((AirmetReferenceImpl) value).toBuilder();
             } else {

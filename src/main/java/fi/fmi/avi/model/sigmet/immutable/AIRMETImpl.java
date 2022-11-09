@@ -30,7 +30,7 @@ import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
-import fi.fmi.avi.model.sigmet.AirmetReference;
+import fi.fmi.avi.model.sigmet.Reference;
 import fi.fmi.avi.model.sigmet.AirmetWind;
 
 @FreeBuilder
@@ -163,7 +163,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
 
         @Override
         @JsonDeserialize(as = AirmetReferenceImpl.class)
-        public Builder setCancelledReference(final AirmetReference cancelledReference) {
+        public Builder setCancelledReference(final Reference cancelledReference) {
             return super.setCancelledReference(cancelledReference);
         }
 

@@ -12,15 +12,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.sigmet.SigmetReference;
+import fi.fmi.avi.model.sigmet.Reference;
 
 @FreeBuilder
 @JsonDeserialize(builder = SigmetReferenceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class SigmetReferenceImpl implements SigmetReference, Serializable {
+public abstract class SigmetReferenceImpl implements Reference, Serializable {
     private static final long serialVersionUID = -7590197694737728555L;
 
-    public static SigmetReferenceImpl immutableCopyOf(final SigmetReference sigmetReference) {
+    public static SigmetReferenceImpl immutableCopyOf(final Reference sigmetReference) {
         Objects.requireNonNull(sigmetReference);
         if (sigmetReference instanceof SigmetReferenceImpl) {
             return (SigmetReferenceImpl) sigmetReference;
@@ -29,7 +29,7 @@ public abstract class SigmetReferenceImpl implements SigmetReference, Serializab
         }
     }
 
-    public static Optional<SigmetReferenceImpl> immutableCopyOf(final Optional<SigmetReference> sigmetReference) {
+    public static Optional<SigmetReferenceImpl> immutableCopyOf(final Optional<Reference> sigmetReference) {
         Objects.requireNonNull(sigmetReference);
         return sigmetReference.map(SigmetReferenceImpl::immutableCopyOf);
     }
@@ -38,7 +38,7 @@ public abstract class SigmetReferenceImpl implements SigmetReference, Serializab
 
     public static class Builder extends SigmetReferenceImpl_Builder {
 
-        public static Builder from(final SigmetReference value) {
+        public static Builder from(final Reference value) {
             if (value instanceof SigmetReferenceImpl) {
                 return ((SigmetReferenceImpl) value).toBuilder();
             } else {

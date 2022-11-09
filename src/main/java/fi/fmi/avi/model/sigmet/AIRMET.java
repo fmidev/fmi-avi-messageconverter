@@ -18,7 +18,7 @@ public interface AIRMET extends SIGMETAIRMET {
 
     Optional<NumericMeasure> getVisibility();
 
-    Optional<AirmetReference> getCancelledReference();
+    Optional<Reference> getCancelledReference();
 
     Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
 }

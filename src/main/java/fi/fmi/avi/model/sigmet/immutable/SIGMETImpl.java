@@ -31,7 +31,7 @@ import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SigmetReference;
+import fi.fmi.avi.model.sigmet.Reference;
 import fi.fmi.avi.model.sigmet.VAInfo;
 
 @FreeBuilder
@@ -174,7 +174,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
 
         @Override
         @JsonDeserialize(as = SigmetReferenceImpl.class)
-        public Builder setCancelledReference(final SigmetReference cancelledReference) {
+        public Builder setCancelledReference(final Reference cancelledReference) {
             return super.setCancelledReference(cancelledReference);
         }
 
