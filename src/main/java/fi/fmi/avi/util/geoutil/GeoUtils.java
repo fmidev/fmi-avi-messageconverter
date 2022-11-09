@@ -24,63 +24,32 @@ import fi.fmi.avi.model.Geometry.Winding;
 
 public class GeoUtils {
   private static final Logger log = LoggerFactory.getLogger(GeoUtils.class);
-
-  private static GeometryFactory gf;
-  private static ObjectMapper om;
-  private static GeoJsonReader reader;
-  private static GeoJsonWriter writer;
-
-  private static GeometryFactory getGeometryFactory() {
-    if (gf == null) {
-      gf = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING));
-    }
-    return gf;
-  }
-
-  private static GeoJsonWriter getWriter() {
-    if (writer == null) {
-      writer = new GeoJsonWriter();
-    }
-    return writer;
-  }
-
-  private static GeoJsonReader getReader() {
-    if (reader == null) {
-      reader = new GeoJsonReader(GeoUtils.getGeometryFactory());
-    }
-    return reader;
-  }
-
-  private static ObjectMapper getObjectMapper() {
-    if (om == null) {
-      om = new ObjectMapper();
-    }
-    return om;
-  }
+  private static final ObjectMapper om = new ObjectMapper();
+  private static final GeoJsonReader reader = new GeoJsonReader(
+      new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING)));
+  private static final GeoJsonWriter writer = new GeoJsonWriter();
 
   public static Geometry jsonFeature2jtsGeometry(Feature F) {
     try {
-      ObjectMapper om = getObjectMapper();
       if (F.getGeometry() == null) {
         return null;
       }
       String json = om.writeValueAsString(F.getGeometry());
-      return getReader().read(json);
+      return reader.read(json);
     } catch (ParseException | JsonProcessingException e) {
       log.error(e.getMessage());
     }
     return null;
   }
+
   @SuppressWarnings("unchecked")
   public static Feature jtsGeometry2jsonFeature(Geometry g) {
     Feature f = null;
     try {
-      ObjectMapper om = getObjectMapper();
-      String json = getWriter().write(g);
+      String json = writer.write(g);
       org.geojson.Geometry<Double> geo = om.readValue(
-        json,
-        org.geojson.Geometry.class
-      );
+          json,
+          org.geojson.Geometry.class);
       f = new Feature();
       f.setGeometry(geo);
     } catch (IOException e) {
@@ -91,30 +60,30 @@ public class GeoUtils {
 
   public static List<Double> enforceWinding(List<Double> positions, Winding requestedWinding) {
     List<Coordinate> coords = new ArrayList<>();
-    for (int i=0; i<positions.size(); i=i+2) {
-      coords.add(new Coordinate(positions.get(i+1), positions.get(i)));
+    for (int i = 0; i < positions.size(); i = i + 2) {
+      coords.add(new Coordinate(positions.get(i + 1), positions.get(i)));
     }
     if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
-        if (requestedWinding.equals(Winding.CW)) {
-          Collections.reverse(coords);
-        }
+      if (requestedWinding.equals(Winding.CW)) {
+        Collections.reverse(coords);
+      }
     } else {
-        if (requestedWinding.equals(Winding.CCW)) {
-            Collections.reverse(coords);
-        }
+      if (requestedWinding.equals(Winding.CCW)) {
+        Collections.reverse(coords);
+      }
     }
     List<Double> newPositions = new ArrayList<>();
-    for (Coordinate c: coords) {
-        newPositions.add(c.y);
-        newPositions.add(c.x);
+    for (Coordinate c : coords) {
+      newPositions.add(c.y);
+      newPositions.add(c.x);
     }
     return newPositions;
   }
 
-  public static Winding getWinding(List<Double> positions){
+  public static Winding getWinding(List<Double> positions) {
     List<Coordinate> coords = new ArrayList<>();
-    for (int i=0; i<positions.size(); i=i+2) {
-      coords.add(new Coordinate(positions.get(i+1), positions.get(i)));
+    for (int i = 0; i < positions.size(); i = i + 2) {
+      coords.add(new Coordinate(positions.get(i + 1), positions.get(i)));
     }
     if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
       return Winding.CCW;
