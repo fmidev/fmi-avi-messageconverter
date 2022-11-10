@@ -69,8 +69,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
 
     public static class Builder extends BulletinHeadingImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setType(Type.NORMAL);
             setOriginalAugmentationIndicator("");
         }
