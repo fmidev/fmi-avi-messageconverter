@@ -50,22 +50,10 @@ public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializ
                 return ((TacOrGeoGeometryImpl) value).toBuilder();
             } else {
                 return new Builder()
-                .setGeoGeometry(value.getGeoGeometry())
-                .setTacGeometry(value.getTacGeometry())
-                .setEntireArea(value.getEntireArea());
+                        .setGeoGeometry(value.getGeoGeometry())
+                        .setTacGeometry(value.getTacGeometry())
+                        .setEntireArea(value.getEntireArea());
             }
-        }
-
-        @Override
-        @JsonDeserialize(as = Geometry.class)
-        public Builder setGeoGeometry(final Geometry geometry) {
-            return super.setGeoGeometry(geometry);
-        }
-
-        @Override
-        @JsonDeserialize(as = TacGeometry.class)
-        public Builder setTacGeometry(final TacGeometry tacGeometry) {
-            return super.setTacGeometry(tacGeometry);
         }
     }
 }
