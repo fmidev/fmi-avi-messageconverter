@@ -20,7 +20,8 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
 public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeometryWithHeight, Serializable {
     private static final long serialVersionUID = 3780345549531133901L;
 
-    public static PhenomenonGeometryWithHeightImpl immutableCopyOf(final PhenomenonGeometryWithHeight phenomenonGeometry) {
+    public static PhenomenonGeometryWithHeightImpl immutableCopyOf(
+            final PhenomenonGeometryWithHeight phenomenonGeometry) {
         Objects.requireNonNull(phenomenonGeometry);
         if (phenomenonGeometry instanceof PhenomenonGeometryWithHeightImpl) {
             return (PhenomenonGeometryWithHeightImpl) phenomenonGeometry;
@@ -29,7 +30,8 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
         }
     }
 
-    public static Optional<PhenomenonGeometryWithHeightImpl> immutableCopyOf(final Optional<PhenomenonGeometryWithHeight> phenomenonGeometry) {
+    public static Optional<PhenomenonGeometryWithHeightImpl> immutableCopyOf(
+            final Optional<PhenomenonGeometryWithHeight> phenomenonGeometry) {
         Objects.requireNonNull(phenomenonGeometry);
         return phenomenonGeometry.map(PhenomenonGeometryWithHeightImpl::immutableCopyOf);
     }
@@ -42,17 +44,19 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
             if (value instanceof PhenomenonGeometryWithHeightImpl) {
                 return ((PhenomenonGeometryWithHeightImpl) value).toBuilder();
             } else {
-                return new Builder().setLowerLimit(value.getLowerLimit())
-                        .setUpperLimit(value.getUpperLimit())
-                        .setLowerLimitOperator(value.getLowerLimitOperator())
-                        .setUpperLimitOperator(value.getUpperLimitOperator())
+                return new Builder()
                         .setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(value.getGeometry()))
+                        .setTime(value.getTime())
                         .setApproximateLocation(value.getApproximateLocation())
-                        .setMovingDirection(value.getMovingDirection())
+                        .setNoVaExpected(value.getNoVaExpected())
+                        .setLowerLimit(value.getLowerLimit())
+                        .setLowerLimitOperator(value.getLowerLimitOperator())
+                        .setUpperLimit(value.getUpperLimit())
+                        .setUpperLimitOperator(value.getUpperLimitOperator())
                         .setMovingSpeed(value.getMovingSpeed())
+                        .setMovingDirection(value.getMovingDirection())
                         .setIntensityChange(value.getIntensityChange())
-                        .setAnalysisType(value.getAnalysisType())
-                        .setTime(value.getTime());
+                        .setAnalysisType(value.getAnalysisType());
             }
         }
 
@@ -79,12 +83,12 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
         public Builder setMovingSpeed(final NumericMeasure speed) {
             return super.setMovingSpeed(NumericMeasureImpl.immutableCopyOf(speed));
         }
+
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setMovingDirection(final NumericMeasure dir) {
             return super.setMovingDirection(NumericMeasureImpl.immutableCopyOf(dir));
 
         }
-     }
+    }
 }
-
