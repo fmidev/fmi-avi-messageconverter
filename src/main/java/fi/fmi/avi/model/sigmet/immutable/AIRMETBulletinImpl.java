@@ -23,7 +23,7 @@ import fi.fmi.avi.model.sigmet.AIRMETBulletin;
 @JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
 public abstract class AIRMETBulletinImpl implements AIRMETBulletin, Serializable {
 
-//    private static final long serialVersionUID = 7742724278322130498L;
+   private static final long serialVersionUID = 7742724278322130498L;
 
     public static Builder builder() {
         return new Builder();
