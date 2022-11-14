@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.PolygonGeometry;
-import fi.fmi.avi.util.geoutil.GeoUtils;
+import fi.fmi.avi.model.Winding;
 
 @FreeBuilder
 @JsonDeserialize(builder = PolygonGeometryImpl.Builder.class)
@@ -43,12 +43,12 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
     @Override
     public Winding getExteriorRingWinding() {
         List<Double>positions = getExteriorRingPositions();
-        return GeoUtils.getWinding(positions);
+        return Winding.getWinding(positions);
     }
 
     @Override
     public List<Double> getExteriorRingPositions(Winding winding) {
-        return GeoUtils.enforceWinding(getExteriorRingPositions(), winding);
+        return Winding.enforceWinding(getExteriorRingPositions(), winding);
     }
 
     public abstract Builder toBuilder();

@@ -2,7 +2,6 @@ package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.MultiPolygonGeometry;
-import fi.fmi.avi.util.geoutil.GeoUtils;
+import fi.fmi.avi.model.Winding;
 
 @FreeBuilder
 @JsonDeserialize(builder = MultiPolygonGeometryImpl.Builder.class)
@@ -46,7 +45,7 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
     public List<List<Double>> getExteriorRingPositions(Winding winding) {
         List<List<Double>> newPolygons = new ArrayList<>();
         for (List<Double> partPolygon: getExteriorRingPositions()) {
-            List<Double> polygon = GeoUtils.enforceWinding(partPolygon, winding);
+            List<Double> polygon = Winding.enforceWinding(partPolygon, winding);
             newPolygons.add(polygon);
         }
         return newPolygons;

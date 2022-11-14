@@ -1,4 +1,4 @@
-package fi.fmi.avi.util.geoutil;
+package fi.fmi.avi.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,33 +17,29 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.geojson.GeoJsonReader;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fi.fmi.avi.model.Geometry.Winding;
-
-public class GeoUtils {
-  private static final Logger log = LoggerFactory.getLogger(GeoUtils.class);
+public class JtsTools {
   private static final ObjectMapper om = new ObjectMapper();
   private static final GeoJsonReader reader = new GeoJsonReader(
       new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING)));
   private static final GeoJsonWriter writer = new GeoJsonWriter();
 
-  public static Geometry jsonFeature2jtsGeometry(Feature F) {
+  public static Geometry jsonFeature2jtsGeometry(Feature F) throws JtsToolsException {
     try {
       if (F.getGeometry() == null) {
         return null;
       }
       String json = om.writeValueAsString(F.getGeometry());
       return reader.read(json);
-    } catch (ParseException | JsonProcessingException e) {
-      log.error(e.getMessage());
+    } catch (ParseException e) {
+      throw(new JtsToolsException("Error parsing JSON feature", e));
+    } catch (JsonProcessingException e) {
+      throw(new JtsToolsException("Error writing JTS geometry", e));
     }
-    return null;
   }
 
   @SuppressWarnings("unchecked")
-  public static Feature jtsGeometry2jsonFeature(Geometry g) {
+  public static Feature jtsGeometry2jsonFeature(Geometry g) throws JtsToolsException {
     Feature f = null;
     try {
       String json = writer.write(g);
@@ -53,45 +49,13 @@ public class GeoUtils {
       f = new Feature();
       f.setGeometry(geo);
     } catch (IOException e) {
-      log.error(e.getMessage());
+      throw (new JtsToolsException("Error in O for writing JTS to JSON", null));
     }
     return f;
   }
 
-  public static List<Double> enforceWinding(List<Double> positions, Winding requestedWinding) {
-    List<Coordinate> coords = new ArrayList<>();
-    for (int i = 0; i < positions.size(); i = i + 2) {
-      coords.add(new Coordinate(positions.get(i + 1), positions.get(i)));
-    }
-    if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
-      if (requestedWinding.equals(Winding.CLOCKWISE)) {
-        Collections.reverse(coords);
-      }
-    } else {
-      if (requestedWinding.equals(Winding.COUNTERCLOCKWISE)) {
-        Collections.reverse(coords);
-      }
-    }
-    List<Double> newPositions = new ArrayList<>();
-    for (Coordinate c : coords) {
-      newPositions.add(c.y);
-      newPositions.add(c.x);
-    }
-    return newPositions;
-  }
 
-  public static Winding getWinding(List<Double> positions) {
-    List<Coordinate> coords = new ArrayList<>();
-    for (int i = 0; i < positions.size(); i = i + 2) {
-      coords.add(new Coordinate(positions.get(i + 1), positions.get(i)));
-    }
-    if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
-      return Winding.COUNTERCLOCKWISE;
-    }
-    return Winding.CLOCKWISE;
-  }
-
-  public static Feature merge(Feature f1, Feature f2) {
+  public static Feature merge(Feature f1, Feature f2) throws JtsToolsException {
     Geometry g1 = jsonFeature2jtsGeometry(f1);
     Geometry g2 = jsonFeature2jtsGeometry(f2);
 

@@ -20,7 +20,5 @@ import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 })
 @JsonPropertyOrder({ "crs" })
 public interface Geometry {
-    public enum Winding {CLOCKWISE, COUNTERCLOCKWISE};
     Optional<CoordinateReferenceSystem> getCrs();
-
 }

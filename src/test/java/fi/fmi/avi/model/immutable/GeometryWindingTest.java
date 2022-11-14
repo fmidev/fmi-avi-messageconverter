@@ -2,7 +2,6 @@ package fi.fmi.avi.model.immutable;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import org.junit.runner.RunWith;
 
 import fi.fmi.avi.model.MultiPolygonGeometry;
 import fi.fmi.avi.model.PolygonGeometry;
-import fi.fmi.avi.model.Geometry.Winding;
+import fi.fmi.avi.model.Winding;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
