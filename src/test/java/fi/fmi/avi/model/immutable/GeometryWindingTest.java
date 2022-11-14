@@ -29,9 +29,9 @@ public class GeometryWindingTest {
         PolygonGeometryImpl.Builder builder = PolygonGeometryImpl.builder().addAllExteriorRingPositions(cwCoordsList);
         PolygonGeometry ccmGeom = builder.build();
         assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions());
-        assertEquals(Winding.CW, ccmGeom.getExteriorRingWinding()); // Unchanged
-        assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CW));
-        assertEquals(ccwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CCW));
+        assertEquals(Winding.CLOCKWISE, ccmGeom.getExteriorRingWinding()); // Unchanged
+        assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CLOCKWISE));
+        assertEquals(ccwCoordsList, ccmGeom.getExteriorRingPositions(Winding.COUNTERCLOCKWISE));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class GeometryWindingTest {
                 .addAllExteriorRingPositions(cwCoordsList);
         MultiPolygonGeometry ccmGeom = builder.build();
         assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions());
-        assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CW));
-        assertEquals(ccwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CCW));
+        assertEquals(cwCoordsList, ccmGeom.getExteriorRingPositions(Winding.CLOCKWISE));
+        assertEquals(ccwCoordsList, ccmGeom.getExteriorRingPositions(Winding.COUNTERCLOCKWISE));
     }
 }

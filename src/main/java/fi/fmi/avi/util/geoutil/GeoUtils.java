@@ -64,11 +64,11 @@ public class GeoUtils {
       coords.add(new Coordinate(positions.get(i + 1), positions.get(i)));
     }
     if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
-      if (requestedWinding.equals(Winding.CW)) {
+      if (requestedWinding.equals(Winding.CLOCKWISE)) {
         Collections.reverse(coords);
       }
     } else {
-      if (requestedWinding.equals(Winding.CCW)) {
+      if (requestedWinding.equals(Winding.COUNTERCLOCKWISE)) {
         Collections.reverse(coords);
       }
     }
@@ -86,9 +86,9 @@ public class GeoUtils {
       coords.add(new Coordinate(positions.get(i + 1), positions.get(i)));
     }
     if (Orientation.isCCW(coords.toArray(new Coordinate[0]))) {
-      return Winding.CCW;
+      return Winding.COUNTERCLOCKWISE;
     }
-    return Winding.CW;
+    return Winding.CLOCKWISE;
   }
 
   public static Feature merge(Feature f1, Feature f2) {
