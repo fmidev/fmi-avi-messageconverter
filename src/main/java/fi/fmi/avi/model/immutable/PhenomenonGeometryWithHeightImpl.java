@@ -48,7 +48,7 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
                         .setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(value.getGeometry()))
                         .setTime(value.getTime())
                         .setApproximateLocation(value.getApproximateLocation())
-                        .setNoVaExpected(value.getNoVaExpected())
+                        .setNoVolcanicAshExpected(value.getNoVolcanicAshExpected())
                         .setLowerLimit(value.getLowerLimit())
                         .setLowerLimitOperator(value.getLowerLimitOperator())
                         .setUpperLimit(value.getUpperLimit())

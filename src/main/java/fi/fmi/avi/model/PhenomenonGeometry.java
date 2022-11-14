@@ -6,5 +6,5 @@ public interface PhenomenonGeometry {
     Optional<TacOrGeoGeometry> getGeometry();
     Optional<PartialOrCompleteTimeInstant> getTime();
     Optional<Boolean> getApproximateLocation();
-    Optional<Boolean> getNoVaExpected();
+    Optional <Boolean> getNoVolcanicAshExpected();
 }
