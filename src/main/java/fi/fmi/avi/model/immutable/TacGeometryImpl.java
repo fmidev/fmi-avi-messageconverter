@@ -53,15 +53,8 @@ public abstract class TacGeometryImpl implements TacGeometry, Serializable {
                 return ((TacGeometryImpl) value).toBuilder();
             } else {
                 return TacGeometryImpl.builder()//
-                        .setData(value.getData());
+                        .setTacContent(value.getTacContent());
             }
-        }
-
-
-        @Override
-//        @JsonDeserialize(as = String.class)
-        public Builder setData(final String data) {
-            return super.setData(data);
         }
     }
 }

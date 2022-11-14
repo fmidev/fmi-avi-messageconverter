@@ -6,5 +6,5 @@ import fi.fmi.avi.model.immutable.TacGeometryImpl;
 
 @JsonDeserialize(builder = TacGeometryImpl.Builder.class)
 public interface TacGeometry{
-    String getData();
+    String getTacContent();
 }

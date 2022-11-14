@@ -53,7 +53,7 @@ public class SigmetTest {
 
         TacOrGeoGeometryImpl.Builder builder = TacOrGeoGeometryImpl.builder();
         builder.setGeoGeometry(anGeometry.get());
-        builder.setTacGeometry(TacGeometryImpl.builder().setData("ENTIRE FIR").build());
+        builder.setTacGeometry(TacGeometryImpl.builder().setTacContent("ENTIRE FIR").build());
 
         PhenomenonGeometryWithHeightImpl.Builder an = new PhenomenonGeometryWithHeightImpl.Builder()
                 .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T13:50:00Z")))
@@ -108,7 +108,7 @@ public class SigmetTest {
 
     @Test
     public void testGeometry() throws IOException {
-        String geom = "{\"tacGeometry\":{\"data\": \"ENTIRE FIR\"}, \"geoGeometry\": {\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
+        String geom = "{\"tacGeometry\":{\"tacContent\": \"ENTIRE FIR\"}, \"geoGeometry\": {\"type\":\"Polygon\",\"exteriorRingPositions\":[0,52,0,60,10,60,10,52,0,52]}}";
 
         om.readValue(geom, TacOrGeoGeometry.class);
     }
@@ -123,7 +123,7 @@ public class SigmetTest {
         assert (smNode.has("reportStatus"));
         assert (smNode.get("reportStatus").asText().equals("NORMAL"));
         assertEquals("ENTIRE FIR",
-                smNode.get("analysisGeometries").get(0).get("geometry").get("tacGeometry").get("data").asText());
+                smNode.get("analysisGeometries").get(0).get("geometry").get("tacGeometry").get("tacContent").asText());
 
         om.readValue(json, SIGMETImpl.class);
     }
