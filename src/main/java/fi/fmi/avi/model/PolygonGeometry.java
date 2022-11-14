@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonTypeName("Polygon")
 public interface PolygonGeometry extends Geometry {
     List<Double> getExteriorRingPositions();
+    List<Double> getExteriorRingPositions(Winding winding);
     @JsonIgnore
     Winding getExteriorRingWinding();
-    List<Double> getExteriorRingPositions(Winding winding);
 }
