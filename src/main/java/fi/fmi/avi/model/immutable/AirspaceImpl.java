@@ -23,6 +23,10 @@ import fi.fmi.avi.model.Airspace;
 public abstract class AirspaceImpl implements Airspace, Serializable {
     private static final long serialVersionUID = 3187315517815642938L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static AirspaceImpl immutableCopyOf(final Airspace airspace) {
         Objects.requireNonNull(airspace);
         if (airspace instanceof AirspaceImpl) {

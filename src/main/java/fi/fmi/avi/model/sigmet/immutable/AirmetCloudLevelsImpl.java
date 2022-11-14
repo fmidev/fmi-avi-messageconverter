@@ -21,6 +21,10 @@ import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
 public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serializable {
     private static final long serialVersionUID = 9141069296330300504L;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static AirmetCloudLevelsImpl immutableCopyOf(final AirmetCloudLevels airmetCloudLevels) {
         Objects.requireNonNull(airmetCloudLevels);
         if (airmetCloudLevels instanceof AirmetCloudLevelsImpl) {
@@ -38,7 +42,7 @@ public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serial
 
     public static class Builder extends AirmetCloudLevelsImpl_Builder {
 
-        public Builder() {
+        Builder() {
             this.setCloudBase(NumericMeasureImpl.of(0, ""));
             this.setCloudTop(NumericMeasureImpl.of(0, ""));
         }

@@ -60,7 +60,7 @@ public class AirmetTest {
     }
 
     public AIRMET buildAirmet() {
-        final AirmetCloudLevelsImpl.Builder levels = new AirmetCloudLevelsImpl.Builder()
+        final AirmetCloudLevelsImpl.Builder levels = AirmetCloudLevelsImpl.builder()
                 .setCloudBase(NumericMeasureImpl.of(0, "SFC"))
                 .setCloudTop(NumericMeasureImpl.of(7000, "[ft_i]"));
 
