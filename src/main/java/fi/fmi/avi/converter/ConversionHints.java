@@ -1,14 +1,10 @@
 package fi.fmi.avi.converter;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import fi.fmi.avi.model.MessageType;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.util.BulletinHeadingIndicatorInterpreter;
+
+import java.util.*;
 
 /**
  * ConversionHints provides lexing, parsing and serializing related
@@ -18,7 +14,7 @@ import fi.fmi.avi.util.BulletinHeadingIndicatorInterpreter;
  * no requirement that a given implementation supports all possible
  * choices indicated below or that it can respond to requests to
  * modify its functionality.
- *
+ * <p>
  * Implementations are free to ignore the hints completely, but should
  * try to use an implementation option that is as close as possible
  * to the request.
@@ -264,6 +260,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_WHITESPACE_SERIALIZATION_MODE;
 
     /**
+     * Controls automatic line wrapping when serializing TAC bulletin messages.
+     */
+    public static final Key KEY_DISABLE_LINEWRAP_SERIALIZATION_MODE;
+
+    /**
      * Trim and replace consecutive whitespace characters with a single space. This is the default behaviour.
      */
     public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM = "WHITESPACE_SERIALIZATION_TRIM";
@@ -272,6 +273,11 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      * Whitespace character passthrough. This allows messages to contain newline and other whitespace characters in TAC serialized bulletins.
      */
     public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH = "WHITESPACE_SERIALIZATION_PASSTHROUGH";
+
+    /**
+     * Disable automatic line wrapping when serializing TAC bulletin messages.
+     */
+    public static final Object VALUE_DISABLE_LINEWRAP_SERIALIZATION_MODE = "DISABLE_LINEWRAP_SERIALIZATION_MODE";
 
     /**
      * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#METAR}.
@@ -368,6 +374,9 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         KEY_WHITESPACE_SERIALIZATION_MODE = new KeyImpl(14, "Controls message white space serialization in TAC bulletins",
                 VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM, VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH);
 
+        KEY_DISABLE_LINEWRAP_SERIALIZATION_MODE = new KeyImpl(15, "Controls line wrapping when serializing TAC bulletins",
+                VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM, VALUE_DISABLE_LINEWRAP_SERIALIZATION_MODE);
+
         KEY_ADVISORY_LABEL_WIDTH = new KeyImpl(16, "Used to determine the length of the label, so that white space can be added accordingly.");
 
         KEY_INDENT_ON_LINE_WRAP = new KeyImpl(17, "Used to determine the indentation after line wrap.");
@@ -412,8 +421,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      * SIGMET = new ConversionHints(KEY_MESSAGE_TYPE, MessageType.SIGMET);
      * Creates ConversionHints with controlled modifiability.
      *
-     * @param modifiable
-     *         set true to create a modifiable hints instance
+     * @param modifiable set true to create a modifiable hints instance
      */
     public ConversionHints(final boolean modifiable) {
         this(null, modifiable);
@@ -422,8 +430,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ConversionHints with the given key-value pairs.
      *
-     * @param init
-     *         the map of key-values
+     * @param init the map of key-values
      */
     public ConversionHints(final Map<? super Key, ?> init) {
         this(init, true);
@@ -432,10 +439,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     /**
      * Creates ParsingHints with the given key-value pairs and controlled modifiability.
      *
-     * @param init
-     *         the map of key-values
-     * @param modifiable
-     *         true if hints can be modified, false if not
+     * @param init       the map of key-values
+     * @param modifiable true if hints can be modified, false if not
      */
     public ConversionHints(final Map<? super Key, ?> init, final boolean modifiable) {
         if (init != null) {
@@ -449,10 +454,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
      * Creates a ParsingHints with only a single key-value pair.
      * The result is unmodifiable.
      *
-     * @param key
-     *         the key
-     * @param value
-     *         the value for the key
+     * @param key   the key
+     * @param value the value for the key
      */
     public ConversionHints(final Key key, final Object value) {
         this(null, true);
@@ -632,9 +635,7 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
         /**
          * Check if using the <code>value</code> with this Key makes sense.
          *
-         * @param value
-         *         value to check
-         *
+         * @param value value to check
          * @return true if the value is one of the allowed ones, false otherwise
          */
         public abstract boolean isCompatibleValue(Object value);
