@@ -1,18 +1,33 @@
 package fi.fmi.avi.util;
 
-import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
-import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
-import org.inferred.freebuilder.FreeBuilder;
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.CARRIAGE_RETURN;
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.END_OF_TEXT;
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.LINE_FEED;
+import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.START_OF_HEADING;
+import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter.*;
-import static java.util.Objects.requireNonNull;
+import org.inferred.freebuilder.FreeBuilder;
 
+import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
+import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
+
+/**
+ * Deprecated.
+ *
+ * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+ */
+@Deprecated
 @FreeBuilder
 public abstract class GTSExchangeFileTemplate implements Serializable {
     public static final String STARTING_LINE_PREFIX = stringOf(START_OF_HEADING, CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
@@ -40,56 +55,86 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
                 .collect(Collectors.joining());
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public static Builder builder() {
         return new Builder();
     }
 
     /**
+     * Deprecated.
      * Parses the provided string into a GTS exchange file template.
      *
-     * @param fileContent file content
+     * @param fileContent
+     *         file content
+     *
      * @return parsed GTS exchange file template
+     *
      * @see Builder#parse(String)
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
+    @Deprecated
     public static GTSExchangeFileTemplate parse(final String fileContent) {
         requireNonNull(fileContent, "fileContent");
         return builder().parse(fileContent).build();
     }
 
     /**
+     * Deprecated.
      * Parses the provided string into a GTS exchange file template.
      * The string is interpreted as a bulletin heading and text content.
      *
-     * @param fileContent file content
+     * @param fileContent
+     *         file content
+     *
      * @return parsed GTS exchange file template
+     *
      * @see Builder#parseHeadingAndText(String)
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
+    @Deprecated
     public static GTSExchangeFileTemplate parseHeadingAndText(final String fileContent) {
         requireNonNull(fileContent, "fileContent");
         return builder().parseHeadingAndText(fileContent).build();
     }
 
     /**
+     * Deprecated.
      * Parses the provided string into a GTS exchange file template.
      * The string is leniently interpreted as a bulletin heading and text content.
      *
-     * @param data data to parse
+     * @param data
+     *         data to parse
+     *
      * @return parsed GTS exchange file template
+     *
      * @see Builder#parseHeadingAndTextLenient(String)
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
+    @Deprecated
     public static GTSExchangeFileTemplate parseHeadingAndTextLenient(final String data) {
         requireNonNull(data, "data");
         return builder().parseHeadingAndTextLenient(data).build();
     }
 
     /**
+     * Deprecated.
      * Parses the provided string into GTS exchange file templates.
      * The string can contain multiple bulletins.
      *
-     * @param fileContent file content
+     * @param fileContent
+     *         file content
+     *
      * @return a list of parse results
+     *
      * @see Builder#parse(String)
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
+    @Deprecated
     public static List<ParseResult> parseAll(final String fileContent) {
         requireNonNull(fileContent, "fileContent");
         final List<ParseResult> results = new ArrayList<>();
@@ -144,6 +189,12 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
         return String.format(Locale.ROOT, "Illegal formatIdentifier: <%02d>", formatIdentifier);
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public int getMessageLength() {
         final int formatIdentifier = getFormatIdentifier();
         if (formatIdentifier == MESSAGE_FORMAT_LONG) {
@@ -164,31 +215,77 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
         }
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public int getFormatIdentifier() {
         return getTransmissionSequenceNumber().isEmpty() ? MESSAGE_FORMAT_SHORT : MESSAGE_FORMAT_LONG;
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public abstract String getTransmissionSequenceNumber();
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public Optional<Integer> getTransmissionSequenceNumberAsInt() {
         return transmissionSequenceNumberToInt(getTransmissionSequenceNumber());
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public abstract String getHeading();
 
     /**
+     * Deprecated.
      * Returns message text part without initial {@link #TEXT_PREFIX}.
      *
      * @return message text part without initial {@link #TEXT_PREFIX}
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
+    @Deprecated
     public abstract String getText();
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public abstract Builder toBuilder();
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public String toHeadingAndTextString() {
         return getHeading() + TEXT_PREFIX + getText();
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public String toString() {
         final int formatIdentifier = getFormatIdentifier();
         if (formatIdentifier == MESSAGE_FORMAT_LONG) {
@@ -215,6 +312,12 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
         }
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     public static class Builder extends GTSExchangeFileTemplate_Builder {
         private static final int MESSAGE_LENGTH_LENGTH = 8;
         private static final int FORMAT_IDENTIFIER_LENGTH = 2;
@@ -236,6 +339,7 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
         }
 
         /**
+         * Deprecated.
          * Parses provided string for a GTS exchange file content and populates this builder with parsed message.
          * The string is read up to message length stated in the beginning of the string. Any remaining part of the string is simply ignored.
          *
@@ -245,15 +349,27 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
          * The heading and text are only stored as is.
          * </p>
          *
-         * @param fileContent string to parse
+         * @param fileContent
+         *         string to parse
+         *
          * @return this builder
-         * @throws GTSExchangeFileParseException if provided {@code message} cannot be parsed or does not meet requirements of WMO Doc. 386 specification.
+         *
+         * @throws GTSExchangeFileParseException
+         *         if provided {@code message} cannot be parsed or does not meet requirements of WMO Doc. 386 specification.
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
          */
+        @Deprecated
         public Builder parse(final String fileContent) {
             requireNonNull(fileContent, "message");
             return parse(fileContent, 0);
         }
 
+        /**
+         * Deprecated.
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+         */
+        @Deprecated
         public Builder parse(final String fileContent, final int offset) {
             // parse message length
             int currentIndex = offset;
@@ -332,6 +448,7 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
         }
 
         /**
+         * Deprecated.
          * Parses provided string for bulletin heading and text content and populates this builder with parsed headingAndText.
          * This parsing method is strict. The start of provided {@code headingAndText} is until {@link #TEXT_PREFIX}
          * is interpreted as the heading. It must not contain any other line break (CR and LF) characters. The remaining part of the {@code headingAndText} is
@@ -342,10 +459,16 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
          * builder is not modified.
          * </p>
          *
-         * @param headingAndText string to parse
+         * @param headingAndText
+         *         string to parse
+         *
          * @return this builder
-         * @throws GTSExchangeFileParseException if provided {@code headingAndText} cannot be parsed or does not meet requirements of WMO Doc. 386 specification. This builder is not modified.
+         *
+         * @throws GTSExchangeFileParseException
+         *         if provided {@code headingAndText} cannot be parsed or does not meet requirements of WMO Doc. 386 specification. This builder is not modified.
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
          */
+        @Deprecated
         public Builder parseHeadingAndText(final String headingAndText) {
             requireNonNull(headingAndText, "headingAndText");
             return parseHeadingAndText(headingAndText, 0, headingAndText.length());
@@ -375,6 +498,7 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
         }
 
         /**
+         * Deprecated.
          * Parses provided string for bulletin heading and text content and populates this builder with parsed headingAndText.
          * This parsing method is lenient. The first line of provided {@code headingAndText} is interpreted as the heading. Then any sequence of CR and LF characters
          * is skipped, and the remaining part of the {@code headingAndText} string is interpreted as text content as is. If provided {@code headingAndText} contains no CR or LF
@@ -385,9 +509,14 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
          * Note that this method does not affect any other property of this builder than {@code heading} and {@code text}.
          * </p>
          *
-         * @param headingAndText string to parse
+         * @param headingAndText
+         *         string to parse
+         *
          * @return this builder
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
          */
+        @Deprecated
         public Builder parseHeadingAndTextLenient(final String headingAndText) {
             requireNonNull(headingAndText, "headingAndText");
             final String[] splitHeadingAndText = ANY_SEQUENCE_OF_LINE_BREAKS.split(headingAndText, 2);
@@ -395,18 +524,42 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
                     .setText(splitHeadingAndText.length > 1 ? splitHeadingAndText[1] : "");
         }
 
+        /**
+         * Deprecated.
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+         */
+        @Deprecated
         public Builder clearTransmissionSequenceNumber() {
             return setTransmissionSequenceNumber("");
         }
 
+        /**
+         * Deprecated.
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+         */
+        @Deprecated
         public Optional<Integer> getTransmissionSequenceNumberAsInt() {
             return transmissionSequenceNumberToInt(getTransmissionSequenceNumber());
         }
 
+        /**
+         * Deprecated.
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+         */
+        @Deprecated
         public Builder setTransmissionSequenceNumberAsInt(final int number) {
             return setTransmissionSequenceNumberAsInt(number, 3);
         }
 
+        /**
+         * Deprecated.
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+         */
+        @Deprecated
         public Builder setTransmissionSequenceNumberAsInt(final int number, final int numberOfDigits) {
             if (number < 0) {
                 throw new IllegalArgumentException("number is negative: " + number);
@@ -422,29 +575,55 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
         }
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+     */
+    @Deprecated
     @FreeBuilder
     public static abstract class ParseResult {
         ParseResult() {
         }
 
+        /**
+         * Deprecated.
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+         */
+        @Deprecated
         public abstract int getStartIndex();
 
         /**
+         * Deprecated.
          * Returns the GTS exchange file template.
          * When this is present, {@link ParseResult#getError()} will return an empty optional.
          *
          * @return GTS exchange file template or an empty Optional
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
          */
+        @Deprecated
         public abstract Optional<GTSExchangeFileTemplate> getResult();
 
         /**
+         * Deprecated.
          * Returns the parse error.
          * When this is present, {@link ParseResult#getResult()} will return an empty optional.
          *
          * @return exception providing details of the parse error or an empty optional
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
          */
+        @Deprecated
         public abstract Optional<GTSExchangeFileParseException> getError();
 
+        /**
+         * Deprecated.
+         *
+         * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
+         */
+        @Deprecated
         public static class Builder extends GTSExchangeFileTemplate_ParseResult_Builder {
             Builder() {
             }

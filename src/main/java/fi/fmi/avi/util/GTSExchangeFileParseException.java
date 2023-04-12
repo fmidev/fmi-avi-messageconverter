@@ -4,6 +4,12 @@ import java.util.Locale;
 
 import org.inferred.freebuilder.shaded.com.google.common.annotations.VisibleForTesting;
 
+/**
+ * Deprecated.
+ *
+ * @deprecated in favor of {@link GTSDataParseException} and subclasses.
+ */
+@Deprecated
 public class GTSExchangeFileParseException extends RuntimeException {
     private static final long serialVersionUID = 7637916048067538148L;
 
@@ -11,6 +17,7 @@ public class GTSExchangeFileParseException extends RuntimeException {
     private final int index;
     private final String failedMessage;
 
+    @Deprecated
     public GTSExchangeFileParseException(final ParseErrorCode errorCode, final int index, final String failedMessage) {
         super(errorCode.getMessage(index));
         this.errorCode = errorCode;
@@ -18,6 +25,7 @@ public class GTSExchangeFileParseException extends RuntimeException {
         this.failedMessage = failedMessage;
     }
 
+    @Deprecated
     public GTSExchangeFileParseException(final ParseErrorCode errorCode, final int index, final String failedMessage, final Throwable cause) {
         super(errorCode.getMessage(index), cause);
         this.errorCode = errorCode;
@@ -25,18 +33,22 @@ public class GTSExchangeFileParseException extends RuntimeException {
         this.failedMessage = failedMessage;
     }
 
+    @Deprecated
     public ParseErrorCode getErrorCode() {
         return errorCode;
     }
 
+    @Deprecated
     public int getIndex() {
         return index;
     }
 
+    @Deprecated
     public String getFailedMessage() {
         return failedMessage;
     }
 
+    @Deprecated
     public enum ParseErrorCode {
         UNEXPECTED_END_OF_MESSAGE_LENGTH("Unexpected end of data while parsing message length"), //
         INVALID_MESSAGE_LENGTH("Invalid message length"), //
