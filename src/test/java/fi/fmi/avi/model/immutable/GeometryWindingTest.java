@@ -12,7 +12,6 @@ import fi.fmi.avi.model.MultiPolygonGeometry;
 import fi.fmi.avi.model.PolygonGeometry;
 import fi.fmi.avi.model.Winding;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import junitparams.JUnitParamsRunner;
 

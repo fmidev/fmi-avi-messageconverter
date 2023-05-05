@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Geometry;
-import fi.fmi.avi.model.TacGeometry;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
 @FreeBuilder
