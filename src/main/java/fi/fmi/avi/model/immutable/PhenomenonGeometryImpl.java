@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.PhenomenonGeometry;
@@ -15,8 +16,14 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
 @FreeBuilder
 @JsonDeserialize(builder = PhenomenonGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"time", "noVolcanicAshExpected", "analysisType", "intensityChange",
+                    "approximateLocation", "geometry"})
 public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Serializable {
     private static final long serialVersionUID = -5756409149372825343L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static PhenomenonGeometryImpl immutableCopyOf(final PhenomenonGeometry phenomenonGeometry) {
         Objects.requireNonNull(phenomenonGeometry);

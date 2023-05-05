@@ -20,7 +20,7 @@ import junitparams.JUnitParamsRunner;
 public class GeometryWindingTest {
 
     @Test
-    public void testPolygonWinding() throws JsonProcessingException {
+    public void testPolygonWinding() {
         // Y,X as they come out of getExteriorPoints
         List<Double> cwCoordsList = Arrays.asList(90.0, -180.0, 90.0, 180.0, 60.0, 180.0, 60.0, -180.0, 90.0, -180.0);
         List<Double> ccwCoordsList = Arrays.asList(90.0, -180.0, 60.0, -180.0, 60.0, 180.0, 90.0, 180.0, 90.0, -180.0);
@@ -34,7 +34,7 @@ public class GeometryWindingTest {
     }
 
     @Test
-    public void testMultiPolygonWinding() throws JsonProcessingException {
+    public void testMultiPolygonWinding() {
         final List<List<Double>> ccwCoordsList = Arrays.asList(
                 Arrays.asList(1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0),
                 Arrays.asList(10.0, 10.0, 12.0, 12.0, 15.0, 10.0, 10.0, 10.0));

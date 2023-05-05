@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.Optional;
 
 import org.junit.Test;
 
@@ -42,20 +41,14 @@ public class SigmetTest {
             .registerModule(new Jdk8Module())
             .enable(SerializationFeature.INDENT_OUTPUT);
 
-    public PhenomenonGeometryWithHeight getAnalysis() {
-        Optional<Geometry> anGeometry = Optional.empty();
-
-        try {
-            anGeometry = Optional.ofNullable(om.readValue(TEST_GEO_JSON_1, Geometry.class));
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
+    public PhenomenonGeometryWithHeight getAnalysis() throws IOException{
+        final Geometry geometry = om.readValue(TEST_GEO_JSON_1, Geometry.class);
 
         TacOrGeoGeometryImpl.Builder builder = TacOrGeoGeometryImpl.builder();
-        builder.setGeoGeometry(anGeometry.get());
+        builder.setGeoGeometry(geometry);
         builder.setTacGeometry(TacGeometryImpl.builder().setTacContent("ENTIRE FIR").build());
 
-        PhenomenonGeometryWithHeightImpl.Builder an = new PhenomenonGeometryWithHeightImpl.Builder()
+        PhenomenonGeometryWithHeightImpl.Builder an = PhenomenonGeometryWithHeightImpl.builder()
                 .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T13:50:00Z")))
                 .setGeometry(builder.build())
                 .setApproximateLocation(false)
@@ -64,23 +57,17 @@ public class SigmetTest {
         return an.build();
     }
 
-    public PhenomenonGeometry getForecast() {
-        Optional<Geometry> fcGeometry = Optional.empty();
+    public PhenomenonGeometry getForecast() throws IOException {
+        final Geometry geometry = om.readValue(TEST_GEO_JSON_2, Geometry.class);
 
-        try {
-            fcGeometry = Optional.ofNullable(om.readValue(TEST_GEO_JSON_2, Geometry.class));
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-
-        final PhenomenonGeometryImpl.Builder an = new PhenomenonGeometryImpl.Builder().setTime(
+        final PhenomenonGeometryImpl.Builder an = PhenomenonGeometryImpl.builder().setTime(
                 PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T18:00:00Z")))
-                .setGeometry(TacOrGeoGeometryImpl.of(fcGeometry.get()))
+                .setGeometry(TacOrGeoGeometryImpl.of(geometry))
                 .setApproximateLocation(false);
         return an.build();
     }
 
-    public SIGMET buildSigmet() {
+    public SIGMET buildSigmet() throws IOException {
         final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR)
                 .setName("AMSTERDAM").build();
 
@@ -99,8 +86,6 @@ public class SigmetTest {
                         .build())
                 .setAnalysisGeometries(Collections.singletonList(getAnalysis()))
                 .setForecastGeometries(Collections.singletonList(getForecast()))
-
-                // .setAnalysis(Collections.singletonList(getAnalysis()))
                 .setPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setTranslated(false);
         return sm.build();

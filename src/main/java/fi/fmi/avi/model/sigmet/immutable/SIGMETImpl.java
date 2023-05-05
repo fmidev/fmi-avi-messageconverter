@@ -39,7 +39,7 @@ import fi.fmi.avi.model.sigmet.VAInfo;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice",
         "sequenceNumber", "issueTime",
-        "validityPeriod", "airspace", "analysisGeometries", "forecastGeometries", "volcano",
+        "validityPeriod", "airspace", "phenomenon", "analysisGeometries", "forecastGeometries", "volcano",
         "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
         "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",

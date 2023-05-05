@@ -45,6 +45,10 @@ public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializ
 
     public static class Builder extends TacOrGeoGeometryImpl_Builder {
 
+        Builder() {
+            this.setEntireArea(false);
+        }
+
         public static Builder from(final TacOrGeoGeometry value) {
             if (value instanceof TacOrGeoGeometryImpl) {
                 return ((TacOrGeoGeometryImpl) value).toBuilder();

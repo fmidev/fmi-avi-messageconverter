@@ -14,11 +14,6 @@
   "issueTime": {
     "completeTime": "2017-08-27T11:30:00Z"
   },
-  "airspace": {
-    "designator": "EHAA",
-    "name": "AMSTERDAM",
-    "type": "FIR"
-  },
   "validityPeriod": {
     "startTime": {
       "completeTime": "2017-08-27T11:30:00Z"
@@ -27,9 +22,12 @@
       "completeTime": "2017-08-27T18:00:00Z"
     }
   },
+  "airspace": {
+    "designator": "EHAA",
+    "name": "AMSTERDAM",
+    "type": "FIR"
+  },
   "phenomenon": "EMBD_TS",
-  "permissibleUsage": "NON_OPERATIONAL",
-  "permissibleUsageReason": "EXERCISE",
   "analysisGeometries": [
     {
       "time": {
@@ -86,5 +84,7 @@
       }
     }
   ],
+  "permissibleUsage": "NON_OPERATIONAL",
+  "permissibleUsageReason": "EXERCISE",
   "translated": true
 }

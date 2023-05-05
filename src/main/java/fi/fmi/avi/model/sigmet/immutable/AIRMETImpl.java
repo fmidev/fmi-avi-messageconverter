@@ -38,7 +38,7 @@ import fi.fmi.avi.model.sigmet.AirmetWind;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice",
         "sequenceNumber", "issueTime",
-        "validityPeriod", "airspace", "analysis", "cancelledReport", "remarks", "permissibleUsage",
+        "validityPeriod", "airspace", "analysisGeometries", "cancelledReport", "remarks", "permissibleUsage",
         "permissibleUsageReason",
         "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime",
         "translationCentreDesignator",

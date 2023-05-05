@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.geojson.Feature;
@@ -24,12 +25,12 @@ public class JtsTools {
       new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING)));
   private static final GeoJsonWriter writer = new GeoJsonWriter();
 
-  public static Geometry jsonFeature2jtsGeometry(Feature F) throws JtsToolsException {
+  public static Geometry jsonFeature2jtsGeometry(final Feature feature) throws JtsToolsException {
     try {
-      if (F.getGeometry() == null) {
+      if (feature.getGeometry() == null) {
         return null;
       }
-      String json = om.writeValueAsString(F.getGeometry());
+      final String json = om.writeValueAsString(feature.getGeometry());
       return reader.read(json);
     } catch (ParseException e) {
       throw(new JtsToolsException("Error parsing JSON feature", e));
@@ -38,14 +39,13 @@ public class JtsTools {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  public static Feature jtsGeometry2jsonFeature(Geometry g) throws JtsToolsException {
+  public static Feature jtsGeometry2jsonFeature(final Geometry g) throws JtsToolsException {
     Feature f = null;
     try {
       String json = writer.write(g);
       org.geojson.Geometry<Double> geo = om.readValue(
           json,
-          org.geojson.Geometry.class);
+          new TypeReference<org.geojson.Geometry<Double>>(){});
       f = new Feature();
       f.setGeometry(geo);
     } catch (IOException e) {
@@ -55,16 +55,18 @@ public class JtsTools {
   }
 
 
-  public static Feature merge(Feature f1, Feature f2) throws JtsToolsException {
-    Geometry g1 = jsonFeature2jtsGeometry(f1);
-    Geometry g2 = jsonFeature2jtsGeometry(f2);
+  public static Feature merge(final Feature f1, final Feature f2) throws JtsToolsException {
+    final Geometry g1 = jsonFeature2jtsGeometry(f1);
+    if (g1==null) throw( new JtsToolsException("First polygon for merge is null"));
+    final Geometry g2 = jsonFeature2jtsGeometry(f2);
+    if (g2==null) throw( new JtsToolsException("Second polygon for merge is null"));
 
     Geometry gNew = g1.union(g2);
     Coordinate[] coords = gNew.getCoordinates();
     if (!Orientation.isCCW(coords)) {
       gNew = gNew.reverse();
     }
-    Feature f = jtsGeometry2jsonFeature(gNew);
+    final Feature f = jtsGeometry2jsonFeature(gNew);
     return f;
   }
 }

@@ -42,7 +42,7 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
     }
 
     @Override
-    public List<List<Double>> getExteriorRingPositions(Winding winding) {
+    public List<List<Double>> getExteriorRingPositions(final Winding winding) {
         List<List<Double>> newPolygons = new ArrayList<>();
         for (List<Double> partPolygon: getExteriorRingPositions()) {
             List<Double> polygon = Winding.enforceWinding(partPolygon, winding);
