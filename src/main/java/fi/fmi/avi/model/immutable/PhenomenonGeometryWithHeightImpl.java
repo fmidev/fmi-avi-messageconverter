@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.NumericMeasure;
@@ -16,8 +17,14 @@ import fi.fmi.avi.model.TacOrGeoGeometry;
 @FreeBuilder
 @JsonDeserialize(builder = PhenomenonGeometryWithHeightImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonPropertyOrder({"time", "lowerLimit", "upperLimit", "analysisType", "intensityChange",
+                    "approximateLocation", "geometry"})
 public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeometryWithHeight, Serializable {
     private static final long serialVersionUID = 3780345549531133901L;
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     public static PhenomenonGeometryWithHeightImpl immutableCopyOf(
             final PhenomenonGeometryWithHeight phenomenonGeometry) {
@@ -47,7 +54,6 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
                         .setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(value.getGeometry()))
                         .setTime(value.getTime())
                         .setApproximateLocation(value.getApproximateLocation())
-                        .setNoVolcanicAshExpected(value.getNoVolcanicAshExpected())
                         .setLowerLimit(value.getLowerLimit())
                         .setLowerLimitOperator(value.getLowerLimitOperator())
                         .setUpperLimit(value.getUpperLimit())

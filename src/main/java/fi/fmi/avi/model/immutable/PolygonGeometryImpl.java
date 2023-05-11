@@ -47,7 +47,7 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
     }
 
     @Override
-    public List<Double> getExteriorRingPositions(Winding winding) {
+    public List<Double> getExteriorRingPositions(final Winding winding) {
         return Winding.enforceWinding(getExteriorRingPositions(), winding);
     }
 

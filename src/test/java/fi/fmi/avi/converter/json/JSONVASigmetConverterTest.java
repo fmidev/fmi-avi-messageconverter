@@ -111,7 +111,7 @@ public class JSONVASigmetConverterTest {
         final String fpaGeomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,53.0,6.0,54.0,4.0,55.0,5.0,53.0]}";
         final Geometry fpaGeom = om.readValue(fpaGeomString, Geometry.class);
 
-        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
+        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = PhenomenonGeometryWithHeightImpl.builder();
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
@@ -120,7 +120,7 @@ public class JSONVASigmetConverterTest {
         geomBuilder.setIntensityChange(SigmetIntensityChange.NO_CHANGE);
         geomBuilder.setAnalysisType(SigmetAnalysisType.OBSERVATION);
 
-        final PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
+        final PhenomenonGeometryImpl.Builder fpGeomBuilder = PhenomenonGeometryImpl.builder();
         fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
         fpGeomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
         fpGeomBuilder.setApproximateLocation(false);

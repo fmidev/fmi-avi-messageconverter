@@ -10,6 +10,6 @@ import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
 public interface TacOrGeoGeometry {
     Optional<TacGeometry> getTacGeometry();
     Optional<Geometry> getGeoGeometry();
-    Optional<Boolean> getEntireArea();
+    boolean getEntireArea();
 
 }

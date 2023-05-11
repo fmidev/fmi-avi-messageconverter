@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.Optional;
 
 import org.junit.Test;
 
@@ -42,24 +41,18 @@ public class AirmetTest {
             .registerModule(new Jdk8Module())
             .enable(SerializationFeature.INDENT_OUTPUT);
 
-    public PhenomenonGeometryWithHeight getAnalysis() {
-        Optional<Geometry> anGeometry = Optional.empty();
+    public PhenomenonGeometryWithHeight getAnalysis() throws IOException {
+        final Geometry geometry= om.readValue(TEST_GEO_JSON_1, Geometry.class);
 
-        try {
-            anGeometry = Optional.ofNullable(om.readValue(TEST_GEO_JSON_1, Geometry.class));
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-
-        final PhenomenonGeometryWithHeightImpl.Builder an = new PhenomenonGeometryWithHeightImpl.Builder().setTime(
+        final PhenomenonGeometryWithHeightImpl.Builder builder = PhenomenonGeometryWithHeightImpl.builder().setTime(
                 PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2018-10-22T13:50:00Z")))
-                .setGeometry(TacOrGeoGeometryImpl.of(anGeometry.get()))
+                .setGeometry(TacOrGeoGeometryImpl.of(geometry))
                 .setApproximateLocation(false)
                 .setAnalysisType(SigmetAnalysisType.OBSERVATION);
-        return an.build();
+        return builder.build();
     }
 
-    public AIRMET buildAirmet() {
+    public AIRMET buildAirmet() throws IOException {
         final AirmetCloudLevelsImpl.Builder levels = AirmetCloudLevelsImpl.builder()
                 .setCloudBase(NumericMeasureImpl.of(0, "SFC"))
                 .setCloudTop(NumericMeasureImpl.of(7000, "[ft_i]"));
@@ -98,7 +91,7 @@ public class AirmetTest {
         assertFalse(smNode.isNull());
         assertTrue(smNode.has("reportStatus"));
         assertEquals("NORMAL", smNode.get("reportStatus").asText());
-        assertTrue(!smNode.has("cancelMessage") || smNode.get("cancelMessage").asBoolean() == false);
+        assertTrue(!smNode.has("cancelMessage") || !smNode.get("cancelMessage").asBoolean());
 
         om.readValue(json, AIRMETImpl.class);
     }

@@ -104,7 +104,7 @@ public class JSONAirmetConverterTest {
         validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
         validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
-        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
+        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = PhenomenonGeometryWithHeightImpl.builder();
         geomBuilder.setApproximateLocation(false);
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));

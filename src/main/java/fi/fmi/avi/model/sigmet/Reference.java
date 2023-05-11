@@ -3,7 +3,7 @@ package fi.fmi.avi.model.sigmet;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.UnitPropertyGroup;
 
-public interface Reference<T> {
+public interface Reference {
     UnitPropertyGroup getIssuingAirTrafficServicesUnit();
 
     UnitPropertyGroup getMeteorologicalWatchOffice();

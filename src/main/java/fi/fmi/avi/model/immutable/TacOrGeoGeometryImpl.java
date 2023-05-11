@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Geometry;
-import fi.fmi.avi.model.TacGeometry;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
 @FreeBuilder
@@ -44,6 +43,10 @@ public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializ
     public abstract Builder toBuilder();
 
     public static class Builder extends TacOrGeoGeometryImpl_Builder {
+
+        Builder() {
+            this.setEntireArea(false);
+        }
 
         public static Builder from(final TacOrGeoGeometry value) {
             if (value instanceof TacOrGeoGeometryImpl) {

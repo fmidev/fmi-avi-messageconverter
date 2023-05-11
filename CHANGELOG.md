@@ -31,6 +31,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ...
 
+## [v6.3.0] - 2023-02-15
+
+### Added
+
+- ConversionHint for disabling line wrapping in TAC serialization [#105]
+
+## [v6.2.0] - 2022-08-24
+
+### Added
+
+- Add a general supertype AviationWeatherMessageCollection for MeteorologicalBulletin [#103]
+
+## [v6.1.0] - 2022-06-06
+
+### Added
+
+- Add support for GTS socket protocol. [#101]
+
 ## [v6.0.0] - 2022-02-22
 
 ### Added
@@ -58,16 +76,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Deprecated
 
-- Deprecated TAFStatus, MetarStatus and SigmetAirmetReportStatus enums. AviationWeatherMessage.ReportStatus should be used instead. See the Javadocs on the
-  deprecated enums and methods that use them for more details.
+- Deprecated TAFStatus, MetarStatus and SigmetAirmetReportStatus enums. AviationWeatherMessage.ReportStatus should be
+  used instead. See the Javadocs on the deprecated enums and methods that use them for more details.
 - Deprecated TAFReference class.
 
 ## Past Changelog
 
-Previous changelog entries are available on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
+Previous changelog entries are available
+on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
-[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.0.0...HEAD
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.3.0...HEAD
+
+[v6.3.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.3.0
+
+[v6.2.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.2.0
+
+[v6.1.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.1.0
 
 [v6.0.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.0.0
 
@@ -92,3 +117,9 @@ Previous changelog entries are available on [GitHub releases page](https://githu
 [#92]: https://github.com/fmidev/fmi-avi-messageconverter/pull/92
 
 [#98]: https://github.com/fmidev/fmi-avi-messageconverter/pull/98
+
+[#101]: https://github.com/fmidev/fmi-avi-messageconverter/issues/101
+
+[#103]: https://github.com/fmidev/fmi-avi-messageconverter/pull/103
+
+[#105]: https://github.com/fmidev/fmi-avi-messageconverter/pull/105
