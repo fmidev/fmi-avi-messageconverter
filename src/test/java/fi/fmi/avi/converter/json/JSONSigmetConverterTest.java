@@ -56,9 +56,8 @@ public class JSONSigmetConverterTest {
         Objects.requireNonNull(is);
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
-        System.err.println("SM:" + result.getStatus() + " ==>");
-        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
+        final ConversionResult<SIGMET> result = converter.convertMessage(input,
+                JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
@@ -75,10 +74,13 @@ public class JSONSigmetConverterTest {
 
         final SIGMETImpl.Builder builder = SIGMETImpl.builder();
 
-        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
+        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO")
+                .build();
+        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder()
+                .setPropertyGroup("AMSTERDAM FIR", "EHAA", "FIR").build();
 
-        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR)
+                .setName("AMSTERDAM").build();
 
         final String geomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
         final Geometry geom = om.readValue(geomString, Geometry.class);
@@ -91,14 +93,16 @@ public class JSONSigmetConverterTest {
         validPeriod.setStartTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T11:30:00Z")));
         validPeriod.setEndTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
 
-        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
+        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = PhenomenonGeometryWithHeightImpl.builder();
         geomBuilder.setApproximateLocation(false);
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
         geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
+        geomBuilder.setIntensityChange(SigmetIntensityChange.NO_CHANGE);
+        geomBuilder.setAnalysisType(SigmetAnalysisType.OBSERVATION);
 
-        final PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
+        final PhenomenonGeometryImpl.Builder fpGeomBuilder = PhenomenonGeometryImpl.builder();
         fpGeomBuilder.setApproximateLocation(false);
         fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
         fpGeomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
@@ -113,25 +117,20 @@ public class JSONSigmetConverterTest {
                 .setPermissibleUsage(AviationCodeListUser.PermissibleUsage.NON_OPERATIONAL)
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
                 .setSequenceNumber("1")
-                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
+
                 .setValidityPeriod(validPeriod.build())
-                .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+                .setPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()))
                 .setForecastGeometries(Collections.singletonList(fpGeomBuilder.build()));
 
         final SIGMET sigmet = builder.build();
-        final ConversionResult<String> result = converter.convertMessage(sigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> result = converter.convertMessage(sigmet,
+                JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 
         final JsonNode refRoot = om.readTree(reference);
         final JsonNode convertedRoot = om.readTree(result.getConvertedMessage().get());
-        System.err.println("EQUALS: " + refRoot.equals(convertedRoot));
         assertEquals("constructed and parsed tree not equal", refRoot, convertedRoot);
-        //       BufferedReader refReader = new BufferedReader(new StringReader(reference));
-        //       BufferedReader resultReader = new BufferedReader(new StringReader(result.getConvertedMessage().get()));
-        //        assertEquals("Strings do not match", reference, result.getConvertedMessage().get());
-
     }
 }

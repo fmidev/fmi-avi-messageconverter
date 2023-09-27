@@ -54,11 +54,6 @@ public abstract class VAInfoImpl implements VAInfo, Serializable {
         }
 
         @Override
-        public Builder setNoVolcanicAshExpected(final boolean noVolcanicAshExpected) {
-            return super.setNoVolcanicAshExpected(noVolcanicAshExpected);
-        }
-
-        @Override
         @JsonDeserialize(as = UnitPropertyGroupImpl.class)
         public Builder setVolcanicAshMovedToFIR(final UnitPropertyGroup issuingAirTrafficServicesUnit) {
             return super.setVolcanicAshMovedToFIR(issuingAirTrafficServicesUnit);

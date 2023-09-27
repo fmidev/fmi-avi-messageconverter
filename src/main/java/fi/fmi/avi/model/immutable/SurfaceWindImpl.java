@@ -49,8 +49,7 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
     @SuppressWarnings("EmptyMethod")
     public static class Builder extends SurfaceWindImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setVariableDirection(false);
         }
 

@@ -76,7 +76,7 @@ public final class PartialOrCompleteTimes {
         requireNonNull(partialCompletion, "partialCompletion");
 
         final List<PartialOrCompleteTime> result = input instanceof Collection ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>();
-        final ZonedDateTime[] rollingReferenceTime = new ZonedDateTime[] { referenceTime }; // Used as mutable reference
+        final ZonedDateTime[] rollingReferenceTime = new ZonedDateTime[] {referenceTime}; // Used as mutable reference
         // Assumption: the start times come in (approximately) chronological order, but the periods may be (partly) overlapping
         int index = 0;
         for (final PartialOrCompleteTime partialOrCompleteTime : input) {

@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.immutable;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.PolygonGeometry;
+import fi.fmi.avi.model.Winding;
 
 @FreeBuilder
 @JsonDeserialize(builder = PolygonGeometryImpl.Builder.class)
@@ -38,12 +40,22 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
         return polygonsGeometry.map(PolygonGeometryImpl::immutableCopyOf);
     }
 
+    @Override
+    public Winding getExteriorRingWinding() {
+        List<Double>positions = getExteriorRingPositions();
+        return Winding.getWinding(positions);
+    }
+
+    @Override
+    public List<Double> getExteriorRingPositions(final Winding winding) {
+        return Winding.enforceWinding(getExteriorRingPositions(), winding);
+    }
+
     public abstract Builder toBuilder();
 
     public static class Builder extends PolygonGeometryImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final PolygonGeometry value) {
@@ -61,5 +73,6 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
         public Builder setCrs(final CoordinateReferenceSystem crs) {
             return super.setCrs(crs);
         }
+
     }
 }

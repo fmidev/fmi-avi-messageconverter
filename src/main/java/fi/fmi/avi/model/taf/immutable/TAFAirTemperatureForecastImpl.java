@@ -54,8 +54,7 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
 
     public static class Builder extends TAFAirTemperatureForecastImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final TAFAirTemperatureForecast value) {

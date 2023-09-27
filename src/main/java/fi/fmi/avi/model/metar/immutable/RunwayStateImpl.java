@@ -53,8 +53,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
 
     public static class Builder extends RunwayStateImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setAppliedToAllRunways(false);
             setEstimatedSurfaceFrictionUnreliable(false);
             setRepetition(false);

@@ -12,6 +12,7 @@ import org.inferred.freebuilder.FreeBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -19,7 +20,6 @@ import fi.fmi.avi.model.AirTrafficServicesUnitWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.Airspace;
 import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.BuilderHelper;
-import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.PhenomenonGeometry;
@@ -27,21 +27,23 @@ import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SIGMETAIRMETBuilderHelper;
 import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.AirspaceImpl;
-import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
 import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SigmetReference;
+import fi.fmi.avi.model.sigmet.Reference;
 import fi.fmi.avi.model.sigmet.VAInfo;
 
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime",
-        "validityPeriod", "airspace", "analysisGeometries", "forecastGeometries", "movingSpeed", "movingDirection", "volcano", "noVolcanicAshExpected",
-        "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated",
-        "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
+@JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice",
+        "sequenceNumber", "issueTime",
+        "validityPeriod", "airspace", "phenomenon", "analysisGeometries", "forecastGeometries", "volcano",
+        "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
+        "permissibleUsageSupplementary", "translated",
+        "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
+        "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class SIGMETImpl implements SIGMET, Serializable {
     private static final long serialVersionUID = -5959366555363410747L;
 
@@ -80,7 +82,8 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         }
         if (this.getAnalysisGeometries().isPresent()) {
             for (final PhenomenonGeometryWithHeight geometryWithHeight : this.getAnalysisGeometries().get()) {
-                if (geometryWithHeight.getTime().isPresent() && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
+                if (geometryWithHeight.getTime().isPresent()
+                        && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
@@ -92,13 +95,13 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                 }
             }
         }
-        return !this.getCancelledReference().isPresent() || (this.getCancelledReference().get().getValidityPeriod().isComplete());
+        return !this.getCancelledReference().isPresent()
+                || (this.getCancelledReference().get().getValidityPeriod().isComplete());
     }
 
     public static class Builder extends SIGMETImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             this.setTranslated(false);
             this.setReportStatus(ReportStatus.NORMAL);
             this.setCancelMessage(false);
@@ -132,28 +135,15 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                         Builder::setAirspace, //
                         Builder::setCancelMessage);
                 return builder//
-                        .setSigmetPhenomenon(value.getSigmetPhenomenon())//
+                        .setPhenomenon(value.getPhenomenon())//
                         .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))//
-                        .setAnalysisType(value.getAnalysisType())//
                         .setAnalysisGeometries(value.getAnalysisGeometries()//
                                 .map(analysisGeometries -> BuilderHelper.toImmutableList(analysisGeometries,
                                         PhenomenonGeometryWithHeightImpl::immutableCopyOf)))//
-                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()))//
-                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))//
-                        .setIntensityChange(value.getIntensityChange())//
                         .setForecastGeometries(value.getForecastGeometries()//
-                                .map(forecastGeometries -> BuilderHelper.toImmutableList(forecastGeometries, PhenomenonGeometryImpl::immutableCopyOf)))//
-                        .setNoVaExpected(value.getNoVaExpected())//
+                                .map(forecastGeometries -> BuilderHelper.toImmutableList(forecastGeometries,
+                                        PhenomenonGeometryImpl::immutableCopyOf)))//
                         .setVAInfo(VAInfoImpl.immutableCopyOf(value.getVAInfo()));
-
- /*               if (value instanceof VASIGMET) {
-                    //From VASigmet
-                    VASIGMET va=(VASIGMET)value;
-                    builder.setVolcano(VolcanoDescriptionImpl.immutableCopyOf((va.getVolcano())));
-                    if (va.getNoVolcanicAshExpected().isPresent()) builder.setNoVolcanicAshExpected(va.getNoVolcanicAshExpected().get());
-                    if (va.getVolcanicAshMovedToFIR().isPresent()) builder.setVolcanicAshMovedToFIR(va.getVolcanicAshMovedToFIR().get());
-                }
-*/
             }
         }
 
@@ -183,7 +173,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
 
         @Override
         @JsonDeserialize(as = SigmetReferenceImpl.class)
-        public Builder setCancelledReference(final SigmetReference cancelledReference) {
+        public Builder setCancelledReference(final Reference cancelledReference) {
             return super.setCancelledReference(cancelledReference);
         }
 
@@ -200,34 +190,19 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingSpeed(final NumericMeasure speed) {
-            return super.setMovingSpeed(speed);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingDirection(final NumericMeasure direction) {
-            return super.setMovingDirection(direction);
-        }
-
-        @Override
         @JsonDeserialize(as = VAInfoImpl.class)
+        @JsonProperty("VAInfo")
         public Builder setVAInfo(final VAInfo vaInfo) {
             return super.setVAInfo(vaInfo);
         }
 
-/*        @Override
+        @Override
+        @JsonIgnore
         @JsonDeserialize(as = VAInfoImpl.class)
         public Builder setVAInfo(final Optional<? extends VAInfo> vaInfo) {
             return super.setVAInfo(vaInfo);
-        }*/
+        }
 
-        /*       @Override
-               public Builder setTranslated(boolean translated) {
-                   return super.setTranslated(translated);
-               }
-       */
         @Override
         @JsonDeserialize(as = AirspaceImpl.class)
         public Builder setAirspace(final Airspace airspace) {
@@ -243,13 +218,17 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         /**
          * Provides the current builder value of the status property.
          *
-         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
-         * explicitly stored. This implementation uses {@link SigmetAirmetReportStatus#fromReportStatus(ReportStatus, boolean)} instead to determine the
+         * Note, this method is provided for backward compatibility with previous
+         * versions of the API. The <code>status</code> is no longer
+         * explicitly stored. This implementation uses
+         * {@link SigmetAirmetReportStatus#fromReportStatus(ReportStatus, boolean)}
+         * instead to determine the
          * returned value on-the-fly.
          *
          * @return the message status
          *
-         * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
+         * @deprecated migrate to using a combination of {@link #getReportStatus()} and
+         *             {@link #isCancelMessage()} instead
          */
         @Deprecated
         public SigmetAirmetReportStatus getStatus() {
@@ -259,28 +238,34 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
         /**
          * Sets the SIGMET-specific message status.
          *
-         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
-         * explicitly stored. Instead, this method sets other property values with the following logic:
+         * Note, this method is provided for backward compatibility with previous
+         * versions of the API. The <code>status</code> is no longer
+         * explicitly stored. Instead, this method sets other property values with the
+         * following logic:
          * <dl>
-         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#CANCELLATION CANCELLATION}</dt>
-         *     <dd>
-         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
-         *         <code>cancelMessage = true</code><br>
-         *     </dd>
+         * <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#CANCELLATION
+         * CANCELLATION}</dt>
+         * <dd>
+         * <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         * <code>cancelMessage = true</code><br>
+         * </dd>
          *
-         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#NORMAL NORMAL}</dt>
-         *     <dd>
-         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
-         *         <code>cancelMessage = false</code><br>
-         *     </dd>
+         * <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#NORMAL
+         * NORMAL}</dt>
+         * <dd>
+         * <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         * <code>cancelMessage = false</code><br>
+         * </dd>
          * </dl>
          *
          * @param status
-         *         the status to set
+         *               the status to set
          *
          * @return builder
          *
-         * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)} and {@link #setCancelMessage(boolean)} instead
+         * @deprecated migrate to using a combination of
+         *             {@link #setReportStatus(ReportStatus)} and
+         *             {@link #setCancelMessage(boolean)} instead
          */
         @Deprecated
         public Builder setStatus(final SigmetAirmetReportStatus status) {

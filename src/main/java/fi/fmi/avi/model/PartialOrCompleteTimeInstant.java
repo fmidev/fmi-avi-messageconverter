@@ -147,8 +147,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
 
     public static class Builder extends PartialOrCompleteTimeInstant_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         @Override

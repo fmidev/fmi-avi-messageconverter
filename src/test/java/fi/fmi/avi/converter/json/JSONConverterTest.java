@@ -200,7 +200,6 @@ public class JSONConverterTest {
         final String reference = readResource("sigmet1.json");
         final ConversionResult<SIGMET> result = converter.convertMessage(reference, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         assertSuccess(result);
-        System.err.println("sigmet:" + result.getConvertedMessage().get());
 
         final SIGMETBulletinImpl.Builder builder = SIGMETBulletinImpl.builder()//
                 .setHeading(BulletinHeadingImpl.builder()//

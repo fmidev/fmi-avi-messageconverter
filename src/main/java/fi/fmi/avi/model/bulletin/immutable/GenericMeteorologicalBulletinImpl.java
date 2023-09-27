@@ -46,8 +46,7 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
     public abstract Builder toBuilder();
 
     public static class Builder extends GenericMeteorologicalBulletinImpl_Builder {
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final GenericMeteorologicalBulletin value) {

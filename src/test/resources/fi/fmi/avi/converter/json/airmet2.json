@@ -27,11 +27,9 @@
     "name": "AMSTERDAM",
     "type": "FIR"
   },
-  "airmetPhenomenon": "MOD_ICE",
+  "phenomenon": "MOD_ICE",
   "permissibleUsage": "NON_OPERATIONAL",
   "permissibleUsageReason": "EXERCISE",
-  "analysisType": "OBSERVATION",
-  "intensityChange": "NO_CHANGE",
   "analysisGeometries": [
     {
       "time": {
@@ -46,6 +44,8 @@
         "uom": "FL"
       },
       "approximateLocation": false,
+      "analysisType": "OBSERVATION",
+      "intensityChange": "NO_CHANGE",
       "geometry": {
         "geoGeometry": {
           "type": "Polygon",

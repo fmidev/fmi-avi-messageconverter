@@ -30,15 +30,18 @@ import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
-import fi.fmi.avi.model.sigmet.AirmetReference;
+import fi.fmi.avi.model.sigmet.Reference;
 import fi.fmi.avi.model.sigmet.AirmetWind;
 
 @FreeBuilder
 @JsonDeserialize(builder = AIRMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice", "sequenceNumber", "issueTime",
-        "validityPeriod", "airspace", "movingDirection", "movingSpeed", "analysis", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
-        "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
+@JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice",
+        "sequenceNumber", "issueTime",
+        "validityPeriod", "airspace", "analysisGeometries", "cancelledReport", "remarks", "permissibleUsage",
+        "permissibleUsageReason",
+        "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime",
+        "translationCentreDesignator",
         "translationCentreName", "translationTime", "translatedTAC" })
 public abstract class AIRMETImpl implements AIRMET, Serializable {
     private static final long serialVersionUID = 4726279033666939216L;
@@ -78,19 +81,20 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         }
         if (this.getAnalysisGeometries().isPresent()) {
             for (final PhenomenonGeometryWithHeight geometryWithHeight : this.getAnalysisGeometries().get()) {
-                if (geometryWithHeight.getTime().isPresent() && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
+                if (geometryWithHeight.getTime().isPresent()
+                        && !geometryWithHeight.getTime().get().getCompleteTime().isPresent()) {
                     return false;
                 }
             }
         }
 
-        return !this.getCancelledReference().isPresent() || (this.getCancelledReference().get().getValidityPeriod().isComplete());
+        return !this.getCancelledReference().isPresent()
+                || (this.getCancelledReference().get().getValidityPeriod().isComplete());
     }
 
     public static class Builder extends AIRMETImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setTranslated(false);
             this.setReportStatus(ReportStatus.NORMAL);
             this.setCancelMessage(false);
@@ -124,20 +128,17 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                         Builder::setAirspace, //
                         Builder::setCancelMessage);
                 return builder//
-                        .setAirmetPhenomenon(value.getAirmetPhenomenon())//
+                        .setPhenomenon(value.getPhenomenon())//
                         .setCloudLevels(AirmetCloudLevelsImpl.immutableCopyOf(value.getCloudLevels()))//
                         .setWind(AirmetWindImpl.immutableCopyOf(value.getWind()))//
                         .setObscuration(value.getObscuration()//
                                 .map(BuilderHelper::toImmutableList))//
                         .setVisibility(NumericMeasureImpl.immutableCopyOf(value.getVisibility()))//
                         .setCancelledReference(AirmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))//
-                        .setAnalysisType(value.getAnalysisType())//
                         .setAnalysisGeometries(value.getAnalysisGeometries()//
                                 .map(analysisGeometries -> BuilderHelper.toImmutableList(analysisGeometries,
-                                        PhenomenonGeometryWithHeightImpl::immutableCopyOf)))//
-                        .setMovingSpeed(NumericMeasureImpl.immutableCopyOf(value.getMovingSpeed()))//
-                        .setMovingDirection(NumericMeasureImpl.immutableCopyOf(value.getMovingDirection()))//
-                        .setIntensityChange(value.getIntensityChange());
+                                        PhenomenonGeometryWithHeightImpl::immutableCopyOf))//
+                        );
             }
         }
 
@@ -160,8 +161,8 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         }
 
         @Override
-        @JsonDeserialize(as = AirmetReference.class)
-        public Builder setCancelledReference(final AirmetReference cancelledReference) {
+        @JsonDeserialize(as = AirmetReferenceImpl.class)
+        public Builder setCancelledReference(final Reference cancelledReference) {
             return super.setCancelledReference(cancelledReference);
         }
 
@@ -185,18 +186,6 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
 
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingSpeed(final NumericMeasure speed) {
-            return super.setMovingSpeed(speed);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingDirection(final NumericMeasure direction) {
-            return super.setMovingDirection(direction);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setVisibility(final NumericMeasure visibility) {
             return super.setVisibility(visibility);
         }
@@ -216,13 +205,17 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         /**
          * Provides the current builder value of the status property.
          *
-         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
-         * explicitly stored. This implementation uses {@link SigmetAirmetReportStatus#fromReportStatus(ReportStatus, boolean)} instead to determine the
+         * Note, this method is provided for backward compatibility with previous
+         * versions of the API. The <code>status</code> is no longer
+         * explicitly stored. This implementation uses
+         * {@link SigmetAirmetReportStatus#fromReportStatus(ReportStatus, boolean)}
+         * instead to determine the
          * returned value on-the-fly.
          *
          * @return the message status
          *
-         * @deprecated migrate to using a combination of {@link #getReportStatus()} and {@link #isCancelMessage()} instead
+         * @deprecated migrate to using a combination of {@link #getReportStatus()} and
+         *             {@link #isCancelMessage()} instead
          */
         @Deprecated
         public SigmetAirmetReportStatus getStatus() {
@@ -232,28 +225,34 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         /**
          * Sets the SIGMET-specific message status.
          *
-         * Note, this method is provided for backward compatibility with previous versions of the API. The <code>status</code> is no longer
-         * explicitly stored. Instead, this method sets other property values with the following logic:
+         * Note, this method is provided for backward compatibility with previous
+         * versions of the API. The <code>status</code> is no longer
+         * explicitly stored. Instead, this method sets other property values with the
+         * following logic:
          * <dl>
-         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#CANCELLATION CANCELLATION}</dt>
-         *     <dd>
-         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
-         *         <code>cancelMessage = true</code><br>
-         *     </dd>
+         * <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#CANCELLATION
+         * CANCELLATION}</dt>
+         * <dd>
+         * <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         * <code>cancelMessage = true</code><br>
+         * </dd>
          *
-         *     <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#NORMAL NORMAL}</dt>
-         *     <dd>
-         *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
-         *         <code>cancelMessage = false</code><br>
-         *     </dd>
+         * <dt>{@link fi.fmi.avi.model.AviationCodeListUser.SigmetAirmetReportStatus#NORMAL
+         * NORMAL}</dt>
+         * <dd>
+         * <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
+         * <code>cancelMessage = false</code><br>
+         * </dd>
          * </dl>
          *
          * @param status
-         *         the status to set
+         *               the status to set
          *
          * @return builder
          *
-         * @deprecated migrate to using a combination of {@link #setReportStatus(ReportStatus)} and {@link #setCancelMessage(boolean)} instead
+         * @deprecated migrate to using a combination of
+         *             {@link #setReportStatus(ReportStatus)} and
+         *             {@link #setCancelMessage(boolean)} instead
          */
         @Deprecated
         public Builder setStatus(final SigmetAirmetReportStatus status) {

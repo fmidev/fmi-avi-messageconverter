@@ -27,11 +27,9 @@
     "name": "AMSTERDAM",
     "type": "FIR"
   },
-  "sigmetPhenomenon": "EMBD_TS",
+  "phenomenon": "EMBD_TS",
   "permissibleUsage": "NON_OPERATIONAL",
   "permissibleUsageReason": "EXERCISE",
-  "analysisType": "OBSERVATION",
-  "intensityChange": "NO_CHANGE",
   "analysisGeometries": [
     {
       "time": {
@@ -45,6 +43,8 @@
         "value": 35.0,
         "uom": "FL"
       },
+      "intensityChange": "NO_CHANGE",
+      "analysisType": "OBSERVATION",
       "approximateLocation": false,
       "geometry": {
         "geoGeometry": {

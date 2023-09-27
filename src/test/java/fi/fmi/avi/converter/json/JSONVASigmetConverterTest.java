@@ -63,12 +63,25 @@ public class JSONVASigmetConverterTest {
         Objects.requireNonNull(is);
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
-        final ConversionResult<SIGMET> result = converter.convertMessage(input, JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        final ConversionResult<SIGMET> result = converter.convertMessage(input,
+                JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
         for (final ConversionIssue iss : result.getConversionIssues()) {
             System.err.println("  ISS:" + iss.getMessage() + " " + iss.getCause());
         }
-        System.err.println("SM:" + result.getStatus() + " ==>");
-        System.err.println("==>" + result.getConvertedMessage().get().getSequenceNumber());
+        assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
+    }
+
+    @Test
+    public void testSIGMETParsingNOVAEXP() throws Exception {
+        final InputStream is = JSONVASigmetConverterTest.class.getResourceAsStream("vasigmet_novaexp.json");
+        Objects.requireNonNull(is);
+        final String input = IOUtils.toString(is, "UTF-8");
+        is.close();
+        final ConversionResult<SIGMET> result = converter.convertMessage(input,
+                JSONConverter.JSON_STRING_TO_SIGMET_POJO, ConversionHints.EMPTY);
+        for (final ConversionIssue iss : result.getConversionIssues()) {
+            System.err.println("  ISS:" + iss.getMessage() + " " + iss.getCause());
+        }
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
     }
 
@@ -85,24 +98,29 @@ public class JSONVASigmetConverterTest {
 
         final SIGMETImpl.Builder builder = SIGMETImpl.builder();
 
-        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO").build();
-        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR").build();
+        final UnitPropertyGroup mwo = new UnitPropertyGroupImpl.Builder().setPropertyGroup("De Bilt", "EHDB", "MWO")
+                .build();
+        final UnitPropertyGroup fir = new UnitPropertyGroupImpl.Builder().setPropertyGroup("AMSTERDAM", "EHAA", "FIR")
+                .build();
 
-        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR).setName("AMSTERDAM").build();
+        final Airspace airspace = new AirspaceImpl.Builder().setDesignator("EHAA").setType(Airspace.AirspaceType.FIR)
+                .setName("AMSTERDAM").build();
 
         final String geomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,52.0,6.0,53.0,4.0,54.0,5.0,52.0]}";
         final Geometry geom = om.readValue(geomString, Geometry.class);
         final String fpaGeomString = "{ \"type\": \"Polygon\", \"exteriorRingPositions\":[5.0,53.0,6.0,54.0,4.0,55.0,5.0,53.0]}";
         final Geometry fpaGeom = om.readValue(fpaGeomString, Geometry.class);
 
-        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = new PhenomenonGeometryWithHeightImpl.Builder();
+        final PhenomenonGeometryWithHeightImpl.Builder geomBuilder = PhenomenonGeometryWithHeightImpl.builder();
         geomBuilder.setGeometry(TacOrGeoGeometryImpl.of(geom));
         geomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T12:00:00Z")));
         geomBuilder.setLowerLimit(NumericMeasureImpl.of(10, "FL"));
         geomBuilder.setUpperLimit(NumericMeasureImpl.of(35, "FL"));
         geomBuilder.setApproximateLocation(false);
+        geomBuilder.setIntensityChange(SigmetIntensityChange.NO_CHANGE);
+        geomBuilder.setAnalysisType(SigmetAnalysisType.OBSERVATION);
 
-        final PhenomenonGeometryImpl.Builder fpGeomBuilder = new PhenomenonGeometryImpl.Builder();
+        final PhenomenonGeometryImpl.Builder fpGeomBuilder = PhenomenonGeometryImpl.builder();
         fpGeomBuilder.setGeometry(TacOrGeoGeometryImpl.of(fpaGeom));
         fpGeomBuilder.setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2017-08-27T18:00:00Z")));
         fpGeomBuilder.setApproximateLocation(false);
@@ -133,37 +151,28 @@ public class JSONVASigmetConverterTest {
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
                 .setSequenceNumber("1")
                 .setTranslated(false)
-                .setSigmetPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+                .setPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setValidityPeriod(validPeriod.build())
-                .setIntensityChange(SigmetIntensityChange.NO_CHANGE)
-                .setAnalysisType(SigmetAnalysisType.OBSERVATION)
+
                 .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()))
                 .setForecastGeometries(Collections.singletonList(fpGeomBuilder.build()))
                 .setVAInfo(vaInfoBuilder.build());
 
         final SIGMET vaSigmet = builder.build();
 
-        final ConversionResult<String> result = converter.convertMessage(vaSigmet, JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> result = converter.convertMessage(vaSigmet,
+                JSONConverter.SIGMET_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
-        System.err.println("Converted: " + result.getConvertedMessage().get());
 
         final SIGMET refVaSigmet = om.readValue(reference, SIGMETImpl.class);
-        System.err.println("refVaSigmet: " + refVaSigmet);
 
         final SIGMET newVaSigmet = om.readValue(result.getConvertedMessage().get(), SIGMETImpl.class);
 
         final JsonNode refTree = om.readTree(reference);
         final JsonNode newTree = om.readTree(result.getConvertedMessage().get());
-        try {
-            System.err.println("REF: " + om.writerWithDefaultPrettyPrinter().writeValueAsString(refTree));
-            System.err.println("NEW: " + om.writerWithDefaultPrettyPrinter().writeValueAsString(newTree));
-        } catch (final Exception e) {
-            System.err.println("EXCEPTION: " + e);
-        }
 
-        System.err.println("ref=new: " + refVaSigmet.equals(newVaSigmet));
-        System.err.println("EQTREE: " + refTree.equals(newTree));
+        assertEquals("Strings do not match ", refVaSigmet, newVaSigmet);
 
         assertEquals("Strings do not match ", refTree, newTree);
 

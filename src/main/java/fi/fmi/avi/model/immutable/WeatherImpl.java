@@ -496,8 +496,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
 
     public static class Builder extends WeatherImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final Weather value) {

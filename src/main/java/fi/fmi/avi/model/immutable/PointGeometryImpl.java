@@ -43,8 +43,7 @@ public abstract class PointGeometryImpl implements PointGeometry, Serializable {
 
     public static class Builder extends PointGeometryImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final PointGeometry value) {

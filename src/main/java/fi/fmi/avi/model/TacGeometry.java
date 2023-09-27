@@ -1,13 +1,10 @@
 package fi.fmi.avi.model;
 
-import java.io.Serializable;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-public class TacGeometry implements Serializable {
-    private static final long serialVersionUID = -8508395627249599116L;
+import fi.fmi.avi.model.immutable.TacGeometryImpl;
 
-    final String data;
-
-    public TacGeometry(final String s) {
-        this.data = s;
-    }
+@JsonDeserialize(builder = TacGeometryImpl.Builder.class)
+public interface TacGeometry{
+    String getTacContent();
 }

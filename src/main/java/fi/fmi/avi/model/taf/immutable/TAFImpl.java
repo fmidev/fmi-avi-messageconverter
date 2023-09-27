@@ -149,8 +149,7 @@ public abstract class TAFImpl implements TAF, Serializable {
         private Aerodrome referredReportAerodrome;
         private boolean missingMessage;
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setCancelMessage(false);
             setReportStatus(ReportStatus.NORMAL);
             setTranslated(false);

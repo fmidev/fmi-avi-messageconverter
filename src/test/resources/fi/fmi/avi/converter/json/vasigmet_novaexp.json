@@ -27,21 +27,25 @@
     "name": "AMSTERDAM",
     "type": "FIR"
   },
+  "phenomenon": "EMBD_TS",
   "permissibleUsage": "NON_OPERATIONAL",
   "permissibleUsageReason": "EXERCISE",
-  "phenomenon": "MOD_ICE",
   "analysisGeometries": [
     {
-      "movingDirection": {
-        "value": 180.0,
-        "uom": "deg"
+      "time": {
+        "completeTime": "2017-08-27T12:00:00Z"
       },
-      "movingSpeed": {
+      "lowerLimit": {
         "value": 10.0,
-        "uom": "[kn_i]"
+        "uom": "FL"
       },
-      "analysisType": "OBSERVATION",
+      "upperLimit": {
+        "value": 35.0,
+        "uom": "FL"
+      },
       "intensityChange": "NO_CHANGE",
+      "analysisType": "OBSERVATION",
+      "approximateLocation": false,
       "geometry": {
         "geoGeometry": {
           "type": "Polygon",
@@ -56,19 +60,37 @@
             52.0
           ]
         }
-      },
-      "time": {
-        "completeTime": "2017-08-27T12:00:00Z"
-      },
-      "approximateLocation": false,
-      "lowerLimit": {
-        "value": 10.0,
-        "uom": "FL"
-      },
-      "upperLimit": {
-        "value": 35.0,
-        "uom": "FL"
       }
     }
-  ]
+  ],
+  "forecastGeometries": [
+    {
+      "time": {
+        "completeTime": "2017-08-27T18:00:00Z"
+      },
+      "approximateLocation": false,
+      "geometry": {},
+      "noVolcanicAshExpected": true
+    }
+  ],
+  "VAInfo": {
+    "volcano": {
+      "volcanoPosition": {
+        "type": "ElevatedPoint",
+        "crs": {
+          "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+          "dimension": 2,
+          "axisLabels": [
+            "Lat",
+            "Lon"
+          ]
+        },
+        "coordinates": [
+          52.0,
+          5.2
+        ]
+      },
+      "volcanoName": "GRIMSVOTN"
+    }
+  }
 }

@@ -27,20 +27,21 @@
     "name": "AMSTERDAM",
     "type": "FIR"
   },
-  "movingDirection": {
-    "value": 180.0,
-    "uom": "deg"
-  },
-  "movingSpeed": {
-    "value": 10.0,
-    "uom": "[kn_i]"
-  },
   "permissibleUsage": "NON_OPERATIONAL",
   "permissibleUsageReason": "EXERCISE",
-  "airmetPhenomenon": "MOD_ICE",
-  "analysisType": "OBSERVATION",
+  "phenomenon": "MOD_ICE",
   "analysisGeometries": [
     {
+      "movingDirection": {
+        "value": 180.0,
+        "uom": "deg"
+      },
+      "movingSpeed": {
+        "value": 10.0,
+        "uom": "[kn_i]"
+      },
+      "analysisType": "OBSERVATION",
+      "intensityChange": "NO_CHANGE",
       "geometry": {
         "geoGeometry": {
           "type": "Point",
@@ -63,6 +64,5 @@
         "uom": "FL"
       }
     }
-  ],
-  "intensityChange": "NO_CHANGE"
+  ]
 }

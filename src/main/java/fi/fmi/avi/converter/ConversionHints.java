@@ -86,7 +86,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_PARSING_MODE;
 
     /**
-     * Strict mode, no errors or warnings should be ignored and the specification requirements followed meticulously.
+     * Strict mode, no errors or warnings should be ignored and the specification
+     * requirements followed meticulously.
      */
     public static final Object VALUE_PARSING_MODE_STRICT = "STRICT";
 
@@ -96,48 +97,57 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_PARSING_MODE_ALLOW_MISSING = "ALLOW_MISSING";
 
     /**
-     * Operation should allow (some) syntax errors and missing data for the operation.
+     * Operation should allow (some) syntax errors and missing data for the
+     * operation.
      */
     public static final Object VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS = "ALLOW_SYNTAX_ERRORS";
 
     /**
-     * Operation should allow (some) logical errors and missing data for the operation.
+     * Operation should allow (some) logical errors and missing data for the
+     * operation.
      */
     public static final Object VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS = "ALLOW_LOGICAL_ERRORS";
 
     /**
-     * Loose mode, operation should allow as much errors and missing data as possible.
+     * Loose mode, operation should allow as much errors and missing data as
+     * possible.
      */
     public static final Object VALUE_PARSING_MODE_ALLOW_ANY_ERRORS = "ALLOW_ANY_ERRORS";
 
     /**
-     * Key for using/preferring the long ((with start and end day number) or short valid time format.
+     * Key for using/preferring the long ((with start and end day number) or short
+     * valid time format.
      */
     public static final Key KEY_VALIDTIME_FORMAT;
 
     /**
-     * The operation should prefer/expect the long format even if the short one could be used.
+     * The operation should prefer/expect the long format even if the short one
+     * could be used.
      */
     public static final Object VALUE_VALIDTIME_FORMAT_PREFER_LONG = "PREFER_LONG";
 
     /**
-     * The operation should prefer/expect the short format when the long format is not necessary.
+     * The operation should prefer/expect the short format when the long format is
+     * not necessary.
      */
     public static final Object VALUE_VALIDTIME_FORMAT_PREFER_SHORT = "PREFER_SHORT";
 
     /**
-     * Key for preferring/expecting timezone ID (typically 'Z' for UTC) to be used for
+     * Key for preferring/expecting timezone ID (typically 'Z' for UTC) to be used
+     * for
      * timestamps.
      */
     public static final Key KEY_TIMEZONE_ID_POLICY;
 
     /**
-     * Prefer/expect the timezone ID to be used for timestamps when ever allowed by the specification, even if mandated by it.
+     * Prefer/expect the timezone ID to be used for timestamps when ever allowed by
+     * the specification, even if mandated by it.
      */
     public static final Object VALUE_TIMEZONE_ID_POLICY_STRICT = "STRICT";
 
     /**
-     * Silently ignore the missing timezone ID or leave it out when allowed, but not required by the specification.
+     * Silently ignore the missing timezone ID or leave it out when allowed, but not
+     * required by the specification.
      */
     public static final Object VALUE_TIMEZONE_ID_POLICY_LOOSE = "LOOSE";
 
@@ -157,12 +167,14 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_WEATHER_CODES;
 
     /**
-     * The code values not on the list https://codes.wmo.int/306/4678 must be silently ignored.
+     * The code values not on the list https://codes.wmo.int/306/4678 must be
+     * silently ignored.
      */
     public static final Object VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678 = "IGNORE NON WMO 306 4678";
 
     /**
-     * The code values not on the list https://codes.wmo.int/306/4678 must be reported as errors.
+     * The code values not on the list https://codes.wmo.int/306/4678 must be
+     * reported as errors.
      */
     public static final Object VALUE_WEATHER_CODES_STRICT_WMO_4678 = "STRICT WMO 306 4678";
 
@@ -172,17 +184,20 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_WEATHER_CODES_ALLOW_ANY = "ALLOW ANY";
 
     /**
-     * Controlling of automatically setting the translation time field of the created POJOs.
+     * Controlling of automatically setting the translation time field of the
+     * created POJOs.
      */
     public static final Key KEY_TRANSLATION_TIME;
 
     /**
-     * The translation time should be set automatically when executing the conversion using the system time.
+     * The translation time should be set automatically when executing the
+     * conversion using the system time.
      */
     public static final Object VALUE_TRANSLATION_TIME_AUTO = "AUTO";
 
     /**
-     * The translation time should be left unset when executing the conversion using the system time.
+     * The translation time should be left unset when executing the conversion using
+     * the system time.
      */
     public static final Object VALUE_TRANSLATION_TIME_SKIP = "SKIP";
 
@@ -202,7 +217,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Key KEY_BULLETIN_HEADING_SPACING;
 
     /**
-     * Determines the length of tac label field, so that whitespace can be added accordingly
+     * Determines the length of tac label field, so that whitespace can be added
+     * accordingly
      */
     public static final Key KEY_ADVISORY_LABEL_WIDTH;
 
@@ -222,40 +238,51 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_BULLETIN_HEADING_SPACING_SPACE = "SPACE";
 
     /**
-     * Extended interpretations for bulletin heading augmentation indicator (BBB). The value has to be of type {@link BulletinHeadingIndicatorInterpreter}.
+     * Extended interpretations for bulletin heading augmentation indicator (BBB).
+     * The value has to be of type {@link BulletinHeadingIndicatorInterpreter}.
      */
     public static final Key KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION;
 
     /**
-     * How the TAC TAF valid time field is matched with TAF POJO validityTime or referredReport/validityTime fields.
+     * How the TAC TAF valid time field is matched with TAF POJO validityTime or
+     * referredReport/validityTime fields.
      */
     public static final Key KEY_TAF_REFERENCE_POLICY;
 
     /**
-     * When parsing and serializing AMD, COR or CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC TAF message.
-     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     * When parsing and serializing AMD, COR or CNL TAFs, the
+     * referredReport/validityTime should be used to match the valid time of the TAC
+     * TAF message.
+     * In other cases the validityTime of the TAF object should be matched with the
+     * valid time of the TAC TAF message.
      */
     public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD = "USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD";
 
     /**
-     * When parsing and serializing COR or CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC message.
-     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     * When parsing and serializing COR or CNL TAFs, the referredReport/validityTime
+     * should be used to match the valid time of the TAC message.
+     * In other cases the validityTime of the TAF object should be matched with the
+     * valid time of the TAC TAF message.
      */
     public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL = "USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL";
 
     /**
-     * When parsing and serializing CNL TAFs, the referredReport/validityTime should be used to match the valid time of the TAC message.
-     * In other cases the validityTime of the TAF object should be matched with the valid time of the TAC TAF message.
+     * When parsing and serializing CNL TAFs, the referredReport/validityTime should
+     * be used to match the valid time of the TAC message.
+     * In other cases the validityTime of the TAF object should be matched with the
+     * valid time of the TAC TAF message.
      */
     public static final Object VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_CNL = "USE_REFERRED_REPORT_VALID_TIME_FOR_CNL";
 
     /**
-     * validityTime of the TAF object should always be matched with the valid time of the TAC TAF message regardless of the message type.
+     * validityTime of the TAF object should always be matched with the valid time
+     * of the TAC TAF message regardless of the message type.
      */
     public static final Object VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY = "USE_OWN_VALID_TIME_ONLY";
 
     /**
-     * Controls how whitespace characters are handled when serializing TAC bulletin messages.
+     * Controls how whitespace characters are handled when serializing TAC bulletin
+     * messages.
      */
     public static final Key KEY_WHITESPACE_SERIALIZATION_MODE;
 
@@ -270,11 +297,33 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM = "WHITESPACE_SERIALIZATION_TRIM";
 
     /**
-     * Whitespace character passthrough. This allows messages to contain newline and other whitespace characters in TAC serialized bulletins.
+     * Whitespace character passthrough. This allows messages to contain newline and
+     * other whitespace characters in TAC serialized bulletins.
      */
     public static final Object VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH = "WHITESPACE_SERIALIZATION_PASSTHROUGH";
 
     /**
+     * Controls whether the minutes part of point coordinates is omitted (default)
+     * or not when minutes is zero.
+     */
+    public static final Key KEY_COORDINATE_MINUTES;
+
+    /**
+     * Omit the minutes part of point coordinates when minutes is zero (default).
+     * I.e. E002 for 2 degrees East.
+     */
+    public static final Object VALUE_COORDINATE_MINUTES_OMIT_ZERO = "OMIT_ZERO";
+
+    /**
+     * Include the minutes part of point coordinates when minutes is zero. I.e.
+     * E00200 for 2 degrees East.
+     */
+    public static final Object VALUE_COORDINATE_MINUTES_INCLUDE_ZERO = "INCLUDE_ZERO";
+
+    /**
+     * A convenience ParsingHints including only the
+     * {@link ConversionHints#KEY_MESSAGE_TYPE} with value
+     * {@link MessageType#METAR}.
      * Disable automatic line wrapping when serializing TAC bulletin messages.
      */
     public static final Object VALUE_DISABLE_LINEWRAP_SERIALIZATION_MODE = "DISABLE_LINEWRAP_SERIALIZATION_MODE";
@@ -285,42 +334,56 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     public static final ConversionHints METAR;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#TAF}.
+     * A convenience ParsingHints including only the
+     * {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#TAF}.
      */
     public static final ConversionHints TAF;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPECI}.
+     * A convenience ParsingHints including only the
+     * {@link ConversionHints#KEY_MESSAGE_TYPE} with value
+     * {@link MessageType#SPECI}.
      */
     public static final ConversionHints SPECI;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SIGMET}.
+     * A convenience ParsingHints including only the
+     * {@link ConversionHints#KEY_MESSAGE_TYPE} with value
+     * {@link MessageType#SIGMET}.
      */
     public static final ConversionHints SIGMET;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link ConversionHints#VALUE_MESSAGE_TYPE_AIRMET}
+     * A convenience ParsingHints including only the
+     * {@link ConversionHints#KEY_MESSAGE_TYPE} with value
+     * {@link ConversionHints#VALUE_MESSAGE_TYPE_AIRMET}
      */
     public static final ConversionHints AIRMET;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPECIAL_AIR_REPORT}.
+     * A convenience ParsingHints including only the
+     * {@link ConversionHints#KEY_MESSAGE_TYPE} with value
+     * {@link MessageType#SPECIAL_AIR_REPORT}.
      */
     public static final ConversionHints SPECIAL_AIR_REPORT;
 
     /**
-     * A convenience ParsingHints including only the {@link ConversionHints#KEY_MESSAGE_TYPE} with value {@link MessageType#SPACE_WEATHER_ADVISORY}.
+     * A convenience ParsingHints including only the
+     * {@link ConversionHints#KEY_MESSAGE_TYPE} with value
+     * {@link MessageType#SPACE_WEATHER_ADVISORY}.
      */
     public static final ConversionHints SPACE_WEATHER_ADVISORY;
 
     /**
-     * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value {@link ConversionHints#VALUE_PARSING_MODE_STRICT}.
+     * A convenience parsingHints including only the
+     * {@link ConversionHints#KEY_PARSING_MODE} with value
+     * {@link ConversionHints#VALUE_PARSING_MODE_STRICT}.
      */
     public static final ConversionHints STRICT_PARSING;
 
     /**
-     * A convenience parsingHints including only the {@link ConversionHints#KEY_PARSING_MODE} with value
+     * A convenience parsingHints including only the
+     * {@link ConversionHints#KEY_PARSING_MODE} with value
      * {@link ConversionHints#VALUE_PARSING_MODE_ALLOW_ANY_ERRORS}.
      */
     public static final ConversionHints ALLOW_ERRORS;
@@ -331,32 +394,42 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
 
     static {
         KEY_MESSAGE_TYPE = new KeyImpl(1, "Aviation message type hint");
-        KEY_PARSING_MODE = new KeyImpl(3, "Parsing mode hint", VALUE_PARSING_MODE_STRICT, VALUE_PARSING_MODE_ALLOW_MISSING,
-                VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS, VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS, VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
-        KEY_VALIDTIME_FORMAT = new KeyImpl(4, "Valid time format preference", VALUE_VALIDTIME_FORMAT_PREFER_SHORT, VALUE_VALIDTIME_FORMAT_PREFER_LONG);
-        KEY_TIMEZONE_ID_POLICY = new KeyImpl(5, "Controls whether the UTZ indicator 'Z' is required/created when not strictly mandated",
+        KEY_PARSING_MODE = new KeyImpl(3, "Parsing mode hint", VALUE_PARSING_MODE_STRICT,
+                VALUE_PARSING_MODE_ALLOW_MISSING,
+                VALUE_PARSING_MODE_ALLOW_SYNTAX_ERRORS, VALUE_PARSING_MODE_ALLOW_LOGICAL_ERRORS,
+                VALUE_PARSING_MODE_ALLOW_ANY_ERRORS);
+        KEY_VALIDTIME_FORMAT = new KeyImpl(4, "Valid time format preference", VALUE_VALIDTIME_FORMAT_PREFER_SHORT,
+                VALUE_VALIDTIME_FORMAT_PREFER_LONG);
+        KEY_TIMEZONE_ID_POLICY = new KeyImpl(5,
+                "Controls whether the UTZ indicator 'Z' is required/created when not strictly mandated",
                 VALUE_TIMEZONE_ID_POLICY_LOOSE, VALUE_TIMEZONE_ID_POLICY_STRICT);
 
-        KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags", VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
+        KEY_SERIALIZATION_POLICY = new KeyImpl(6, "Controls serialization flags",
+                VALUE_SERIALIZATION_POLICY_ANNEX3_16TH);
 
-        KEY_WEATHER_CODES = new KeyImpl(7, "Control the checks on the used weather codes", VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678,
+        KEY_WEATHER_CODES = new KeyImpl(7, "Control the checks on the used weather codes",
+                VALUE_WEATHER_CODES_IGNORE_NON_WMO_4678,
                 VALUE_WEATHER_CODES_STRICT_WMO_4678, VALUE_WEATHER_CODES_ALLOW_ANY);
 
-        //Values not fixed: the actual time to use may be given as value
+        // Values not fixed: the actual time to use may be given as value
         KEY_TRANSLATION_TIME = new KeyImpl(8,
                 "Set the translation time when converting. If the value is an instance of ZonedDateTime, the value is used as translation time");
 
-        KEY_BULLETIN_ID = new KeyImpl(9, "Set the containing bulletin ID when converting from a bulletin format not containing the ID in itself");
+        KEY_BULLETIN_ID = new KeyImpl(9,
+                "Set the containing bulletin ID when converting from a bulletin format not containing the ID in itself");
 
-        KEY_CONTAINED_MESSAGE_TYPE = new KeyImpl(10, "Hint for the message type contained within a container, such as bulletin");
+        KEY_CONTAINED_MESSAGE_TYPE = new KeyImpl(10,
+                "Hint for the message type contained within a container, such as bulletin");
 
-        KEY_BULLETIN_HEADING_SPACING = new KeyImpl(11, "Controls how the abbreviated bulletin heading are spaced", VALUE_BULLETIN_HEADING_SPACING_NONE,
+        KEY_BULLETIN_HEADING_SPACING = new KeyImpl(11, "Controls how the abbreviated bulletin heading are spaced",
+                VALUE_BULLETIN_HEADING_SPACING_NONE,
                 VALUE_BULLETIN_HEADING_SPACING_SPACE);
 
-        KEY_TAF_REFERENCE_POLICY = new KeyImpl(12, "Controls how the valid time is interpreted and handled with TAF messages",
-                VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY,//
-                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_CNL,//
-                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL,//
+        KEY_TAF_REFERENCE_POLICY = new KeyImpl(12,
+                "Controls how the valid time is interpreted and handled with TAF messages",
+                VALUE_TAF_REFERENCE_POLICY_USE_OWN_VALID_TIME_ONLY, //
+                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_CNL, //
+                VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL, //
                 VALUE_TAF_REFERENCE_POLICY_USE_REFERRED_REPORT_VALID_TIME_FOR_COR_CNL_AMD);
 
         KEY_BULLETIN_HEADING_AUGMENTATION_INDICATOR_EXTENSION = new Key(13) {
@@ -371,13 +444,17 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
             }
         };
 
-        KEY_WHITESPACE_SERIALIZATION_MODE = new KeyImpl(14, "Controls message white space serialization in TAC bulletins",
+        KEY_WHITESPACE_SERIALIZATION_MODE = new KeyImpl(14,
+                "Controls message white space serialization in TAC bulletins",
                 VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM, VALUE_WHITESPACE_SERIALIZATION_MODE_PASSTHROUGH);
 
+        KEY_COORDINATE_MINUTES = new KeyImpl(20,
+                "Controls whether a zero value for minutes in coordinates is dropped",
+                VALUE_COORDINATE_MINUTES_OMIT_ZERO, VALUE_COORDINATE_MINUTES_INCLUDE_ZERO);
+        KEY_ADVISORY_LABEL_WIDTH = new KeyImpl(16,
+                "Used to determine the length of the label, so that white space can be added accordingly.");
         KEY_DISABLE_LINEWRAP_SERIALIZATION_MODE = new KeyImpl(15, "Controls line wrapping when serializing TAC bulletins",
                 VALUE_WHITESPACE_SERIALIZATION_MODE_TRIM, VALUE_DISABLE_LINEWRAP_SERIALIZATION_MODE);
-
-        KEY_ADVISORY_LABEL_WIDTH = new KeyImpl(16, "Used to determine the length of the label, so that white space can be added accordingly.");
 
         KEY_INDENT_ON_LINE_WRAP = new KeyImpl(17, "Used to determine the indentation after line wrap.");
 
@@ -437,7 +514,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     }
 
     /**
-     * Creates ParsingHints with the given key-value pairs and controlled modifiability.
+     * Creates ParsingHints with the given key-value pairs and controlled
+     * modifiability.
      *
      * @param init       the map of key-values
      * @param modifiable true if hints can be modified, false if not
@@ -464,7 +542,8 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     }
 
     public static ConversionHints immutableCopyOf(final Map<? super Key, ?> hints) {
-        return hints instanceof ConversionHints && !((ConversionHints) hints).modifiable ? (ConversionHints) hints : new ConversionHints(hints, false);
+        return hints instanceof ConversionHints && !((ConversionHints) hints).modifiable ? (ConversionHints) hints
+                : new ConversionHints(hints, false);
     }
 
     public static ConversionHints modifiableCopyOf(final Map<? super Key, ?> hints) {
@@ -622,8 +701,10 @@ public final class ConversionHints implements Map<Object, Object>, Cloneable {
     }
 
     /**
-     * Key for a specific hint. The {@link ConversionHints#put} methods only accept key-value pairs
-     * where the {@link #isCompatibleValue(Object)} returns true for the given value.
+     * Key for a specific hint. The {@link ConversionHints#put} methods only accept
+     * key-value pairs
+     * where the {@link #isCompatibleValue(Object)} returns true for the given
+     * value.
      */
     public abstract static class Key {
         private final int key;

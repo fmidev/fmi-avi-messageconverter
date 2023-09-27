@@ -51,15 +51,6 @@ public abstract class VolcanoDescriptionImpl implements VolcanoDescription, Seri
         public Builder setVolcanoPosition(final ElevatedPoint volcanoPosition) {
             return super.setVolcanoPosition(volcanoPosition);
         }
-
- /*       @Override
-        public Builder setVolcanoName(String volcanoName) {
-            return super.setVolcanoName(Optional.of(volcanoName));
-        }
-
-        public Builder setVolcanoName(Optional<String> volcanoName) {
-            return super.setVolcanoName(volcanoName);
-        }*/
     }
 
 }

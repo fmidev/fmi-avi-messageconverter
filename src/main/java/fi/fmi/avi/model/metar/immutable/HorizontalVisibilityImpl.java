@@ -49,8 +49,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
 
     public static class Builder extends HorizontalVisibilityImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final HorizontalVisibility value) {

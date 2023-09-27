@@ -48,8 +48,7 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
 
     public static class Builder extends RunwayDirectionImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final RunwayDirection value) {

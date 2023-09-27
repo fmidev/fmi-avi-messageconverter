@@ -14,51 +14,51 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
-import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SIGMETBulletin;
+import fi.fmi.avi.model.sigmet.AIRMET;
+import fi.fmi.avi.model.sigmet.AIRMETBulletin;
 
 @FreeBuilder
-@JsonDeserialize(builder = SIGMETBulletinImpl.Builder.class)
+@JsonDeserialize(builder = AIRMETBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
-public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable {
+public abstract class AIRMETBulletinImpl implements AIRMETBulletin, Serializable {
 
-    private static final long serialVersionUID = 7742724278322130499L;
+   private static final long serialVersionUID = 7742724278322130498L;
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public static SIGMETBulletinImpl immutableCopyOf(final SIGMETBulletin bulletin) {
+    public static AIRMETBulletinImpl immutableCopyOf(final AIRMETBulletin bulletin) {
         Objects.requireNonNull(bulletin);
-        if (bulletin instanceof SIGMETBulletinImpl) {
-            return (SIGMETBulletinImpl) bulletin;
+        if (bulletin instanceof AIRMETBulletinImpl) {
+            return (AIRMETBulletinImpl) bulletin;
         } else {
             return Builder.from(bulletin).build();
         }
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Optional<SIGMETBulletinImpl> immutableCopyOf(final Optional<SIGMETBulletin> bulletin) {
-        return bulletin.map(SIGMETBulletinImpl::immutableCopyOf);
+    public static Optional<AIRMETBulletinImpl> immutableCopyOf(final Optional<AIRMETBulletin> bulletin) {
+        return bulletin.map(AIRMETBulletinImpl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
 
-    public static class Builder extends SIGMETBulletinImpl_Builder {
+    public static class Builder extends AIRMETBulletinImpl_Builder {
 
         Builder() {
         }
 
-        public static Builder from(final SIGMETBulletin value) {
-            if (value instanceof SIGMETBulletinImpl) {
-                return ((SIGMETBulletinImpl) value).toBuilder();
+        public static Builder from(final AIRMETBulletin value) {
+            if (value instanceof AIRMETBulletinImpl) {
+                return ((AIRMETBulletinImpl) value).toBuilder();
             } else {
                 final Builder builder = builder();
                 MeteorologicalBulletinBuilderHelper.copyFrom(builder, value, //
                         Builder::setHeading, //
                         Builder::addAllMessages, //
-                        SIGMETImpl::immutableCopyOf, //
+                        AIRMETImpl::immutableCopyOf, //
                         Builder::setTimeStamp, //
                         Builder::addAllTimeStampFields);
                 return builder;
@@ -72,9 +72,9 @@ public abstract class SIGMETBulletinImpl implements SIGMETBulletin, Serializable
         }
 
         @Override
-        @JsonDeserialize(contentAs = SIGMETImpl.class)
+        @JsonDeserialize(contentAs = AIRMETImpl.class)
         @JsonProperty("messages")
-        public Builder addMessages(final SIGMET... messages) {
+        public Builder addMessages(final AIRMET... messages) {
             return super.addMessages(messages);
         }
     }

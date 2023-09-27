@@ -38,11 +38,9 @@
           "completeTime": "2017-08-27T18:00:00Z"
         }
       },
-      "sigmetPhenomenon": "EMBD_TS",
+      "phenomenon": "EMBD_TS",
       "permissibleUsage": "NON_OPERATIONAL",
       "permissibleUsageReason": "EXERCISE",
-      "analysisType": "OBSERVATION",
-      "intensityChange": "NO_CHANGE",
       "analysisGeometries": [
         {
           "time": {
@@ -56,7 +54,9 @@
             "value": 35.0,
             "uom": "FL"
           },
+          "intensityChange": "NO_CHANGE",
           "approximateLocation": false,
+          "analysisType": "OBSERVATION",
           "geometry": {
             "geoGeometry": {
               "type": "Polygon",
@@ -128,11 +128,9 @@
         "name": "AMSTERDAM",
         "type": "FIR"
       },
-      "sigmetPhenomenon": "EMBD_TS",
+      "phenomenon": "EMBD_TS",
       "permissibleUsage": "NON_OPERATIONAL",
       "permissibleUsageReason": "EXERCISE",
-      "analysisType": "OBSERVATION",
-      "intensityChange": "NO_CHANGE",
       "analysisGeometries": [
         {
           "time": {
@@ -146,7 +144,9 @@
             "value": 35.0,
             "uom": "FL"
           },
+          "intensityChange": "NO_CHANGE",
           "approximateLocation": false,
+          "analysisType": "OBSERVATION",
           "geometry": {
             "geoGeometry": {
               "type": "Polygon",

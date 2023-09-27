@@ -58,8 +58,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
 
     public static class Builder extends TrendForecastImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);
         }

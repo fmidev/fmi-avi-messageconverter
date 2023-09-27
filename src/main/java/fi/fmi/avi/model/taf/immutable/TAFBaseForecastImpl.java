@@ -74,8 +74,7 @@ public abstract class TAFBaseForecastImpl implements TAFBaseForecast, Serializab
 
     public static class Builder extends TAFBaseForecastImpl_Builder implements TAFForecast.Builder<TAFBaseForecastImpl, Builder> {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);
         }

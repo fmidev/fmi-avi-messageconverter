@@ -54,8 +54,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
 
     public static class Builder extends ObservedCloudsImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
             setNoCloudsDetectedByAutoSystem(false);
             setNoSignificantCloud(false);
             setVerticalVisibilityUnobservableByAutoSystem(false);

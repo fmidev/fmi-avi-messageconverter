@@ -8,7 +8,7 @@ import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.SIGMETAIRMET;
 
 public interface AIRMET extends SIGMETAIRMET {
-    AeronauticalAirmetWeatherPhenomenon getAirmetPhenomenon();
+    Optional<AeronauticalAirmetWeatherPhenomenon> getPhenomenon();
 
     Optional<AirmetCloudLevels> getCloudLevels();
 
@@ -18,16 +18,7 @@ public interface AIRMET extends SIGMETAIRMET {
 
     Optional<NumericMeasure> getVisibility();
 
-    Optional<AirmetReference> getCancelledReference();
-
-    SigmetAnalysisType getAnalysisType();
+    Optional<Reference> getCancelledReference();
 
     Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
-
-    Optional<NumericMeasure> getMovingSpeed();
-
-    Optional<NumericMeasure> getMovingDirection();
-
-    Optional<SigmetIntensityChange> getIntensityChange();
-
 }

@@ -6,7 +6,6 @@ import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.VolcanoDescription;
 
 public interface VAInfo {
-    VolcanoDescription getVolcano();
-    Optional<Boolean> getNoVolcanicAshExpected();
+    Optional<VolcanoDescription> getVolcano();
     Optional<UnitPropertyGroup> getVolcanicAshMovedToFIR();
 }

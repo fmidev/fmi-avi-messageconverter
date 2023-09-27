@@ -48,8 +48,7 @@ public abstract class SeaStateImpl implements SeaState, Serializable {
 
     public static class Builder extends SeaStateImpl_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public static Builder from(final SeaState value) {

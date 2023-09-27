@@ -135,8 +135,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
 
     public static class Builder extends PartialOrCompleteTimePeriod_Builder {
 
-        @Deprecated
-        public Builder() {
+        Builder() {
         }
 
         public Builder setTrendTimeGroupToken(final String token) {
