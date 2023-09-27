@@ -31,6 +31,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ...
 
+## [v7.0.0-beta1] - 2023-09-27
+
+### Added
+
+- Experimental support for SIGMET/AIRMET messages [#100]
+
 ## [v6.3.0] - 2023-02-15
 
 ### Added
@@ -88,6 +94,8 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 
 [Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.3.0...HEAD
 
+[v7.0.0-beta1]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-7.0.0-beta1
+
 [v6.3.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.3.0
 
 [v6.2.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.2.0
@@ -117,6 +125,8 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 [#92]: https://github.com/fmidev/fmi-avi-messageconverter/pull/92
 
 [#98]: https://github.com/fmidev/fmi-avi-messageconverter/pull/98
+
+[#100]: https://github.com/fmidev/fmi-avi-messageconverter/pull/100
 
 [#101]: https://github.com/fmidev/fmi-avi-messageconverter/issues/101
 
