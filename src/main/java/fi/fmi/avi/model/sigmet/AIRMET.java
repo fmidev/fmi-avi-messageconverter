@@ -1,11 +1,10 @@
 package fi.fmi.avi.model.sigmet;
 
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.SIGMETAIRMET;
+
 import java.util.List;
 import java.util.Optional;
-
-import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.SIGMETAIRMET;
 
 public interface AIRMET extends SIGMETAIRMET {
     Optional<AeronauticalAirmetWeatherPhenomenon> getPhenomenon();
@@ -20,5 +19,4 @@ public interface AIRMET extends SIGMETAIRMET {
 
     Optional<Reference> getCancelledReference();
 
-    Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
 }
