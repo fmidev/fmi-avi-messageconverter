@@ -31,6 +31,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ...
 
+## [v7.0.0-beta2] - 2023-10-23
+
+### Changed
+
+- Moved SIGMET and AIRMET getAnalysisGeometries() to SIGMETAIRMET interface [#116]
+
 ## [v7.0.0-beta1] - 2023-09-27
 
 ### Added
@@ -94,6 +100,8 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 
 [Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.3.0...HEAD
 
+[v7.0.0-beta2]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-7.0.0-beta2
+
 [v7.0.0-beta1]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-7.0.0-beta1
 
 [v6.3.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-6.3.0
@@ -133,3 +141,5 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 [#103]: https://github.com/fmidev/fmi-avi-messageconverter/pull/103
 
 [#105]: https://github.com/fmidev/fmi-avi-messageconverter/pull/105
+
+[#116]: https://github.com/fmidev/fmi-avi-messageconverter/pull/116
