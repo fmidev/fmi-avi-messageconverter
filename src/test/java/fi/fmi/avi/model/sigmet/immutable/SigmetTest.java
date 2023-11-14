@@ -1,37 +1,22 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import fi.fmi.avi.model.Airspace;
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.AviationWeatherMessage;
-import fi.fmi.avi.model.Geometry;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.PhenomenonGeometry;
-import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.TacOrGeoGeometry;
-import fi.fmi.avi.model.immutable.AirspaceImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
-import fi.fmi.avi.model.immutable.TacGeometryImpl;
-import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
-import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
+import fi.fmi.avi.model.*;
+import fi.fmi.avi.model.immutable.*;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
 import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
 
 public class SigmetTest {
 
@@ -86,6 +71,7 @@ public class SigmetTest {
                         .build())
                 .setAnalysisGeometries(Collections.singletonList(getAnalysis()))
                 .setForecastGeometries(Collections.singletonList(getForecast()))
+                .setPhenomenonType(AviationCodeListUser.SigmetPhenomenonType.SIGMET)
                 .setPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
                 .setTranslated(false);
         return sm.build();

@@ -1,15 +1,21 @@
 package fi.fmi.avi.converter.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.io.InputStream;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import fi.fmi.avi.converter.AviMessageConverter;
+import fi.fmi.avi.converter.ConversionHints;
+import fi.fmi.avi.converter.ConversionIssue;
+import fi.fmi.avi.converter.ConversionResult;
+import fi.fmi.avi.converter.json.conf.JSONConverter;
+import fi.fmi.avi.model.*;
+import fi.fmi.avi.model.immutable.*;
+import fi.fmi.avi.model.sigmet.SIGMET;
+import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
+import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
+import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
+import fi.fmi.avi.model.sigmet.immutable.VAInfoImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,37 +24,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.io.InputStream;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
 
-import fi.fmi.avi.converter.AviMessageConverter;
-import fi.fmi.avi.converter.ConversionHints;
-import fi.fmi.avi.converter.ConversionIssue;
-import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.converter.json.conf.JSONConverter;
-import fi.fmi.avi.model.Airspace;
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.AviationWeatherMessage;
-import fi.fmi.avi.model.Geometry;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.UnitPropertyGroup;
-import fi.fmi.avi.model.immutable.AirspaceImpl;
-import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
-import fi.fmi.avi.model.immutable.ElevatedPointImpl;
-import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
-import fi.fmi.avi.model.immutable.TacOrGeoGeometryImpl;
-import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
-import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.SigmetAnalysisType;
-import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
-import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
-import fi.fmi.avi.model.sigmet.immutable.VAInfoImpl;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONVASigmetTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
@@ -151,7 +133,8 @@ public class JSONVASigmetConverterTest {
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.EXERCISE)
                 .setSequenceNumber("1")
                 .setTranslated(false)
-                .setPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.EMBD_TS)
+                .setPhenomenonType(AviationCodeListUser.SigmetPhenomenonType.VOLCANIC_ASH_SIGMET)
+                .setPhenomenon(AviationCodeListUser.AeronauticalSignificantWeatherPhenomenon.VA)
                 .setValidityPeriod(validPeriod.build())
 
                 .setAnalysisGeometries(Collections.singletonList(geomBuilder.build()))

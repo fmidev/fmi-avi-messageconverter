@@ -27,7 +27,8 @@
     "name": "AMSTERDAM",
     "type": "FIR"
   },
-  "phenomenon": "EMBD_TS",
+  "phenomenonType": "VOLCANIC_ASH_SIGMET",
+  "phenomenon": "VA",
   "permissibleUsage": "NON_OPERATIONAL",
   "permissibleUsageReason": "EXERCISE",
   "analysisGeometries": [

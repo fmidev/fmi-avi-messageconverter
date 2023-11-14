@@ -1,6 +1,19 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
-import static java.util.Objects.requireNonNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.*;
+import fi.fmi.avi.model.immutable.AirspaceImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
+import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
+import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
+import fi.fmi.avi.model.sigmet.Reference;
+import fi.fmi.avi.model.sigmet.SIGMET;
+import fi.fmi.avi.model.sigmet.VAInfo;
+import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,38 +21,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import org.inferred.freebuilder.FreeBuilder;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fi.fmi.avi.model.AirTrafficServicesUnitWeatherMessageBuilderHelper;
-import fi.fmi.avi.model.Airspace;
-import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
-import fi.fmi.avi.model.BuilderHelper;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
-import fi.fmi.avi.model.PhenomenonGeometry;
-import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
-import fi.fmi.avi.model.SIGMETAIRMETBuilderHelper;
-import fi.fmi.avi.model.UnitPropertyGroup;
-import fi.fmi.avi.model.immutable.AirspaceImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryImpl;
-import fi.fmi.avi.model.immutable.PhenomenonGeometryWithHeightImpl;
-import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
-import fi.fmi.avi.model.sigmet.SIGMET;
-import fi.fmi.avi.model.sigmet.Reference;
-import fi.fmi.avi.model.sigmet.VAInfo;
+import static java.util.Objects.requireNonNull;
 
 @FreeBuilder
 @JsonDeserialize(builder = SIGMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice",
         "sequenceNumber", "issueTime",
-        "validityPeriod", "airspace", "phenomenon", "analysisGeometries", "forecastGeometries", "volcano",
+        "validityPeriod", "airspace", "phenomenonType", "phenomenon", "analysisGeometries", "forecastGeometries", "volcano",
         "volcanicAshMovedToFIR", "cancelledReport", "remarks", "permissibleUsage", "permissibleUsageReason",
         "permissibleUsageSupplementary", "translated",
         "translatedBulletinID", "translatedBulletinReceptionTime", "translationCentreDesignator",
@@ -135,6 +124,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
                         Builder::setAirspace, //
                         Builder::setCancelMessage);
                 return builder//
+                        .setPhenomenonType(value.getPhenomenonType())//
                         .setPhenomenon(value.getPhenomenon())//
                         .setCancelledReference(SigmetReferenceImpl.immutableCopyOf(value.getCancelledReference()))//
                         .setAnalysisGeometries(value.getAnalysisGeometries()//
