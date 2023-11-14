@@ -1,11 +1,11 @@
 package fi.fmi.avi.model;
 
-import static fi.fmi.avi.model.AviationCodeListUser.RelationalOperator.BELOW;
-import static java.util.Objects.requireNonNull;
+import fi.fmi.avi.model.taf.TAF;
 
 import java.util.Optional;
 
-import fi.fmi.avi.model.taf.TAF;
+import static fi.fmi.avi.model.AviationCodeListUser.RelationalOperator.BELOW;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A convenience interface containing references to shared codelists and enums.
@@ -806,6 +806,22 @@ public interface AviationCodeListUser {
                 }
             }
             return null;
+        }
+    }
+
+    enum SigmetPhenomenonType {
+        SIGMET("WS"),
+        TROPICAL_CYCLONE_SIGMET("WC"),
+        VOLCANIC_ASH_SIGMET("WV");
+
+        private String type;
+
+        SigmetPhenomenonType(final String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
         }
     }
 

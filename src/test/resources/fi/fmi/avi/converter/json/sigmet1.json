@@ -27,6 +27,7 @@
     "name": "AMSTERDAM",
     "type": "FIR"
   },
+  "phenomenonType": "SIGMET",
   "phenomenon": "EMBD_TS",
   "analysisGeometries": [
     {
