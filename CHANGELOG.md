@@ -31,6 +31,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ...
 
+## [v7.0.0-beta3] - 2023-11-24
+
+### Changed
+
+- Added SIGMET phenomenon type to the SIGMET model. This will enable the use of minimal test sigmets of different types
+  without meteorological information [#120]
+- Made SIGMET analysis type optional [#114]
+
 ## [v7.0.0-beta2] - 2023-10-23
 
 ### Changed
@@ -100,6 +108,8 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 
 [Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.3.0...HEAD
 
+[v7.0.0-beta3]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-7.0.0-beta3
+
 [v7.0.0-beta2]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-7.0.0-beta2
 
 [v7.0.0-beta1]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-7.0.0-beta1
@@ -142,4 +152,8 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 
 [#105]: https://github.com/fmidev/fmi-avi-messageconverter/pull/105
 
+[#114]: https://github.com/fmidev/fmi-avi-messageconverter/pull/114
+
 [#116]: https://github.com/fmidev/fmi-avi-messageconverter/pull/116
+
+[#120]: https://github.com/fmidev/fmi-avi-messageconverter/pull/120
