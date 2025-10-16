@@ -1,8 +1,8 @@
-package fi.fmi.avi.model.swx;
-
-import java.util.Optional;
+package fi.fmi.avi.model.swx.amd79;
 
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+
+import java.util.Optional;
 
 public interface NextAdvisory {
     Type getTimeSpecifier();

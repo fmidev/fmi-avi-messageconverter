@@ -1,18 +1,16 @@
-package fi.fmi.avi.model.swx.immutable;
-
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.inferred.freebuilder.FreeBuilder;
+package fi.fmi.avi.model.swx.amd79.immutable;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.swx.AirspaceVolume;
+import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
+import org.inferred.freebuilder.FreeBuilder;
+
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
 
 @FreeBuilder
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)

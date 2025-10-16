@@ -1,17 +1,19 @@
 package fi.fmi.avi.converter.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.io.InputStream;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import fi.fmi.avi.converter.AviMessageConverter;
+import fi.fmi.avi.converter.ConversionHints;
+import fi.fmi.avi.converter.ConversionResult;
+import fi.fmi.avi.converter.json.conf.JSONConverter;
+import fi.fmi.avi.model.*;
+import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
+import fi.fmi.avi.model.swx.amd79.*;
+import fi.fmi.avi.model.swx.amd79.immutable.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,40 +22,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.io.InputStream;
+import java.time.ZonedDateTime;
+import java.util.*;
 
-import fi.fmi.avi.converter.AviMessageConverter;
-import fi.fmi.avi.converter.ConversionHints;
-import fi.fmi.avi.converter.ConversionResult;
-import fi.fmi.avi.converter.json.conf.JSONConverter;
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.PartialDateTime;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PolygonGeometry;
-import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
-import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
-import fi.fmi.avi.model.swx.AirspaceVolume;
-import fi.fmi.avi.model.swx.IssuingCenter;
-import fi.fmi.avi.model.swx.NextAdvisory;
-import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.swx.SpaceWeatherPhenomenon;
-import fi.fmi.avi.model.swx.SpaceWeatherRegion;
-import fi.fmi.avi.model.swx.immutable.AdvisoryNumberImpl;
-import fi.fmi.avi.model.swx.immutable.AirspaceVolumeImpl;
-import fi.fmi.avi.model.swx.immutable.IssuingCenterImpl;
-import fi.fmi.avi.model.swx.immutable.NextAdvisoryImpl;
-import fi.fmi.avi.model.swx.immutable.SpaceWeatherAdvisoryAnalysisImpl;
-import fi.fmi.avi.model.swx.immutable.SpaceWeatherAdvisoryImpl;
-import fi.fmi.avi.model.swx.immutable.SpaceWeatherRegionImpl;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = JSONSpaceWeatherAdvisoryTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
-public class JSONSpaceWeatherAdvisoryConverterTest {
+public class JSONSpaceWeatherAdvisoryAmd79ConverterTest {
 
     @Autowired
     private AviMessageConverter converter;
@@ -151,7 +128,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
 
         final String reference = IOUtils.toString(is, "UTF-8");
 
-        final SpaceWeatherAdvisoryImpl SWXObject = SpaceWeatherAdvisoryImpl.builder()
+        final SpaceWeatherAdvisoryAmd79Impl SWXObject = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .addAllAnalyses(getAnalyses(false))
@@ -164,7 +141,7 @@ public class JSONSpaceWeatherAdvisoryConverterTest {
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();
 
-        final ConversionResult<String> result = converter.convertMessage(SWXObject, JSONConverter.SWX_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> result = converter.convertMessage(SWXObject, JSONConverter.SWX_AMD79_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 

@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.swx;
+package fi.fmi.avi.model.swx.amd79;
 
 public interface AdvisoryNumber {
     int getYear();

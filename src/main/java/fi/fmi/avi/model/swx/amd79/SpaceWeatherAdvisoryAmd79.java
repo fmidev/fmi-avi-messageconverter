@@ -1,11 +1,11 @@
-package fi.fmi.avi.model.swx;
+package fi.fmi.avi.model.swx.amd79;
+
+import fi.fmi.avi.model.AviationWeatherMessage;
 
 import java.util.List;
 import java.util.Optional;
 
-import fi.fmi.avi.model.AviationWeatherMessage;
-
-public interface SpaceWeatherAdvisory extends AviationWeatherMessage {
+public interface SpaceWeatherAdvisoryAmd79 extends AviationWeatherMessage {
     IssuingCenter getIssuingCenter();
 
     AdvisoryNumber getAdvisoryNumber();

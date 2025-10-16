@@ -1,6 +1,11 @@
-package fi.fmi.avi.model.swx.immutable;
+package fi.fmi.avi.model.swx.amd79.immutable;
 
-import static java.util.Objects.requireNonNull;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.*;
+import fi.fmi.avi.model.swx.amd79.*;
+import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
 import java.time.DateTimeException;
@@ -9,31 +14,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import org.inferred.freebuilder.FreeBuilder;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
-import fi.fmi.avi.model.PartialDateTime;
-import fi.fmi.avi.model.PartialOrCompleteTime;
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
-import fi.fmi.avi.model.PartialOrCompleteTimes;
-import fi.fmi.avi.model.swx.AdvisoryNumber;
-import fi.fmi.avi.model.swx.IssuingCenter;
-import fi.fmi.avi.model.swx.NextAdvisory;
-import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
-import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.swx.SpaceWeatherPhenomenon;
+import static java.util.Objects.requireNonNull;
 
 @FreeBuilder
-@JsonDeserialize(builder = SpaceWeatherAdvisoryImpl.Builder.class)
+@JsonDeserialize(builder = SpaceWeatherAdvisoryAmd79Impl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "issueTime", "issuingCenter", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "nextAdvisory", "remarks",
         "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime",
         "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, Serializable {
+public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvisoryAmd79, Serializable {
 
     private static final long serialVersionUID = 2643733022733469004L;
 
@@ -41,19 +30,19 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
         return new Builder();
     }
 
-    public static SpaceWeatherAdvisoryImpl immutableCopyOf(final SpaceWeatherAdvisory advisory) {
+    public static SpaceWeatherAdvisoryAmd79Impl immutableCopyOf(final SpaceWeatherAdvisoryAmd79 advisory) {
         requireNonNull(advisory);
-        if (advisory instanceof SpaceWeatherAdvisoryImpl) {
-            return (SpaceWeatherAdvisoryImpl) advisory;
+        if (advisory instanceof SpaceWeatherAdvisoryAmd79Impl) {
+            return (SpaceWeatherAdvisoryAmd79Impl) advisory;
         } else {
             return Builder.from(advisory).build();
         }
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Optional<SpaceWeatherAdvisoryImpl> immutableCopyOf(final Optional<SpaceWeatherAdvisory> advisory) {
+    public static Optional<SpaceWeatherAdvisoryAmd79Impl> immutableCopyOf(final Optional<SpaceWeatherAdvisoryAmd79> advisory) {
         requireNonNull(advisory);
-        return advisory.map(SpaceWeatherAdvisoryImpl::immutableCopyOf);
+        return advisory.map(SpaceWeatherAdvisoryAmd79Impl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
@@ -74,16 +63,16 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
         return true;
     }
 
-    public static class Builder extends SpaceWeatherAdvisoryImpl_Builder {
+    public static class Builder extends SpaceWeatherAdvisoryAmd79Impl_Builder {
         @Deprecated
         Builder() {
             this.setTranslated(false);
             this.setReportStatus(ReportStatus.NORMAL);
         }
 
-        public static Builder from(final SpaceWeatherAdvisory value) {
-            if (value instanceof SpaceWeatherAdvisoryImpl) {
-                return ((SpaceWeatherAdvisoryImpl) value).toBuilder();
+        public static Builder from(final SpaceWeatherAdvisoryAmd79 value) {
+            if (value instanceof SpaceWeatherAdvisoryAmd79Impl) {
+                return ((SpaceWeatherAdvisoryAmd79Impl) value).toBuilder();
             } else {
                 final Builder builder = builder();
                 AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
@@ -115,7 +104,7 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
             return super.addAllPhenomena(elements);
         }
 
-        public SpaceWeatherAdvisoryImpl.Builder withCompleteIssueTimeNear(final ZonedDateTime reference) {
+        public SpaceWeatherAdvisoryAmd79Impl.Builder withCompleteIssueTimeNear(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             if (getIssueTime().isPresent() && getIssueTime().get().getCompleteTime().isPresent()) {
                 return this;
@@ -123,7 +112,7 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
             return mapIssueTime((input) -> input.toBuilder().completePartialNear(reference).build());
         }
 
-        public SpaceWeatherAdvisoryImpl.Builder withCompleteNextAdvisory(final ZonedDateTime issueTime) {
+        public SpaceWeatherAdvisoryAmd79Impl.Builder withCompleteNextAdvisory(final ZonedDateTime issueTime) {
             requireNonNull(issueTime, "issueTime");
             if (getNextAdvisory().getTime().isPresent() && getNextAdvisory().getTime().get().getCompleteTime().isPresent()) {
                 return this;
@@ -175,7 +164,7 @@ public abstract class SpaceWeatherAdvisoryImpl implements SpaceWeatherAdvisory, 
             };
         }
 
-        public SpaceWeatherAdvisoryImpl.Builder withAllTimesComplete(final ZonedDateTime reference) {
+        public SpaceWeatherAdvisoryAmd79Impl.Builder withAllTimesComplete(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             withCompleteIssueTimeNear(reference);
             final ZonedDateTime issueTime = getIssueTime()//

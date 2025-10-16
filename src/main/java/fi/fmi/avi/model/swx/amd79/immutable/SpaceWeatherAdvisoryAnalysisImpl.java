@@ -1,18 +1,16 @@
-package fi.fmi.avi.model.swx.immutable;
+package fi.fmi.avi.model.swx.amd79.immutable;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis;
+import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
+import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.inferred.freebuilder.FreeBuilder;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fi.fmi.avi.model.swx.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.swx.SpaceWeatherRegion;
 
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAnalysisImpl.Builder.class)

@@ -1,18 +1,12 @@
-package fi.fmi.avi.model.swx;
+package fi.fmi.avi.model.swx.amd79;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
+import org.junit.Test;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class SpaceWeatherPhenomenonTest {
     @Test

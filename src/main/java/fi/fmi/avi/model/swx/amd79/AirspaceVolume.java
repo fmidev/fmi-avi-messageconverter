@@ -1,9 +1,9 @@
-package fi.fmi.avi.model.swx;
-
-import java.util.Optional;
+package fi.fmi.avi.model.swx.amd79;
 
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.NumericMeasure;
+
+import java.util.Optional;
 
 public interface AirspaceVolume {
 

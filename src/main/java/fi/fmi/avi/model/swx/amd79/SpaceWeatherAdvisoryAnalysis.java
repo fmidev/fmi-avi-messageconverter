@@ -1,9 +1,9 @@
-package fi.fmi.avi.model.swx;
+package fi.fmi.avi.model.swx.amd79;
+
+import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 
 import java.util.List;
 import java.util.Optional;
-
-import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 
 public interface SpaceWeatherAdvisoryAnalysis {
     PartialOrCompleteTimeInstant getTime();

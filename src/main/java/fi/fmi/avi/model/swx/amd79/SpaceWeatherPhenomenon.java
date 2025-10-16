@@ -1,9 +1,9 @@
-package fi.fmi.avi.model.swx;
-
-import static java.util.Objects.requireNonNull;
+package fi.fmi.avi.model.swx.amd79;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Objects.requireNonNull;
 
 public enum SpaceWeatherPhenomenon {
     GNSS_MOD(Type.GNSS_BASED_NAVIGATION_AND_SURVEILLANCE, Severity.MODERATE), //
