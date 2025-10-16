@@ -9,6 +9,7 @@ import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAmd79;
+import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAmd82;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 import org.springframework.context.annotation.Bean;
@@ -43,6 +44,12 @@ public class JSONConverter {
      * Pre-configured spec for {@link SpaceWeatherAdvisoryAmd79} to fmi-avi-messageconverter JSON SWX document String.
      */
     public static final ConversionSpecification<SpaceWeatherAdvisoryAmd79, String> SWX_AMD79_POJO_TO_JSON_STRING = new ConversionSpecification<>(SpaceWeatherAdvisoryAmd79.class, String.class,
+            null, "SWX, fmi-avi-messageconverter JSON");
+
+    /**
+     * Pre-configured spec for {@link SpaceWeatherAdvisoryAmd82} to fmi-avi-messageconverter JSON SWX document String.
+     */
+    public static final ConversionSpecification<SpaceWeatherAdvisoryAmd82, String> SWX_AMD82_POJO_TO_JSON_STRING = new ConversionSpecification<>(SpaceWeatherAdvisoryAmd82.class, String.class,
             null, "SWX, fmi-avi-messageconverter JSON");
 
     /**
@@ -81,6 +88,12 @@ public class JSONConverter {
      * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SpaceWeatherAdvisoryAmd79}.
      */
     public static final ConversionSpecification<String, SpaceWeatherAdvisoryAmd79> JSON_STRING_TO_SWX_AMD79_POJO = new ConversionSpecification<>(String.class, SpaceWeatherAdvisoryAmd79.class,
+            "SWX, fmi-avi-messageconverter JSON", null);
+
+    /**
+     * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SpaceWeatherAdvisoryAmd82}.
+     */
+    public static final ConversionSpecification<String, SpaceWeatherAdvisoryAmd82> JSON_STRING_TO_SWX_AMD82_POJO = new ConversionSpecification<>(String.class, SpaceWeatherAdvisoryAmd82.class,
             "SWX, fmi-avi-messageconverter JSON", null);
 
     /**
@@ -141,6 +154,11 @@ public class JSONConverter {
     }
 
     @Bean
+    public AviMessageSpecificConverter<SpaceWeatherAdvisoryAmd82, String> swxAmd82JSONSerializer() {
+        return new SpaceWeatherAdvisoryAmd82JSONSerializer();
+    }
+
+    @Bean
     public AviMessageSpecificConverter<SIGMETBulletin, String> sigmetBulletinJSONSerializer() {
         return new SIGMETBulletinJSONSerializer();
     }
@@ -173,6 +191,11 @@ public class JSONConverter {
     @Bean
     public AviMessageSpecificConverter<String, SpaceWeatherAdvisoryAmd79> swxAmd79JSONParser() {
         return new SpaceWeatherAdvisoryAmd79JSONParser();
+    }
+
+    @Bean
+    public AviMessageSpecificConverter<String, SpaceWeatherAdvisoryAmd82> swxAmd82JSONParser() {
+        return new SpaceWeatherAdvisoryAmd82JSONParser();
     }
 
     @Bean

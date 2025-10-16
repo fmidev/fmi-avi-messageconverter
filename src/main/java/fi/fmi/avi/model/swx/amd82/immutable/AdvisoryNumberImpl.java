@@ -1,9 +1,9 @@
-package fi.fmi.avi.model.swx.amd79.immutable;
+package fi.fmi.avi.model.swx.amd82.immutable;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fi.fmi.avi.model.swx.amd79.AdvisoryNumber;
+import fi.fmi.avi.model.swx.amd82.AdvisoryNumber;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 @FreeBuilder
 @JsonDeserialize(builder = AdvisoryNumberImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "year", "serialNumber" })
+@JsonPropertyOrder({"year", "serialNumber"})
 public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable {
 
     private static final long serialVersionUID = -8532026521718086632L;
@@ -65,7 +65,7 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
         /**
          * Parses AdvisoryNumber from a String matching format declared in ICAO Annex 3.
          * <pre><code>nnnn/[n][n][n]n</code></pre>
-         *
+         * <p>
          * No strict checking is made, this method may accept more digits than specified.
          */
         public static Builder from(final String value) {

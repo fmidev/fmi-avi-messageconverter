@@ -1,10 +1,10 @@
-package fi.fmi.avi.model.swx.amd79.immutable;
+package fi.fmi.avi.model.swx.amd82.immutable;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.*;
-import fi.fmi.avi.model.swx.amd79.*;
+import fi.fmi.avi.model.swx.amd82.*;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
@@ -17,12 +17,12 @@ import java.util.function.BiFunction;
 import static java.util.Objects.requireNonNull;
 
 @FreeBuilder
-@JsonDeserialize(builder = SpaceWeatherAdvisoryAmd79Impl.Builder.class)
+@JsonDeserialize(builder = SpaceWeatherAdvisoryAmd82Impl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "issueTime", "issuingCenter", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "nextAdvisory", "remarks",
+@JsonPropertyOrder({"issueTime", "issuingCenter", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "nextAdvisory", "remarks",
         "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime",
-        "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
-public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvisoryAmd79, Serializable {
+        "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC"})
+public abstract class SpaceWeatherAdvisoryAmd82Impl implements SpaceWeatherAdvisoryAmd82, Serializable {
 
     private static final long serialVersionUID = 2643733022733469004L;
 
@@ -30,19 +30,19 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
         return new Builder();
     }
 
-    public static SpaceWeatherAdvisoryAmd79Impl immutableCopyOf(final SpaceWeatherAdvisoryAmd79 advisory) {
+    public static SpaceWeatherAdvisoryAmd82Impl immutableCopyOf(final SpaceWeatherAdvisoryAmd82 advisory) {
         requireNonNull(advisory);
-        if (advisory instanceof SpaceWeatherAdvisoryAmd79Impl) {
-            return (SpaceWeatherAdvisoryAmd79Impl) advisory;
+        if (advisory instanceof SpaceWeatherAdvisoryAmd82Impl) {
+            return (SpaceWeatherAdvisoryAmd82Impl) advisory;
         } else {
             return Builder.from(advisory).build();
         }
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Optional<SpaceWeatherAdvisoryAmd79Impl> immutableCopyOf(final Optional<SpaceWeatherAdvisoryAmd79> advisory) {
+    public static Optional<SpaceWeatherAdvisoryAmd82Impl> immutableCopyOf(final Optional<SpaceWeatherAdvisoryAmd82> advisory) {
         requireNonNull(advisory);
-        return advisory.map(SpaceWeatherAdvisoryAmd79Impl::immutableCopyOf);
+        return advisory.map(SpaceWeatherAdvisoryAmd82Impl::immutableCopyOf);
     }
 
     public abstract Builder toBuilder();
@@ -63,16 +63,16 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
         return true;
     }
 
-    public static class Builder extends SpaceWeatherAdvisoryAmd79Impl_Builder {
+    public static class Builder extends SpaceWeatherAdvisoryAmd82Impl_Builder {
         @Deprecated
         Builder() {
             this.setTranslated(false);
             this.setReportStatus(ReportStatus.NORMAL);
         }
 
-        public static Builder from(final SpaceWeatherAdvisoryAmd79 value) {
-            if (value instanceof SpaceWeatherAdvisoryAmd79Impl) {
-                return ((SpaceWeatherAdvisoryAmd79Impl) value).toBuilder();
+        public static Builder from(final SpaceWeatherAdvisoryAmd82 value) {
+            if (value instanceof SpaceWeatherAdvisoryAmd82Impl) {
+                return ((SpaceWeatherAdvisoryAmd82Impl) value).toBuilder();
             } else {
                 final Builder builder = builder();
                 AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //

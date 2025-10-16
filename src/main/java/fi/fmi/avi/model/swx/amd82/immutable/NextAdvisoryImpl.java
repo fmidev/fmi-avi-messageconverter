@@ -1,9 +1,9 @@
-package fi.fmi.avi.model.swx.amd79.immutable;
+package fi.fmi.avi.model.swx.amd82.immutable;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fi.fmi.avi.model.swx.amd79.NextAdvisory;
+import fi.fmi.avi.model.swx.amd82.NextAdvisory;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = NextAdvisoryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "time", "timeSpecifier" })
+@JsonPropertyOrder({"time", "timeSpecifier"})
 public abstract class NextAdvisoryImpl implements NextAdvisory, Serializable {
 
     private static final long serialVersionUID = 1697837715002765108L;

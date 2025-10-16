@@ -1,11 +1,11 @@
-package fi.fmi.avi.model.swx.amd79.immutable;
+package fi.fmi.avi.model.swx.amd82.immutable;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
+import fi.fmi.avi.model.swx.amd82.AirspaceVolume;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
@@ -15,8 +15,8 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "horizontalProjection", "upperLimit", "upperLimitReference", "lowerLimit", "lowerLimitReference", "maximumLimit", "maximumLimitReference",
-        "minimumLimit", "minimumLimitReference", "width" })
+@JsonPropertyOrder({"horizontalProjection", "upperLimit", "upperLimitReference", "lowerLimit", "lowerLimitReference", "maximumLimit", "maximumLimitReference",
+        "minimumLimit", "minimumLimitReference", "width"})
 public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable {
 
     private static final long serialVersionUID = 3293242693002143947L;
