@@ -9,6 +9,7 @@ import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
+import fi.fmi.avi.model.swx.amd79.SpaceWeatherAmd79Bulletin;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAmd82;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAmd82Bulletin;
 import org.inferred.freebuilder.FreeBuilder;
@@ -62,6 +63,17 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
                         Builder::addAllTimeStampFields);
                 return builder;
             }
+        }
+
+        public static Builder from(final SpaceWeatherAmd79Bulletin value) {
+            final Builder builder = builder()
+                    .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))
+                    .setTimeStamp(value.getTimeStamp())
+                    .addAllTimeStampFields(value.getTimeStampFields());
+            value.getMessages().stream()
+                    .map(advisoryAmd79 -> SpaceWeatherAdvisoryAmd82Impl.Builder.from(advisoryAmd79).build())
+                    .forEach(builder::addMessages);
+            return builder;
         }
 
         @Override

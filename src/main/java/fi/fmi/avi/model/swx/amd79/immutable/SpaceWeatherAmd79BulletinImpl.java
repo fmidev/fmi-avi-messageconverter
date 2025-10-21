@@ -11,6 +11,7 @@ import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAmd79;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherAmd79Bulletin;
+import fi.fmi.avi.model.swx.amd82.SpaceWeatherAmd82Bulletin;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
@@ -20,7 +21,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAmd79BulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
+@JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "messages"})
 public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79Bulletin, Serializable {
 
     private static final long serialVersionUID = -7494296545788396274L;
@@ -62,6 +63,18 @@ public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79
                         Builder::addAllTimeStampFields);
                 return builder;
             }
+        }
+
+        public static Builder from(final SpaceWeatherAmd82Bulletin value) {
+            final Builder builder = builder()
+                    .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))
+                    .setTimeStamp(value.getTimeStamp())
+                    .addAllTimeStampFields(value.getTimeStampFields());
+            value.getMessages().stream()
+                    .map(advisoryAmd82 ->
+                            SpaceWeatherAdvisoryAmd79Impl.Builder.from(advisoryAmd82).build())
+                    .forEach(builder::addMessages);
+            return builder;
         }
 
         @Override
