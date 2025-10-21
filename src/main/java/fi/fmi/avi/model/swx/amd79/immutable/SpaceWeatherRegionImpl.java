@@ -58,14 +58,13 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
         }
 
         public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion value) {
-            final Builder builder = builder()
+            return builder()
+                    .setAirSpaceVolume(value.getAirSpaceVolume().map(airspaceVolume ->
+                            AirspaceVolumeImpl.Builder.fromAmd82(airspaceVolume).build()))
                     .setLongitudeLimitMaximum(value.getLongitudeLimitMaximum())
-                    .setLongitudeLimitMinimum(value.getLongitudeLimitMinimum());
-            value.getAirSpaceVolume().ifPresent(airSpaceVolume ->
-                    builder.setAirSpaceVolume(AirspaceVolumeImpl.Builder.fromAmd82(airSpaceVolume).build()));
-            value.getLocationIndicator().ifPresent(locationIndicator ->
-                    builder.setLocationIndicator(SpaceWeatherLocation.valueOf(locationIndicator.name())));
-            return builder;
+                    .setLongitudeLimitMinimum(value.getLongitudeLimitMinimum())
+                    .setLocationIndicator(value.getLocationIndicator().map(locationIndicator ->
+                            SpaceWeatherLocation.valueOf(locationIndicator.name())));
         }
 
         @Override

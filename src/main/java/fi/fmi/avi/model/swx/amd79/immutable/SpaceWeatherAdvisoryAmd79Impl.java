@@ -117,18 +117,16 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
                     Builder::setTranslationCentreName, //
                     Builder::setTranslationTime, //
                     Builder::setTranslatedTAC);
-            builder//
+            return builder//
                     .setIssuingCenter(IssuingCenterImpl.Builder.fromAmd82(value.getIssuingCenter()).build())
                     .setAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd82(value.getAdvisoryNumber()).build())
+                    .setReplaceAdvisoryNumber(value.getReplaceAdvisoryNumber().map(advisoryNumber ->
+                            AdvisoryNumberImpl.Builder.fromAmd82(advisoryNumber).build()))
                     .addAllPhenomena(value.getPhenomena().stream()
                             .map(phenomenon -> SpaceWeatherPhenomenon.valueOf(phenomenon.name())))
                     .addAllAnalyses(value.getAnalyses().stream().map(analysis ->
                             SpaceWeatherAdvisoryAnalysisImpl.Builder.fromAmd82(analysis).build()))
                     .setNextAdvisory(NextAdvisoryImpl.Builder.fromAmd82(value.getNextAdvisory()).build());
-
-            value.getReplaceAdvisoryNumber().ifPresent(replaceAdvisoryNumber ->
-                    builder.setReplaceAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd82(replaceAdvisoryNumber).build()));
-            return builder;
         }
 
         public Builder addAllPhenomena(final List<SpaceWeatherPhenomenon> elements) {

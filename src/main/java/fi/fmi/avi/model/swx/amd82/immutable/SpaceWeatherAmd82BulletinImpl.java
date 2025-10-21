@@ -66,15 +66,12 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
         }
 
         public static Builder fromAmd79(final SpaceWeatherAmd79Bulletin value) {
-            final Builder builder = builder()
+            return builder()
                     .setHeading(BulletinHeadingImpl.immutableCopyOf(value.getHeading()))
+                    .addAllMessages(value.getMessages().stream().map(advisoryAmd79 ->
+                            SpaceWeatherAdvisoryAmd82Impl.Builder.fromAmd79(advisoryAmd79).build()))
                     .setTimeStamp(value.getTimeStamp())
                     .addAllTimeStampFields(value.getTimeStampFields());
-            value.getMessages().stream()
-                    .map(advisoryAmd79 ->
-                            SpaceWeatherAdvisoryAmd82Impl.Builder.fromAmd79(advisoryAmd79).build())
-                    .forEach(builder::addMessages);
-            return builder;
         }
 
         @Override
