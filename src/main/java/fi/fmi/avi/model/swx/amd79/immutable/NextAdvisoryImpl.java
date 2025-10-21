@@ -52,7 +52,7 @@ public abstract class NextAdvisoryImpl implements NextAdvisory, Serializable {
             }
         }
 
-        public static Builder from(final fi.fmi.avi.model.swx.amd82.NextAdvisory value) {
+        public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.NextAdvisory value) {
             return builder().setTime(value.getTime()).setTimeSpecifier(NextAdvisory.Type.valueOf(value.getTimeSpecifier().name()));
         }
     }

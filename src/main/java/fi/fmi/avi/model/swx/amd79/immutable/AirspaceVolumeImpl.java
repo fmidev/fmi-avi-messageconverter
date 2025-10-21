@@ -64,7 +64,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
             }
         }
 
-        public static Builder from(final fi.fmi.avi.model.swx.amd82.AirspaceVolume value) {
+        public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.AirspaceVolume value) {
             return builder().setHorizontalProjection(value.getHorizontalProjection())
                     .setUpperLimit(value.getUpperLimit())
                     .setUpperLimitReference(value.getUpperLimitReference())

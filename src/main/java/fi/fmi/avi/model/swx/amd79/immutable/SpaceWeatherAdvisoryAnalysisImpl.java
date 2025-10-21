@@ -57,7 +57,7 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
             }
         }
 
-        public static Builder from(final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis value) {
+        public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis value) {
             final Builder builder = builder()//
                     .setTime(value.getTime())//
                     .setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.valueOf(value.getAnalysisType().name()));
@@ -65,7 +65,7 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
                     builder.setNilPhenomenonReason(NilPhenomenonReason.valueOf(nilPhenomenonReason.name())));
 
             for (final fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion region : value.getRegions()) {
-                builder.addRegions(SpaceWeatherRegionImpl.Builder.from(region).build());
+                builder.addRegions(SpaceWeatherRegionImpl.Builder.fromAmd82(region).build());
             }
             return builder;
         }

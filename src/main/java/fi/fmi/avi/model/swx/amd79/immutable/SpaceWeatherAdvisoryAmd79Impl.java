@@ -101,7 +101,7 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
             }
         }
 
-        public static Builder from(final SpaceWeatherAdvisoryAmd82 value) {
+        public static Builder fromAmd82(final SpaceWeatherAdvisoryAmd82 value) {
             final Builder builder = builder();
             AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
                     Builder::setReportStatus, //
@@ -118,17 +118,16 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
                     Builder::setTranslationTime, //
                     Builder::setTranslatedTAC);
             builder//
-                    .setIssuingCenter(IssuingCenterImpl.Builder.from(value.getIssuingCenter()).build())
-                    .setAdvisoryNumber(AdvisoryNumberImpl.Builder.from(value.getAdvisoryNumber()).build())
+                    .setIssuingCenter(IssuingCenterImpl.Builder.fromAmd82(value.getIssuingCenter()).build())
+                    .setAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd82(value.getAdvisoryNumber()).build())
                     .addAllPhenomena(value.getPhenomena().stream()
                             .map(phenomenon -> SpaceWeatherPhenomenon.valueOf(phenomenon.name())))
                     .addAllAnalyses(value.getAnalyses().stream().map(analysis ->
-                            SpaceWeatherAdvisoryAnalysisImpl.Builder.from(analysis).build()))
-                    .setNextAdvisory(NextAdvisoryImpl.Builder.from(value.getNextAdvisory()).build());
+                            SpaceWeatherAdvisoryAnalysisImpl.Builder.fromAmd82(analysis).build()))
+                    .setNextAdvisory(NextAdvisoryImpl.Builder.fromAmd82(value.getNextAdvisory()).build());
 
-            value.getReplaceAdvisoryNumber().ifPresent(replaceAdvisoryNumber -> {
-                builder.setReplaceAdvisoryNumber(AdvisoryNumberImpl.Builder.from(replaceAdvisoryNumber).build());
-            });
+            value.getReplaceAdvisoryNumber().ifPresent(replaceAdvisoryNumber ->
+                    builder.setReplaceAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd82(replaceAdvisoryNumber).build()));
             return builder;
         }
 

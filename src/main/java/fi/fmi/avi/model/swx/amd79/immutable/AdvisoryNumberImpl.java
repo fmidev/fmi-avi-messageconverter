@@ -62,7 +62,7 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
             }
         }
 
-        public static Builder from(final fi.fmi.avi.model.swx.amd82.AdvisoryNumber value) {
+        public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.AdvisoryNumber value) {
             return builder().setSerialNumber(value.getSerialNumber()).setYear(value.getYear());
         }
 
