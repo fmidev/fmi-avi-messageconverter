@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.bulletin;
 
-import static java.util.Objects.requireNonNull;
+import fi.fmi.avi.model.AviationWeatherMessage;
+import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
@@ -10,8 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import fi.fmi.avi.model.AviationWeatherMessage;
-import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
+import static java.util.Objects.requireNonNull;
 
 public final class MeteorologicalBulletinBuilderHelper {
     private MeteorologicalBulletinBuilderHelper() {
@@ -26,30 +26,56 @@ public final class MeteorologicalBulletinBuilderHelper {
      * conform to changes in all builders using this method. This ensures that changes will not get unnoticed in builder classes.
      * </p>
      *
-     * @param <T>
-     *         type of {@code value}
-     * @param <B>
-     *         type of {@code builder}
-     * @param builder
-     *         builder to copy properties to
-     * @param value
-     *         value object to copy properties from
-     * @param setHeading
-     *         setter for heading
-     * @param addAllMessages
-     *         setter for messages
-     * @param toImmutableMessage
-     *         function transforming message to immutable
-     * @param setTimeStamp
-     *         setter for timeStamp
-     * @param addAllTimeStampFields
-     *         setter for timeStampFields
+     * @param <T>                   type of {@code value}
+     * @param <B>                   type of {@code builder}
+     * @param builder               builder to copy properties to
+     * @param value                 value object to copy properties from
+     * @param setHeading            setter for heading
+     * @param addAllMessages        setter for messages
+     * @param toImmutableMessage    function transforming message to immutable
+     * @param setTimeStamp          setter for timeStamp
+     * @param addAllTimeStampFields setter for timeStampFields
      */
-    public static <T extends MeteorologicalBulletin<M>, M extends AviationWeatherMessage, B> void copyFrom(final B builder, final T value,  //
-            final BiConsumer<B, BulletinHeading> setHeading, //
-            final BiConsumer<B, Stream<M>> addAllMessages, //
-            final Function<M, ? extends M> toImmutableMessage, //
-            final BiConsumer<B, Optional<ZonedDateTime>> setTimeStamp, //
+    public static <T extends MeteorologicalBulletin<M>, M extends AviationWeatherMessage, B> void copyFrom(
+            final B builder,
+            final T value,
+            final BiConsumer<B, BulletinHeading> setHeading,
+            final BiConsumer<B, Stream<M>> addAllMessages,
+            final Function<M, ? extends M> toImmutableMessage,
+            final BiConsumer<B, Optional<ZonedDateTime>> setTimeStamp,
+            final BiConsumer<B, Set<ChronoField>> addAllTimeStampFields) {
+        copyAndTransform(builder, value, setHeading, addAllMessages, toImmutableMessage, setTimeStamp, addAllTimeStampFields);
+    }
+
+    /**
+     * Copy properties declared in {@link MeteorologicalBulletin} from provided {@code value} to {@code builder}
+     * using provided setters and transformation function for messages.
+     *
+     * <p>
+     * This method allows transforming bulletin messages to another type while copying all other bulletin properties.
+     * See {@link #copyFrom(Object, MeteorologicalBulletin, BiConsumer, BiConsumer, Function, BiConsumer, BiConsumer)}
+     * for non-transforming version.
+     * </p>
+     *
+     * @param <T>                   type of {@code value}
+     * @param <M>                   type of messages contained in {@code value}
+     * @param <I>                   type of transformed messages accepted by {@code addAllMessages}
+     * @param <B>                   type of {@code builder}
+     * @param builder               builder to copy properties to
+     * @param value                 value object to copy properties from
+     * @param setHeading            setter for heading
+     * @param addAllMessages        setter for messages
+     * @param toImmutableMessage    function transforming message to immutable
+     * @param setTimeStamp          setter for timeStamp
+     * @param addAllTimeStampFields setter for timeStampFields
+     */
+    public static <T extends MeteorologicalBulletin<M>, M extends AviationWeatherMessage, I extends AviationWeatherMessage, B> void copyAndTransform(
+            final B builder,
+            final T value,
+            final BiConsumer<B, BulletinHeading> setHeading,
+            final BiConsumer<B, Stream<I>> addAllMessages,
+            final Function<M, ? extends I> toImmutableMessage,
+            final BiConsumer<B, Optional<ZonedDateTime>> setTimeStamp,
             final BiConsumer<B, Set<ChronoField>> addAllTimeStampFields) {
         requireNonNull(value, "value");
         requireNonNull(builder, "builder");
