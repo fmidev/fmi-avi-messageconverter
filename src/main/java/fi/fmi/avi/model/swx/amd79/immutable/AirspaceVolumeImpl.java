@@ -15,8 +15,8 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "horizontalProjection", "upperLimit", "upperLimitReference", "lowerLimit", "lowerLimitReference", "maximumLimit", "maximumLimitReference",
-        "minimumLimit", "minimumLimitReference", "width" })
+@JsonPropertyOrder({"horizontalProjection", "upperLimit", "upperLimitReference", "lowerLimit", "lowerLimitReference", "maximumLimit", "maximumLimitReference",
+        "minimumLimit", "minimumLimitReference", "width"})
 public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable {
 
     private static final long serialVersionUID = 3293242693002143947L;
@@ -62,6 +62,19 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
                         .setMinimumLimitReference(value.getMinimumLimitReference())
                         .setWidth(value.getWidth());
             }
+        }
+
+        public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.AirspaceVolume value) {
+            return builder().setHorizontalProjection(value.getHorizontalProjection())
+                    .setUpperLimit(value.getUpperLimit())
+                    .setUpperLimitReference(value.getUpperLimitReference())
+                    .setLowerLimit(value.getLowerLimit())
+                    .setLowerLimitReference(value.getLowerLimitReference())
+                    .setMaximumLimit(value.getMaximumLimit())
+                    .setMaximumLimitReference(value.getMaximumLimitReference())
+                    .setMinimumLimit(value.getMinimumLimit())
+                    .setMinimumLimitReference(value.getMinimumLimitReference())
+                    .setWidth(value.getWidth());
         }
 
         @Override

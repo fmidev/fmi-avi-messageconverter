@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.*;
 import fi.fmi.avi.model.swx.amd79.*;
+import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAmd82;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
@@ -19,9 +20,9 @@ import static java.util.Objects.requireNonNull;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAmd79Impl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "issueTime", "issuingCenter", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "nextAdvisory", "remarks",
+@JsonPropertyOrder({"issueTime", "issuingCenter", "advisoryNumber", "replacementAdvisoryNumber", "phenomena", "analyses", "nextAdvisory", "remarks",
         "permissibleUsage", "permissibleUsageReason", "permissibleUsageSupplementary", "translated", "translatedBulletinID", "translatedBulletinReceptionTime",
-        "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC" })
+        "translationCentreDesignator", "translationCentreName", "translationTime", "translatedTAC"})
 public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvisoryAmd79, Serializable {
 
     private static final long serialVersionUID = 2643733022733469004L;
@@ -98,6 +99,34 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
                         .addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf))//
                         .setNextAdvisory(NextAdvisoryImpl.immutableCopyOf(value.getNextAdvisory()));
             }
+        }
+
+        public static Builder fromAmd82(final SpaceWeatherAdvisoryAmd82 value) {
+            final Builder builder = builder();
+            AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
+                    Builder::setReportStatus, //
+                    Builder::setIssueTime, //
+                    Builder::setRemarks, //
+                    Builder::setPermissibleUsage, //
+                    Builder::setPermissibleUsageReason, //
+                    Builder::setPermissibleUsageSupplementary, //
+                    Builder::setTranslated, //
+                    Builder::setTranslatedBulletinID, //
+                    Builder::setTranslatedBulletinReceptionTime, //
+                    Builder::setTranslationCentreDesignator, //
+                    Builder::setTranslationCentreName, //
+                    Builder::setTranslationTime, //
+                    Builder::setTranslatedTAC);
+            return builder//
+                    .setIssuingCenter(IssuingCenterImpl.Builder.fromAmd82(value.getIssuingCenter()).build())
+                    .setAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd82(value.getAdvisoryNumber()).build())
+                    .setReplaceAdvisoryNumber(value.getReplaceAdvisoryNumber().map(advisoryNumber ->
+                            AdvisoryNumberImpl.Builder.fromAmd82(advisoryNumber).build()))
+                    .addAllPhenomena(value.getPhenomena().stream()
+                            .map(phenomenon -> SpaceWeatherPhenomenon.valueOf(phenomenon.name())))
+                    .addAllAnalyses(value.getAnalyses().stream().map(analysis ->
+                            SpaceWeatherAdvisoryAnalysisImpl.Builder.fromAmd82(analysis).build()))
+                    .setNextAdvisory(NextAdvisoryImpl.Builder.fromAmd82(value.getNextAdvisory()).build());
         }
 
         public Builder addAllPhenomena(final List<SpaceWeatherPhenomenon> elements) {

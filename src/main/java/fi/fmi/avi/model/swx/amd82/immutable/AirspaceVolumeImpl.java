@@ -64,6 +64,19 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
             }
         }
 
+        public static Builder fromAmd79(final fi.fmi.avi.model.swx.amd79.AirspaceVolume value) {
+            return builder().setHorizontalProjection(value.getHorizontalProjection())
+                    .setUpperLimit(value.getUpperLimit())
+                    .setUpperLimitReference(value.getUpperLimitReference())
+                    .setLowerLimit(value.getLowerLimit())
+                    .setLowerLimitReference(value.getLowerLimitReference())
+                    .setMaximumLimit(value.getMaximumLimit())
+                    .setMaximumLimitReference(value.getMaximumLimitReference())
+                    .setMinimumLimit(value.getMinimumLimit())
+                    .setMinimumLimitReference(value.getMinimumLimitReference())
+                    .setWidth(value.getWidth());
+        }
+
         @Override
         @JsonDeserialize(as = NumericMeasureImpl.class)
         public Builder setUpperLimit(final NumericMeasure limit) {

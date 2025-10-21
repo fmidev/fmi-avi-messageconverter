@@ -57,6 +57,16 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
             }
         }
 
+        public static Builder fromAmd79(final fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis value) {
+            return builder()//
+                    .setTime(value.getTime())//
+                    .setAnalysisType(Type.valueOf(value.getAnalysisType().name()))
+                    .addAllRegions(value.getRegions().stream()
+                            .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd79(region).build()))
+                    .setNilPhenomenonReason(value.getNilPhenomenonReason()
+                            .map(reason -> NilPhenomenonReason.valueOf(reason.name())));
+        }
+
         @JsonDeserialize(contentAs = SpaceWeatherRegionImpl.class)
         public Builder addAllRegions(final List<SpaceWeatherRegion> region) {
             return super.addAllRegions(region);

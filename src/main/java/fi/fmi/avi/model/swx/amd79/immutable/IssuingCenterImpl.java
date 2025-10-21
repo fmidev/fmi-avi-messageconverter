@@ -13,7 +13,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = IssuingCenterImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "designator", "name", "type" })
+@JsonPropertyOrder({"designator", "name", "type"})
 public abstract class IssuingCenterImpl implements IssuingCenter, Serializable {
 
     private static final long serialVersionUID = -7092051001055467810L;
@@ -50,6 +50,10 @@ public abstract class IssuingCenterImpl implements IssuingCenter, Serializable {
             } else {
                 return builder().setDesignator(value.getDesignator()).setName(value.getName()).setType(value.getType());
             }
+        }
+
+        public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.IssuingCenter value) {
+            return builder().setDesignator(value.getDesignator()).setName(value.getName()).setType(value.getType());
         }
     }
 }
