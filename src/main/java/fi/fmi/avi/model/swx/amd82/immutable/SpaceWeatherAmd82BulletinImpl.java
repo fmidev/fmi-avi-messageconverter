@@ -71,7 +71,8 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
                     .setTimeStamp(value.getTimeStamp())
                     .addAllTimeStampFields(value.getTimeStampFields());
             value.getMessages().stream()
-                    .map(advisoryAmd79 -> SpaceWeatherAdvisoryAmd82Impl.Builder.from(advisoryAmd79).build())
+                    .map(advisoryAmd79 ->
+                            SpaceWeatherAdvisoryAmd82Impl.Builder.from(advisoryAmd79).build())
                     .forEach(builder::addMessages);
             return builder;
         }
