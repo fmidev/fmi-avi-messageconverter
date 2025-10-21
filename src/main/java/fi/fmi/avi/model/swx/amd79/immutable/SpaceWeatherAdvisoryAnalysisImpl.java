@@ -15,7 +15,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAnalysisImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "time", "analysisType", "regions", "nilPhenomenonReason" })
+@JsonPropertyOrder({"time", "analysisType", "regions", "nilPhenomenonReason"})
 public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAdvisoryAnalysis, Serializable {
 
     private static final long serialVersionUID = -6443983160749650868L;
@@ -55,6 +55,19 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
                         .addAllRegions(value.getRegions().stream().map(SpaceWeatherRegionImpl::immutableCopyOf))//
                         .setNilPhenomenonReason(value.getNilPhenomenonReason());
             }
+        }
+
+        public static Builder from(final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis value) {
+            final Builder builder = builder()//
+                    .setTime(value.getTime())//
+                    .setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.valueOf(value.getAnalysisType().name()));
+            value.getNilPhenomenonReason().ifPresent(nilPhenomenonReason ->
+                    builder.setNilPhenomenonReason(NilPhenomenonReason.valueOf(nilPhenomenonReason.name())));
+
+            for (final fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion region : value.getRegions()) {
+                builder.addRegions(SpaceWeatherRegionImpl.Builder.from(region).build());
+            }
+            return builder;
         }
 
         @JsonDeserialize(contentAs = SpaceWeatherRegionImpl.class)

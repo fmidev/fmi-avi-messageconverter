@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.*;
+import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAmd79;
 import fi.fmi.avi.model.swx.amd82.*;
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -98,6 +99,37 @@ public abstract class SpaceWeatherAdvisoryAmd82Impl implements SpaceWeatherAdvis
                         .addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf))//
                         .setNextAdvisory(NextAdvisoryImpl.immutableCopyOf(value.getNextAdvisory()));
             }
+        }
+
+        public static Builder from(final SpaceWeatherAdvisoryAmd79 value) {
+            final Builder builder = builder();
+            AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
+                    Builder::setReportStatus, //
+                    Builder::setIssueTime, //
+                    Builder::setRemarks, //
+                    Builder::setPermissibleUsage, //
+                    Builder::setPermissibleUsageReason, //
+                    Builder::setPermissibleUsageSupplementary, //
+                    Builder::setTranslated, //
+                    Builder::setTranslatedBulletinID, //
+                    Builder::setTranslatedBulletinReceptionTime, //
+                    Builder::setTranslationCentreDesignator, //
+                    Builder::setTranslationCentreName, //
+                    Builder::setTranslationTime, //
+                    Builder::setTranslatedTAC);
+            builder//
+                    .setIssuingCenter(IssuingCenterImpl.Builder.from(value.getIssuingCenter()).build())
+                    .setAdvisoryNumber(AdvisoryNumberImpl.Builder.from(value.getAdvisoryNumber()).build())
+                    .addAllPhenomena(value.getPhenomena().stream()
+                            .map(phenomenon -> SpaceWeatherPhenomenon.valueOf(phenomenon.name())))
+                    .addAllAnalyses(value.getAnalyses().stream().map(analysis ->
+                            SpaceWeatherAdvisoryAnalysisImpl.Builder.from(analysis).build()))
+                    .setNextAdvisory(NextAdvisoryImpl.Builder.from(value.getNextAdvisory()).build());
+
+            value.getReplaceAdvisoryNumber().ifPresent(replaceAdvisoryNumber -> {
+                builder.setReplaceAdvisoryNumber(AdvisoryNumberImpl.Builder.from(replaceAdvisoryNumber).build());
+            });
+            return builder;
         }
 
         public Builder addAllPhenomena(final List<SpaceWeatherPhenomenon> elements) {

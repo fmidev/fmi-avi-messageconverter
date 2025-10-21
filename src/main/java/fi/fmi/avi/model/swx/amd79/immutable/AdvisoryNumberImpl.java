@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 @FreeBuilder
 @JsonDeserialize(builder = AdvisoryNumberImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "year", "serialNumber" })
+@JsonPropertyOrder({"year", "serialNumber"})
 public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable {
 
     private static final long serialVersionUID = -8532026521718086632L;
@@ -62,10 +62,14 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
             }
         }
 
+        public static Builder from(final fi.fmi.avi.model.swx.amd82.AdvisoryNumber value) {
+            return builder().setSerialNumber(value.getSerialNumber()).setYear(value.getYear());
+        }
+
         /**
          * Parses AdvisoryNumber from a String matching format declared in ICAO Annex 3.
          * <pre><code>nnnn/[n][n][n]n</code></pre>
-         *
+         * <p>
          * No strict checking is made, this method may accept more digits than specified.
          */
         public static Builder from(final String value) {

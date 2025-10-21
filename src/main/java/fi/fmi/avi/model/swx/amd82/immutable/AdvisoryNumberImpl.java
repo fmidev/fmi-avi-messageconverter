@@ -62,6 +62,10 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
             }
         }
 
+        public static Builder from(final fi.fmi.avi.model.swx.amd79.AdvisoryNumber value) {
+            return builder().setSerialNumber(value.getSerialNumber()).setYear(value.getYear());
+        }
+
         /**
          * Parses AdvisoryNumber from a String matching format declared in ICAO Annex 3.
          * <pre><code>nnnn/[n][n][n]n</code></pre>

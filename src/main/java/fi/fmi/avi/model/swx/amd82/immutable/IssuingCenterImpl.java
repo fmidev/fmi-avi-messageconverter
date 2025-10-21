@@ -51,5 +51,9 @@ public abstract class IssuingCenterImpl implements IssuingCenter, Serializable {
                 return builder().setDesignator(value.getDesignator()).setName(value.getName()).setType(value.getType());
             }
         }
+
+        public static Builder from(final fi.fmi.avi.model.swx.amd79.IssuingCenter value) {
+            return builder().setDesignator(value.getDesignator()).setName(value.getName()).setType(value.getType());
+        }
     }
 }

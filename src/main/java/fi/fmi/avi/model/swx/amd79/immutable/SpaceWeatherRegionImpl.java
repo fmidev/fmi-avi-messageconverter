@@ -14,7 +14,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherRegionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "airSpaceVolume", "locationIndicator", "longitudeLimitMinimum", "longitudeLimitMaximum" })
+@JsonPropertyOrder({"airSpaceVolume", "locationIndicator", "longitudeLimitMinimum", "longitudeLimitMaximum"})
 public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Serializable {
 
     private static final long serialVersionUID = 207049872292188821L;
@@ -55,6 +55,19 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
                         .setLongitudeLimitMinimum(value.getLongitudeLimitMinimum())//
                         .setLocationIndicator(value.getLocationIndicator());
             }
+        }
+
+        public static Builder from(final fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion value) {
+            final Builder builder = builder()
+                    .setLongitudeLimitMaximum(value.getLongitudeLimitMaximum())
+                    .setLongitudeLimitMinimum(value.getLongitudeLimitMinimum());
+            value.getAirSpaceVolume().ifPresent(airSpaceVolume -> {
+                builder.setAirSpaceVolume(AirspaceVolumeImpl.Builder.from(airSpaceVolume).build());
+            });
+            value.getLocationIndicator().ifPresent(locationIndicator -> {
+                builder.setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.valueOf(locationIndicator.name()));
+            });
+            return builder;
         }
 
         @Override
