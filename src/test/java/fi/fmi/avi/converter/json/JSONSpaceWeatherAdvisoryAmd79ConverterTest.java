@@ -123,7 +123,7 @@ public class JSONSpaceWeatherAdvisoryAmd79ConverterTest {
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
 
-        final InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("swx1.json");
+        final InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("swx-amd79.json");
         Objects.requireNonNull(is);
 
         final String reference = IOUtils.toString(is, "UTF-8");

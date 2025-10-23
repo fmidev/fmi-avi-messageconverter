@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.collect.ImmutableList;
 import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
@@ -24,7 +25,10 @@ import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -35,10 +39,8 @@ public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
     @Autowired
     private AviMessageConverter converter;
 
-    private AdvisoryNumberImpl getAdvisoryNumber() {
-        final AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
-
-        return advisory.build();
+    private static AdvisoryNumberImpl advisoryNumber(final int year, final int serialNumber) {
+        return AdvisoryNumberImpl.builder().setYear(year).setSerialNumber(serialNumber).build();
     }
 
     private NextAdvisory getNextAdvisory(final boolean hasNext) {
@@ -123,25 +125,29 @@ public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
         om.registerModule(new Jdk8Module());
         om.registerModule(new JavaTimeModule());
 
-        final InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("swx1.json");
+        final InputStream is = JSONSigmetConverterTest.class.getResourceAsStream("swx-amd82.json");
         Objects.requireNonNull(is);
 
         final String reference = IOUtils.toString(is, "UTF-8");
 
-        final SpaceWeatherAdvisoryAmd82Impl SWXObject = SpaceWeatherAdvisoryAmd82Impl.builder()
+        final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .addAllAnalyses(getAnalyses(false))
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
-                .setAdvisoryNumber(getAdvisoryNumber())
-                .setReplaceAdvisoryNumber(Optional.empty())
+                .setAdvisoryNumber(advisoryNumber(2020, 1))
+                .addAllReplaceAdvisoryNumber(ImmutableList.of(
+                        advisoryNumber(2019, 40),
+                        advisoryNumber(2019, 41),
+                        advisoryNumber(2019, 42))
+                )
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();
 
-        final ConversionResult<String> result = converter.convertMessage(SWXObject, JSONConverter.SWX_AMD82_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
+        final ConversionResult<String> result = converter.convertMessage(advisory, JSONConverter.SWX_AMD82_POJO_TO_JSON_STRING, ConversionHints.EMPTY);
         assertSame(ConversionResult.Status.SUCCESS, result.getStatus());
         assertTrue(result.getConvertedMessage().isPresent());
 
