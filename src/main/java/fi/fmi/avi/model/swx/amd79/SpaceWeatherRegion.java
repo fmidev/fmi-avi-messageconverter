@@ -25,7 +25,7 @@ public interface SpaceWeatherRegion {
 
         private static final String CODELIST_BASE = "http://codes.wmo.int/49-2/SpaceWxLocation/";
         private static final Pattern WMO_CODELIST_PATTERN = Pattern.compile(
-                "^(?<protocol>[a-z]*)://codes\\.wmo\\.int/49-2/SpaceWxLocation/" + "(?<value>[A-Z_0-9]*)$");
+                "^(?<protocol>[a-z]*)://codes\\.wmo\\.int/49-2/SpaceWxLocation/(?<value>[A-Z_0-9]*)$");
 
         private final String code;
         private final double latitudeBandMinCoordinate;

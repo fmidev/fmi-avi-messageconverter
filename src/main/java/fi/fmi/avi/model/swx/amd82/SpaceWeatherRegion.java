@@ -21,11 +21,12 @@ public interface SpaceWeatherRegion {
         EQUATORIAL_LATITUDES_SOUTHERN_HEMISPHERE("EQS", 0d, -30d),
         MIDDLE_LATITUDES_SOUTHERN_HEMISPHERE("MSH", -30d, -60d),
         HIGH_LATITUDES_SOUTHERN_HEMISPHERE("HSH", -60d, -90d),
-        DAYLIGHT_SIDE("DAYLIGHT SIDE", Double.NaN, Double.NaN);
+        DAYSIDE("DAYSIDE", Double.NaN, Double.NaN),
+        NIGHTSIDE("NIGHTSIDE", Double.NaN, Double.NaN);
 
         private static final String CODELIST_BASE = "http://codes.wmo.int/49-2/SpaceWxLocation/";
         private static final Pattern WMO_CODELIST_PATTERN = Pattern.compile(
-                "^(?<protocol>[a-z]*)://codes\\.wmo\\.int/49-2/SpaceWxLocation/" + "(?<value>[A-Z_0-9]*)$");
+                "^(?<protocol>[a-z]*)://codes\\.wmo\\.int/49-2/SpaceWxLocation/(?<value>[A-Z_0-9]*)$");
 
         private final String code;
         private final double latitudeBandMinCoordinate;
@@ -40,7 +41,7 @@ public interface SpaceWeatherRegion {
         public static SpaceWeatherLocation fromWMOCodeListValue(final String value) {
             final Matcher m = WMO_CODELIST_PATTERN.matcher(value);
             if (m.matches()) {
-                final String tacCode = m.group("value").replaceAll("_", " ");
+                final String tacCode = m.group("value");
                 return fromTacCode(tacCode);
             }
             throw new IllegalArgumentException("Value '" + value + "' is not valid WMO 49-2 SpaceWxLocation value");
@@ -68,7 +69,7 @@ public interface SpaceWeatherRegion {
         }
 
         public String asWMOCodeListValue() {
-            return CODELIST_BASE + getCode().replaceAll("\\s+", "_");
+            return CODELIST_BASE + getCode();
         }
     }
 }
