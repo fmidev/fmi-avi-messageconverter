@@ -3,7 +3,6 @@ package fi.fmi.avi.model.swx.amd82.immutable;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.collect.ImmutableList;
 import fi.fmi.avi.model.*;
 import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
 import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
@@ -16,6 +15,7 @@ import org.junit.Test;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -62,13 +62,12 @@ public class SpaceWeatherAdvisoryAmd82Test {
         return remarks;
     }
 
-    private static List<AdvisoryNumber> getReplacementNumbers(final int... serials) {
+    private static Stream<AdvisoryNumber> getReplacementNumbers(final int... serials) {
         return Arrays.stream(serials)
                 .mapToObj(serial -> AdvisoryNumberImpl.builder()
                         .setYear(2020)
                         .setSerialNumber(serial)
-                        .build())
-                .collect(ImmutableList.toImmutableList());
+                        .build());
     }
 
     private List<SpaceWeatherAdvisoryAnalysis> getAnalyses(final boolean hasObservation) {
@@ -310,42 +309,25 @@ public class SpaceWeatherAdvisoryAmd82Test {
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
-                .addAllReplaceAdvisoryNumber(getReplacementNumbers(13, 14, 15))
+                .addAllReplaceAdvisoryNumbers(getReplacementNumbers(13, 14, 15))
                 .addAllAnalyses(getAnalyses(true))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();
 
-        assertEquals(3, advisory.getReplaceAdvisoryNumber().size());
-        assertEquals(2020, advisory.getReplaceAdvisoryNumber().get(0).getYear());
-        assertEquals(13, advisory.getReplaceAdvisoryNumber().get(0).getSerialNumber());
-        assertEquals(2020, advisory.getReplaceAdvisoryNumber().get(1).getYear());
-        assertEquals(14, advisory.getReplaceAdvisoryNumber().get(1).getSerialNumber());
-        assertEquals(2020, advisory.getReplaceAdvisoryNumber().get(1).getYear());
-        assertEquals(15, advisory.getReplaceAdvisoryNumber().get(2).getSerialNumber());
+        assertEquals(3, advisory.getReplaceAdvisoryNumbers().size());
+        assertEquals(2020, advisory.getReplaceAdvisoryNumbers().get(0).getYear());
+        assertEquals(13, advisory.getReplaceAdvisoryNumbers().get(0).getSerialNumber());
+        assertEquals(2020, advisory.getReplaceAdvisoryNumbers().get(1).getYear());
+        assertEquals(14, advisory.getReplaceAdvisoryNumbers().get(1).getSerialNumber());
+        assertEquals(2020, advisory.getReplaceAdvisoryNumbers().get(1).getYear());
+        assertEquals(15, advisory.getReplaceAdvisoryNumbers().get(2).getSerialNumber());
 
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd82Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd82Impl.class);
 
         assertEquals(advisory, deserialized);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void buildSWXWithTooManyReplaceAdvisoryNumbers() {
-        SpaceWeatherAdvisoryAmd82Impl.builder()
-                .setIssuingCenter(getIssuingCenter())
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .addAllPhenomena(Arrays.asList(
-                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
-                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
-                .setAdvisoryNumber(getAdvisoryNumber())
-                .addAllReplaceAdvisoryNumber(getReplacementNumbers(13, 14, 15, 16, 17))
-                .addAllAnalyses(getAnalyses(true))
-                .setRemarks(getRemarks())
-                .setNextAdvisory(getNextAdvisory(true))
-                .build();
     }
 
 }

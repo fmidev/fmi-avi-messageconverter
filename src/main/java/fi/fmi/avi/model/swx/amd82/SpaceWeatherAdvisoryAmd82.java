@@ -9,7 +9,7 @@ public interface SpaceWeatherAdvisoryAmd82 extends AviationWeatherMessage {
 
     AdvisoryNumber getAdvisoryNumber();
 
-    List<AdvisoryNumber> getReplaceAdvisoryNumber();
+    List<AdvisoryNumber> getReplaceAdvisoryNumbers();
 
     List<SpaceWeatherPhenomenon> getPhenomena();
 

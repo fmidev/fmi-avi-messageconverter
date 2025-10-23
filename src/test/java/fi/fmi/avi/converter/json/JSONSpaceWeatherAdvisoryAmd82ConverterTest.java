@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.collect.ImmutableList;
 import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.ConversionHints;
 import fi.fmi.avi.converter.ConversionResult;
@@ -138,10 +137,10 @@ public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(advisoryNumber(2020, 1))
-                .addAllReplaceAdvisoryNumber(ImmutableList.of(
+                .addReplaceAdvisoryNumbers(
                         advisoryNumber(2019, 40),
                         advisoryNumber(2019, 41),
-                        advisoryNumber(2019, 42))
+                        advisoryNumber(2019, 42)
                 )
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
