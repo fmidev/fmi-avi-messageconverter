@@ -213,11 +213,17 @@ public abstract class SpaceWeatherAdvisoryAmd82Impl implements SpaceWeatherAdvis
             return super.setAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(advisoryNumber));
         }
 
+        @Override
+        @JsonDeserialize(contentAs = AdvisoryNumberImpl.class)
+        public Builder addReplaceAdvisoryNumbers(final AdvisoryNumber replaceAdvisoryNumber) {
+            return super.addReplaceAdvisoryNumbers(AdvisoryNumberImpl.immutableCopyOf(replaceAdvisoryNumber));
+        }
+
         @JsonProperty("replaceAdvisoryNumbers")
         @JsonDeserialize(contentAs = AdvisoryNumberImpl.class)
-        public Builder setReplaceAdvisoryNumbers(final List<AdvisoryNumber> values) {
-            super.clearReplaceAdvisoryNumbers();
-            return super.addAllReplaceAdvisoryNumbers(values);
+        public Builder setReplaceAdvisoryNumbers(final List<? extends AdvisoryNumber> values) {
+            return clearReplaceAdvisoryNumbers()
+                    .addAllReplaceAdvisoryNumbers(values);
         }
 
         @Override
