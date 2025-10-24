@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -35,13 +36,11 @@ public class SpaceWeatherAdvisoryAmd82Test {
         return partialOrCompleteTimeInstant.getCompleteTime().orElse(null);
     }
 
-    private AdvisoryNumberImpl getAdvisoryNumber() {
-        final AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
-
-        return advisory.build();
+    private static AdvisoryNumberImpl getAdvisoryNumber() {
+        return AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1).build();
     }
 
-    private NextAdvisory getNextAdvisory(final boolean hasNext) {
+    private static NextAdvisory getNextAdvisory(final boolean hasNext) {
         final NextAdvisoryImpl.Builder next = NextAdvisoryImpl.builder();
 
         if (hasNext) {
@@ -55,12 +54,20 @@ public class SpaceWeatherAdvisoryAmd82Test {
         return next.build();
     }
 
-    private List<String> getRemarks() {
+    private static List<String> getRemarks() {
         final List<String> remarks = new ArrayList<>();
         remarks.add("RADIATION LVL EXCEEDED 100 PCT OF BACKGROUND LVL AT FL350 AND ABV. THE CURRENT EVENT HAS PEAKED AND LVL SLW RTN TO BACKGROUND LVL."
                 + " SEE WWW.SPACEWEATHERPROVIDER.WEB");
 
         return remarks;
+    }
+
+    private static Stream<AdvisoryNumber> getReplacementNumbers(final int... serials) {
+        return Arrays.stream(serials)
+                .mapToObj(serial -> AdvisoryNumberImpl.builder()
+                        .setYear(2020)
+                        .setSerialNumber(serial)
+                        .build());
     }
 
     private List<SpaceWeatherAdvisoryAnalysis> getAnalyses(final boolean hasObservation) {
@@ -159,61 +166,59 @@ public class SpaceWeatherAdvisoryAmd82Test {
         analyses.add(analysis.build());
         analyses.add(analysis.build());
 
-        final SpaceWeatherAdvisoryAmd82Impl SWXObject = SpaceWeatherAdvisoryAmd82Impl.builder()
+        final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
-                .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(analyses)
                 .setRemarks(getRemarks())
                 .setNextAdvisory(nextAdvisory.build())
                 .build();
 
-        Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
-        Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.FORECAST, SWXObject.getAnalyses().get(0).getAnalysisType());
-        Assert.assertEquals(NextAdvisory.Type.NEXT_ADVISORY_BY, SWXObject.getNextAdvisory().getTimeSpecifier());
-        Assert.assertTrue(SWXObject.getNextAdvisory().getTime().isPresent());
+        Assert.assertEquals(1, advisory.getAdvisoryNumber().getSerialNumber());
+        Assert.assertEquals(2020, advisory.getAdvisoryNumber().getYear());
+        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.FORECAST, advisory.getAnalyses().get(0).getAnalysisType());
+        Assert.assertEquals(NextAdvisory.Type.NEXT_ADVISORY_BY, advisory.getNextAdvisory().getTimeSpecifier());
+        Assert.assertTrue(advisory.getNextAdvisory().getTime().isPresent());
 
-        final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd82Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd82Impl.class);
-        assertEquals(SWXObject, deserialized);
+        assertEquals(advisory, deserialized);
     }
 
     @Test
     public void buildSWXWithoutNextAdvisory() throws Exception {
-        final SpaceWeatherAdvisoryAmd82Impl SWXObject = SpaceWeatherAdvisoryAmd82Impl.builder()
+        final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
-                .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(getAnalyses(true))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(false))
                 .build();
 
-        Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
-        Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION, SWXObject.getAnalyses().get(0).getAnalysisType());
-        Assert.assertEquals(5, SWXObject.getAnalyses().size());
-        Assert.assertFalse(SWXObject.getNextAdvisory().getTime().isPresent());
-        Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, SWXObject.getNextAdvisory().getTimeSpecifier());
+        Assert.assertEquals(1, advisory.getAdvisoryNumber().getSerialNumber());
+        Assert.assertEquals(2020, advisory.getAdvisoryNumber().getYear());
+        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION, advisory.getAnalyses().get(0).getAnalysisType());
+        Assert.assertEquals(5, advisory.getAnalyses().size());
+        Assert.assertFalse(advisory.getNextAdvisory().getTime().isPresent());
+        Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, advisory.getNextAdvisory().getTimeSpecifier());
 
-        final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd82Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd82Impl.class);
 
-        assertEquals(SWXObject, deserialized);
+        assertEquals(advisory, deserialized);
     }
 
     @Test
     public void buildSWXWithoutObservation() throws Exception {
-        final SpaceWeatherAdvisoryAmd82Impl SWXObject = SpaceWeatherAdvisoryAmd82Impl.builder()
+        final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
@@ -221,45 +226,43 @@ public class SpaceWeatherAdvisoryAmd82Test {
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
-                .setReplaceAdvisoryNumber(Optional.empty())
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(false))
                 .build();
 
-        Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
-        Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertEquals(5, SWXObject.getAnalyses().size());
+        Assert.assertEquals(1, advisory.getAdvisoryNumber().getSerialNumber());
+        Assert.assertEquals(2020, advisory.getAdvisoryNumber().getYear());
+        Assert.assertEquals(5, advisory.getAnalyses().size());
 
-        Assert.assertFalse(SWXObject.getNextAdvisory().getTime().isPresent());
-        Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, SWXObject.getNextAdvisory().getTimeSpecifier());
+        Assert.assertFalse(advisory.getNextAdvisory().getTime().isPresent());
+        Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, advisory.getNextAdvisory().getTimeSpecifier());
 
-        final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd82Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd82Impl.class);
 
-        assertEquals(SWXObject, deserialized);
+        assertEquals(advisory, deserialized);
     }
 
     @Test
     public void swxSerializationTest() throws Exception {
-        final SpaceWeatherAdvisoryAmd82Impl SWXObject = SpaceWeatherAdvisoryAmd82Impl.builder()
+        final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .setReplaceAdvisoryNumber(getAdvisoryNumber())
+                .setAdvisoryNumber(getAdvisoryNumber())
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
-                .setAdvisoryNumber(getAdvisoryNumber())
-                .setReplaceAdvisoryNumber(Optional.empty())
+
                 .addAllAnalyses(getAnalyses(true))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(getNextAdvisory(true))
                 .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
                 .build();
 
-        final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd82Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd82Impl.class);
 
-        assertEquals(SWXObject, deserialized);
+        assertEquals(advisory, deserialized);
     }
 
     @Test
@@ -273,11 +276,9 @@ public class SpaceWeatherAdvisoryAmd82Test {
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setPartialTime(PartialDateTime.ofDayHourMinute(27, 1, 31)).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
-                .setReplaceAdvisoryNumber(getAdvisoryNumber())
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
                 .setAdvisoryNumber(getAdvisoryNumber())
-                .setReplaceAdvisoryNumber(Optional.empty())
                 .addAllAnalyses(getAnalyses(true))
                 .setRemarks(getRemarks())
                 .setNextAdvisory(partialNextAdvisory)
@@ -297,4 +298,36 @@ public class SpaceWeatherAdvisoryAmd82Test {
         assertFalse("no more analyses", completedAnalyses.hasNext());
         assertTrue("all times are complete", completedAdvisory.areAllTimeReferencesComplete());
     }
+
+    @Test
+    public void buildSWXWithMultipleReplaceAdvisoryNumbers() throws Exception {
+        final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
+                .setIssuingCenter(getIssuingCenter())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
+                .addAllPhenomena(Arrays.asList(
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
+                        SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
+                .setAdvisoryNumber(getAdvisoryNumber())
+                .addAllReplaceAdvisoryNumbers(getReplacementNumbers(13, 14, 15))
+                .addAllAnalyses(getAnalyses(true))
+                .setRemarks(getRemarks())
+                .setNextAdvisory(getNextAdvisory(true))
+                .build();
+
+        assertEquals(3, advisory.getReplaceAdvisoryNumbers().size());
+        assertEquals(2020, advisory.getReplaceAdvisoryNumbers().get(0).getYear());
+        assertEquals(13, advisory.getReplaceAdvisoryNumbers().get(0).getSerialNumber());
+        assertEquals(2020, advisory.getReplaceAdvisoryNumbers().get(1).getYear());
+        assertEquals(14, advisory.getReplaceAdvisoryNumbers().get(1).getSerialNumber());
+        assertEquals(2020, advisory.getReplaceAdvisoryNumbers().get(1).getYear());
+        assertEquals(15, advisory.getReplaceAdvisoryNumbers().get(2).getSerialNumber());
+
+
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
+        final SpaceWeatherAdvisoryAmd82Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd82Impl.class);
+
+        assertEquals(advisory, deserialized);
+    }
+
 }

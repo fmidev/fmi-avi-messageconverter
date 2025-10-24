@@ -1,6 +1,7 @@
 package fi.fmi.avi.model.swx.amd82.immutable;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.*;
@@ -11,6 +12,7 @@ import org.inferred.freebuilder.FreeBuilder;
 import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -93,7 +95,7 @@ public abstract class SpaceWeatherAdvisoryAmd82Impl implements SpaceWeatherAdvis
                 return builder//
                         .setIssuingCenter(IssuingCenterImpl.immutableCopyOf(value.getIssuingCenter()))
                         .setAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(value.getAdvisoryNumber()))
-                        .setReplaceAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(value.getReplaceAdvisoryNumber()))
+                        .addAllReplaceAdvisoryNumbers(value.getReplaceAdvisoryNumbers().stream().map(AdvisoryNumberImpl::immutableCopyOf))
                         .addAllPhenomena(value.getPhenomena().stream()//
                                 .map(p -> SpaceWeatherPhenomenon.from(p.getType(), p.getSeverity())))//
                         .addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf))//
@@ -117,11 +119,13 @@ public abstract class SpaceWeatherAdvisoryAmd82Impl implements SpaceWeatherAdvis
                     Builder::setTranslationCentreName, //
                     Builder::setTranslationTime, //
                     Builder::setTranslatedTAC);
-            return builder//
+            return builder
                     .setIssuingCenter(IssuingCenterImpl.Builder.fromAmd79(value.getIssuingCenter()).build())
                     .setAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd79(value.getAdvisoryNumber()).build())
-                    .setReplaceAdvisoryNumber(value.getReplaceAdvisoryNumber().map(advisoryNumber ->
-                            AdvisoryNumberImpl.Builder.fromAmd79(advisoryNumber).build()))
+                    .addAllReplaceAdvisoryNumbers(value.getReplaceAdvisoryNumber()
+                            .map(advisoryNumber -> Collections.singletonList(
+                                    AdvisoryNumberImpl.Builder.fromAmd79(advisoryNumber).build()))
+                            .orElse(Collections.emptyList()))
                     .addAllPhenomena(value.getPhenomena().stream()
                             .map(phenomenon -> SpaceWeatherPhenomenon.valueOf(phenomenon.name())))
                     .addAllAnalyses(value.getAnalyses().stream().map(analysis ->
@@ -210,9 +214,16 @@ public abstract class SpaceWeatherAdvisoryAmd82Impl implements SpaceWeatherAdvis
         }
 
         @Override
-        @JsonDeserialize(as = AdvisoryNumberImpl.class)
-        public Builder setReplaceAdvisoryNumber(final AdvisoryNumber replaceAdvisoryNumber) {
-            return super.setReplaceAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(replaceAdvisoryNumber));
+        @JsonDeserialize(contentAs = AdvisoryNumberImpl.class)
+        public Builder addReplaceAdvisoryNumbers(final AdvisoryNumber replaceAdvisoryNumber) {
+            return super.addReplaceAdvisoryNumbers(AdvisoryNumberImpl.immutableCopyOf(replaceAdvisoryNumber));
+        }
+
+        @JsonProperty("replaceAdvisoryNumbers")
+        @JsonDeserialize(contentAs = AdvisoryNumberImpl.class)
+        public Builder setReplaceAdvisoryNumbers(final List<? extends AdvisoryNumber> values) {
+            return clearReplaceAdvisoryNumbers()
+                    .addAllReplaceAdvisoryNumbers(values);
         }
 
         @Override

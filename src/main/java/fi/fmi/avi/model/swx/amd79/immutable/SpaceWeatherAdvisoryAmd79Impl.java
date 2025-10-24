@@ -120,7 +120,7 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
             return builder//
                     .setIssuingCenter(IssuingCenterImpl.Builder.fromAmd82(value.getIssuingCenter()).build())
                     .setAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd82(value.getAdvisoryNumber()).build())
-                    .setReplaceAdvisoryNumber(value.getReplaceAdvisoryNumber().map(advisoryNumber ->
+                    .setReplaceAdvisoryNumber(value.getReplaceAdvisoryNumbers().stream().findFirst().map(advisoryNumber ->
                             AdvisoryNumberImpl.Builder.fromAmd82(advisoryNumber).build()))
                     .addAllPhenomena(value.getPhenomena().stream()
                             .map(phenomenon -> SpaceWeatherPhenomenon.valueOf(phenomenon.name())))
