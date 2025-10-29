@@ -85,11 +85,9 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
          *                                  {@link fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion.SpaceWeatherLocation#DAYLIGHT_SIDE}
          */
         public Builder withComputedDaylightSideAirspaceVolume(final Instant analysisTime) {
-            getLocationIndicator()
-                    .filter(loc -> loc != SpaceWeatherLocation.DAYLIGHT_SIDE)
-                    .ifPresent(loc -> {
-                        throw new IllegalArgumentException("Location indicator is not DAYLIGHT SIDE: " + loc);
-                    });
+            if (!getLocationIndicator().isPresent() || getLocationIndicator().get() != SpaceWeatherLocation.DAYLIGHT_SIDE) {
+                throw new IllegalArgumentException("Location indicator is not DAYLIGHT SIDE");
+            }
             setAirSpaceVolume(AirspaceVolumeImpl.builder()
                     .setHorizontalProjection(
                             CircleByCenterPointImpl.builder()
