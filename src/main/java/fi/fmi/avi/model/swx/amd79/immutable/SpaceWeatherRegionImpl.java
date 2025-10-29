@@ -73,13 +73,16 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
         }
 
         /**
-         * Sets the airspace volume's horizontal projection for
-         * {@link fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion.SpaceWeatherLocation#DAYLIGHT_SIDE}.
          * <p>
-         * If the airspace volume already has a geometry, returns the builder without modifications.
+         * Sets the airspace volume's horizontal projection for
+         * {@link fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion.SpaceWeatherLocation#DAYLIGHT_SIDE} with a computed
+         * sub-solar point and a static radius.
+         * </p>
          *
          * @param analysisTime analysis' time
          * @return builder instance
+         * @throws IllegalArgumentException if location indicator is not
+         *                                  {@link fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion.SpaceWeatherLocation#DAYLIGHT_SIDE}
          */
         public Builder withComputedDaylightSideAirspaceVolume(final Instant analysisTime) {
             getLocationIndicator()
