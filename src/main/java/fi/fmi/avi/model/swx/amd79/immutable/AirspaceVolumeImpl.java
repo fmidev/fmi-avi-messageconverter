@@ -3,9 +3,11 @@ package fi.fmi.avi.model.swx.amd79.immutable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
+import fi.fmi.avi.model.swx.amd79.VerticalLimits;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
@@ -106,5 +108,28 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         public Builder setWidth(final NumericMeasure width) {
             return super.setWidth(width);
         }
+
+        public Builder withVerticalLimits(final VerticalLimits verticalLimits) {
+            final String verticalReference = verticalLimits.getVerticalReference();
+            final Optional<NumericMeasure> lowerLimit = verticalLimits.getLowerLimit();
+            final Optional<NumericMeasure> upperLimit = verticalLimits.getUpperLimit();
+            final Optional<AviationCodeListUser.RelationalOperator> operator = verticalLimits.getOperator();
+
+            if (lowerLimit.isPresent() && upperLimit.isPresent()) {
+                setLowerLimitReference(verticalReference);
+                setUpperLimitReference(verticalReference);
+                setLowerLimit(lowerLimit.get());
+                setUpperLimit(upperLimit.get());
+            } else if (lowerLimit.isPresent() && operator.filter(op -> op == AviationCodeListUser.RelationalOperator.ABOVE).isPresent()) {
+                setLowerLimitReference(verticalReference);
+                setLowerLimit(lowerLimit.get());
+            } else if (upperLimit.isPresent() && operator.filter(op -> op == AviationCodeListUser.RelationalOperator.BELOW).isPresent()) {
+                setUpperLimitReference(verticalReference);
+                setUpperLimit(upperLimit.get());
+            }
+
+            return this;
+        }
     }
+
 }

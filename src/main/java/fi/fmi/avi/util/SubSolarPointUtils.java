@@ -14,7 +14,7 @@ import java.util.List;
  */
 public final class SubSolarPointUtils {
 
-    public static final double DAYLIGHT_SIDE_RADIUS_KM = 10_100.0;
+    public static final double DAYSIDE_RADIUS_KM = 10_100.0;
 
     // Unit conversion constants
     private static final double DEG_PER_CIRCLE = 360.0;
