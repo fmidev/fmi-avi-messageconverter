@@ -9,9 +9,10 @@ import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
 import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
+import fi.fmi.avi.model.swx.VerticalLimits;
+import fi.fmi.avi.model.swx.VerticalLimitsImpl;
 import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
-import fi.fmi.avi.model.swx.amd79.VerticalLimits;
 import fi.fmi.avi.util.SubSolarPointUtils;
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -156,7 +157,7 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
          * @param analysisTime      analysis time (required only for DAYLIGHT_SIDE)
          * @param minLongitude      minimum longitude (optional, defaults to -180)
          * @param maxLongitude      maximum longitude (optional, defaults to 180)
-         * @param verticalLimits    vertical limit constraints (lower limit, upper limit, and operator)
+         * @param verticalLimits    vertical limit constraints
          * @return builder instance
          */
         public Builder withComputedAirspaceVolume(final SpaceWeatherLocation locationIndicator,
@@ -174,7 +175,7 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
                         locationIndicator.getLatitudeBandMaxCoordinate().get(),
                         maxLongitude != null ? maxLongitude : 180d);
                 setAirSpaceVolume(buildAirspaceVolume(geometry,
-                        verticalLimits != null ? verticalLimits : VerticalLimitsImpl.Builder.none()));
+                        verticalLimits != null ? verticalLimits : VerticalLimitsImpl.none()));
             }
             return this;
         }

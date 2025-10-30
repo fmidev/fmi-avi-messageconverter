@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
-import fi.fmi.avi.model.swx.amd79.VerticalLimits;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
