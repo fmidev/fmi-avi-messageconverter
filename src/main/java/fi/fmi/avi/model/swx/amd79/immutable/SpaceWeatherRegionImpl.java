@@ -164,10 +164,7 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
                                                   @Nullable final Double minLongitude,
                                                   @Nullable final Double maxLongitude,
                                                   @Nullable final VerticalLimits verticalLimits) {
-            if (locationIndicator == SpaceWeatherLocation.DAYLIGHT_SIDE) {
-                if (analysisTime == null) {
-                    throw new IllegalArgumentException("analysisTime is required for DAYLIGHT_SIDE location indicator");
-                }
+            if (locationIndicator == SpaceWeatherLocation.DAYLIGHT_SIDE && analysisTime != null) {
                 setAirSpaceVolume(buildDaylightSideAirspaceVolume(analysisTime));
             } else if (locationIndicator.getLatitudeBandMinCoordinate().isPresent()
                     && locationIndicator.getLatitudeBandMaxCoordinate().isPresent()) {
