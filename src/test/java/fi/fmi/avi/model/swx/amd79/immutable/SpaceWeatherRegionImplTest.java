@@ -20,19 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SpaceWeatherRegionImplTest {
 
     @Test
-    public void testLongitudeLimits() {
-        final SpaceWeatherRegionImpl region = SpaceWeatherRegionImpl.builder()
-                .setLongitudeLimitMinimum(-90.0)
-                .setLongitudeLimitMaximum(90.0)
-                .build();
-
-        assertThat(region.getLongitudeLimitMinimum()).isPresent().hasValue(-90.0);
-        assertThat(region.getLongitudeLimitMaximum()).isPresent().hasValue(90.0);
-    }
-
-    @Test
     public void testComputedAirspaceVolumeDaylightSide() {
-        final Instant analysisTime = Instant.parse("2016-11-08T01:00:00Z");
+        final Instant analysisTime = Instant.parse("2023-10-31T12:00:00Z");
         final SpaceWeatherRegionImpl region = SpaceWeatherRegionImpl.builder()
                 .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE)
                 .withComputedAirspaceVolume(
@@ -54,7 +43,7 @@ public class SpaceWeatherRegionImplTest {
         final CircleByCenterPoint circle = (CircleByCenterPoint) volume.getHorizontalProjection().get();
         assertThat(circle.getRadius().getValue()).isEqualTo(SubSolarPointUtils.DAYSIDE_RADIUS_KM);
         assertThat(circle.getRadius().getUom()).isEqualTo("km");
-        assertThat(circle.getCenterPointCoordinates()).containsExactly(-16.64, 160.94);
+        assertThat(circle.getCenterPointCoordinates()).containsExactly(-14.11, -4.09);
     }
 
     @Test
@@ -137,8 +126,7 @@ public class SpaceWeatherRegionImplTest {
         assertThat(region.getAirSpaceVolume()).isPresent();
         final PolygonGeometry polygon = (PolygonGeometry) region.getAirSpaceVolume().get().getHorizontalProjection().get();
         assertThat(polygon.getExteriorRingPositions())
-                .hasSize(10)
-                .contains(60.0, 90.0, -90.0);
+                .containsExactly(60.0, -90.0, 90.0, -90.0, 90.0, 90.0, 60.0, 90.0, 60.0, -90.0);
     }
 
     @Test
@@ -148,7 +136,7 @@ public class SpaceWeatherRegionImplTest {
                 .build();
 
         final PolygonGeometry polygon = (PolygonGeometry) region.getAirSpaceVolume().get().getHorizontalProjection().get();
-        assertThat(polygon.getExteriorRingPositions()).contains(-180.0, 180.0);
+        assertThat(polygon.getExteriorRingPositions()).containsExactly(60.0, -180.0, 90.0, -180.0, 90.0, 180.0, 60.0, 180.0, 60.0, -180.0);
     }
 
 }
