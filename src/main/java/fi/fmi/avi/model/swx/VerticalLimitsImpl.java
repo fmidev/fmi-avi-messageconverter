@@ -11,12 +11,14 @@ public abstract class VerticalLimitsImpl implements VerticalLimits, Serializable
 
     private static final long serialVersionUID = 456150576462009061L;
 
+    private static final VerticalLimits NONE = new Builder().build();
+
     public static Builder builder() {
         return new Builder();
     }
 
     public static VerticalLimits none() {
-        return builder().build();
+        return NONE;
     }
 
     public static VerticalLimitsImpl immutableCopyOf(final VerticalLimits verticalLimits) {
@@ -38,7 +40,7 @@ public abstract class VerticalLimitsImpl implements VerticalLimits, Serializable
 
     public static class Builder extends VerticalLimitsImpl_Builder {
 
-        public Builder() {
+        Builder() {
             setVerticalReference(STANDARD_ATMOSPHERE);
         }
 

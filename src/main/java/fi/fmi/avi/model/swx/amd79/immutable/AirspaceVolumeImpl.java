@@ -4,13 +4,21 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PolygonGeometry;
+import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
+import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
+import fi.fmi.avi.util.SubSolarPointUtils;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -77,6 +85,94 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
                     .setMinimumLimit(value.getMinimumLimit())
                     .setMinimumLimitReference(value.getMinimumLimitReference())
                     .setWidth(value.getWidth());
+        }
+
+        private static Geometry buildPolygonGeometry(final double minLatitude, final double minLongitude,
+                                                     final double maxLatitude, final double maxLongitude) {
+            final double normalizedMinLongitude = Math.abs(minLongitude) == 180d ? -180d : minLongitude;
+            final double normalizedMaxLongitude = Math.abs(maxLongitude) == 180d ? 180d : maxLongitude;
+            return PolygonGeometryImpl.builder()
+                    .setCrs(CoordinateReferenceSystemImpl.wgs84())
+                    .mutateExteriorRingPositions(coordinates ->
+                            addPolygonRingPositions(coordinates, minLatitude, normalizedMinLongitude, maxLatitude, normalizedMaxLongitude))
+                    .build();
+        }
+
+        private static void addPolygonRingPositions(final List<Double> coordinates, final double minLat, final double minLon,
+                                                    final double maxLat, final double maxLon) {
+            // Upper left corner:
+            coordinates.add(minLat);
+            coordinates.add(minLon);
+
+            // Lower left corner:
+            coordinates.add(maxLat);
+            coordinates.add(minLon);
+
+            // Lower right corner:
+            coordinates.add(maxLat);
+            coordinates.add(maxLon);
+
+            // Upper right corner:
+            coordinates.add(minLat);
+            coordinates.add(maxLon);
+
+            // Upper left corner (again, to close the ring):
+            coordinates.add(minLat);
+            coordinates.add(minLon);
+        }
+
+        /**
+         * Creates an airspace volume for the daylight side using the sub-solar point.
+         *
+         * @param analysisTime the time to compute the sub-solar point for
+         * @return the built airspace volume
+         */
+        public static AirspaceVolume forDaylightSide(final Instant analysisTime) {
+            return builder()
+                    .setHorizontalProjection(
+                            CircleByCenterPointImpl.builder()
+                                    .setCrs(CoordinateReferenceSystemImpl.wgs84())
+                                    .setCenterPointCoordinates(SubSolarPointUtils.computeSubSolarPoint(analysisTime))
+                                    .setRadius(NumericMeasureImpl.builder()
+                                            .setUom("km")
+                                            .setValue(SubSolarPointUtils.DAYSIDE_RADIUS_KM)
+                                            .build())
+                                    .build())
+                    .build();
+        }
+
+        /**
+         * Creates an airspace volume from a polygon geometry and vertical limits.
+         *
+         * @param polygon        the polygon geometry
+         * @param verticalLimits the vertical limits
+         * @return the built airspace volume
+         */
+        public static AirspaceVolume fromPolygon(final PolygonGeometry polygon, final VerticalLimits verticalLimits) {
+            return builder()
+                    .setHorizontalProjection(polygon)
+                    .withVerticalLimits(verticalLimits)
+                    .build();
+        }
+
+        /**
+         * Creates an airspace volume from geographic bounds and vertical limits.
+         *
+         * @param minLatitude    minimum latitude
+         * @param minLongitude   minimum longitude
+         * @param maxLatitude    maximum latitude
+         * @param maxLongitude   maximum longitude
+         * @param verticalLimits the vertical limits
+         * @return the built airspace volume
+         */
+        public static AirspaceVolume fromBounds(final double minLatitude, final double minLongitude,
+                                                final double maxLatitude, final double maxLongitude,
+                                                final VerticalLimits verticalLimits) {
+            final Geometry geometry = buildPolygonGeometry(minLatitude, minLongitude, maxLatitude, maxLongitude);
+            return builder()
+                    .setHorizontalProjection(geometry)
+                    .withVerticalLimits(verticalLimits)
+                    .build();
         }
 
         @Override
