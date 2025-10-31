@@ -101,7 +101,7 @@ public class SpaceWeatherRegionImplTest {
 
         assertThat(region.getAirSpaceVolume()).isPresent();
         final PolygonGeometry polygon = (PolygonGeometry) region.getAirSpaceVolume().get().getHorizontalProjection().get();
-        assertThat(polygon.getExteriorRingPositions()).contains(-180.0, 180.0);
+        assertThat(polygon.getExteriorRingPositions()).containsExactly(60.0, -180.0, 30.0, -180.0, 30.0, 180.0, 60.0, 180.0, 60.0, -180.0);
     }
 
     @Test
