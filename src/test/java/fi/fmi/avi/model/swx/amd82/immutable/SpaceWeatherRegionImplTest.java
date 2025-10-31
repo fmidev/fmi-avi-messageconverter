@@ -1,4 +1,4 @@
-package fi.fmi.avi.model.swx.amd79.immutable;
+package fi.fmi.avi.model.swx.amd82.immutable;
 
 import fi.fmi.avi.model.CircleByCenterPoint;
 import fi.fmi.avi.model.PolygonGeometry;
@@ -7,8 +7,8 @@ import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.VerticalLimitsImpl;
-import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
-import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
+import fi.fmi.avi.model.swx.amd82.AirspaceVolume;
+import fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion;
 import fi.fmi.avi.util.SubSolarPointUtils;
 import org.junit.Test;
 
@@ -20,12 +20,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SpaceWeatherRegionImplTest {
 
     @Test
-    public void testComputedAirspaceVolumeDaylightSide() {
+    public void testComputedAirspaceVolumeDayside() {
         final Instant analysisTime = Instant.parse("2023-10-31T12:00:00Z");
         final SpaceWeatherRegionImpl region = SpaceWeatherRegionImpl.builder()
-                .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE)
+                .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE)
                 .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(
-                        SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE,
+                        SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE,
                         analysisTime,
                         null,
                         null,
@@ -61,7 +61,8 @@ public class SpaceWeatherRegionImplTest {
                         -90.0,
                         90.0,
                         verticalLimits
-                )).build();
+                ))
+                .build();
 
         assertThat(region.getAirSpaceVolume()).isPresent();
         final AirspaceVolume volume = region.getAirSpaceVolume().get();
@@ -84,7 +85,8 @@ public class SpaceWeatherRegionImplTest {
                         null,
                         null,
                         VerticalLimitsImpl.none()
-                )).build();
+                ))
+                .build();
 
         assertThat(region.getAirSpaceVolume()).isPresent();
         final PolygonGeometry polygon = (PolygonGeometry) region.getAirSpaceVolume().get().getHorizontalProjection().get();
