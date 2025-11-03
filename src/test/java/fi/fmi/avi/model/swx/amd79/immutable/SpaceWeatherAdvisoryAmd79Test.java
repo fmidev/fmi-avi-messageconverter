@@ -9,14 +9,14 @@ import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.amd79.*;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpaceWeatherAdvisoryAmd79Test {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -35,13 +35,11 @@ public class SpaceWeatherAdvisoryAmd79Test {
         return partialOrCompleteTimeInstant.getCompleteTime().orElse(null);
     }
 
-    private AdvisoryNumberImpl getAdvisoryNumber() {
-        final AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
-
-        return advisory.build();
+    private static AdvisoryNumberImpl getAdvisoryNumber() {
+        return AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1).build();
     }
 
-    private NextAdvisory getNextAdvisory(final boolean hasNext) {
+    private static NextAdvisory getNextAdvisory(final boolean hasNext) {
         final NextAdvisoryImpl.Builder next = NextAdvisoryImpl.builder();
 
         if (hasNext) {
@@ -55,7 +53,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
         return next.build();
     }
 
-    private List<String> getRemarks() {
+    private static List<String> getRemarks() {
         final List<String> remarks = new ArrayList<>();
         remarks.add("RADIATION LVL EXCEEDED 100 PCT OF BACKGROUND LVL AT FL350 AND ABV. THE CURRENT EVENT HAS PEAKED AND LVL SLW RTN TO BACKGROUND LVL."
                 + " SEE WWW.SPACEWEATHERPROVIDER.WEB");
@@ -159,7 +157,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
         analyses.add(analysis.build());
         analyses.add(analysis.build());
 
-        final SpaceWeatherAdvisoryAmd79Impl SWXObject = SpaceWeatherAdvisoryAmd79Impl.builder()
+        final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
@@ -172,20 +170,69 @@ public class SpaceWeatherAdvisoryAmd79Test {
                 .setNextAdvisory(nextAdvisory.build())
                 .build();
 
-        Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
-        Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.FORECAST, SWXObject.getAnalyses().get(0).getAnalysisType());
-        Assert.assertEquals(NextAdvisory.Type.NEXT_ADVISORY_BY, SWXObject.getNextAdvisory().getTimeSpecifier());
-        Assert.assertTrue(SWXObject.getNextAdvisory().getTime().isPresent());
+        assertThat(advisory.getAdvisoryNumber().getSerialNumber()).as("serial number").isEqualTo(1);
+        assertThat(advisory.getAdvisoryNumber().getYear()).as("year").isEqualTo(2020);
+        assertThat(advisory.getAnalyses().get(0).getAnalysisType()).as("analysis type").isEqualTo(SpaceWeatherAdvisoryAnalysis.Type.FORECAST);
+        assertThat(advisory.getNextAdvisory().getTimeSpecifier()).as("next advisory time specifier").isEqualTo(NextAdvisory.Type.NEXT_ADVISORY_BY);
+        assertThat(advisory.getNextAdvisory().getTime()).as("next advisory time").isPresent();
 
-        final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd79Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd79Impl.class);
-        assertEquals(SWXObject, deserialized);
+        assertThat(deserialized).isEqualTo(advisory);
+    }
+
+    @Test
+    public void buildSWXWithDaylightSideRegion() throws Exception {
+        final Instant analysisTime = Instant.parse("2025-10-31T11:00:00Z");
+        final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z[UTC]");
+
+        final List<SpaceWeatherRegion> regions = new ArrayList<>();
+        regions.add(SpaceWeatherRegionImpl.builder()
+                .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE)
+                .setAirSpaceVolume(AirspaceVolumeImpl.forDaylightSide(analysisTime))
+                .build());
+
+        final SpaceWeatherAdvisoryAnalysisImpl.Builder analysis = SpaceWeatherAdvisoryAnalysisImpl.builder();
+        analysis.setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION)
+                .setTime(PartialOrCompleteTimeInstant.of(issueTime))
+                .addAllRegions(regions)
+                .setNilPhenomenonReason(SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason.NO_INFORMATION_AVAILABLE);
+
+        final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
+                .setIssuingCenter(getIssuingCenter())
+                .setIssueTime(PartialOrCompleteTimeInstant.of(issueTime))
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
+                .addAllPhenomena(Collections.singletonList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD")))
+                .setAdvisoryNumber(getAdvisoryNumber())
+                .setReplaceAdvisoryNumber(Optional.empty())
+                .addAllAnalyses(Collections.singletonList(analysis.build()))
+                .setRemarks(getRemarks())
+                .setNextAdvisory(getNextAdvisory(true))
+                .build();
+
+        assertThat(advisory.getAnalyses()).hasSize(1);
+
+        final SpaceWeatherRegion dayside = advisory.getAnalyses().get(0).getRegions().get(0);
+        assertThat(dayside.getLocationIndicator()).hasValue(SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE);
+        assertThat(dayside.getAirSpaceVolume()).isPresent();
+        assertThat(dayside.getAirSpaceVolume().get().getHorizontalProjection())
+                .isPresent()
+                .get()
+                .isInstanceOf(CircleByCenterPoint.class);
+
+        final CircleByCenterPoint circle = (CircleByCenterPoint) dayside.getAirSpaceVolume().get().getHorizontalProjection().get();
+        assertThat(circle.getRadius().getValue()).isEqualTo(10100d);
+        assertThat(circle.getRadius().getUom()).isEqualTo("km");
+        assertThat(circle.getCenterPointCoordinates()).containsExactly(-14.26d, 10.9d);
+
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
+        final SpaceWeatherAdvisoryAmd79Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd79Impl.class);
+        assertThat(deserialized).isEqualTo(advisory);
     }
 
     @Test
     public void buildSWXWithoutNextAdvisory() throws Exception {
-        final SpaceWeatherAdvisoryAmd79Impl SWXObject = SpaceWeatherAdvisoryAmd79Impl.builder()
+        final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
@@ -198,22 +245,22 @@ public class SpaceWeatherAdvisoryAmd79Test {
                 .setNextAdvisory(getNextAdvisory(false))
                 .build();
 
-        Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
-        Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertEquals(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION, SWXObject.getAnalyses().get(0).getAnalysisType());
-        Assert.assertEquals(5, SWXObject.getAnalyses().size());
-        Assert.assertFalse(SWXObject.getNextAdvisory().getTime().isPresent());
-        Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, SWXObject.getNextAdvisory().getTimeSpecifier());
+        assertThat(advisory.getAdvisoryNumber().getSerialNumber()).as("serial number").isEqualTo(1);
+        assertThat(advisory.getAdvisoryNumber().getYear()).as("year").isEqualTo(2020);
+        assertThat(advisory.getAnalyses().get(0).getAnalysisType()).as("analysis type").isEqualTo(SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION);
+        assertThat(advisory.getAnalyses()).as("analyses").hasSize(5);
+        assertThat(advisory.getNextAdvisory().getTime()).as("next advisory time").isNotPresent();
+        assertThat(advisory.getNextAdvisory().getTimeSpecifier()).as("next advisory time specifier").isEqualTo(NextAdvisory.Type.NO_FURTHER_ADVISORIES);
 
-        final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd79Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd79Impl.class);
 
-        assertEquals(SWXObject, deserialized);
+        assertThat(deserialized).isEqualTo(advisory);
     }
 
     @Test
     public void buildSWXWithoutObservation() throws Exception {
-        final SpaceWeatherAdvisoryAmd79Impl SWXObject = SpaceWeatherAdvisoryAmd79Impl.builder()
+        final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
@@ -226,22 +273,22 @@ public class SpaceWeatherAdvisoryAmd79Test {
                 .setNextAdvisory(getNextAdvisory(false))
                 .build();
 
-        Assert.assertEquals(1, SWXObject.getAdvisoryNumber().getSerialNumber());
-        Assert.assertEquals(2020, SWXObject.getAdvisoryNumber().getYear());
-        Assert.assertEquals(5, SWXObject.getAnalyses().size());
+        assertThat(advisory.getAdvisoryNumber().getSerialNumber()).as("serial number").isEqualTo(1);
+        assertThat(advisory.getAdvisoryNumber().getYear()).as("year").isEqualTo(2020);
+        assertThat(advisory.getAnalyses()).as("analyses").hasSize(5);
 
-        Assert.assertFalse(SWXObject.getNextAdvisory().getTime().isPresent());
-        Assert.assertEquals(NextAdvisory.Type.NO_FURTHER_ADVISORIES, SWXObject.getNextAdvisory().getTimeSpecifier());
+        assertThat(advisory.getNextAdvisory().getTime()).as("next advisory time").isNotPresent();
+        assertThat(advisory.getNextAdvisory().getTimeSpecifier()).as("next advisory time specifier").isEqualTo(NextAdvisory.Type.NO_FURTHER_ADVISORIES);
 
-        final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd79Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd79Impl.class);
 
-        assertEquals(SWXObject, deserialized);
+        assertThat(deserialized).isEqualTo(advisory);
     }
 
     @Test
     public void swxSerializationTest() throws Exception {
-        final SpaceWeatherAdvisoryAmd79Impl SWXObject = SpaceWeatherAdvisoryAmd79Impl.builder()
+        final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
@@ -256,10 +303,10 @@ public class SpaceWeatherAdvisoryAmd79Test {
                 .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
                 .build();
 
-        final String serialized = OBJECT_MAPPER.writeValueAsString(SWXObject);
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd79Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd79Impl.class);
 
-        assertEquals(SWXObject, deserialized);
+        assertThat(deserialized).isEqualTo(advisory);
     }
 
     @Test
@@ -286,15 +333,15 @@ public class SpaceWeatherAdvisoryAmd79Test {
 
         final ZonedDateTime referenceTime = ZonedDateTime.parse("2020-02-27T00:00Z");
         final SpaceWeatherAdvisoryAmd79 completedAdvisory = advisory.toBuilder().withAllTimesComplete(referenceTime).build();
-        assertEquals("issueTime", ZonedDateTime.parse("2020-02-27T01:31Z"), nullableCompleteTime(completedAdvisory.getIssueTime()));
-        assertEquals("nextAdvisory", ZonedDateTime.parse("2020-02-28T01:00Z"), nullableCompleteTime(completedAdvisory.getNextAdvisory().getTime()));
+        assertThat(nullableCompleteTime(completedAdvisory.getIssueTime())).as("issueTime").isEqualTo(ZonedDateTime.parse("2020-02-27T01:31Z"));
+        assertThat(nullableCompleteTime(completedAdvisory.getNextAdvisory().getTime())).as("nextAdvisory").isEqualTo(ZonedDateTime.parse("2020-02-28T01:00Z"));
         final Iterator<SpaceWeatherAdvisoryAnalysis> completedAnalyses = completedAdvisory.getAnalyses().iterator();
-        assertEquals("observation", ZonedDateTime.parse("2020-02-27T01:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
-        assertEquals("forecast +6", ZonedDateTime.parse("2020-02-27T02:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
-        assertEquals("forecast +12", ZonedDateTime.parse("2020-02-27T03:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
-        assertEquals("forecast +18", ZonedDateTime.parse("2020-02-27T04:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
-        assertEquals("forecast +24", ZonedDateTime.parse("2020-02-27T05:00Z"), nullableCompleteTime(completedAnalyses.next().getTime()));
-        assertFalse("no more analyses", completedAnalyses.hasNext());
-        assertTrue("all times are complete", completedAdvisory.areAllTimeReferencesComplete());
+        assertThat(nullableCompleteTime(completedAnalyses.next().getTime())).as("observation").isEqualTo(ZonedDateTime.parse("2020-02-27T01:00Z"));
+        assertThat(nullableCompleteTime(completedAnalyses.next().getTime())).as("forecast +6").isEqualTo(ZonedDateTime.parse("2020-02-27T02:00Z"));
+        assertThat(nullableCompleteTime(completedAnalyses.next().getTime())).as("forecast +12").isEqualTo(ZonedDateTime.parse("2020-02-27T03:00Z"));
+        assertThat(nullableCompleteTime(completedAnalyses.next().getTime())).as("forecast +18").isEqualTo(ZonedDateTime.parse("2020-02-27T04:00Z"));
+        assertThat(nullableCompleteTime(completedAnalyses.next().getTime())).as("forecast +24").isEqualTo(ZonedDateTime.parse("2020-02-27T05:00Z"));
+        assertThat(completedAnalyses.hasNext()).as("no more analyses").isFalse();
+        assertThat(completedAdvisory.areAllTimeReferencesComplete()).as("all times are complete").isTrue();
     }
 }

@@ -41,7 +41,7 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
     public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherRegionImpl_Builder {
-        @Deprecated
+
         Builder() {
         }
 
