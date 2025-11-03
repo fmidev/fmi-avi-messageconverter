@@ -185,6 +185,9 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
 
     public static class Builder extends AirspaceVolumeImpl_Builder {
 
+        Builder() {
+        }
+
         public static Builder from(final AirspaceVolume value) {
             if (value instanceof AirspaceVolumeImpl) {
                 return ((AirspaceVolumeImpl) value).toBuilder();

@@ -42,6 +42,9 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
 
     public static class Builder extends SpaceWeatherRegionImpl_Builder {
 
+        Builder() {
+        }
+
         public static Builder from(final SpaceWeatherRegion value) {
             if (value instanceof SpaceWeatherRegionImpl) {
                 return ((SpaceWeatherRegionImpl) value).toBuilder();
