@@ -1,19 +1,17 @@
 package fi.fmi.avi.model.immutable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.CoordinateReferenceSystem;
+import fi.fmi.avi.model.MultiPolygonGeometry;
+import fi.fmi.avi.model.Winding;
+import org.inferred.freebuilder.FreeBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.inferred.freebuilder.FreeBuilder;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fi.fmi.avi.model.CoordinateReferenceSystem;
-import fi.fmi.avi.model.MultiPolygonGeometry;
-import fi.fmi.avi.model.Winding;
 
 @FreeBuilder
 @JsonDeserialize(builder = MultiPolygonGeometryImpl.Builder.class)
@@ -43,9 +41,9 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
 
     @Override
     public List<List<Double>> getExteriorRingPositions(final Winding winding) {
-        List<List<Double>> newPolygons = new ArrayList<>();
-        for (List<Double> partPolygon: getExteriorRingPositions()) {
-            List<Double> polygon = Winding.enforceWinding(partPolygon, winding);
+        final List<List<Double>> newPolygons = new ArrayList<>();
+        for (final List<Double> partPolygon : getExteriorRingPositions()) {
+            final List<Double> polygon = Winding.enforceWinding(partPolygon, winding);
             newPolygons.add(polygon);
         }
         return newPolygons;
@@ -67,6 +65,10 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
                         .addAllExteriorRingPositions(value.getExteriorRingPositions());
 
             }
+        }
+
+        public Builder setExteriorRingPositions(final List<List<Double>> positions) {
+            return clearExteriorRingPositions().addAllExteriorRingPositions(positions);
         }
 
         @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)

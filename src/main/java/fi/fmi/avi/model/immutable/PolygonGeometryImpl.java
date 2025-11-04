@@ -1,18 +1,16 @@
 package fi.fmi.avi.model.immutable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.CoordinateReferenceSystem;
+import fi.fmi.avi.model.PolygonGeometry;
+import fi.fmi.avi.model.Winding;
+import org.inferred.freebuilder.FreeBuilder;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.inferred.freebuilder.FreeBuilder;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fi.fmi.avi.model.CoordinateReferenceSystem;
-import fi.fmi.avi.model.PolygonGeometry;
-import fi.fmi.avi.model.Winding;
 
 @FreeBuilder
 @JsonDeserialize(builder = PolygonGeometryImpl.Builder.class)
@@ -42,7 +40,7 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
 
     @Override
     public Winding getExteriorRingWinding() {
-        List<Double>positions = getExteriorRingPositions();
+        final List<Double> positions = getExteriorRingPositions();
         return Winding.getWinding(positions);
     }
 
@@ -66,6 +64,10 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
                         .setCrs(value.getCrs())//
                         .addAllExteriorRingPositions(value.getExteriorRingPositions());
             }
+        }
+
+        public Builder setExteriorRingPositions(final List<Double> positions) {
+            return clearExteriorRingPositions().addAllExteriorRingPositions(positions);
         }
 
         @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)

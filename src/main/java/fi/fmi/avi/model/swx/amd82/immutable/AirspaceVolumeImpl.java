@@ -3,14 +3,8 @@ package fi.fmi.avi.model.swx.amd82.immutable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fi.fmi.avi.model.AviationCodeListUser;
-import fi.fmi.avi.model.Geometry;
-import fi.fmi.avi.model.NumericMeasure;
-import fi.fmi.avi.model.PolygonGeometry;
-import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
-import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
-import fi.fmi.avi.model.immutable.NumericMeasureImpl;
-import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
+import fi.fmi.avi.model.*;
+import fi.fmi.avi.model.immutable.*;
 import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.VerticalLimitsImpl;
 import fi.fmi.avi.model.swx.amd82.AirspaceVolume;
@@ -24,6 +18,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @FreeBuilder
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)
@@ -188,6 +184,43 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         Builder() {
         }
 
+        private static Geometry roundCoordinatesToIntegers(final Geometry geometry) {
+            if (geometry instanceof PolygonGeometry) {
+                final PolygonGeometry polygon = (PolygonGeometry) geometry;
+                return PolygonGeometryImpl.Builder.from(polygon)
+                        .setExteriorRingPositions(roundCoordinates(polygon.getExteriorRingPositions()))
+                        .build();
+            } else if (geometry instanceof CircleByCenterPoint) {
+                final CircleByCenterPoint circle = (CircleByCenterPoint) geometry;
+                return CircleByCenterPointImpl.Builder.from(circle)
+                        .setCenterPointCoordinates(roundCoordinates(circle.getCenterPointCoordinates()))
+                        .build();
+            } else if (geometry instanceof PointGeometry) {
+                final PointGeometry point = (PointGeometry) geometry;
+                return PointGeometryImpl.Builder.from(point)
+                        .setCoordinates(roundCoordinates(point.getCoordinates()))
+                        .build();
+            } else if (geometry instanceof MultiPolygonGeometry) {
+                final MultiPolygonGeometry multiPolygon = (MultiPolygonGeometry) geometry;
+                return MultiPolygonGeometryImpl.Builder.from(multiPolygon)
+                        .setExteriorRingPositions(roundCoordinateRings(multiPolygon.getExteriorRingPositions()))
+                        .build();
+            }
+            return geometry;
+        }
+
+        private static List<Double> roundCoordinates(final List<Double> coordinates) {
+            return coordinates.stream()
+                    .map(coordinate -> (double) Math.round(coordinate))
+                    .collect(toList());
+        }
+
+        private static List<List<Double>> roundCoordinateRings(final List<List<Double>> rings) {
+            return rings.stream()
+                    .map(Builder::roundCoordinates)
+                    .collect(toList());
+        }
+
         public static Builder from(final AirspaceVolume value) {
             if (value instanceof AirspaceVolumeImpl) {
                 return ((AirspaceVolumeImpl) value).toBuilder();
@@ -206,7 +239,8 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         }
 
         public static Builder fromAmd79(final fi.fmi.avi.model.swx.amd79.AirspaceVolume value) {
-            return builder().setHorizontalProjection(value.getHorizontalProjection())
+            return builder()
+                    .setHorizontalProjection(value.getHorizontalProjection().map(Builder::roundCoordinatesToIntegers))
                     .setUpperLimit(value.getUpperLimit())
                     .setUpperLimitReference(value.getUpperLimitReference())
                     .setLowerLimit(value.getLowerLimit())
