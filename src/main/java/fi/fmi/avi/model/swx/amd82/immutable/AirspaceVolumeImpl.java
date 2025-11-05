@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
+
 @FreeBuilder
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -188,6 +190,28 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         Builder() {
         }
 
+        /**
+         * <p>
+         * Rounds polygon geometry coordinates to the nearest integers.
+         * </p>
+         * Only polygon coordinates are rounded, because space weather advisories use a polygon or a circle to
+         * represent the airspace volume. The circles use a calculated center point, which we don't want to round.
+         *
+         * @param geometry geometry to process
+         * @return geometry with rounded coordinates if it is a polygon, otherwise the original geometry
+         */
+        private static Geometry roundPolygonCoordinatesToIntegers(final Geometry geometry) {
+            if (geometry instanceof PolygonGeometry) {
+                final PolygonGeometry polygon = (PolygonGeometry) geometry;
+                return PolygonGeometryImpl.Builder.from(polygon)
+                        .setExteriorRingPositions(polygon.getExteriorRingPositions().stream()
+                                .map(coordinate -> (double) Math.round(coordinate))
+                                .collect(toList()))
+                        .build();
+            }
+            return geometry;
+        }
+
         public static Builder from(final AirspaceVolume value) {
             if (value instanceof AirspaceVolumeImpl) {
                 return ((AirspaceVolumeImpl) value).toBuilder();
@@ -206,7 +230,8 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         }
 
         public static Builder fromAmd79(final fi.fmi.avi.model.swx.amd79.AirspaceVolume value) {
-            return builder().setHorizontalProjection(value.getHorizontalProjection())
+            return builder()
+                    .setHorizontalProjection(value.getHorizontalProjection().map(Builder::roundPolygonCoordinatesToIntegers))
                     .setUpperLimit(value.getUpperLimit())
                     .setUpperLimitReference(value.getUpperLimitReference())
                     .setLowerLimit(value.getLowerLimit())
