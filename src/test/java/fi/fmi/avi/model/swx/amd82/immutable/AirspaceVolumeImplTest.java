@@ -43,7 +43,7 @@ public class AirspaceVolumeImplTest {
     }
 
     @Test
-    public void testFromAmd79KeepsCircleByCenterPointCoordinates() {
+    public void testFromAmd79PreservesCircleByCenterPointCoordinates() {
         final fi.fmi.avi.model.swx.amd79.immutable.AirspaceVolumeImpl amd79Volume =
                 fi.fmi.avi.model.swx.amd79.immutable.AirspaceVolumeImpl.builder()
                         .setHorizontalProjection(CircleByCenterPointImpl.builder()
