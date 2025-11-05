@@ -3,8 +3,14 @@ package fi.fmi.avi.model.swx.amd82.immutable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import fi.fmi.avi.model.*;
-import fi.fmi.avi.model.immutable.*;
+import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.Geometry;
+import fi.fmi.avi.model.NumericMeasure;
+import fi.fmi.avi.model.PolygonGeometry;
+import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
+import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.VerticalLimitsImpl;
 import fi.fmi.avi.model.swx.amd82.AirspaceVolume;
@@ -184,41 +190,26 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         Builder() {
         }
 
-        private static Geometry roundCoordinatesToIntegers(final Geometry geometry) {
+        /**
+         * <p>
+         * Rounds polygon geometry coordinates to the nearest integers.
+         * </p>
+         * Only polygon coordinates are rounded, because space weather advisories use a polygon or a circle to
+         * represent the airspace volume. The circles use a calculated center point, which we don't want to round.
+         *
+         * @param geometry geometry to process
+         * @return geometry with rounded coordinates if it is a polygon, otherwise the original geometry
+         */
+        private static Geometry roundPolygonCoordinatesToIntegers(final Geometry geometry) {
             if (geometry instanceof PolygonGeometry) {
                 final PolygonGeometry polygon = (PolygonGeometry) geometry;
                 return PolygonGeometryImpl.Builder.from(polygon)
-                        .setExteriorRingPositions(roundCoordinates(polygon.getExteriorRingPositions()))
-                        .build();
-            } else if (geometry instanceof CircleByCenterPoint) {
-                final CircleByCenterPoint circle = (CircleByCenterPoint) geometry;
-                return CircleByCenterPointImpl.Builder.from(circle)
-                        .setCenterPointCoordinates(roundCoordinates(circle.getCenterPointCoordinates()))
-                        .build();
-            } else if (geometry instanceof PointGeometry) {
-                final PointGeometry point = (PointGeometry) geometry;
-                return PointGeometryImpl.Builder.from(point)
-                        .setCoordinates(roundCoordinates(point.getCoordinates()))
-                        .build();
-            } else if (geometry instanceof MultiPolygonGeometry) {
-                final MultiPolygonGeometry multiPolygon = (MultiPolygonGeometry) geometry;
-                return MultiPolygonGeometryImpl.Builder.from(multiPolygon)
-                        .setExteriorRingPositions(roundCoordinateRings(multiPolygon.getExteriorRingPositions()))
+                        .setExteriorRingPositions(polygon.getExteriorRingPositions().stream()
+                                .map(coordinate -> (double) Math.round(coordinate))
+                                .collect(toList()))
                         .build();
             }
             return geometry;
-        }
-
-        private static List<Double> roundCoordinates(final List<Double> coordinates) {
-            return coordinates.stream()
-                    .map(coordinate -> (double) Math.round(coordinate))
-                    .collect(toList());
-        }
-
-        private static List<List<Double>> roundCoordinateRings(final List<List<Double>> rings) {
-            return rings.stream()
-                    .map(Builder::roundCoordinates)
-                    .collect(toList());
         }
 
         public static Builder from(final AirspaceVolume value) {
@@ -240,7 +231,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
 
         public static Builder fromAmd79(final fi.fmi.avi.model.swx.amd79.AirspaceVolume value) {
             return builder()
-                    .setHorizontalProjection(value.getHorizontalProjection().map(Builder::roundCoordinatesToIntegers))
+                    .setHorizontalProjection(value.getHorizontalProjection().map(Builder::roundPolygonCoordinatesToIntegers))
                     .setUpperLimit(value.getUpperLimit())
                     .setUpperLimitReference(value.getUpperLimitReference())
                     .setLowerLimit(value.getLowerLimit())

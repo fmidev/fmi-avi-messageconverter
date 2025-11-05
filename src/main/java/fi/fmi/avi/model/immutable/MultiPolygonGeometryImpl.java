@@ -67,10 +67,6 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
             }
         }
 
-        public Builder setExteriorRingPositions(final List<List<Double>> positions) {
-            return clearExteriorRingPositions().addAllExteriorRingPositions(positions);
-        }
-
         @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
         @Override
         public Builder setCrs(final CoordinateReferenceSystem crs) {

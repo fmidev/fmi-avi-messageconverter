@@ -1,10 +1,11 @@
 package fi.fmi.avi.model.swx.amd82.immutable;
 
 import fi.fmi.avi.model.CircleByCenterPoint;
-import fi.fmi.avi.model.MultiPolygonGeometry;
-import fi.fmi.avi.model.PointGeometry;
 import fi.fmi.avi.model.PolygonGeometry;
-import fi.fmi.avi.model.immutable.*;
+import fi.fmi.avi.model.immutable.CircleByCenterPointImpl;
+import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
+import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.amd82.AirspaceVolume;
 import org.junit.Test;
 
@@ -42,11 +43,11 @@ public class AirspaceVolumeImplTest {
     }
 
     @Test
-    public void testFromAmd79RoundsCircleByCenterPointCoordinates() {
+    public void testFromAmd79KeepsCircleByCenterPointCoordinates() {
         final fi.fmi.avi.model.swx.amd79.immutable.AirspaceVolumeImpl amd79Volume =
                 fi.fmi.avi.model.swx.amd79.immutable.AirspaceVolumeImpl.builder()
                         .setHorizontalProjection(CircleByCenterPointImpl.builder()
-                                .addAllCenterPointCoordinates(Arrays.asList(-16.6392, 160.9368))
+                                .addAllCenterPointCoordinates(Arrays.asList(-16.64, 160.94))
                                 .setRadius(NumericMeasureImpl.builder()
                                         .setValue(10100d)
                                         .setUom("km")
@@ -59,60 +60,7 @@ public class AirspaceVolumeImplTest {
 
         assertThat(amd82Volume.getHorizontalProjection()).isPresent();
         final CircleByCenterPoint circle = (CircleByCenterPoint) amd82Volume.getHorizontalProjection().get();
-        assertThat(circle.getCenterPointCoordinates()).containsExactly(-17.0, 161.0);
-    }
-
-    @Test
-    public void testFromAmd79RoundsPointGeometryCoordinates() {
-        final fi.fmi.avi.model.swx.amd79.immutable.AirspaceVolumeImpl amd79Volume =
-                fi.fmi.avi.model.swx.amd79.immutable.AirspaceVolumeImpl.builder()
-                        .setHorizontalProjection(PointGeometryImpl.builder()
-                                .addAllCoordinates(Arrays.asList(45.7, -122.3))
-                                .setCrs(CoordinateReferenceSystemImpl.wgs84())
-                                .build())
-                        .build();
-
-        final AirspaceVolume amd82Volume = AirspaceVolumeImpl.Builder.fromAmd79(amd79Volume).build();
-
-        assertThat(amd82Volume.getHorizontalProjection()).isPresent();
-        final PointGeometry point = (PointGeometry) amd82Volume.getHorizontalProjection().get();
-        assertThat(point.getCoordinates()).containsExactly(46.0, -122.0);
-    }
-
-    @Test
-    public void testFromAmd79RoundsMultiPolygonGeometryCoordinates() {
-        final fi.fmi.avi.model.swx.amd79.immutable.AirspaceVolumeImpl amd79Volume =
-                fi.fmi.avi.model.swx.amd79.immutable.AirspaceVolumeImpl.builder()
-                        .setHorizontalProjection(MultiPolygonGeometryImpl.builder()
-                                .addExteriorRingPositions(Arrays.asList(
-                                        60.5, -180.7,
-                                        30.2, -180.3,
-                                        30.8, 180.6,
-                                        60.5, -180.7))
-                                .addExteriorRingPositions(Arrays.asList(
-                                        -30.4, -90.6,
-                                        -60.1, -90.2,
-                                        -60.9, 90.8,
-                                        -30.4, -90.6))
-                                .setCrs(CoordinateReferenceSystemImpl.wgs84())
-                                .build())
-                        .build();
-
-        final AirspaceVolume amd82Volume = AirspaceVolumeImpl.Builder.fromAmd79(amd79Volume).build();
-
-        assertThat(amd82Volume.getHorizontalProjection()).isPresent();
-        final MultiPolygonGeometry multiPolygon = (MultiPolygonGeometry) amd82Volume.getHorizontalProjection().get();
-        assertThat(multiPolygon.getExteriorRingPositions()).hasSize(2);
-        assertThat(multiPolygon.getExteriorRingPositions().get(0)).containsExactly(
-                61.0, -181.0,
-                30.0, -180.0,
-                31.0, 181.0,
-                61.0, -181.0);
-        assertThat(multiPolygon.getExteriorRingPositions().get(1)).containsExactly(
-                -30.0, -91.0,
-                -60.0, -90.0,
-                -61.0, 91.0,
-                -30.0, -91.0);
+        assertThat(circle.getCenterPointCoordinates()).containsExactly(-16.64, 160.94);
     }
 
     @Test
