@@ -21,6 +21,7 @@ import org.inferred.freebuilder.FreeBuilder;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -185,6 +186,58 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         Builder() {
         }
 
+        /**
+         * <p>
+         * Rounds polygon geometry coordinates to AMD 79 resolution.
+         * </p>
+         * <p>
+         * AMD 79 coordinate resolution:
+         * <ul>
+         *   <li>Latitude: 10 degrees precision</li>
+         *   <li>Longitude: 15 degrees precision</li>
+         * </ul>
+         * <p>
+         * Only polygon coordinates are rounded, because space weather advisories use a polygon or a circle to
+         * represent the airspace volume. The circles use a calculated center point, which we don't want to round.
+         * </p>
+         * <p>
+         * Duplicate consecutive coordinate pairs resulting from rounding are removed to maintain a valid polygon
+         * geometry.
+         * </p>
+         *
+         * @param geometry geometry to process
+         * @return geometry with rounded coordinates if it is a polygon, otherwise the original geometry
+         */
+        private static Geometry roundPolygonCoordinatesToAmd79Precision(final Geometry geometry) {
+            if (geometry instanceof PolygonGeometry) {
+                final PolygonGeometry polygon = (PolygonGeometry) geometry;
+                final List<Double> positions = polygon.getExteriorRingPositions();
+                if (positions.size() % 2 != 0 || positions.isEmpty()) {
+                    return geometry;
+                }
+
+                final List<Double> roundedPositions = new ArrayList<>();
+                for (int i = 0; i < positions.size(); i += 2) {
+                    final double lat = positions.get(i);
+                    final double lon = positions.get(i + 1);
+                    final double roundedLat = Math.round(lat / 10.0) * 10.0;
+                    final double roundedLon = Math.round(lon / 15.0) * 15.0;
+
+                    if (roundedPositions.isEmpty() ||
+                            roundedPositions.get(roundedPositions.size() - 2) != roundedLat ||
+                            roundedPositions.get(roundedPositions.size() - 1) != roundedLon) {
+                        roundedPositions.add(roundedLat);
+                        roundedPositions.add(roundedLon);
+                    }
+                }
+
+                return PolygonGeometryImpl.Builder.from(polygon)
+                        .setExteriorRingPositions(roundedPositions)
+                        .build();
+            }
+            return geometry;
+        }
+
         public static Builder from(final AirspaceVolume value) {
             if (value instanceof AirspaceVolumeImpl) {
                 return ((AirspaceVolumeImpl) value).toBuilder();
@@ -203,7 +256,8 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         }
 
         public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.AirspaceVolume value) {
-            return builder().setHorizontalProjection(value.getHorizontalProjection())
+            return builder()
+                    .setHorizontalProjection(value.getHorizontalProjection().map(Builder::roundPolygonCoordinatesToAmd79Precision))
                     .setUpperLimit(value.getUpperLimit())
                     .setUpperLimitReference(value.getUpperLimitReference())
                     .setLowerLimit(value.getLowerLimit())

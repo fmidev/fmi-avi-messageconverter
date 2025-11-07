@@ -194,8 +194,10 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
          * <p>
          * Rounds polygon geometry coordinates to the nearest integers.
          * </p>
+         * <p>
          * Only polygon coordinates are rounded, because space weather advisories use a polygon or a circle to
          * represent the airspace volume. The circles use a calculated center point, which we don't want to round.
+         * </p>
          *
          * @param geometry geometry to process
          * @return geometry with rounded coordinates if it is a polygon, otherwise the original geometry
