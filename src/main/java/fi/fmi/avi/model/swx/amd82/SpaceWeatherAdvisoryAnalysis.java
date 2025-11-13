@@ -10,12 +10,12 @@ public interface SpaceWeatherAdvisoryAnalysis {
 
     Type getAnalysisType();
 
-    List<SpaceWeatherRegion> getRegions();
+    List<SpaceWeatherIntensityAndRegion> getIntensityAndRegions();
 
-    Optional<NilPhenomenonReason> getNilPhenomenonReason();
+    Optional<NilReason> getNilReason();
 
-    enum NilPhenomenonReason {
-        NO_PHENOMENON_EXPECTED, NO_INFORMATION_AVAILABLE
+    enum NilReason {
+        NO_SWX_EXPECTED, NO_INFORMATION_AVAILABLE
     }
 
     enum Type {

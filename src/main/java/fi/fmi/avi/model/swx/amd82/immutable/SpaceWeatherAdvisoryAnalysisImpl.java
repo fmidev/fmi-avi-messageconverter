@@ -3,8 +3,9 @@ package fi.fmi.avi.model.swx.amd82.immutable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.swx.amd82.Intensity;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis;
-import fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion;
+import fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAnalysisImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"time", "analysisType", "regions", "nilPhenomenonReason"})
+@JsonPropertyOrder({"time", "analysisType", "intensityAndRegions", "nilReason"})
 public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAdvisoryAnalysis, Serializable {
 
     private static final long serialVersionUID = -6443983160749650868L;
@@ -52,25 +53,31 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
                 return builder()//
                         .setTime(value.getTime())//
                         .setAnalysisType(value.getAnalysisType())//
-                        .addAllRegions(value.getRegions().stream().map(SpaceWeatherRegionImpl::immutableCopyOf))//
-                        .setNilPhenomenonReason(value.getNilPhenomenonReason());
+                        .addAllIntensityAndRegions(value.getIntensityAndRegions().stream()
+                                .map(SpaceWeatherIntensityAndRegionImpl::immutableCopyOf))//
+                        .setNilReason(value.getNilReason());
             }
         }
 
-        public static Builder fromAmd79(final fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis value) {
+        public static Builder fromAmd79(final Intensity intensity, final fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis value) {
             return builder()//
                     .setTime(value.getTime())//
                     .setAnalysisType(Type.valueOf(value.getAnalysisType().name()))
-                    .addAllRegions(value.getRegions().stream()
-                            .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd79(region).build()))
-                    .setNilPhenomenonReason(value.getNilPhenomenonReason()
-                            .map(reason -> NilPhenomenonReason.valueOf(reason.name())));
+                    .addIntensityAndRegions(SpaceWeatherIntensityAndRegionImpl.Builder.fromAmd79(intensity, value.getRegions()).build())
+                    .setNilReason(value.getNilPhenomenonReason().map(Builder::nilReasonFromAmdy79));
         }
 
-        @JsonDeserialize(contentAs = SpaceWeatherRegionImpl.class)
-        public Builder addAllRegions(final List<SpaceWeatherRegion> region) {
-            return super.addAllRegions(region);
+        private static NilReason nilReasonFromAmdy79(final fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason value) {
+            if (value == fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason.NO_PHENOMENON_EXPECTED) {
+                return NilReason.NO_SWX_EXPECTED;
+            } else {
+                return NilReason.valueOf(value.name());
+            }
         }
 
+        @JsonDeserialize(contentAs = SpaceWeatherIntensityAndRegionImpl.class)
+        public Builder addAllIntensityAndRegions(final List<SpaceWeatherIntensityAndRegion> intensityAndRegions) {
+            return super.addAllIntensityAndRegions(intensityAndRegions);
+        }
     }
 }

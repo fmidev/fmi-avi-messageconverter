@@ -1,5 +1,6 @@
 package fi.fmi.avi.model.swx.amd79;
 
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,12 +101,20 @@ public enum SpaceWeatherPhenomenon {
     }
 
     public enum Severity {
-        MODERATE("MOD"), SEVERE("SEV");
+        MODERATE("MOD", 1), SEVERE("SEV", 2);
+
+        private static final Comparator<Severity> COMPARATOR = Comparator.comparingInt(Severity::getInternalSeverityWeight);
 
         private final String code;
+        private final int internalSeverityWeight;
 
-        Severity(final String code) {
+        Severity(final String code, final int internalSeverityWeight) {
             this.code = code;
+            this.internalSeverityWeight = internalSeverityWeight;
+        }
+
+        public static Comparator<Severity> comparator() {
+            return COMPARATOR;
         }
 
         public static Severity fromString(final String code) {
@@ -119,6 +128,10 @@ public enum SpaceWeatherPhenomenon {
 
         public String getCode() {
             return this.code;
+        }
+
+        private int getInternalSeverityWeight() {
+            return internalSeverityWeight;
         }
     }
 }

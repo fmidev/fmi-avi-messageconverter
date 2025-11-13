@@ -58,13 +58,27 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
         }
 
         public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis value) {
+            if (value.getIntensityAndRegions().size() > 1) {
+                // Combining regions correctly is not as trivial as just concatenating all regions.
+                // Possibly impossible in some cases. Better to fail than return invalid result.
+                throw new IllegalArgumentException("Cannot merge multiple intensity and regions");
+            }
             return builder()//
                     .setTime(value.getTime())//
                     .setAnalysisType(Type.valueOf(value.getAnalysisType().name()))
-                    .addAllRegions(value.getRegions().stream()
-                            .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd82(region).build()))
-                    .setNilPhenomenonReason(value.getNilPhenomenonReason()
-                            .map(reason -> NilPhenomenonReason.valueOf(reason.name())));
+                    .addAllRegions(value.getIntensityAndRegions().stream()
+                            .flatMap(intensityAndRegion -> intensityAndRegion.getRegions().stream())
+                            .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd82(region).build())
+                            .distinct())
+                    .setNilPhenomenonReason(value.getNilReason().map(Builder::nilPhenomenonReasonFromAmd82));
+        }
+
+        private static NilPhenomenonReason nilPhenomenonReasonFromAmd82(final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis.NilReason value) {
+            if (value == fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis.NilReason.NO_SWX_EXPECTED) {
+                return NilPhenomenonReason.NO_PHENOMENON_EXPECTED;
+            } else {
+                return NilPhenomenonReason.valueOf(value.name());
+            }
         }
 
         @JsonDeserialize(contentAs = SpaceWeatherRegionImpl.class)
