@@ -90,7 +90,7 @@ public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
                                                         SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE
                                                 )
                                                 .map(locationIndicator -> SpaceWeatherRegionImpl.fromLocationIndicator(
-                                                        locationIndicator, null, null, null, VERTICAL_LIMITS))
+                                                        locationIndicator, VERTICAL_LIMITS, null, null, null))
                                 )
                                 .build())
                         .setNilReason(SpaceWeatherAdvisoryAnalysis.NilReason.NO_INFORMATION_AVAILABLE)

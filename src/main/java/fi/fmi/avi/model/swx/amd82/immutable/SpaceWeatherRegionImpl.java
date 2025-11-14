@@ -11,8 +11,9 @@ import org.inferred.freebuilder.FreeBuilder;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherRegionImpl.Builder.class)
@@ -27,7 +28,7 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
     }
 
     public static SpaceWeatherRegionImpl immutableCopyOf(final SpaceWeatherRegion region) {
-        Objects.requireNonNull(region);
+        requireNonNull(region);
         if (region instanceof SpaceWeatherRegionImpl) {
             return (SpaceWeatherRegionImpl) region;
         } else {
@@ -37,20 +38,20 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<SpaceWeatherRegionImpl> immutableCopyOf(final Optional<SpaceWeatherRegion> region) {
-        Objects.requireNonNull(region);
+        requireNonNull(region);
         return region.map(SpaceWeatherRegionImpl::immutableCopyOf);
     }
 
     public static SpaceWeatherRegionImpl fromLocationIndicator(
             final SpaceWeatherLocation locationIndicator,
+            final VerticalLimits verticalLimits,
             @Nullable final Instant analysisTime,
             @Nullable final Double minLongitude,
-            @Nullable final Double maxLongitude,
-            @Nullable final VerticalLimits verticalLimits) {
+            @Nullable final Double maxLongitude) {
         return builder()
                 .setLocationIndicator(locationIndicator)
-                .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(locationIndicator,
-                        analysisTime, minLongitude, maxLongitude, verticalLimits))
+                .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(
+                        locationIndicator, verticalLimits, analysisTime, minLongitude, maxLongitude))
                 .setNullableLongitudeLimitMinimum(minLongitude)
                 .setNullableLongitudeLimitMaximum(maxLongitude)
                 .build();

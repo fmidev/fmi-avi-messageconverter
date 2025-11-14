@@ -12,7 +12,6 @@ import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.VerticalLimits;
-import fi.fmi.avi.model.swx.VerticalLimitsImpl;
 import fi.fmi.avi.model.swx.amd82.AirspaceVolume;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation;
 import fi.fmi.avi.util.SubSolarPointUtils;
@@ -22,9 +21,9 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 @FreeBuilder
@@ -41,7 +40,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
     }
 
     public static AirspaceVolumeImpl immutableCopyOf(final AirspaceVolume airspaceVolume) {
-        Objects.requireNonNull(airspaceVolume);
+        requireNonNull(airspaceVolume);
         if (airspaceVolume instanceof AirspaceVolumeImpl) {
             return (AirspaceVolumeImpl) airspaceVolume;
         } else {
@@ -51,7 +50,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<AirspaceVolumeImpl> immutableCopyOf(final Optional<AirspaceVolume> airspaceVolume) {
-        Objects.requireNonNull(airspaceVolume);
+        requireNonNull(airspaceVolume);
         return airspaceVolume.map(AirspaceVolumeImpl::immutableCopyOf);
     }
 
@@ -92,10 +91,11 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
     /**
      * Creates an airspace volume for the daylight side using the sub-solar point.
      *
-     * @param analysisTime the time to compute the sub-solar point for
+     * @param analysisTime   the time to compute the sub-solar point for
+     * @param verticalLimits the vertical limits
      * @return the built airspace volume
      */
-    public static AirspaceVolumeImpl forDaylightSide(final Instant analysisTime) {
+    public static AirspaceVolumeImpl forDayside(final Instant analysisTime, final VerticalLimits verticalLimits) {
         return builder()
                 .setHorizontalProjection(
                         CircleByCenterPointImpl.builder()
@@ -106,6 +106,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
                                         .setValue(SubSolarPointUtils.DAYSIDE_RADIUS_KM)
                                         .build())
                                 .build())
+                .withVerticalLimits(verticalLimits)
                 .build();
     }
 
@@ -155,22 +156,27 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
      * </p>
      *
      * @param locationIndicator the location indicator
+     * @param verticalLimits    vertical limit constraints
      * @param analysisTime      analysis time (required only for DAYLIGHT_SIDE)
      * @param minLongitude      minimum longitude (optional, defaults to -180)
      * @param maxLongitude      maximum longitude (optional, defaults to 180)
-     * @param verticalLimits    vertical limit constraints
      * @return the built airspace volume
      */
-    public static AirspaceVolumeImpl fromLocationIndicator(final SpaceWeatherLocation locationIndicator,
-                                                           @Nullable final Instant analysisTime,
-                                                           @Nullable final Double minLongitude,
-                                                           @Nullable final Double maxLongitude,
-                                                           @Nullable final VerticalLimits verticalLimits) {
+    public static AirspaceVolumeImpl fromLocationIndicator(
+            final SpaceWeatherLocation locationIndicator,
+            final VerticalLimits verticalLimits,
+            @Nullable final Instant analysisTime,
+            @Nullable final Double minLongitude,
+            @Nullable final Double maxLongitude) {
+        requireNonNull(locationIndicator, "locationIndicator");
+        requireNonNull(verticalLimits, "verticalLimits");
         if (locationIndicator == SpaceWeatherLocation.DAYSIDE && analysisTime != null) {
-            return AirspaceVolumeImpl.forDaylightSide(analysisTime);
+            return AirspaceVolumeImpl.forDayside(analysisTime, verticalLimits);
         } else if (locationIndicator == SpaceWeatherLocation.NIGHTSIDE && analysisTime != null) {
             // TODO
-            return AirspaceVolumeImpl.builder().build();
+            return AirspaceVolumeImpl.builder()
+                    .withVerticalLimits(verticalLimits)
+                    .build();
         } else if (locationIndicator.getLatitudeBandMinCoordinate().isPresent()
                 && locationIndicator.getLatitudeBandMaxCoordinate().isPresent()) {
             return AirspaceVolumeImpl.fromBounds(
@@ -178,7 +184,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
                     minLongitude != null ? minLongitude : -180d,
                     locationIndicator.getLatitudeBandMaxCoordinate().get(),
                     maxLongitude != null ? maxLongitude : 180d,
-                    verticalLimits != null ? verticalLimits : VerticalLimitsImpl.none());
+                    verticalLimits);
         }
         throw new IllegalArgumentException("Unable to create AirspaceVolume for location indicator: " + locationIndicator);
     }
@@ -276,6 +282,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         }
 
         public Builder withVerticalLimits(final VerticalLimits verticalLimits) {
+            requireNonNull(verticalLimits, "verticalLimits");
             final String verticalReference = verticalLimits.getVerticalReference();
             final Optional<NumericMeasure> lowerLimit = verticalLimits.getLowerLimit();
             final Optional<NumericMeasure> upperLimit = verticalLimits.getUpperLimit();
