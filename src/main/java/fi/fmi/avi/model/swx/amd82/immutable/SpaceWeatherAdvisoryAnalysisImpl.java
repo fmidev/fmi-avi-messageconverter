@@ -64,10 +64,10 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
                     .setTime(value.getTime())//
                     .setAnalysisType(Type.valueOf(value.getAnalysisType().name()))
                     .addIntensityAndRegions(SpaceWeatherIntensityAndRegionImpl.Builder.fromAmd79(intensity, value.getRegions()).build())
-                    .setNilReason(value.getNilPhenomenonReason().map(Builder::nilReasonFromAmdy79));
+                    .setNilReason(value.getNilPhenomenonReason().map(Builder::nilReasonFromAmd79));
         }
 
-        private static NilReason nilReasonFromAmdy79(final fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason value) {
+        private static NilReason nilReasonFromAmd79(final fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason value) {
             if (value == fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis.NilPhenomenonReason.NO_PHENOMENON_EXPECTED) {
                 return NilReason.NO_SWX_EXPECTED;
             } else {
