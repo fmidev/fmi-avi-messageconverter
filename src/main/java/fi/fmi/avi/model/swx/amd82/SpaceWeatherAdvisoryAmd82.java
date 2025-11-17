@@ -7,11 +7,11 @@ import java.util.List;
 public interface SpaceWeatherAdvisoryAmd82 extends AviationWeatherMessage {
     IssuingCenter getIssuingCenter();
 
+    Effect getEffect();
+
     AdvisoryNumber getAdvisoryNumber();
 
     List<AdvisoryNumber> getReplaceAdvisoryNumbers();
-
-    List<SpaceWeatherPhenomenon> getPhenomena();
 
     List<SpaceWeatherAdvisoryAnalysis> getAnalyses();
 

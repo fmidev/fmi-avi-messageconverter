@@ -3,11 +3,14 @@ package fi.fmi.avi.model.swx.amd79.immutable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
 import org.inferred.freebuilder.FreeBuilder;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -38,6 +41,21 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
         return region.map(SpaceWeatherRegionImpl::immutableCopyOf);
     }
 
+    public static SpaceWeatherRegionImpl fromLocationIndicator(
+            final SpaceWeatherRegion.SpaceWeatherLocation locationIndicator,
+            @Nullable final Instant analysisTime,
+            @Nullable final Double minLongitude,
+            @Nullable final Double maxLongitude,
+            @Nullable final VerticalLimits verticalLimits) {
+        return builder()
+                .setLocationIndicator(locationIndicator)
+                .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(locationIndicator,
+                        analysisTime, minLongitude, maxLongitude, verticalLimits))
+                .setNullableLongitudeLimitMinimum(minLongitude)
+                .setNullableLongitudeLimitMaximum(maxLongitude)
+                .build();
+    }
+
     public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherRegionImpl_Builder {
@@ -63,8 +81,17 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
                             AirspaceVolumeImpl.Builder.fromAmd82(airspaceVolume).build()))
                     .setLongitudeLimitMaximum(value.getLongitudeLimitMaximum())
                     .setLongitudeLimitMinimum(value.getLongitudeLimitMinimum())
-                    .setLocationIndicator(value.getLocationIndicator().map(locationIndicator ->
-                            SpaceWeatherLocation.valueOf(locationIndicator.name())));
+                    .setLocationIndicator(value.getLocationIndicator().map(Builder::locationIndicatorFromAmd82));
+        }
+
+        private static SpaceWeatherLocation locationIndicatorFromAmd82(
+                final fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation amd82Location) {
+            if (amd82Location == fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE) {
+                return SpaceWeatherLocation.DAYLIGHT_SIDE;
+            } else {
+                // Let fail on NIGHTSIDE, there's no counterpart in Amd79.
+                return SpaceWeatherLocation.valueOf(amd82Location.name());
+            }
         }
 
         @Override

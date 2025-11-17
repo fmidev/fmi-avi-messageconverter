@@ -3,13 +3,17 @@ package fi.fmi.avi.model.swx.amd82.immutable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.amd82.AirspaceVolume;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion;
 import org.inferred.freebuilder.FreeBuilder;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.Objects;
+import java.time.Instant;
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherRegionImpl.Builder.class)
@@ -24,7 +28,7 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
     }
 
     public static SpaceWeatherRegionImpl immutableCopyOf(final SpaceWeatherRegion region) {
-        Objects.requireNonNull(region);
+        requireNonNull(region);
         if (region instanceof SpaceWeatherRegionImpl) {
             return (SpaceWeatherRegionImpl) region;
         } else {
@@ -34,8 +38,23 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<SpaceWeatherRegionImpl> immutableCopyOf(final Optional<SpaceWeatherRegion> region) {
-        Objects.requireNonNull(region);
+        requireNonNull(region);
         return region.map(SpaceWeatherRegionImpl::immutableCopyOf);
+    }
+
+    public static SpaceWeatherRegionImpl fromLocationIndicator(
+            final SpaceWeatherLocation locationIndicator,
+            final VerticalLimits verticalLimits,
+            @Nullable final Instant analysisTime,
+            @Nullable final Double minLongitude,
+            @Nullable final Double maxLongitude) {
+        return builder()
+                .setLocationIndicator(locationIndicator)
+                .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(
+                        locationIndicator, verticalLimits, analysisTime, minLongitude, maxLongitude))
+                .setNullableLongitudeLimitMinimum(minLongitude)
+                .setNullableLongitudeLimitMaximum(maxLongitude)
+                .build();
     }
 
     public abstract Builder toBuilder();
@@ -63,8 +82,16 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
                             AirspaceVolumeImpl.Builder.fromAmd79(airspaceVolume).build()))
                     .setLongitudeLimitMaximum(value.getLongitudeLimitMaximum())
                     .setLongitudeLimitMinimum(value.getLongitudeLimitMinimum())
-                    .setLocationIndicator(value.getLocationIndicator().map(locationIndicator ->
-                            SpaceWeatherLocation.valueOf(locationIndicator.name())));
+                    .setLocationIndicator(value.getLocationIndicator().map(Builder::locationIndicatorFromAmd79));
+        }
+
+        private static SpaceWeatherLocation locationIndicatorFromAmd79(
+                final fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion.SpaceWeatherLocation amd79Location) {
+            if (amd79Location == fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE) {
+                return SpaceWeatherLocation.DAYSIDE;
+            } else {
+                return SpaceWeatherLocation.valueOf(amd79Location.name());
+            }
         }
 
         @Override

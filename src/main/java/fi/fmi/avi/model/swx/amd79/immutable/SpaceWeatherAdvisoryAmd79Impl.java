@@ -71,39 +71,9 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
             this.setReportStatus(ReportStatus.NORMAL);
         }
 
-        public static Builder from(final SpaceWeatherAdvisoryAmd79 value) {
-            if (value instanceof SpaceWeatherAdvisoryAmd79Impl) {
-                return ((SpaceWeatherAdvisoryAmd79Impl) value).toBuilder();
-            } else {
-                final Builder builder = builder();
-                AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
-                        Builder::setReportStatus, //
-                        Builder::setIssueTime, //
-                        Builder::setRemarks, //
-                        Builder::setPermissibleUsage, //
-                        Builder::setPermissibleUsageReason, //
-                        Builder::setPermissibleUsageSupplementary, //
-                        Builder::setTranslated, //
-                        Builder::setTranslatedBulletinID, //
-                        Builder::setTranslatedBulletinReceptionTime, //
-                        Builder::setTranslationCentreDesignator, //
-                        Builder::setTranslationCentreName, //
-                        Builder::setTranslationTime, //
-                        Builder::setTranslatedTAC);
-                return builder//
-                        .setIssuingCenter(IssuingCenterImpl.immutableCopyOf(value.getIssuingCenter()))
-                        .setAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(value.getAdvisoryNumber()))
-                        .setReplaceAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(value.getReplaceAdvisoryNumber()))
-                        .addAllPhenomena(value.getPhenomena().stream()//
-                                .map(p -> SpaceWeatherPhenomenon.from(p.getType(), p.getSeverity())))//
-                        .addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf))//
-                        .setNextAdvisory(NextAdvisoryImpl.immutableCopyOf(value.getNextAdvisory()));
-            }
-        }
-
-        public static Builder fromAmd82(final SpaceWeatherAdvisoryAmd82 value) {
+        private static Builder builderFromAviationWeatherMessage(final AviationWeatherMessage aviationWeatherMessage) {
             final Builder builder = builder();
-            AviationWeatherMessageBuilderHelper.copyFrom(builder, value, //
+            AviationWeatherMessageBuilderHelper.copyFrom(builder, aviationWeatherMessage, //
                     Builder::setReportStatus, //
                     Builder::setIssueTime, //
                     Builder::setRemarks, //
@@ -117,13 +87,39 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
                     Builder::setTranslationCentreName, //
                     Builder::setTranslationTime, //
                     Builder::setTranslatedTAC);
-            return builder//
+            return builder;
+        }
+
+        public static Builder from(final SpaceWeatherAdvisoryAmd79 value) {
+            if (value instanceof SpaceWeatherAdvisoryAmd79Impl) {
+                return ((SpaceWeatherAdvisoryAmd79Impl) value).toBuilder();
+            } else {
+                return builderFromAviationWeatherMessage(value)//
+                        .setIssuingCenter(IssuingCenterImpl.immutableCopyOf(value.getIssuingCenter()))
+                        .setAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(value.getAdvisoryNumber()))
+                        .setReplaceAdvisoryNumber(AdvisoryNumberImpl.immutableCopyOf(value.getReplaceAdvisoryNumber()))
+                        .addAllPhenomena(value.getPhenomena().stream()//
+                                .map(p -> SpaceWeatherPhenomenon.from(p.getType(), p.getSeverity())))//
+                        .addAllAnalyses(value.getAnalyses().stream().map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf))//
+                        .setNextAdvisory(NextAdvisoryImpl.immutableCopyOf(value.getNextAdvisory()));
+            }
+        }
+
+        public static Builder fromAmd82(final SpaceWeatherAdvisoryAmd82 value) {
+            return builderFromAviationWeatherMessage(value)//
                     .setIssuingCenter(IssuingCenterImpl.Builder.fromAmd82(value.getIssuingCenter()).build())
                     .setAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd82(value.getAdvisoryNumber()).build())
                     .setReplaceAdvisoryNumber(value.getReplaceAdvisoryNumbers().stream().findFirst().map(advisoryNumber ->
                             AdvisoryNumberImpl.Builder.fromAmd82(advisoryNumber).build()))
-                    .addAllPhenomena(value.getPhenomena().stream()
-                            .map(phenomenon -> SpaceWeatherPhenomenon.valueOf(phenomenon.name())))
+                    .addPhenomena(SpaceWeatherPhenomenon.from(
+                            SpaceWeatherPhenomenon.Type.fromString(value.getEffect().getCode().replaceAll("_", " ")),
+                            SpaceWeatherPhenomenon.Severity.fromString(value.getAnalyses().stream()
+                                    .flatMap(analysis -> analysis.getIntensityAndRegions().stream())
+                                    .map(fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion::getIntensity)
+                                    .max(fi.fmi.avi.model.swx.amd82.Intensity.comparator())
+                                    .orElse(fi.fmi.avi.model.swx.amd82.Intensity.MODERATE)
+                                    .getCode())
+                    ))
                     .addAllAnalyses(value.getAnalyses().stream().map(analysis ->
                             SpaceWeatherAdvisoryAnalysisImpl.Builder.fromAmd82(analysis).build()))
                     .setNextAdvisory(NextAdvisoryImpl.Builder.fromAmd82(value.getNextAdvisory()).build());
