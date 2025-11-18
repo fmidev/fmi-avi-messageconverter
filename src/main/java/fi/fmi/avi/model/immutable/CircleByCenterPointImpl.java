@@ -1,22 +1,24 @@
 package fi.fmi.avi.model.immutable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import fi.fmi.avi.model.CircleByCenterPoint;
+import fi.fmi.avi.model.CoordinateReferenceSystem;
+import fi.fmi.avi.model.NumericMeasure;
+import org.inferred.freebuilder.FreeBuilder;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fi.fmi.avi.model.CircleByCenterPoint;
-import fi.fmi.avi.model.CoordinateReferenceSystem;
-import fi.fmi.avi.model.NumericMeasure;
-
 @FreeBuilder
 @JsonDeserialize(builder = CircleByCenterPointImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class CircleByCenterPointImpl implements CircleByCenterPoint {
+public abstract class CircleByCenterPointImpl implements CircleByCenterPoint, Serializable {
+
+    private static final long serialVersionUID = 2380951223773931004L;
+
     public static Builder builder() {
         return new Builder();
     }
