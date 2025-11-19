@@ -65,12 +65,22 @@ public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79
             }
         }
 
-        public static Builder fromAmd82(final SpaceWeatherAmd82Bulletin value) {
+        /**
+         * Return a builder converted from {@link SpaceWeatherAmd82Bulletin}.
+         * In lenient mode, the method tries to convert some data, though it may be incomplete. In normal mode
+         * ({@code lenient == false}) the method will simply fail if data cannot be converted.
+         *
+         * @param value   bulletin to convert
+         * @param lenient whether to run in lenient ({@code  true}) or normal ({@code false}) mode
+         * @return new builder with values from provided {@code value}
+         * @throws IllegalArgumentException if data cannot be converted
+         */
+        public static Builder fromAmd82(final SpaceWeatherAmd82Bulletin value, final boolean lenient) {
             final Builder builder = builder();
             MeteorologicalBulletinBuilderHelper.copyAndTransform(builder(), value,
                     Builder::setHeading,
                     Builder::addAllMessages,
-                    message -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(message).build(),
+                    message -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(message, lenient).build(),
                     Builder::setTimeStamp,
                     Builder::addAllTimeStampFields);
             return builder;

@@ -91,6 +91,8 @@ public final class SWXAmd79Tests {
         }
 
         public static class Builder extends SWXAmd79Tests_AnalysisBuilderSpec_Builder {
+            private boolean regionsCountFromLocationIndicators;
+
             Builder() {
                 setRegionsCount(REGIONS_COUNT_DEFAULT);
             }
@@ -103,11 +105,30 @@ public final class SWXAmd79Tests {
                 if (getLocationIndicators().isEmpty()) {
                     addAllLocationIndicators(LATITUDE_BANDS);
                 }
+                if (regionsCountFromLocationIndicators) {
+                    super.setRegionsCount(getLocationIndicators().size());
+                }
                 return super.build();
             }
 
             public Stream<SpaceWeatherAdvisoryAnalysis> generateAnalyses() {
                 return build().generateAnalyses();
+            }
+
+            public Builder setRegionsCountFromLocationIndicators() {
+                regionsCountFromLocationIndicators = true;
+                return this;
+            }
+
+            @Override
+            public int getRegionsCount() {
+                return regionsCountFromLocationIndicators ? getLocationIndicators().size() : super.getRegionsCount();
+            }
+
+            @Override
+            public Builder setRegionsCount(final int regionsCount) {
+                regionsCountFromLocationIndicators = false;
+                return super.setRegionsCount(regionsCount);
             }
         }
     }
