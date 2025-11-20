@@ -84,11 +84,11 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
          */
         public static Builder fromAmd82(
                 final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis value, final boolean lenient) {
-            final List<fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion> firstConvertableMostSevereAmd82Regions =
+            final List<fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion> firstConvertibleMostSevereAmd82Regions =
                     value.getIntensityAndRegions().stream()
                             .sorted(AMD82_INTENSITY_AND_REGION_COMPARATOR) // stable on ordered stream
                             .map(fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion::getRegions)
-                            .filter(Builder::isConvertableAmd82Regions)
+                            .filter(Builder::isConvertibleAmd82Regions)
                             .findFirst()
                             .orElse(Collections.emptyList());
 
@@ -96,18 +96,18 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
                 // Combining regions correctly is not trivial, but impossible in some cases.
                 // Better to fail than return invalid result, unless lenient processing is requested.
                 throw new IllegalArgumentException("Cannot convert multiple intensity and regions");
-            } else if (firstConvertableMostSevereAmd82Regions.isEmpty() && !value.getIntensityAndRegions().isEmpty()) {
+            } else if (firstConvertibleMostSevereAmd82Regions.isEmpty() && !value.getIntensityAndRegions().isEmpty()) {
                 throw new IllegalArgumentException("Unable to convert regions: " + value.getIntensityAndRegions());
             }
             return builder()//
                     .setTime(value.getTime())//
                     .setAnalysisType(Type.valueOf(value.getAnalysisType().name()))
-                    .addAllRegions(firstConvertableMostSevereAmd82Regions.stream()
+                    .addAllRegions(firstConvertibleMostSevereAmd82Regions.stream()
                             .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd82(region).build()))
                     .setNilPhenomenonReason(value.getNilReason().map(Builder::nilPhenomenonReasonFromAmd82));
         }
 
-        private static boolean isConvertableAmd82Regions(final List<fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion> amd82Regions) {
+        private static boolean isConvertibleAmd82Regions(final List<fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion> amd82Regions) {
             return !amd82Regions.isEmpty() &&
                     IntStream.range(0, amd82Regions.size())
                             .noneMatch(i -> {
