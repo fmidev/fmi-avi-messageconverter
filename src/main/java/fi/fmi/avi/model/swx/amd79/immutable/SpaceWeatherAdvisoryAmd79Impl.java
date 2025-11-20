@@ -105,7 +105,17 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
             }
         }
 
-        public static Builder fromAmd82(final SpaceWeatherAdvisoryAmd82 value) {
+        /**
+         * Return a builder converted from {@link SpaceWeatherAdvisoryAmd82}.
+         * In lenient mode, the method tries to convert some data, though it may be incomplete. In normal mode
+         * ({@code lenient == false}) the method will simply fail if data cannot be converted.
+         *
+         * @param value   advisory to convert
+         * @param lenient whether to run in lenient ({@code  true}) or normal ({@code false}) mode
+         * @return new builder with values from provided {@code value}
+         * @throws IllegalArgumentException if data cannot be converted
+         */
+        public static Builder fromAmd82(final SpaceWeatherAdvisoryAmd82 value, final boolean lenient) {
             return builderFromAviationWeatherMessage(value)//
                     .setIssuingCenter(IssuingCenterImpl.Builder.fromAmd82(value.getIssuingCenter()).build())
                     .setAdvisoryNumber(AdvisoryNumberImpl.Builder.fromAmd82(value.getAdvisoryNumber()).build())
@@ -121,7 +131,7 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
                                     .getCode())
                     ))
                     .addAllAnalyses(value.getAnalyses().stream().map(analysis ->
-                            SpaceWeatherAdvisoryAnalysisImpl.Builder.fromAmd82(analysis).build()))
+                            SpaceWeatherAdvisoryAnalysisImpl.Builder.fromAmd82(analysis, lenient).build()))
                     .setNextAdvisory(NextAdvisoryImpl.Builder.fromAmd82(value.getNextAdvisory()).build());
         }
 

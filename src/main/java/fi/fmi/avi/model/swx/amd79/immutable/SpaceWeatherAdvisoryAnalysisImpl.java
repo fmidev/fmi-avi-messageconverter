@@ -7,10 +7,10 @@ import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
 import org.inferred.freebuilder.FreeBuilder;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.IntStream;
 
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAnalysisImpl.Builder.class)
@@ -42,6 +42,11 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
     public abstract Builder toBuilder();
 
     public static class Builder extends SpaceWeatherAdvisoryAnalysisImpl_Builder {
+        private static final Comparator<fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion> AMD82_INTENSITY_AND_REGION_COMPARATOR =
+                Comparator.comparing(fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion::getIntensity,
+                                fi.fmi.avi.model.swx.amd82.Intensity.comparator())
+                        .reversed();
+
         Builder() {
         }
 
@@ -57,20 +62,61 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
             }
         }
 
-        public static Builder fromAmd82(final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis value) {
-            if (value.getIntensityAndRegions().size() > 1) {
-                // Combining regions correctly is not as trivial as just concatenating all regions.
-                // Possibly impossible in some cases. Better to fail than return invalid result.
-                throw new IllegalArgumentException("Cannot merge multiple intensity and regions");
+        /**
+         * Return a builder converted from
+         * {@link fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis Amd82 SpaceWeatherAdvisoryAnalysis}.
+         * In lenient mode, the method tries to convert some data, though it may be incomplete. In normal mode
+         * ({@code lenient == false}) the method will simply fail if data cannot be converted. For example,
+         * multiple {@link fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion SpaceWeatherIntensityAndRegion}s
+         * cannot be converted into single list of regions.
+         *
+         * <p>
+         * Current lenient implementation uses the first most severe regions that do not contain
+         * {@link fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation#NIGHTSIDE NIGHTSIDE} and has
+         * {@link fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation#DAYSIDE DAYSIDE} only as the first
+         * region if at all. The lenient behavior may be changed in the future.
+         * </p>
+         *
+         * @param value   analysis to convert
+         * @param lenient whether to run in lenient ({@code  true}) or normal ({@code false}) mode
+         * @return new builder with values from provided {@code value}
+         * @throws IllegalArgumentException if data cannot be converted
+         */
+        public static Builder fromAmd82(
+                final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis value, final boolean lenient) {
+            final List<fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion> firstConvertibleMostSevereAmd82Regions =
+                    value.getIntensityAndRegions().stream()
+                            .sorted(AMD82_INTENSITY_AND_REGION_COMPARATOR) // stable on ordered stream
+                            .map(fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion::getRegions)
+                            .filter(Builder::isConvertibleAmd82Regions)
+                            .findFirst()
+                            .orElse(Collections.emptyList());
+
+            if (!lenient && value.getIntensityAndRegions().size() > 1) {
+                // Combining regions correctly is not trivial, but impossible in some cases.
+                // Better to fail than return invalid result, unless lenient processing is requested.
+                throw new IllegalArgumentException("Cannot convert multiple intensity and regions");
+            } else if (firstConvertibleMostSevereAmd82Regions.isEmpty() && !value.getIntensityAndRegions().isEmpty()) {
+                throw new IllegalArgumentException("Unable to convert regions: " + value.getIntensityAndRegions());
             }
             return builder()//
                     .setTime(value.getTime())//
                     .setAnalysisType(Type.valueOf(value.getAnalysisType().name()))
-                    .addAllRegions(value.getIntensityAndRegions().stream()
-                            .flatMap(intensityAndRegion -> intensityAndRegion.getRegions().stream())
-                            .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd82(region).build())
-                            .distinct())
+                    .addAllRegions(firstConvertibleMostSevereAmd82Regions.stream()
+                            .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd82(region).build()))
                     .setNilPhenomenonReason(value.getNilReason().map(Builder::nilPhenomenonReasonFromAmd82));
+        }
+
+        private static boolean isConvertibleAmd82Regions(final List<fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion> amd82Regions) {
+            return !amd82Regions.isEmpty() &&
+                    IntStream.range(0, amd82Regions.size())
+                            .noneMatch(i -> {
+                                @Nullable final fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation locationIndicator =
+                                        amd82Regions.get(i).getLocationIndicator().orElse(null);
+                                // Allow DAYSIDE (DAYLIGHT SIDE) as first region, otherwise disallow DAYSIDE and NIGHTSIDE
+                                return locationIndicator == fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.NIGHTSIDE ||
+                                        i > 0 && locationIndicator == fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE;
+                            });
         }
 
         private static NilPhenomenonReason nilPhenomenonReasonFromAmd82(final fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis.NilReason value) {

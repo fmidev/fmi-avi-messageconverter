@@ -53,7 +53,7 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                         .build())
                 .build();
 
-        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input).build();
+        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false).build();
 
         assertThat(result)
                 .usingRecursiveComparison()
@@ -103,7 +103,7 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                         .build())
                 .build();
 
-        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input).build();
+        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false).build();
 
         assertThat(result)
                 .usingRecursiveComparison()
@@ -161,7 +161,7 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                         .build())
                 .build();
 
-        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input).build();
+        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false).build();
 
         assertThat(result)
                 .usingRecursiveComparison()
@@ -219,7 +219,7 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                         .build())
                 .build();
 
-        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input).build();
+        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false).build();
 
         assertThat(result)
                 .usingRecursiveComparison()
@@ -263,8 +263,8 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                         .build())
                 .addAllAnalyses(SWXAmd82Tests.analysisBuilder(BASE_TIME)
                         .addIntensities(fi.fmi.avi.model.swx.amd82.Intensity.MODERATE)
+                        .setRegionsPerIntensityFromLocationIndicators()
                         .addLocationIndicators(fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE)
-                        .setRegionsPerIntensityCount(1)
                         .generateAnalyses())
                 .setNextAdvisory(fi.fmi.avi.model.swx.amd82.immutable.NextAdvisoryImpl.builder()
                         .setTimeSpecifier(fi.fmi.avi.model.swx.amd82.NextAdvisory.Type.NEXT_ADVISORY_AT)
@@ -272,7 +272,7 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                         .build())
                 .build();
 
-        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input).build();
+        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false).build();
 
         assertThat(result)
                 .usingRecursiveComparison()
@@ -289,7 +289,7 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                                 .build())
                         .addPhenomena(SpaceWeatherPhenomenon.RADIATION_MOD)
                         .addAllAnalyses(SWXAmd79Tests.analysisBuilder(BASE_TIME)
-                                .setRegionsCount(1)
+                                .setRegionsCountFromLocationIndicators()
                                 .addLocationIndicators(SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE)
                                 .generateAnalyses())
                         .setNextAdvisory(NextAdvisoryImpl.builder()
@@ -316,8 +316,8 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                         .build())
                 .addAllAnalyses(SWXAmd82Tests.analysisBuilder(BASE_TIME)
                         .addIntensities(fi.fmi.avi.model.swx.amd82.Intensity.MODERATE)
+                        .setRegionsPerIntensityFromLocationIndicators()
                         .addLocationIndicators(fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.NIGHTSIDE)
-                        .setRegionsPerIntensityCount(1)
                         .generateAnalyses())
                 .setNextAdvisory(fi.fmi.avi.model.swx.amd82.immutable.NextAdvisoryImpl.builder()
                         .setTimeSpecifier(fi.fmi.avi.model.swx.amd82.NextAdvisory.Type.NEXT_ADVISORY_AT)
@@ -326,7 +326,76 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                 .build();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input));
+                .isThrownBy(() -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false))
+                .withMessageContaining("Unable to convert regions");
+    }
+
+    @Test
+    public void fromAmd82FailsOnNightsideAsLastRegion() {
+        final PartialOrCompleteTimeInstant nextAdvisoryTime = SWXAmd79Tests.dayHourMinuteZoneAndCompleteTime(BASE_TIME.plusHours(12));
+        final SpaceWeatherAdvisoryAmd82Impl input = SpaceWeatherAdvisoryAmd82Impl.builder()
+                .setIssueTime(SWXAmd79Tests.dayHourMinuteZoneAndCompleteTime(BASE_TIME))
+                .setIssuingCenter(ISSUING_CENTER_AMD82)
+                .setEffect(fi.fmi.avi.model.swx.amd82.Effect.RADIATION_AT_FLIGHT_LEVELS)
+                .setAdvisoryNumber(fi.fmi.avi.model.swx.amd82.immutable.AdvisoryNumberImpl.builder()
+                        .setYear(BASE_TIME.getYear())
+                        .setSerialNumber(ADVISORY_NUMBER)
+                        .build())
+                .addReplaceAdvisoryNumbers(fi.fmi.avi.model.swx.amd82.immutable.AdvisoryNumberImpl.builder()
+                        .setYear(BASE_TIME.getYear())
+                        .setSerialNumber(REPLACE_ADVISORY_NUMBER)
+                        .build())
+                .addAllAnalyses(SWXAmd82Tests.analysisBuilder(BASE_TIME)
+                        .addIntensities(fi.fmi.avi.model.swx.amd82.Intensity.MODERATE)
+                        .setRegionsPerIntensityFromLocationIndicators()
+                        .addLocationIndicators(
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE,
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE,
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.NIGHTSIDE)
+                        .generateAnalyses())
+                .setNextAdvisory(fi.fmi.avi.model.swx.amd82.immutable.NextAdvisoryImpl.builder()
+                        .setTimeSpecifier(fi.fmi.avi.model.swx.amd82.NextAdvisory.Type.NEXT_ADVISORY_AT)
+                        .setTime(nextAdvisoryTime)
+                        .build())
+                .build();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false))
+                .withMessageContaining("Unable to convert regions");
+    }
+
+    @Test
+    public void fromAmd82FailsOnDaysideAsLastRegion() {
+        final PartialOrCompleteTimeInstant nextAdvisoryTime = SWXAmd79Tests.dayHourMinuteZoneAndCompleteTime(BASE_TIME.plusHours(12));
+        final SpaceWeatherAdvisoryAmd82Impl input = SpaceWeatherAdvisoryAmd82Impl.builder()
+                .setIssueTime(SWXAmd79Tests.dayHourMinuteZoneAndCompleteTime(BASE_TIME))
+                .setIssuingCenter(ISSUING_CENTER_AMD82)
+                .setEffect(fi.fmi.avi.model.swx.amd82.Effect.RADIATION_AT_FLIGHT_LEVELS)
+                .setAdvisoryNumber(fi.fmi.avi.model.swx.amd82.immutable.AdvisoryNumberImpl.builder()
+                        .setYear(BASE_TIME.getYear())
+                        .setSerialNumber(ADVISORY_NUMBER)
+                        .build())
+                .addReplaceAdvisoryNumbers(fi.fmi.avi.model.swx.amd82.immutable.AdvisoryNumberImpl.builder()
+                        .setYear(BASE_TIME.getYear())
+                        .setSerialNumber(REPLACE_ADVISORY_NUMBER)
+                        .build())
+                .addAllAnalyses(SWXAmd82Tests.analysisBuilder(BASE_TIME)
+                        .addIntensities(fi.fmi.avi.model.swx.amd82.Intensity.MODERATE)
+                        .setRegionsPerIntensityFromLocationIndicators()
+                        .addLocationIndicators(
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE,
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE,
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE)
+                        .generateAnalyses())
+                .setNextAdvisory(fi.fmi.avi.model.swx.amd82.immutable.NextAdvisoryImpl.builder()
+                        .setTimeSpecifier(fi.fmi.avi.model.swx.amd82.NextAdvisory.Type.NEXT_ADVISORY_AT)
+                        .setTime(nextAdvisoryTime)
+                        .build())
+                .build();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false))
+                .withMessageContaining("Unable to convert regions");
     }
 
     @Test
@@ -355,6 +424,82 @@ public class SpaceWeatherAdvisoryAmd82To79MigrationTest {
                 .build();
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input));
+                .isThrownBy(() -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, false))
+                .withMessageContaining("Cannot convert multiple intensity and regions");
+    }
+
+    @Test
+    public void testFromAmd82LenientReturnsFirstMostSevereConvertibleRegions() {
+        final PartialOrCompleteTimeInstant nextAdvisoryTime = SWXAmd79Tests.dayHourMinuteZoneAndCompleteTime(BASE_TIME.plusHours(12));
+        final SpaceWeatherAdvisoryAmd82Impl input = SpaceWeatherAdvisoryAmd82Impl.builder()
+                .setIssueTime(SWXAmd79Tests.dayHourMinuteZoneAndCompleteTime(BASE_TIME))
+                .setIssuingCenter(ISSUING_CENTER_AMD82)
+                .setEffect(fi.fmi.avi.model.swx.amd82.Effect.RADIATION_AT_FLIGHT_LEVELS)
+                .setAdvisoryNumber(fi.fmi.avi.model.swx.amd82.immutable.AdvisoryNumberImpl.builder()
+                        .setYear(BASE_TIME.getYear())
+                        .setSerialNumber(ADVISORY_NUMBER)
+                        .build())
+                .addReplaceAdvisoryNumbers(fi.fmi.avi.model.swx.amd82.immutable.AdvisoryNumberImpl.builder()
+                        .setYear(BASE_TIME.getYear())
+                        .setSerialNumber(REPLACE_ADVISORY_NUMBER)
+                        .build())
+                .addAllAnalyses(SWXAmd82Tests.analysisBuilder(BASE_TIME)
+                        .setIntensityAndRegionCount(4)
+                        .setRegionsPerIntensityCount(2)
+                        .addIntensities(
+                                fi.fmi.avi.model.swx.amd82.Intensity.MODERATE,
+                                fi.fmi.avi.model.swx.amd82.Intensity.SEVERE,
+                                fi.fmi.avi.model.swx.amd82.Intensity.SEVERE,
+                                fi.fmi.avi.model.swx.amd82.Intensity.SEVERE)
+                        .addLocationIndicators(
+                                // MODERATE
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE,
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE,
+                                // SEVERE
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.EQUATORIAL_LATITUDES_NORTHERN_HEMISPHERE,
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE,
+                                // SEVERE
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.EQUATORIAL_LATITUDES_SOUTHERN_HEMISPHERE,
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_LATITUDES_SOUTHERN_HEMISPHERE,
+                                // SEVERE
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.HIGH_LATITUDES_SOUTHERN_HEMISPHERE,
+                                fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE
+                        )
+                        .generateAnalyses()
+                )
+                .setNextAdvisory(fi.fmi.avi.model.swx.amd82.immutable.NextAdvisoryImpl.builder()
+                        .setTimeSpecifier(fi.fmi.avi.model.swx.amd82.NextAdvisory.Type.NEXT_ADVISORY_AT)
+                        .setTime(nextAdvisoryTime)
+                        .build())
+                .build();
+
+        final SpaceWeatherAdvisoryAmd79Impl result = SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(input, true).build();
+
+        assertThat(result)
+                .usingRecursiveComparison()
+                .isEqualTo(SpaceWeatherAdvisoryAmd79Impl.builder()
+                        .setIssueTime(SWXAmd79Tests.dayHourMinuteZoneAndCompleteTime(BASE_TIME))
+                        .setIssuingCenter(ISSUING_CENTER_AMD79)
+                        .setAdvisoryNumber(AdvisoryNumberImpl.builder()
+                                .setYear(BASE_TIME.getYear())
+                                .setSerialNumber(ADVISORY_NUMBER)
+                                .build())
+                        .setReplaceAdvisoryNumber(AdvisoryNumberImpl.builder()
+                                .setYear(BASE_TIME.getYear())
+                                .setSerialNumber(REPLACE_ADVISORY_NUMBER)
+                                .build())
+                        .addPhenomena(SpaceWeatherPhenomenon.RADIATION_SEV)
+                        .addAllAnalyses(SWXAmd79Tests.analysisBuilder(BASE_TIME)
+                                .setRegionsCountFromLocationIndicators()
+                                .addLocationIndicators(
+                                        SpaceWeatherRegion.SpaceWeatherLocation.EQUATORIAL_LATITUDES_SOUTHERN_HEMISPHERE,
+                                        SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_LATITUDES_SOUTHERN_HEMISPHERE
+                                )
+                                .generateAnalyses())
+                        .setNextAdvisory(NextAdvisoryImpl.builder()
+                                .setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_AT)
+                                .setTime(nextAdvisoryTime)
+                                .build())
+                        .build());
     }
 }

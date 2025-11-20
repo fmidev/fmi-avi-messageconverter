@@ -71,7 +71,7 @@ public class SpaceWeatherAdvisoryAmd82Test {
     private static Stream<SpaceWeatherAdvisoryAnalysisImpl> generateAnalyses() {
         return SWXAmd82Tests.analysisBuilder(BASE_TIME)
                 .addIntensities(Intensity.MODERATE)
-                .setRegionsPerIntensityCount(LOCATION_INDICATORS.size())
+                .setRegionsPerIntensityFromLocationIndicators()
                 .addAllLocationIndicators(LOCATION_INDICATORS)
                 .generateAnalyses();
     }
@@ -88,7 +88,7 @@ public class SpaceWeatherAdvisoryAmd82Test {
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setAdvisoryNumber(ADVISORY_NUMBER)
                 .addAllAnalyses(SWXAmd82Tests.analysisBuilder(analysisTime)
-                        .setRegionsPerIntensityCount(1)
+                        .setRegionsPerIntensityFromLocationIndicators()
                         .addLocationIndicators(SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE)
                         .generateAnalyses())
                 .setRemarks(REMARKS)

@@ -95,7 +95,7 @@ public final class SWXAmd82Tests {
                     ? getObservationIntensities() : getForecastIntensities();
             return IntStream.range(0, getIntensityAndRegionCount())
                     .mapToObj(intensityAndRegionIndex -> SpaceWeatherIntensityAndRegionImpl.builder()
-                            .setIntensity(getNullableElement(analysisIndex, intensities))
+                            .setIntensity(getNullableElement(intensityAndRegionIndex, intensities))
                             .addAllRegions(generateRegions(analysisIndex, intensityAndRegionIndex, totalRegionsPerAnalysis, analysisTime))
                             .build()
                     );
@@ -113,6 +113,8 @@ public final class SWXAmd82Tests {
         }
 
         public static class Builder extends SWXAmd82Tests_AnalysisBuilderSpec_Builder {
+            private boolean regionsPerIntensityFromLocationIndicators;
+
             Builder() {
                 setIntensityAndRegionCount(INTENSITY_AND_REGION_COUNT_DEFAULT);
                 setRegionsPerIntensityCount(REGIONS_PER_INTENSITY_COUNT_DEFAULT);
@@ -131,6 +133,9 @@ public final class SWXAmd82Tests {
                 }
                 if (getLocationIndicators().isEmpty()) {
                     addAllLocationIndicators(LATITUDE_BANDS);
+                }
+                if (regionsPerIntensityFromLocationIndicators) {
+                    super.setRegionsPerIntensityCount(getLocationIndicators().size());
                 }
                 return super.build();
             }
@@ -167,6 +172,24 @@ public final class SWXAmd82Tests {
             public Builder clearIntensities() {
                 return clearObservationIntensities()
                         .clearForecastIntensities();
+            }
+
+            public Builder setRegionsPerIntensityFromLocationIndicators() {
+                regionsPerIntensityFromLocationIndicators = true;
+                return this;
+            }
+
+            @Override
+            public int getRegionsPerIntensityCount() {
+                return regionsPerIntensityFromLocationIndicators
+                        ? getLocationIndicators().size()
+                        : super.getRegionsPerIntensityCount();
+            }
+
+            @Override
+            public Builder setRegionsPerIntensityCount(final int regionsPerIntensityCount) {
+                regionsPerIntensityFromLocationIndicators = false;
+                return super.setRegionsPerIntensityCount(regionsPerIntensityCount);
             }
         }
     }
