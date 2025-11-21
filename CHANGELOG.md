@@ -31,6 +31,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ...
 
+## [v8.0.0] - 2025-11-21
+
+### Added
+
+- Added support for Annex 3 Amendment 82 Space Weather Advisories. Support for Amd 79 SWX is retained and the models can
+  be bidirectionally transformed [#121]
+
 ## [v7.0.0-beta3] - 2023-11-24
 
 ### Changed
@@ -106,7 +113,9 @@ Previous changelog entries are available
 on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
-[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-6.3.0...HEAD
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-8.0.0...HEAD
+
+[v8.0.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-8.0.0
 
 [v7.0.0-beta3]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-7.0.0-beta3
 
@@ -157,3 +166,5 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 [#116]: https://github.com/fmidev/fmi-avi-messageconverter/pull/116
 
 [#120]: https://github.com/fmidev/fmi-avi-messageconverter/pull/120
+
+[#121]: https://github.com/fmidev/fmi-avi-messageconverter/pull/121
