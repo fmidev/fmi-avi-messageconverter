@@ -1,0 +1,441 @@
+{
+  "issueTime": {
+    "completeTime": "2020-02-27T01:00:00Z"
+  },
+  "issuingCenter": {
+    "name": "DONLON",
+    "type": "OTHER:SWXC"
+  },
+  "effect": "HF_COMMUNICATIONS",
+  "advisoryNumber": {
+    "year": 2020,
+    "serialNumber": 1
+  },
+  "replaceAdvisoryNumbers": [
+    {
+      "year": 2019,
+      "serialNumber": 40
+    },
+    {
+      "year": 2019,
+      "serialNumber": 41
+    },
+    {
+      "year": 2019,
+      "serialNumber": 42
+    }
+  ],
+  "analyses": [
+    {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
+      "analysisType": "OBSERVATION",
+      "intensityAndRegions": [
+        {
+          "intensity": "MODERATE",
+          "regions": [
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    90.0,
+                    -180.0,
+                    60.0,
+                    -180.0,
+                    60.0,
+                    180.0,
+                    90.0,
+                    180.0,
+                    90.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
+            },
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    60.0,
+                    -180.0,
+                    30.0,
+                    -180.0,
+                    30.0,
+                    180.0,
+                    60.0,
+                    180.0,
+                    60.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
+            }
+          ]
+        }
+      ],
+      "nilReason": "NO_INFORMATION_AVAILABLE"
+    },
+    {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
+      "analysisType": "FORECAST",
+      "intensityAndRegions": [
+        {
+          "intensity": "MODERATE",
+          "regions": [
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    90.0,
+                    -180.0,
+                    60.0,
+                    -180.0,
+                    60.0,
+                    180.0,
+                    90.0,
+                    180.0,
+                    90.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
+            },
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    60.0,
+                    -180.0,
+                    30.0,
+                    -180.0,
+                    30.0,
+                    180.0,
+                    60.0,
+                    180.0,
+                    60.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
+            }
+          ]
+        }
+      ],
+      "nilReason": "NO_INFORMATION_AVAILABLE"
+    },
+    {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
+      "analysisType": "FORECAST",
+      "intensityAndRegions": [
+        {
+          "intensity": "MODERATE",
+          "regions": [
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    90.0,
+                    -180.0,
+                    60.0,
+                    -180.0,
+                    60.0,
+                    180.0,
+                    90.0,
+                    180.0,
+                    90.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
+            },
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    60.0,
+                    -180.0,
+                    30.0,
+                    -180.0,
+                    30.0,
+                    180.0,
+                    60.0,
+                    180.0,
+                    60.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
+            }
+          ]
+        }
+      ],
+      "nilReason": "NO_INFORMATION_AVAILABLE"
+    },
+    {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
+      "analysisType": "FORECAST",
+      "intensityAndRegions": [
+        {
+          "intensity": "MODERATE",
+          "regions": [
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    90.0,
+                    -180.0,
+                    60.0,
+                    -180.0,
+                    60.0,
+                    180.0,
+                    90.0,
+                    180.0,
+                    90.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
+            },
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    60.0,
+                    -180.0,
+                    30.0,
+                    -180.0,
+                    30.0,
+                    180.0,
+                    60.0,
+                    180.0,
+                    60.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
+            }
+          ]
+        }
+      ],
+      "nilReason": "NO_INFORMATION_AVAILABLE"
+    },
+    {
+      "time": {
+        "partialTime": "--27T01:00Z"
+      },
+      "analysisType": "FORECAST",
+      "intensityAndRegions": [
+        {
+          "intensity": "MODERATE",
+          "regions": [
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    90.0,
+                    -180.0,
+                    60.0,
+                    -180.0,
+                    60.0,
+                    180.0,
+                    90.0,
+                    180.0,
+                    90.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "HIGH_NORTHERN_HEMISPHERE"
+            },
+            {
+              "airSpaceVolume": {
+                "horizontalProjection": {
+                  "type": "Polygon",
+                  "crs": {
+                    "name": "http://www.opengis.net/def/crs/EPSG/0/4326",
+                    "dimension": 2,
+                    "axisLabels": [
+                      "Lat",
+                      "Lon"
+                    ]
+                  },
+                  "exteriorRingPositions": [
+                    60.0,
+                    -180.0,
+                    30.0,
+                    -180.0,
+                    30.0,
+                    180.0,
+                    60.0,
+                    180.0,
+                    60.0,
+                    -180.0
+                  ]
+                },
+                "lowerLimit": {
+                  "value": 350.0,
+                  "uom": "uom"
+                },
+                "lowerLimitReference": "Reference"
+              },
+              "locationIndicator": "MIDDLE_NORTHERN_HEMISPHERE"
+            }
+          ]
+        }
+      ],
+      "nilReason": "NO_INFORMATION_AVAILABLE"
+    }
+  ],
+  "remarks": [
+    "RADIATION LVL EXCEEDED 100 PCT OF BACKGROUND LVL AT FL350 AND ABV. THE CURRENT EVENT HAS PEAKED AND LVL SLW RTN TO BACKGROUND LVL. SEE WWW.SPACEWEATHERPROVIDER.WEB"
+  ],
+  "nextAdvisory": {
+    "timeSpecifier": "NEXT_ADVISORY_AT",
+    "time": {
+      "completeTime": "2020-02-27T01:00:00Z"
+    }
+  },
+  "permissibleUsageReason": "TEST",
+  "reportStatus": "NORMAL"
+}

@@ -1,34 +1,19 @@
 package fi.fmi.avi.converter.json.conf;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionSpecification;
-import fi.fmi.avi.converter.json.AIRMETJSONParser;
-import fi.fmi.avi.converter.json.AIRMETJSONSerializer;
-import fi.fmi.avi.converter.json.GenericMeteorologicalBulletinJSONParser;
-import fi.fmi.avi.converter.json.GenericMeteorologicalBulletinJSONSerializer;
-import fi.fmi.avi.converter.json.METARJSONParser;
-import fi.fmi.avi.converter.json.METARJSONSerializer;
-import fi.fmi.avi.converter.json.SIGMETBulletinJSONParser;
-import fi.fmi.avi.converter.json.SIGMETBulletinJSONSerializer;
-import fi.fmi.avi.converter.json.SIGMETJSONParser;
-import fi.fmi.avi.converter.json.SIGMETJSONSerializer;
-import fi.fmi.avi.converter.json.SpaceWeatherAdvisoryJSONParser;
-import fi.fmi.avi.converter.json.SpaceWeatherAdvisoryJSONSerializer;
-import fi.fmi.avi.converter.json.TAFBulletinJSONParser;
-import fi.fmi.avi.converter.json.TAFBulletinJSONSerializer;
-import fi.fmi.avi.converter.json.TAFJSONParser;
-import fi.fmi.avi.converter.json.TAFJSONSerializer;
+import fi.fmi.avi.converter.json.*;
 import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.SIGMET;
 import fi.fmi.avi.model.sigmet.SIGMETBulletin;
-import fi.fmi.avi.model.swx.SpaceWeatherAdvisory;
+import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAmd79;
+import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAmd82;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Spring configuration for Java POJO and JSON conversion.
@@ -56,9 +41,15 @@ public class JSONConverter {
             null, "SIGMET, fmi-avi-messageconverter JSON");
 
     /**
-     * Pre-configured spec for {@link SpaceWeatherAdvisory} to fmi-avi-messageconverter JSON SWX document String.
+     * Pre-configured spec for {@link SpaceWeatherAdvisoryAmd79} to fmi-avi-messageconverter JSON SWX document String.
      */
-    public static final ConversionSpecification<SpaceWeatherAdvisory, String> SWX_POJO_TO_JSON_STRING = new ConversionSpecification<>(SpaceWeatherAdvisory.class, String.class,
+    public static final ConversionSpecification<SpaceWeatherAdvisoryAmd79, String> SWX_AMD79_POJO_TO_JSON_STRING = new ConversionSpecification<>(SpaceWeatherAdvisoryAmd79.class, String.class,
+            null, "SWX, fmi-avi-messageconverter JSON");
+
+    /**
+     * Pre-configured spec for {@link SpaceWeatherAdvisoryAmd82} to fmi-avi-messageconverter JSON SWX document String.
+     */
+    public static final ConversionSpecification<SpaceWeatherAdvisoryAmd82, String> SWX_AMD82_POJO_TO_JSON_STRING = new ConversionSpecification<>(SpaceWeatherAdvisoryAmd82.class, String.class,
             null, "SWX, fmi-avi-messageconverter JSON");
 
     /**
@@ -94,9 +85,15 @@ public class JSONConverter {
             "TAF, fmi-avi-messageconverter JSON", null);
 
     /**
-     * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SpaceWeatherAdvisory}.
+     * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SpaceWeatherAdvisoryAmd79}.
      */
-    public static final ConversionSpecification<String, SpaceWeatherAdvisory> JSON_STRING_TO_SWX_POJO = new ConversionSpecification<>(String.class, SpaceWeatherAdvisory.class,
+    public static final ConversionSpecification<String, SpaceWeatherAdvisoryAmd79> JSON_STRING_TO_SWX_AMD79_POJO = new ConversionSpecification<>(String.class, SpaceWeatherAdvisoryAmd79.class,
+            "SWX, fmi-avi-messageconverter JSON", null);
+
+    /**
+     * Pre-configured spec for fmi-avi-messageconverter JSON SWX document String to {@link SpaceWeatherAdvisoryAmd82}.
+     */
+    public static final ConversionSpecification<String, SpaceWeatherAdvisoryAmd82> JSON_STRING_TO_SWX_AMD82_POJO = new ConversionSpecification<>(String.class, SpaceWeatherAdvisoryAmd82.class,
             "SWX, fmi-avi-messageconverter JSON", null);
 
     /**
@@ -152,8 +149,13 @@ public class JSONConverter {
     }
 
     @Bean
-    public AviMessageSpecificConverter<SpaceWeatherAdvisory, String> swxJSONSerializer() {
-        return new SpaceWeatherAdvisoryJSONSerializer();
+    public AviMessageSpecificConverter<SpaceWeatherAdvisoryAmd79, String> swxAmd79JSONSerializer() {
+        return new SpaceWeatherAdvisoryAmd79JSONSerializer();
+    }
+
+    @Bean
+    public AviMessageSpecificConverter<SpaceWeatherAdvisoryAmd82, String> swxAmd82JSONSerializer() {
+        return new SpaceWeatherAdvisoryAmd82JSONSerializer();
     }
 
     @Bean
@@ -187,8 +189,13 @@ public class JSONConverter {
     }
 
     @Bean
-    public AviMessageSpecificConverter<String, SpaceWeatherAdvisory> swxJSONParser() {
-        return new SpaceWeatherAdvisoryJSONParser();
+    public AviMessageSpecificConverter<String, SpaceWeatherAdvisoryAmd79> swxAmd79JSONParser() {
+        return new SpaceWeatherAdvisoryAmd79JSONParser();
+    }
+
+    @Bean
+    public AviMessageSpecificConverter<String, SpaceWeatherAdvisoryAmd82> swxAmd82JSONParser() {
+        return new SpaceWeatherAdvisoryAmd82JSONParser();
     }
 
     @Bean

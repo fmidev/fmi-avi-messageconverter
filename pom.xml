@@ -11,7 +11,7 @@
     <description>Aviation weather message conversions</description>
     <groupId>fi.fmi.avi.converter</groupId>
     <artifactId>fmi-avi-messageconverter</artifactId>
-    <version>7.0.0-beta4-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
 
     <scm>
         <connection>scm:git:https://github.com/fmidev/fmi-avi-messageconverter.git</connection>
@@ -125,7 +125,7 @@
         <dependency>
             <groupId>org.locationtech.jts.io</groupId>
             <artifactId>jts-io-common</artifactId>
-            <version>1.18.1</version>
+          <version>1.20.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
