@@ -88,6 +88,22 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         coordinates.add(minLon);
     }
 
+    private static AirspaceVolumeImpl buildCircumscribingCircle(final VerticalLimits verticalLimits,
+                                                                final List<Double> centerPoint) {
+        return builder()
+                .setHorizontalProjection(
+                        CircleByCenterPointImpl.builder()
+                                .setCrs(CoordinateReferenceSystemImpl.wgs84())
+                                .setCenterPointCoordinates(centerPoint)
+                                .setRadius(NumericMeasureImpl.builder()
+                                        .setUom("km")
+                                        .setValue(SubSolarPointUtils.DAYSIDE_RADIUS_KM)
+                                        .build())
+                                .build())
+                .withVerticalLimits(verticalLimits)
+                .build();
+    }
+
     /**
      * Creates an airspace volume for the daylight side using the sub-solar point.
      *
@@ -96,18 +112,18 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
      * @return the built airspace volume
      */
     public static AirspaceVolumeImpl forDayside(final Instant analysisTime, final VerticalLimits verticalLimits) {
-        return builder()
-                .setHorizontalProjection(
-                        CircleByCenterPointImpl.builder()
-                                .setCrs(CoordinateReferenceSystemImpl.wgs84())
-                                .setCenterPointCoordinates(SubSolarPointUtils.computeSubSolarPoint(analysisTime))
-                                .setRadius(NumericMeasureImpl.builder()
-                                        .setUom("km")
-                                        .setValue(SubSolarPointUtils.DAYSIDE_RADIUS_KM)
-                                        .build())
-                                .build())
-                .withVerticalLimits(verticalLimits)
-                .build();
+        return buildCircumscribingCircle(verticalLimits, SubSolarPointUtils.computeSubSolarPoint(analysisTime));
+    }
+
+    /**
+     * Creates an airspace volume for the nightside using the antipode of the sub-solar point.
+     *
+     * @param analysisTime   the time to compute the antipode of the sub-solar point for
+     * @param verticalLimits the vertical limits
+     * @return the built airspace volume
+     */
+    public static AirspaceVolumeImpl forNightside(final Instant analysisTime, final VerticalLimits verticalLimits) {
+        return buildCircumscribingCircle(verticalLimits, SubSolarPointUtils.computeSubSolarPointAntipode(analysisTime));
     }
 
     /**
@@ -173,10 +189,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         if (locationIndicator == SpaceWeatherLocation.DAYSIDE && analysisTime != null) {
             return AirspaceVolumeImpl.forDayside(analysisTime, verticalLimits);
         } else if (locationIndicator == SpaceWeatherLocation.NIGHTSIDE && analysisTime != null) {
-            // TODO
-            return AirspaceVolumeImpl.builder()
-                    .withVerticalLimits(verticalLimits)
-                    .build();
+            return AirspaceVolumeImpl.forNightside(analysisTime, verticalLimits);
         } else if (locationIndicator.getLatitudeBandMinCoordinate().isPresent()
                 && locationIndicator.getLatitudeBandMaxCoordinate().isPresent()) {
             return AirspaceVolumeImpl.fromBounds(

@@ -77,7 +77,7 @@ public class SpaceWeatherAdvisoryAmd82Test {
     }
 
     @Test
-    public void buildSWXWithDaySideRegion() throws Exception {
+    public void buildSWXWithDaysideRegion() throws Exception {
         final ZonedDateTime analysisTime = ZonedDateTime.parse("2025-10-31T11:00:00Z");
         final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z[UTC]");
 
@@ -107,6 +107,43 @@ public class SpaceWeatherAdvisoryAmd82Test {
         assertThat(circle.getRadius().getValue()).isEqualTo(10100d);
         assertThat(circle.getRadius().getUom()).isEqualTo("km");
         assertThat(circle.getCenterPointCoordinates()).containsExactly(-14.26d, 10.9d);
+
+        final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
+        final SpaceWeatherAdvisoryAmd82Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd82Impl.class);
+        assertThat(deserialized).isEqualTo(advisory);
+    }
+
+    @Test
+    public void buildSWXWithNightsideRegion() throws Exception {
+        final ZonedDateTime analysisTime = ZonedDateTime.parse("2025-10-31T11:00:00Z");
+        final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z[UTC]");
+
+        final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
+                .setIssuingCenter(ISSUING_CENTER)
+                .setEffect(Effect.HF_COMMUNICATIONS)
+                .setIssueTime(PartialOrCompleteTimeInstant.of(issueTime))
+                .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
+                .setAdvisoryNumber(ADVISORY_NUMBER)
+                .addAllAnalyses(SWXAmd82Tests.analysisBuilder(analysisTime)
+                        .setRegionsPerIntensityFromLocationIndicators()
+                        .addLocationIndicators(SpaceWeatherRegion.SpaceWeatherLocation.NIGHTSIDE)
+                        .generateAnalyses())
+                .setRemarks(REMARKS)
+                .setNextAdvisory(getNextAdvisory(true))
+                .build();
+
+        final SpaceWeatherRegion nightside = advisory.getAnalyses().get(0).getIntensityAndRegions().get(0).getRegions().get(0);
+        assertThat(nightside.getLocationIndicator()).hasValue(SpaceWeatherRegion.SpaceWeatherLocation.NIGHTSIDE);
+        assertThat(nightside.getAirSpaceVolume()).isPresent();
+        assertThat(nightside.getAirSpaceVolume().get().getHorizontalProjection())
+                .isPresent()
+                .get()
+                .isInstanceOf(CircleByCenterPoint.class);
+
+        final CircleByCenterPoint circle = (CircleByCenterPoint) nightside.getAirSpaceVolume().get().getHorizontalProjection().get();
+        assertThat(circle.getRadius().getValue()).isEqualTo(10100d);
+        assertThat(circle.getRadius().getUom()).isEqualTo("km");
+        assertThat(circle.getCenterPointCoordinates()).containsExactly(14.26d, -169.1d);
 
         final String serialized = OBJECT_MAPPER.writeValueAsString(advisory);
         final SpaceWeatherAdvisoryAmd82Impl deserialized = OBJECT_MAPPER.readValue(serialized, SpaceWeatherAdvisoryAmd82Impl.class);

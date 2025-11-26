@@ -88,11 +88,10 @@ public final class SubSolarPointUtils {
      * Computes the sub-solar point (latitude and longitude where the Sun is directly overhead)
      * for the given time.
      *
-     * @param instant       the time for which to calculate the sub-solar point
-     * @param decimalPlaces number of decimal places to round to (0-15)
-     * @return list containing [latitude, longitude] in degrees, rounded
+     * @param instant the time for which to calculate the sub-solar point
+     * @return list containing [latitude, longitude] in degrees
      */
-    public static List<Double> computeSubSolarPoint(final Instant instant, final int decimalPlaces) {
+    private static LatLon computeExactSubSolarPoint(final Instant instant) {
         final long epochSecond = instant.getEpochSecond();
         final double hourUtc = (epochSecond % SECONDS_PER_DAY) / SECONDS_PER_HOUR;
 
@@ -141,11 +140,53 @@ public final class SubSolarPointUtils {
         // Sub-solar latitude equals solar declination
         final double latDeg = delta * DEG_PER_RAD;
 
-        return Arrays.asList(round(latDeg, decimalPlaces), round(lonDeg, decimalPlaces));
+        return new LatLon(latDeg, lonDeg);
+    }
+
+    /**
+     * Computes the sub-solar point (latitude and longitude where the Sun is directly overhead)
+     * for the given time.
+     *
+     * @param instant       the time for which to calculate the sub-solar point
+     * @param decimalPlaces number of decimal places to round to (0-15)
+     * @return list containing [latitude, longitude] in degrees, rounded
+     */
+    public static List<Double> computeSubSolarPoint(final Instant instant, final int decimalPlaces) {
+        final LatLon point = computeExactSubSolarPoint(instant);
+        return Arrays.asList(round(point.lat, decimalPlaces), round(point.lon, decimalPlaces));
     }
 
     public static List<Double> computeSubSolarPoint(final Instant instant) {
         return computeSubSolarPoint(instant, 2);
+    }
+
+    /**
+     * Computes the antipode of the sub-solar point for the given time.
+     *
+     * @param instant the time for which to calculate the antipode of the sub-solar point
+     * @return list containing [latitude, longitude] in degrees
+     */
+    private static LatLon computeExactSubSolarPointAntipode(final Instant instant) {
+        final LatLon ssp = computeExactSubSolarPoint(instant);
+        final double antiLat = -ssp.lat;
+        final double antiLon = wrap180(ssp.lon + 180.0);
+        return new LatLon(antiLat, antiLon);
+    }
+
+    /**
+     * Computes the antipode of the sub-solar point for the given time.
+     *
+     * @param instant       the time for which to calculate the sub-solar point
+     * @param decimalPlaces number of decimal places to round to (0-15)
+     * @return list containing [latitude, longitude] in degrees, rounded
+     */
+    public static List<Double> computeSubSolarPointAntipode(final Instant instant, final int decimalPlaces) {
+        final LatLon antipode = computeExactSubSolarPointAntipode(instant);
+        return Arrays.asList(round(antipode.lat, decimalPlaces), round(antipode.lon, decimalPlaces));
+    }
+
+    public static List<Double> computeSubSolarPointAntipode(final Instant instant) {
+        return computeSubSolarPointAntipode(instant, 2);
     }
 
     private static double round(final double value, final int decimalPlaces) {
@@ -174,5 +215,15 @@ public final class SubSolarPointUtils {
      */
     private static double wrap180(final double degrees) {
         return ((degrees + 180.0) % 360.0 + 360.0) % 360.0 - 180.0;
+    }
+
+    private static final class LatLon {
+        final double lat;
+        final double lon;
+
+        LatLon(final double lat, final double lon) {
+            this.lat = lat;
+            this.lon = lon;
+        }
     }
 }

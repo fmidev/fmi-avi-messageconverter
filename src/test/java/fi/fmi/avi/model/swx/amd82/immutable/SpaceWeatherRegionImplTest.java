@@ -47,6 +47,33 @@ public class SpaceWeatherRegionImplTest {
     }
 
     @Test
+    public void testComputedAirspaceVolumeNightside() {
+        final Instant analysisTime = Instant.parse("2023-10-31T12:00:00Z");
+        final SpaceWeatherRegionImpl region = SpaceWeatherRegionImpl.builder()
+                .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.NIGHTSIDE)
+                .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(
+                        SpaceWeatherRegion.SpaceWeatherLocation.NIGHTSIDE,
+                        VerticalLimitsImpl.none(),
+                        analysisTime,
+                        null,
+                        null
+                ))
+                .build();
+
+        assertThat(region.getAirSpaceVolume()).isPresent();
+        final AirspaceVolume volume = region.getAirSpaceVolume().get();
+        assertThat(volume.getHorizontalProjection())
+                .isPresent()
+                .get()
+                .isInstanceOf(CircleByCenterPoint.class);
+
+        final CircleByCenterPoint circle = (CircleByCenterPoint) volume.getHorizontalProjection().get();
+        assertThat(circle.getRadius().getValue()).isEqualTo(SubSolarPointUtils.DAYSIDE_RADIUS_KM);
+        assertThat(circle.getRadius().getUom()).isEqualTo("km");
+        assertThat(circle.getCenterPointCoordinates()).containsExactly(14.11, 175.91);
+    }
+
+    @Test
     public void testComputedAirspaceVolumeLatitudeBand() {
         final VerticalLimits verticalLimits = VerticalLimitsImpl.builder()
                 .setLowerLimit(NumericMeasureImpl.builder().setValue(100.0).setUom("km").build())
