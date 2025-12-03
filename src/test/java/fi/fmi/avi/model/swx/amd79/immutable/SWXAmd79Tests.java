@@ -2,6 +2,7 @@ package fi.fmi.avi.model.swx.amd79.immutable;
 
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
+import fi.fmi.avi.model.swx.VerticalLimitsImpl;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
 import org.inferred.freebuilder.FreeBuilder;
@@ -86,7 +87,7 @@ public final class SWXAmd79Tests {
                     .mapToObj(subsetIndex ->
                             SpaceWeatherRegionImpl.fromLocationIndicator(
                                     getNullableElement(subsetIndex, getRegionsCount(), analysisIndex, getLocationIndicators()),
-                                    analysisTime, -180.0, 180.0, null)
+                                    VerticalLimitsImpl.none(), analysisTime, -180.0, 180.0)
                     );
         }
 

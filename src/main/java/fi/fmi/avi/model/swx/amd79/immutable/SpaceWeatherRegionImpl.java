@@ -42,15 +42,15 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
     }
 
     public static SpaceWeatherRegionImpl fromLocationIndicator(
-            final SpaceWeatherRegion.SpaceWeatherLocation locationIndicator,
+            final SpaceWeatherLocation locationIndicator,
+            final VerticalLimits verticalLimits,
             @Nullable final Instant analysisTime,
             @Nullable final Double minLongitude,
-            @Nullable final Double maxLongitude,
-            @Nullable final VerticalLimits verticalLimits) {
+            @Nullable final Double maxLongitude) {
         return builder()
                 .setLocationIndicator(locationIndicator)
                 .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(locationIndicator,
-                        analysisTime, minLongitude, maxLongitude, verticalLimits))
+                        verticalLimits, analysisTime, minLongitude, maxLongitude))
                 .setNullableLongitudeLimitMinimum(minLongitude)
                 .setNullableLongitudeLimitMaximum(maxLongitude)
                 .build();
