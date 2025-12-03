@@ -12,7 +12,6 @@ import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.VerticalLimits;
-import fi.fmi.avi.model.swx.VerticalLimitsImpl;
 import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
 import fi.fmi.avi.util.SubSolarPointUtils;
@@ -23,8 +22,9 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 
 @FreeBuilder
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)
@@ -40,7 +40,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
     }
 
     public static AirspaceVolumeImpl immutableCopyOf(final AirspaceVolume airspaceVolume) {
-        Objects.requireNonNull(airspaceVolume);
+        requireNonNull(airspaceVolume);
         if (airspaceVolume instanceof AirspaceVolumeImpl) {
             return (AirspaceVolumeImpl) airspaceVolume;
         } else {
@@ -50,7 +50,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Optional<AirspaceVolumeImpl> immutableCopyOf(final Optional<AirspaceVolume> airspaceVolume) {
-        Objects.requireNonNull(airspaceVolume);
+        requireNonNull(airspaceVolume);
         return airspaceVolume.map(AirspaceVolumeImpl::immutableCopyOf);
     }
 
@@ -154,17 +154,19 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
      * </p>
      *
      * @param locationIndicator the location indicator
+     * @param verticalLimits    vertical limit constraints
      * @param analysisTime      analysis time (required only for DAYLIGHT_SIDE)
      * @param minLongitude      minimum longitude (optional, defaults to -180)
      * @param maxLongitude      maximum longitude (optional, defaults to 180)
-     * @param verticalLimits    vertical limit constraints
      * @return the built airspace volume
      */
     public static AirspaceVolumeImpl fromLocationIndicator(final SpaceWeatherRegion.SpaceWeatherLocation locationIndicator,
+                                                           final VerticalLimits verticalLimits,
                                                            @Nullable final Instant analysisTime,
                                                            @Nullable final Double minLongitude,
-                                                           @Nullable final Double maxLongitude,
-                                                           @Nullable final VerticalLimits verticalLimits) {
+                                                           @Nullable final Double maxLongitude) {
+        requireNonNull(locationIndicator, "locationIndicator");
+        requireNonNull(verticalLimits, "verticalLimits");
         if (locationIndicator == SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE && analysisTime != null) {
             return AirspaceVolumeImpl.forDaylightSide(analysisTime);
         } else if (locationIndicator.getLatitudeBandMinCoordinate().isPresent()
@@ -174,7 +176,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
                     minLongitude != null ? minLongitude : -180d,
                     locationIndicator.getLatitudeBandMaxCoordinate().get(),
                     maxLongitude != null ? maxLongitude : 180d,
-                    verticalLimits != null ? verticalLimits : VerticalLimitsImpl.none());
+                    verticalLimits);
         }
         throw new IllegalArgumentException("Unable to create AirspaceVolume for location indicator: " + locationIndicator);
     }
