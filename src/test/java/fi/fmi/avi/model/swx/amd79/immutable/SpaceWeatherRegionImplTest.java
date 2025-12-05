@@ -26,8 +26,8 @@ public class SpaceWeatherRegionImplTest {
                 .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE)
                 .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(
                         SpaceWeatherRegion.SpaceWeatherLocation.DAYLIGHT_SIDE,
+                        VerticalLimitsImpl.none(),
                         analysisTime,
-                        null,
                         null,
                         null
                 ))
@@ -57,10 +57,10 @@ public class SpaceWeatherRegionImplTest {
                 .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE)
                 .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(
                         SpaceWeatherRegion.SpaceWeatherLocation.HIGH_NORTHERN_HEMISPHERE,
+                        verticalLimits,
                         null,
                         -90.0,
-                        90.0,
-                        verticalLimits
+                        90.0
                 )).build();
 
         assertThat(region.getAirSpaceVolume()).isPresent();
@@ -80,10 +80,10 @@ public class SpaceWeatherRegionImplTest {
                 .setLocationIndicator(SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE)
                 .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(
                         SpaceWeatherRegion.SpaceWeatherLocation.MIDDLE_NORTHERN_HEMISPHERE,
+                        VerticalLimitsImpl.none(),
                         null,
                         null,
-                        null,
-                        VerticalLimitsImpl.none()
+                        null
                 )).build();
 
         assertThat(region.getAirSpaceVolume()).isPresent();
