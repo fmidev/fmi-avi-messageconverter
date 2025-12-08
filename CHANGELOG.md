@@ -31,6 +31,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ...
 
+## [v8.1.0] - 2025-12-08
+
+### Added
+
+- NIGHTSIDE location indicator geometry computation for Annex 3 Amendment 82 Space Weather Advisories [#134]
+
 ## [v8.0.0] - 2025-11-21
 
 ### Added
@@ -113,7 +119,9 @@ Previous changelog entries are available
 on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
-[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-8.0.0...HEAD
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-8.1.0...HEAD
+
+[v8.1.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-8.1.0
 
 [v8.0.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-8.0.0
 
@@ -168,3 +176,5 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 [#120]: https://github.com/fmidev/fmi-avi-messageconverter/pull/120
 
 [#121]: https://github.com/fmidev/fmi-avi-messageconverter/pull/121
+
+[#134]: https://github.com/fmidev/fmi-avi-messageconverter/pull/134
