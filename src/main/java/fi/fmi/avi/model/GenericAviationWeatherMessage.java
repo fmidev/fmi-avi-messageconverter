@@ -14,6 +14,13 @@ public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
 
     Optional<PartialOrCompleteTimePeriod> getValidityTime();
 
+    /**
+     * Returns the observation time for METAR and SPECI. For other message types, this will be empty.
+     *
+     * @return the observation time, if applicable
+     */
+    Optional<PartialOrCompleteTimeInstant> getObservationTime();
+
     Map<LocationIndicatorType, String> getLocationIndicators();
 
     enum Format {

@@ -1,18 +1,16 @@
 package fi.fmi.avi.model.immutable;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.inferred.freebuilder.FreeBuilder;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
+import org.inferred.freebuilder.FreeBuilder;
+
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
 
 @FreeBuilder
 @JsonDeserialize(builder = GenericAviationWeatherMessageImpl.Builder.class)
@@ -48,6 +46,11 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
     public boolean areAllTimeReferencesComplete() {
         if (this.getIssueTime().isPresent()) {
             if (!this.getIssueTime().get().getCompleteTime().isPresent()) {
+                return false;
+            }
+        }
+        if (this.getObservationTime().isPresent()) {
+            if (!this.getObservationTime().get().getCompleteTime().isPresent()) {
                 return false;
             }
         }
@@ -88,6 +91,7 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
                         .setMessageType(value.getMessageType())//
                         .setMessageFormat(value.getMessageFormat())//
                         .setValidityTime(value.getValidityTime())//
+                        .setObservationTime(value.getObservationTime())//
                         .putAllLocationIndicators(value.getLocationIndicators());
             }
         }
