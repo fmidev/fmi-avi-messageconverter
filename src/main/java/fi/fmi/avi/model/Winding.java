@@ -8,6 +8,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * Polygon winding order (clockwise or counter-clockwise).
+ *
+ * <p>
+ * <strong>Note:</strong> The winding detection in this class uses
+ * {@link Orientation#isCCW(Coordinate[])} from JTS. This calculation may produce incorrect results for polygons
+ * that cross the antimeridian (±180° longitude).
+ * </p>
+ */
 public enum Winding {
     CLOCKWISE, COUNTERCLOCKWISE;
 
@@ -17,6 +26,11 @@ public enum Winding {
      * The positions list should contain coordinate pairs as alternating latitude/longitude values.
      * If the ring is not closed (first and last coordinate pairs differ) or contains fewer than
      * 4 coordinate pairs, the original list is returned unchanged.
+     * </p>
+     *
+     * <p>
+     * <strong>Note:</strong> This method may produce incorrect results for polygons that
+     * cross the antimeridian. See the class-level documentation for details.
      * </p>
      *
      * @param positions        the list of coordinate positions (lat, lon pairs)
@@ -42,6 +56,17 @@ public enum Winding {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Determines the winding order of a polygon from its coordinate positions.
+     *
+     * <p>
+     * <strong>Note:</strong> This method may produce incorrect results for polygons that
+     * cross the antimeridian. See the class-level documentation for details.
+     * </p>
+     *
+     * @param positions the list of coordinate positions (lat, lon pairs)
+     * @return the detected winding order
+     */
     public static Winding getWinding(final List<Double> positions) {
         final Coordinate[] coords = getCoordinates(positions).toArray(Coordinate[]::new);
         return Orientation.isCCW(coords) ? COUNTERCLOCKWISE : CLOCKWISE;
