@@ -64,6 +64,7 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
         Builder() {
             setReportStatus(ReportStatus.NORMAL);
             setTranslated(false);
+            setNil(false);
         }
 
         public static Builder from(final GenericAviationWeatherMessage value) {
@@ -92,6 +93,7 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
                         .setMessageFormat(value.getMessageFormat())//
                         .setValidityTime(value.getValidityTime())//
                         .setObservationTime(value.getObservationTime())//
+                        .setNil(value.isNil())//
                         .putAllLocationIndicators(value.getLocationIndicators());
             }
         }

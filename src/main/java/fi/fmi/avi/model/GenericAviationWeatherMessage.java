@@ -23,6 +23,8 @@ public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
 
     Map<LocationIndicatorType, String> getLocationIndicators();
 
+    boolean isNil();
+
     enum Format {
         TAC, IWXXM
     }
