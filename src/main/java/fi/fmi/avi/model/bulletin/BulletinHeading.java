@@ -114,9 +114,7 @@ public interface BulletinHeading {
      * @return the original collect identifier string, or empty if not available
      */
     @JsonIgnore
-    default Optional<String> getOriginalCollectIdentifier() {
-        return Optional.empty();
-    }
+    Optional<String> getOriginalCollectIdentifier();
 
     @JsonIgnore
     Optional<MessageType> getExpectedContainedMessageType();
