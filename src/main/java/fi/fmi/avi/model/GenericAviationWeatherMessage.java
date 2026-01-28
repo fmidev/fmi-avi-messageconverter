@@ -4,6 +4,13 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
+    /**
+     * Returns the GML identifier (gml:id) of the IWXXM message root element.
+     *
+     * @return the gml:id attribute value, if available
+     */
+    Optional<String> getGmlId();
+
     Optional<String> getXMLNamespace();
 
     String getOriginalMessage();

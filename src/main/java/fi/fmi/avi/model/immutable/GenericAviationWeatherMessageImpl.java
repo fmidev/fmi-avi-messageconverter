@@ -15,7 +15,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = GenericAviationWeatherMessageImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "messageType", "messageFormat", "originalMessage", "issueTime", "validityTime", "targetAerodrome" })
+@JsonPropertyOrder({"gmlId", "messageType", "messageFormat", "originalMessage", "issueTime", "validityTime", "targetAerodrome"})
 public abstract class GenericAviationWeatherMessageImpl implements GenericAviationWeatherMessage, Serializable {
 
     private static final long serialVersionUID = 2232603779482075673L;
@@ -88,6 +88,7 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
                         Builder::setTranslatedTAC);
 
                 return builder//
+                        .setGmlId(value.getGmlId())//
                         .setOriginalMessage(value.getOriginalMessage())//
                         .setMessageType(value.getMessageType())//
                         .setMessageFormat(value.getMessageFormat())//
