@@ -107,7 +107,7 @@ public interface BulletinHeading {
      * <p>
      * Example: {@code A_LTFI31EFLK251400_C_EFLK_20191125143800.xml}
      * <p>
-     * For TAC bulletins or IWXXM messages without a collect wrapper, this will be empty.
+     * This will be empty for TAC bulletins.
      * <p>
      * <strong>Note:</strong> Serialization generates a new identifier from the current model state.
      *
