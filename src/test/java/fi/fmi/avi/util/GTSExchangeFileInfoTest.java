@@ -39,7 +39,8 @@ public class GTSExchangeFileInfoTest {
 
     @Test
     public void testFileNameParser() {
-        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from("AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz").build();
+        final String filename = "AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz";
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from(filename).build();
         final BulletinHeading expectedHeading = BulletinHeadingImpl.builder()
                 .setLocationIndicator("ABCD")
                 .setAugmentationIndicator(BulletinHeading.Type.CORRECTED, 1)
@@ -48,6 +49,7 @@ public class GTSExchangeFileInfoTest {
                 .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
                 .setBulletinNumber(12)
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
+                .setOriginalCollectIdentifier(filename)
                 .build();
 
         assertSame(GTSExchangeFileInfo.GTSExchangePFlag.A, info.getPFlag());
