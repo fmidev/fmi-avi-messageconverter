@@ -20,7 +20,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = TAFBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
+@JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
 public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
 
     private static final long serialVersionUID = 8584221872062469463L;

@@ -18,7 +18,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = AIRMETBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
+@JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
 public abstract class AIRMETBulletinImpl implements AIRMETBulletin, Serializable {
 
    private static final long serialVersionUID = 7742724278322130498L;
