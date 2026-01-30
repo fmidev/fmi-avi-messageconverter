@@ -1,21 +1,19 @@
 package fi.fmi.avi.model.sigmet.immutable;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.inferred.freebuilder.FreeBuilder;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AIRMETBulletin;
+import org.inferred.freebuilder.FreeBuilder;
+
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
 
 @FreeBuilder
 @JsonDeserialize(builder = AIRMETBulletinImpl.Builder.class)
@@ -60,7 +58,8 @@ public abstract class AIRMETBulletinImpl implements AIRMETBulletin, Serializable
                         Builder::addAllMessages, //
                         AIRMETImpl::immutableCopyOf, //
                         Builder::setTimeStamp, //
-                        Builder::addAllTimeStampFields);
+                        Builder::addAllTimeStampFields, //
+                        Builder::setCollectIdentifier);
                 return builder;
             }
         }

@@ -60,7 +60,8 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
                         Builder::addAllMessages, //
                         SpaceWeatherAdvisoryAmd82Impl::immutableCopyOf, //
                         Builder::setTimeStamp, //
-                        Builder::addAllTimeStampFields);
+                        Builder::addAllTimeStampFields, //
+                        Builder::setCollectIdentifier);
                 return builder;
             }
         }
@@ -72,7 +73,8 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
                     Builder::addAllMessages,
                     message -> SpaceWeatherAdvisoryAmd82Impl.Builder.fromAmd79(message).build(),
                     Builder::setTimeStamp,
-                    Builder::addAllTimeStampFields);
+                    Builder::addAllTimeStampFields,
+                    Builder::setCollectIdentifier);
             return builder;
         }
 

@@ -99,23 +99,6 @@ public interface BulletinHeading {
      */
     PartialOrCompleteTimeInstant getIssueTime();
 
-    /**
-     * Returns the original collect identifier string from the IWXXM collect schema.
-     * <p>
-     * For IWXXM bulletins parsed from collect documents, this contains the value of
-     * the {@code <collect:bulletinIdentifier>} element.
-     * <p>
-     * Example: {@code A_LTFI31EFLK251400_C_EFLK_20191125143800.xml}
-     * <p>
-     * This will be empty for TAC bulletins.
-     * <p>
-     * <strong>Note:</strong> Serialization generates a new identifier from the current model state.
-     *
-     * @return the original collect identifier string, or empty if not available
-     */
-    @JsonIgnore
-    Optional<String> getOriginalCollectIdentifier();
-
     @JsonIgnore
     Optional<MessageType> getExpectedContainedMessageType();
 

@@ -65,9 +65,6 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         }
     }
 
-    @Override
-    public abstract Optional<String> getOriginalCollectIdentifier();
-
     public abstract Builder toBuilder();
 
     public static class Builder extends BulletinHeadingImpl_Builder {
@@ -88,7 +85,6 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                         .setType(value.getType())//
                         .setAugmentationNumber(value.getAugmentationNumber())//
                         .setOriginalAugmentationIndicator(value.getOriginalAugmentationIndicator())//
-                        .setOriginalCollectIdentifier(value.getOriginalCollectIdentifier())//
                         .setDataTypeDesignatorT2(value.getDataTypeDesignatorT2())//
                         .setDataTypeDesignatorT1ForTAC(value.getDataTypeDesignatorT1ForTAC())//
                         .setIssueTime(value.getIssueTime());

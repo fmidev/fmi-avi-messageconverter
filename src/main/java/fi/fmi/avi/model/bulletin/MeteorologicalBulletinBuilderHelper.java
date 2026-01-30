@@ -35,6 +35,7 @@ public final class MeteorologicalBulletinBuilderHelper {
      * @param toImmutableMessage    function transforming message to immutable
      * @param setTimeStamp          setter for timeStamp
      * @param addAllTimeStampFields setter for timeStampFields
+     * @param setCollectIdentifier  setter for collectIdentifier
      */
     public static <T extends MeteorologicalBulletin<M>, M extends AviationWeatherMessage, B> void copyFrom(
             final B builder,
@@ -43,8 +44,9 @@ public final class MeteorologicalBulletinBuilderHelper {
             final BiConsumer<B, Stream<M>> addAllMessages,
             final Function<M, ? extends M> toImmutableMessage,
             final BiConsumer<B, Optional<ZonedDateTime>> setTimeStamp,
-            final BiConsumer<B, Set<ChronoField>> addAllTimeStampFields) {
-        copyAndTransform(builder, value, setHeading, addAllMessages, toImmutableMessage, setTimeStamp, addAllTimeStampFields);
+            final BiConsumer<B, Set<ChronoField>> addAllTimeStampFields,
+            final BiConsumer<B, Optional<String>> setCollectIdentifier) {
+        copyAndTransform(builder, value, setHeading, addAllMessages, toImmutableMessage, setTimeStamp, addAllTimeStampFields, setCollectIdentifier);
     }
 
     /**
@@ -53,7 +55,7 @@ public final class MeteorologicalBulletinBuilderHelper {
      *
      * <p>
      * This method allows transforming bulletin messages to another type while copying all other bulletin properties.
-     * See {@link #copyFrom(Object, MeteorologicalBulletin, BiConsumer, BiConsumer, Function, BiConsumer, BiConsumer)}
+     * See {@link #copyFrom(Object, MeteorologicalBulletin, BiConsumer, BiConsumer, Function, BiConsumer, BiConsumer, BiConsumer)}
      * for non-transforming version.
      * </p>
      *
@@ -68,6 +70,7 @@ public final class MeteorologicalBulletinBuilderHelper {
      * @param toImmutableMessage    function transforming message to immutable
      * @param setTimeStamp          setter for timeStamp
      * @param addAllTimeStampFields setter for timeStampFields
+     * @param setCollectIdentifier  setter for collectIdentifier
      */
     public static <T extends MeteorologicalBulletin<M>, M extends AviationWeatherMessage, I extends AviationWeatherMessage, B> void copyAndTransform(
             final B builder,
@@ -76,13 +79,15 @@ public final class MeteorologicalBulletinBuilderHelper {
             final BiConsumer<B, Stream<I>> addAllMessages,
             final Function<M, ? extends I> toImmutableMessage,
             final BiConsumer<B, Optional<ZonedDateTime>> setTimeStamp,
-            final BiConsumer<B, Set<ChronoField>> addAllTimeStampFields) {
+            final BiConsumer<B, Set<ChronoField>> addAllTimeStampFields,
+            final BiConsumer<B, Optional<String>> setCollectIdentifier) {
         requireNonNull(value, "value");
         requireNonNull(builder, "builder");
         setHeading.accept(builder, BulletinHeadingImpl.immutableCopyOf(value.getHeading()));
         addAllMessages.accept(builder, value.getMessages().stream().map(toImmutableMessage));
         setTimeStamp.accept(builder, value.getTimeStamp());
         addAllTimeStampFields.accept(builder, value.getTimeStampFields());
+        setCollectIdentifier.accept(builder, value.getCollectIdentifier());
     }
 
 }

@@ -1,26 +1,24 @@
 package fi.fmi.avi.model.bulletin.immutable;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.inferred.freebuilder.FreeBuilder;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.immutable.GenericAviationWeatherMessageImpl;
+import org.inferred.freebuilder.FreeBuilder;
+
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
 
 @FreeBuilder
 @JsonDeserialize(builder = GenericMeteorologicalBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
+@JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "messages"})
 public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteorologicalBulletin, Serializable {
 
     private static final long serialVersionUID = -4860727383244788466L;
@@ -59,7 +57,8 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
                         Builder::addAllMessages, //
                         GenericAviationWeatherMessageImpl::immutableCopyOf, //
                         Builder::setTimeStamp, //
-                        Builder::addAllTimeStampFields);
+                        Builder::addAllTimeStampFields, //
+                        Builder::setCollectIdentifier);
                 return builder;
             }
         }

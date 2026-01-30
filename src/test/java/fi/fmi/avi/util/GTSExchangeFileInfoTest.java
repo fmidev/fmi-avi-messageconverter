@@ -49,7 +49,6 @@ public class GTSExchangeFileInfoTest {
                 .setDataTypeDesignatorT2(DataTypeDesignatorT2.ForecastsDataTypeDesignatorT2.FCT_AERODROME_VT_LONG)
                 .setBulletinNumber(12)
                 .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(9, 10, 0)))
-                .setOriginalCollectIdentifier(filename)
                 .build();
 
         assertSame(GTSExchangeFileInfo.GTSExchangePFlag.A, info.getPFlag());

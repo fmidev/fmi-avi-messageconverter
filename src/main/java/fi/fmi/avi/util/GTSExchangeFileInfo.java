@@ -330,9 +330,7 @@ public abstract class GTSExchangeFileInfo implements Serializable {
                     .setFileType(GTSExchangeFileType.fromExtension(m.group("type")))//
                     .setFreeFormPart(Optional.ofNullable(m.group("freeForm")))//
                     .setCompressionType(Optional.ofNullable(compressionType))//
-                    .setHeading(BulletinHeadingImpl.Builder.from(abbreviatedHeading)
-                            .setOriginalCollectIdentifier(gtsExchangefileName)
-                            .build())//
+                    .setHeading(BulletinHeadingImpl.Builder.from(abbreviatedHeading).build())//
                     .setTimeStampYear(timeStampYear)//
                     .setTimeStampMonth(timeStampMonth)//
                     .setTimeStampDay(timeStampDay)//
