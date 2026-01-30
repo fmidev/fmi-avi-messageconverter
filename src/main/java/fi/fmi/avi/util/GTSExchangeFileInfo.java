@@ -56,23 +56,23 @@ public abstract class GTSExchangeFileInfo implements Serializable {
 
     public abstract Optional<Integer> getTimeStampSecond();
 
-    public String toGTSExchangeFileName() {
-        return this.toGTSExchangeFileName(DEFAULT_TIME_FIELDS);
+    public String toGTSExchangeFilename() {
+        return this.toGTSExchangeFilename(DEFAULT_TIME_FIELDS);
     }
 
-    public String toGTSExchangeFileName(final Set<TimeStampField> fieldsToInclude) {
+    public String toGTSExchangeFilename(final Set<TimeStampField> fieldsToInclude) {
 
         //TODO: rest of the types
         switch (this.getPFlag()) {
             case A:
-                return createATypeFileName(fieldsToInclude);
+                return createATypeFilename(fieldsToInclude);
             default:
                 throw new IllegalStateException("Names with pFlag value '" + this.getPFlag() + "' not yet supported");
         }
 
     }
 
-    private String createATypeFileName(final Set<TimeStampField> fieldsToInclude) {
+    private String createATypeFilename(final Set<TimeStampField> fieldsToInclude) {
         final StringBuilder sb = new StringBuilder();
         sb.append('A');
         if (this.isMetadataFile()) {
@@ -281,14 +281,14 @@ public abstract class GTSExchangeFileInfo implements Serializable {
             this.setMetadataFile(false);
         }
 
-        public static Builder from(final String gtsExchangefileName) {
+        public static Builder from(final String gtsExchangeFilename) {
             //TODO: support other P flags than A
-            if (!gtsExchangefileName.startsWith("A")) {
+            if (!gtsExchangeFilename.startsWith("A")) {
                 throw new IllegalArgumentException("Only file names for pflag value 'A' are currently supported");
             }
-            final Matcher m = P_FLAG_A_PATTERN.matcher(gtsExchangefileName);
+            final Matcher m = P_FLAG_A_PATTERN.matcher(gtsExchangeFilename);
             if (!m.matches()) {
-                throw new IllegalArgumentException("File name '" + gtsExchangefileName + "' does not match the General file naming conventions for FTP/SFTP "
+                throw new IllegalArgumentException("File name '" + gtsExchangeFilename + "' does not match the General file naming conventions for FTP/SFTP "
                         + "data exchange as defined in the " + "WMO-No. 386 Manual on the Global Telecommunication System, 2015 edition (updated 2017)");
             }
             GTSExchangeCompressionType compressionType = null;

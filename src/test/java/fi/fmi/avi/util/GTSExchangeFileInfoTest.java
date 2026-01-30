@@ -34,7 +34,7 @@ public class GTSExchangeFileInfoTest {
                 .setTimeStamp(LocalDateTime.of(2019, Month.JANUARY, 9, 10, 5))
                 .build();
 
-        assertEquals("AM_FTFI12ABCD091000CCA_C_ABCD_20190109100500_foobar12345_-.met.gz", info.toGTSExchangeFileName());
+        assertEquals("AM_FTFI12ABCD091000CCA_C_ABCD_20190109100500_foobar12345_-.met.gz", info.toGTSExchangeFilename());
     }
 
     @Test
