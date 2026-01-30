@@ -1,13 +1,17 @@
 package fi.fmi.avi.util;
 
 import fi.fmi.avi.model.bulletin.BulletinHeading;
+import fi.fmi.avi.model.bulletin.MeteorologicalBulletin;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import org.inferred.freebuilder.FreeBuilder;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -279,6 +283,39 @@ public abstract class GTSExchangeFileInfo implements Serializable {
 
         public Builder() {
             this.setMetadataFile(false);
+        }
+
+        public static Builder from(final MeteorologicalBulletin<?> bulletin) {
+            final Builder builder = new Builder()
+                    .setPFlag(GTSExchangePFlag.A) // TODO: support P flags other than A
+                    .setHeading(bulletin.getHeading())
+                    .setMetadataFile(false)
+                    .setFileType(GTSExchangeFileType.XML);
+            if (bulletin.getTimeStamp().isPresent()) {
+                final ZonedDateTime timeStamp = bulletin.getTimeStamp().get();
+                final Set<ChronoField> fieldsToInclude = bulletin.getTimeStampFields();
+                if (fieldsToInclude.contains(ChronoField.YEAR)) {
+                    builder.setTimeStampYear(timeStamp.getYear());
+                }
+                if (fieldsToInclude.contains(ChronoField.MONTH_OF_YEAR)) {
+                    builder.setTimeStampMonth(timeStamp.getMonth());
+                }
+                if (fieldsToInclude.contains(ChronoField.DAY_OF_MONTH)) {
+                    builder.setTimeStampDay(timeStamp.getDayOfMonth());
+                }
+                if (fieldsToInclude.contains(ChronoField.HOUR_OF_DAY)) {
+                    builder.setTimeStampHour(timeStamp.getHour());
+                }
+                if (fieldsToInclude.contains(ChronoField.MINUTE_OF_HOUR)) {
+                    builder.setTimeStampMinute(timeStamp.getMinute());
+                }
+                if (fieldsToInclude.contains(ChronoField.SECOND_OF_MINUTE)) {
+                    builder.setTimeStampSecond(timeStamp.getSecond());
+                }
+            } else {
+                builder.setTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
+            }
+            return builder;
         }
 
         public static Builder from(final String gtsExchangeFilename) {
