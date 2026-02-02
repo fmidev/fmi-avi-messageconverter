@@ -45,7 +45,7 @@ public class GTSExchangeFileInfoTest {
 
     @Test
     public void testFileNameGenerator() {
-        final GTSExchangeFileInfo info = new GTSExchangeFileInfo.Builder()
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.builder()
                 .setPFlag(GTSExchangeFileInfo.GTSExchangePFlag.A)
                 .setMetadataFile(true)
                 .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.METADATA)

@@ -285,7 +285,7 @@ public abstract class GTSExchangeFileInfo implements Serializable {
 
     public static class Builder extends GTSExchangeFileInfo_Builder {
 
-        public Builder() {
+        Builder() {
             this.setMetadataFile(false);
         }
 
