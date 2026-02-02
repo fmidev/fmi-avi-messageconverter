@@ -21,7 +21,7 @@ import java.util.Optional;
 @FreeBuilder
 @JsonDeserialize(builder = SpaceWeatherAmd79BulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "messages"})
+@JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
 public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79Bulletin, Serializable {
 
     private static final long serialVersionUID = -7494296545788396274L;
@@ -60,7 +60,8 @@ public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79
                         Builder::addAllMessages, //
                         SpaceWeatherAdvisoryAmd79Impl::immutableCopyOf, //
                         Builder::setTimeStamp, //
-                        Builder::addAllTimeStampFields);
+                        Builder::addAllTimeStampFields, //
+                        Builder::setCollectIdentifier);
                 return builder;
             }
         }
@@ -82,7 +83,8 @@ public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79
                     Builder::addAllMessages,
                     message -> SpaceWeatherAdvisoryAmd79Impl.Builder.fromAmd82(message, lenient).build(),
                     Builder::setTimeStamp,
-                    Builder::addAllTimeStampFields);
+                    Builder::addAllTimeStampFields,
+                    Builder::setCollectIdentifier);
             return builder;
         }
 

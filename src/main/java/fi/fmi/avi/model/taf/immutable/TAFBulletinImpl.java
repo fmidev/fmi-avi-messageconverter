@@ -1,16 +1,9 @@
 package fi.fmi.avi.model.taf.immutable;
 
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.inferred.freebuilder.FreeBuilder;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
@@ -18,11 +11,16 @@ import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
+import org.inferred.freebuilder.FreeBuilder;
+
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.Optional;
 
 @FreeBuilder
 @JsonDeserialize(builder = TAFBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({ "timeStamp", "timeStampFields", "heading", "messages" })
+@JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
 public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
 
     private static final long serialVersionUID = 8584221872062469463L;
@@ -62,7 +60,8 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
                         Builder::addAllMessages, //
                         TAFImpl::immutableCopyOf, //
                         Builder::setTimeStamp, //
-                        Builder::addAllTimeStampFields);
+                        Builder::addAllTimeStampFields, //
+                        Builder::setCollectIdentifier);
                 return builder;
             }
         }
