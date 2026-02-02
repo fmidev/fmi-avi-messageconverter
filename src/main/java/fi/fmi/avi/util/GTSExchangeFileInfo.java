@@ -34,6 +34,10 @@ public abstract class GTSExchangeFileInfo implements Serializable {
 
     public abstract Builder toBuilder();
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public abstract GTSExchangePFlag getPFlag();
 
     public abstract BulletinHeading getHeading();
@@ -288,9 +292,7 @@ public abstract class GTSExchangeFileInfo implements Serializable {
         public static Builder from(final MeteorologicalBulletin<?> bulletin) {
             final Builder builder = new Builder()
                     .setPFlag(GTSExchangePFlag.A) // TODO: support P flags other than A
-                    .setHeading(bulletin.getHeading())
-                    .setMetadataFile(false)
-                    .setFileType(GTSExchangeFileType.XML);
+                    .setHeading(bulletin.getHeading());
             if (bulletin.getTimeStamp().isPresent()) {
                 final ZonedDateTime timeStamp = bulletin.getTimeStamp().get();
                 final Set<ChronoField> fieldsToInclude = bulletin.getTimeStampFields();

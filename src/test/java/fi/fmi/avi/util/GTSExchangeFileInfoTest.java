@@ -88,7 +88,9 @@ public class GTSExchangeFileInfoTest {
                         ChronoField.HOUR_OF_DAY, ChronoField.MINUTE_OF_HOUR, ChronoField.SECOND_OF_MINUTE))
                 .build();
 
-        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from(bulletin).build();
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from(bulletin)
+                .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.XML)
+                .build();
 
         assertThat(info.getHeading()).isEqualTo(heading);
         assertThat(info.getFileType()).isSameAs(GTSExchangeFileInfo.GTSExchangeFileType.XML);
@@ -111,7 +113,9 @@ public class GTSExchangeFileInfoTest {
                 .addAllTimeStampFields(EnumSet.of(ChronoField.YEAR, ChronoField.MONTH_OF_YEAR, ChronoField.DAY_OF_MONTH))
                 .build();
 
-        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from(bulletin).build();
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from(bulletin)
+                .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.TEXT)
+                .build();
 
         assertThat(info.getTimeStampYear()).hasValue(2019);
         assertThat(info.getTimeStampMonth()).hasValue(Month.NOVEMBER);
@@ -119,6 +123,6 @@ public class GTSExchangeFileInfoTest {
         assertThat(info.getTimeStampHour()).isEmpty();
         assertThat(info.getTimeStampMinute()).isEmpty();
         assertThat(info.getTimeStampSecond()).isEmpty();
-        assertThat(info.toGTSExchangeFilename()).isEqualTo("A_LTFI31EFKL251400_C_EFKL_20191125------.xml");
+        assertThat(info.toGTSExchangeFilename()).isEqualTo("A_FTFI31EFKL251400_C_EFKL_20191125------.txt");
     }
 }
