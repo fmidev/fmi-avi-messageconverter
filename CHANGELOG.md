@@ -31,6 +31,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - ...
 
+## [v8.3.0] - 2026-02-09
+
+### Added
+
+- Added nil flag to `GenericAviationWeatherMessage` model [#137]
+- Added IWXXM collect identifier to `MeteorologicalBulletin` model [#139]
+- Added message GML id to `GenericAviationWeatherMessage` model [#140]
+
 ## [v8.2.0] - 2026-01-12
 
 ### Added
@@ -126,7 +134,9 @@ Previous changelog entries are available
 on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/releases) in a more freeform format.
 
 
-[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-8.2.0...HEAD
+[Unreleased]: https://github.com/fmidev/fmi-avi-messageconverter/compare/fmi-avi-messageconverter-8.3.0...HEAD
+
+[v8.3.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-8.3.0
 
 [v8.2.0]: https://github.com/fmidev/fmi-avi-messageconverter/releases/tag/fmi-avi-messageconverter-8.2.0
 
@@ -191,3 +201,9 @@ on [GitHub releases page](https://github.com/fmidev/fmi-avi-messageconverter/rel
 [#135]: https://github.com/fmidev/fmi-avi-messageconverter/pull/135
 
 [#136]: https://github.com/fmidev/fmi-avi-messageconverter/pull/136
+
+[#137]: https://github.com/fmidev/fmi-avi-messageconverter/pull/137
+
+[#139]: https://github.com/fmidev/fmi-avi-messageconverter/pull/139
+
+[#140]: https://github.com/fmidev/fmi-avi-messageconverter/pull/140
