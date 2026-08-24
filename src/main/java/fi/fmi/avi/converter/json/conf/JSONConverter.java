@@ -16,30 +16,6 @@ import fi.fmi.avi.model.taf.TAFBulletin;
 
 /**
  * Java POJO and JSON conversions.
- *
- * <p><b>Modernization note (2026-08, see docs/07-modernization-plan.md):</b> this class used to be
- * a Spring {@code @Configuration} class with one {@code @Bean} method per converter. It is now a
- * plain factory with no dependency on any DI framework, so this module builds and runs the same way
- * whether or not the consuming application uses Spring, Guice, Dagger, or manual wiring.
- *
- * <p>A consuming Spring application wires these into its own context with a handful of
- * {@code @Bean} methods, e.g.:
- * <pre>{@code
- * @Configuration
- * public class MyAppConversionConfig {
- *     @Bean
- *     public AviMessageConverter aviMessageConverter() {
- *         final AviMessageConverter converter = new AviMessageConverter();
- *         JSONConverter.addTo(converter);
- *         // ... also add TAC / IWXXM converters here, once those modules follow the same pattern
- *         return converter;
- *     }
- * }
- * }</pre>
- * or, if individual {@link AviMessageSpecificConverter} beans are wanted (e.g. to compose them
- * with other formats' beans the way the pre-modernization {@code @Bean}-based configuration did),
- * declare them individually by delegating to the static factory methods below, e.g.
- * {@code @Bean public AviMessageSpecificConverter<TAF, String> tafJSONSerializer() { return JSONConverter.tafJSONSerializer(); }}
  */
 public final class JSONConverter {
 
@@ -232,11 +208,7 @@ public final class JSONConverter {
 
     /**
      * Registers every JSON conversion spec declared above onto {@code target}, using
-     * {@link AviMessageConverter#setMessageSpecificConverter}. This is the plain-Java equivalent of
-     * what the pre-modernization {@code JSONTestConfiguration} Spring {@code @Bean} method did, and
-     * is the method a non-Spring consumer (or a Spring {@code @Bean} method, per the class javadoc)
-     * calls to get a fully wired {@link AviMessageConverter} for every message type this module
-     * supports in JSON.
+     * {@link AviMessageConverter#setMessageSpecificConverter}.
      *
      * @param target the converter to register the JSON conversions on; returned for chaining
      * @return {@code target}, for convenience

@@ -26,9 +26,6 @@ public class TAFImplTest {
                     .build()).build();
     private static final PartialOrCompleteTimePeriod PARTIAL_TIME_PERIOD = PartialOrCompleteTimePeriod.createValidityTime("0103/0203");
     private static final PartialOrCompleteTimeInstant PARTIAL_ISSUE_TIME = PartialOrCompleteTimeInstant.createIssueTime("010300Z");
-    // NOTE: Immutables has no buildPartial() equivalent (FreeBuilder-only; see docs/07-modernization-plan.md),
-    // so tests below now populate every required property (aerodrome, temperatures, changeIndicator) with
-    // these arbitrary placeholder values before calling build().
     private static final AerodromeImpl DUMMY_AERODROME = AerodromeImpl.builder().setDesignator("XXXX").build();
     private static final NumericMeasure DUMMY_TEMPERATURE = NumericMeasureImpl.of(0, "degC");
 

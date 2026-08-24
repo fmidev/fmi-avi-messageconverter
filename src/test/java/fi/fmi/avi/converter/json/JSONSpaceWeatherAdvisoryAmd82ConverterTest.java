@@ -45,7 +45,6 @@ public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
                     + "THE CURRENT EVENT HAS PEAKED AND LVL SLW RTN TO BACKGROUND LVL."
                     + " SEE WWW.SPACEWEATHERPROVIDER.WEB");
 
-    // No Spring - see docs/07-modernization-plan.md.
     private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     private static AdvisoryNumberImpl advisoryNumber(final int year, final int serialNumber) {

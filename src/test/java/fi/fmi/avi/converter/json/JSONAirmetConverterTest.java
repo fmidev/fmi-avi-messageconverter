@@ -39,8 +39,6 @@ import fi.fmi.avi.model.sigmet.immutable.AIRMETImpl;
 
 public class JSONAirmetConverterTest {
 
-    // No Spring - see docs/07-modernization-plan.md. Recreates exactly the ObjectMapper the old
-    // JSONAirmetTestConfiguration.getObjectMapper() Spring @Bean used to provide.
     private final ObjectMapper om = newObjectMapper();
     private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 

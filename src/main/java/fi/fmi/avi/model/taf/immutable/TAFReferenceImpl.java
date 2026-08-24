@@ -74,13 +74,9 @@ public abstract class TAFReferenceImpl implements TAFReference, Serializable {
     public abstract Aerodrome getAerodrome();
 
     /*
-     * The FreeBuilder-era Builder extended the generated builder directly and used its builder-side
-     * getters/mapX(...) convenience methods (mapIssueTime, mapValidityTime, getIssueTime, getValidityTime)
-     * to implement withCompleteIssueTime/withCompleteValidityTime/withAllTimesComplete etc. Immutables
-     * generates neither builder-side getters nor mapX methods (see docs/07-modernization-plan.md), so this
-     * Builder is a "detached builder": a standalone class with plain fields, its own get/set/map methods,
-     * which only calls into ImmutableTAFReferenceImpl.internalBuilder() inside build() to assemble the
-     * final value.
+     * This Builder is a "detached builder": a standalone class with plain fields, its own get/set/map
+     * methods, which only calls into ImmutableTAFReferenceImpl.internalBuilder() inside build() to
+     * assemble the final value.
      */
     public static class Builder {
 

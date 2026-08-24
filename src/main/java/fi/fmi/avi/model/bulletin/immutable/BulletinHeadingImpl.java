@@ -70,11 +70,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
     }
 
     /**
-     * Derived from {@link #getDataTypeDesignatorT2()} unless explicitly set - see
-     * {@code Builder.setDataTypeDesignatorT2(...)}'s FreeBuilder-era side effect, replaced by this
-     * {@code @Value.Default} (Immutables' generated setters are final and this class's setter for
-     * this property can no longer derive it as a side effect of setting T2 - see
-     * docs/07-modernization-plan.md).
+     * Derived from {@link #getDataTypeDesignatorT2()} unless explicitly set.
      */
     @Override
     @Value.Default
@@ -141,15 +137,6 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                     .setOriginalAugmentationIndicator(BulletinHeadingEncoder.encodeBBBIndicator(type, augmentationNumber));
         }
 
-        /*
-         * FreeBuilder-era code validated setAugmentationNumber(int)'s and setBulletinNumber(int)'s
-         * range as soon as each was set. Immutables' generated setters are final and cannot be
-         * overridden (see docs/07-modernization-plan.md), so both checks moved here, into build(),
-         * validating the finished value instead of eagerly on set(). The setDataTypeDesignatorT2(...)
-         * override that used to derive dataTypeDesignatorT1ForTAC as a side effect is gone entirely -
-         * that derivation is now a @Value.Default on getDataTypeDesignatorT1ForTAC() above, which is
-         * the Immutables-native way to express "derived from another property unless explicitly set".
-         */
         @Override
         public ImmutableBulletinHeadingImpl build() {
             final ImmutableBulletinHeadingImpl result = super.build();

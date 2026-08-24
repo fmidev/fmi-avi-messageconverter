@@ -370,11 +370,11 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
     }
 
     /**
-     * Test-only fixture value type, migrated off {@code @FreeBuilder} onto Immutables. {@link Builder} is a
-     * "detached builder" (see docs/07-modernization-plan.md) that simply extends the shared, hand-written
-     * {@link AbstractTAFForecastBuilderImpl}, which already implements every {@link TAFForecast.Builder} method
-     * this fixture needs (all its properties are the ones {@code AbstractTAFForecastBuilderImpl} already covers) -
-     * only {@code build()} needs implementing here.
+     * Test-only fixture value type. {@link Builder} is a "detached builder" that simply extends the
+     * shared, hand-written {@link AbstractTAFForecastBuilderImpl}, which already implements every
+     * {@link TAFForecast.Builder} method this fixture needs (all its properties are the ones
+     * {@code AbstractTAFForecastBuilderImpl} already covers) - only {@code build()} needs implementing
+     * here.
      */
     @Value.Immutable
     @Value.Style(init = "set*", get = { "is*", "get*" }, typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")

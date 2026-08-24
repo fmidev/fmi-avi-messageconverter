@@ -20,7 +20,6 @@ import fi.fmi.avi.model.taf.immutable.TAFImpl;
 
 public class ConversionChainTest {
 
-    // No Spring - see docs/07-modernization-plan.md.
     private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     @Test

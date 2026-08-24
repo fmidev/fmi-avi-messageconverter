@@ -52,11 +52,11 @@ public final class SWXAmd79Tests {
     }
 
     /**
-     * Test-only fixture value type, migrated off {@code @FreeBuilder} onto Immutables. {@link Builder} is a
-     * hand-written "detached builder" (see docs/07-modernization-plan.md) because {@link Builder#build()} needs to
-     * perform cross-field validation and defaulting that requires reading back already-set builder state
-     * (region count, nil phenomenon reasons, location indicators) — reads which a plain Immutables-generated
-     * builder (extending {@code ImmutableAnalysisBuilderSpec.Builder}) does not expose.
+     * Test-only fixture value type. {@link Builder} is a hand-written "detached builder" because
+     * {@link Builder#build()} needs to perform cross-field validation and defaulting that requires
+     * reading back already-set builder state (region count, nil phenomenon reasons, location
+     * indicators) — reads which a plain Immutables-generated builder (extending
+     * {@code ImmutableAnalysisBuilderSpec.Builder}) does not expose.
      */
     @Value.Immutable
     @Value.Style(init = "set*", typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")

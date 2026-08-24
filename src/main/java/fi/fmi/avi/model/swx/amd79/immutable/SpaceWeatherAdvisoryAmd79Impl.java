@@ -604,8 +604,6 @@ public abstract class SpaceWeatherAdvisoryAmd79Impl implements SpaceWeatherAdvis
             }
             return mapNextAdvisory(nextAdvisory -> {
                 final NextAdvisoryImpl.Builder builder = NextAdvisoryImpl.Builder.copyOf(nextAdvisory);
-                // NOTE: rewritten from builder.mapTime(...) (FreeBuilder-only convenience, see
-                // docs/07-modernization-plan.md): read the time from nextAdvisory itself instead of the builder.
                 nextAdvisory.getTime()
                         .map(time -> time.toBuilder().completePartial(partial -> partial.toZonedDateTimeAfter(issueTime)).build())
                         .ifPresent(builder::setTime);

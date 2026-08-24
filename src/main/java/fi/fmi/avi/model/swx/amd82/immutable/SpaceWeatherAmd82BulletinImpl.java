@@ -48,11 +48,6 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
         return new Builder().from(this);
     }
 
-    // NOTE: Immutables generates a final addMessages(...)/addAllMessages(...) and getMessages() cannot be
-    // used to carry an override with real logic on the setter (see docs/07-modernization-plan.md); the
-    // @JsonDeserialize/@JsonProperty hints the FreeBuilder-era addMessages(...) override carried move onto
-    // this abstract getter re-declaration instead, and the package's passAnnotations style propagates them
-    // onto the generated builder setter for Jackson's builder-based deserialization.
     @Override
     @JsonProperty("messages")
     public abstract java.util.List<SpaceWeatherAdvisoryAmd82> getMessages();
@@ -93,13 +88,6 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
             return builder;
         }
 
-        /*
-         * The FreeBuilder-era Builder overrode setHeading(...) to validate the heading's data type
-         * designators as soon as it was set. Immutables' generated setters are final and cannot be
-         * overridden (see docs/07-modernization-plan.md), so this validation moved here, into build(), and
-         * now runs against the finished value instead of eagerly on set(). The @JsonDeserialize(as=...)
-         * hint this setter override used to carry moved onto an abstract getHeading() getter re-declaration.
-         */
         @Override
         public ImmutableSpaceWeatherAmd82BulletinImpl build() {
             final ImmutableSpaceWeatherAmd82BulletinImpl result = super.build();

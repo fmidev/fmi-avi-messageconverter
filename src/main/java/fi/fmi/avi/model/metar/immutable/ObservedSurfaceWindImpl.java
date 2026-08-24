@@ -76,12 +76,6 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
             setVariableDirection(false);
         }
 
-        /*
-         * FreeBuilder-era code validated this by reading the builder's own isVariableDirection()/
-         * getMeanWindDirection() before finishing. Immutables' generated builders expose no getters
-         * at all (see docs/07-modernization-plan.md), so the same check now runs against the
-         * finished value from super.build() instead of against in-progress builder state.
-         */
         @Override
         public ImmutableObservedSurfaceWindImpl build() {
             final ImmutableObservedSurfaceWindImpl result = super.build();

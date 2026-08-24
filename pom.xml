@@ -20,15 +20,6 @@
         <tag>HEAD</tag>
     </scm>
 
-    <!--
-      Spring note (modernization, 2026-08): fmi-avi-messageconverter no longer depends on Spring at
-      all, in any scope. It previously used spring-context (for the single @Configuration class
-      fi.fmi.avi.converter.json.conf.JSONConverter) and spring-test (for five near-identical
-      @Configuration test-fixture classes under src/test). Both were replaced by plain static
-      factory methods; see docs/07-modernization-plan.md for the pattern and docs/02-core-module.md
-      for what changed. A consuming application that wants Spring-managed beans wraps these plain
-      factories with its own @Bean methods - see the example in docs/07-modernization-plan.md.
-    -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -65,15 +56,6 @@
             <version>2.0.3</version>
         </dependency>
 
-        <!--
-          org.immutables:value is the FreeBuilder replacement (FreeBuilder is unmaintained and, as
-          of this modernization pass, its implicit classpath-based annotation-processor discovery no
-          longer runs under this project's javac/toolchain - see docs/07-modernization-plan.md for the
-          full finding). The FreeBuilder-to-Immutables migration is complete: no model class uses
-          @FreeBuilder any more, so org.inferred:freebuilder has been removed entirely. "provided"
-          because the @Value.* annotations are SOURCE-retention and org.immutables:value is not
-          needed at runtime.
-        -->
         <dependency>
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
@@ -154,15 +136,6 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>5.1.1</version>
             </plugin>
-            <!--
-              Overrides the parent POM's maven-compiler-plugin:3.8.0 (source/target 1.8). That
-              version relies on implicit, classpath-based annotation-processor discovery, which does
-              not run under current javac (verified empirically on JDK 25: a build with FreeBuilder
-              or org.immutables:value only on the compile classpath silently generates no sources at
-              all - no warning, no error, just "cannot find symbol" for the generated classes).
-              Explicit annotationProcessorPaths is therefore required, not optional, going forward.
-              See docs/07-modernization-plan.md for the full writeup of this finding.
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

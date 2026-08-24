@@ -103,15 +103,6 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
         }
         */
 
-        /*
-         * The FreeBuilder-era Builder overrode setHeading(...) to validate the heading's data type
-         * designators as soon as it was set. Immutables' generated setters are final and cannot be
-         * overridden (see docs/07-modernization-plan.md), so this validation moved here, into
-         * build(), and now runs against the finished value instead of eagerly on set(). The
-         * @JsonDeserialize(as=...) hint this setter override used to carry moved onto the abstract
-         * getHeading() getter above (see the class body), which is the Immutables-compatible way to
-         * give Jackson the same concrete-type hint for builder-based deserialization.
-         */
         @Override
         public ImmutableTAFBulletinImpl build() {
             final ImmutableTAFBulletinImpl result = super.build();

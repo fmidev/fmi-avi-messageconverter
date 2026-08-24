@@ -378,9 +378,6 @@ public final class GTSDataExchangeTranscoder {
             Builder() {
             }
 
-            // NOTE: the FreeBuilder-era Builder read the builder's own getMessage()/getError() to validate
-            // mutual exclusivity before completing the build. Immutables generates no builder-side getters
-            // (see docs/07-modernization-plan.md), so this validates against the finished value instead.
             @Override
             public ImmutableGTSDataExchangeTranscoderParseResult build() {
                 final ImmutableGTSDataExchangeTranscoderParseResult result = super.build();

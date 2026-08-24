@@ -26,7 +26,6 @@ import static org.junit.Assert.*;
 
 public class JSONSigmetConverterTest {
 
-    // No Spring - see docs/07-modernization-plan.md.
     private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     public void testSIGMETParsing() throws Exception {

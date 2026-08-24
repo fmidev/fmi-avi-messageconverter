@@ -39,9 +39,6 @@ import static org.junit.Assert.assertTrue;
 
 public class JSONConverterTest {
 
-    // No Spring: the converter under test is created directly from the plain factory (see
-    // docs/07-modernization-plan.md). Previously this field was @Autowired from a Spring
-    // application context built by JSONTestConfiguration.
     private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     private static void assertSuccess(final ConversionResult<?> result) {

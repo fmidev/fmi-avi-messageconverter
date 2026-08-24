@@ -184,15 +184,6 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
             }
         }
 
-        /*
-         * NOTE: the FreeBuilder-era Builder also carried mapStatus(...)/getStatus() convenience methods
-         * reading the builder's current reportStatus/cancelMessage values via FreeBuilder's builder-side
-         * getters. Immutables generates no builder-side getters (see docs/07-modernization-plan.md), so
-         * these two methods - both already @Deprecated, and confirmed unused anywhere in src/main or
-         * src/test - were removed rather than worked around. setStatus(...) (below) needs no builder-side
-         * read and is kept.
-         */
-
         /**
          * Sets the SIGMET-specific message status.
          *

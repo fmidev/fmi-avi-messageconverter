@@ -81,12 +81,6 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
             }
         }
 
-        /*
-         * FreeBuilder-era code validated this by reading the builder's own isVariableDirection()/
-         * getMeanWindDirection() before finishing. Immutables' generated builders expose no getters
-         * at all (see docs/07-modernization-plan.md), so the same check now runs against the
-         * finished value from super.build() instead of against in-progress builder state.
-         */
         @Override
         public ImmutableSurfaceWindImpl build() {
             final ImmutableSurfaceWindImpl result = super.build();

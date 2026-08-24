@@ -68,11 +68,5 @@ public abstract class CoordinateReferenceSystemImpl implements CoordinateReferen
                     .addAllAxisLabels(value.getAxisLabels())//
                     .addAllUomLabels(value.getUomLabels());
         }
-
-        // Hand-written setAxisLabels(List<String>)/setUomLabels(List<String>) used to live here,
-        // built on FreeBuilder's mutateX(Consumer<List<T>>) API (no Immutables equivalent).
-        // Immutables' own generated setAxisLabels(Iterable<String>)/setUomLabels(Iterable<String>)
-        // already replace the whole collection, so the wrappers were redundant once migrated -
-        // see docs/07-modernization-plan.md.
     }
 }

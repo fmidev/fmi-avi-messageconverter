@@ -28,14 +28,10 @@ import fi.fmi.avi.model.Weather;
 /**
  * Shared, hand-written base for {@link METARImpl.Builder} and {@link SPECIImpl.Builder}.
  *
- * <p>{@link MeteorologicalTerminalAirReportBuilder} (~30 shared properties, ~90 abstract methods)
- * used to be satisfied automatically because FreeBuilder's generated {@code METARImpl_Builder}/
- * {@code SPECIImpl_Builder} happened to expose a matching set of builder-side getters and setters.
- * Immutables' generated builders expose no getters at all (see docs/07-modernization-plan.md), so
- * this class implements the shared interface directly against plain fields instead of extending an
- * Immutables-generated builder - the "detached builder" pattern. {@code build()} itself stays
- * abstract: each subclass assembles its own {@code ImmutableMETARImpl}/{@code ImmutableSPECIImpl}
- * from these fields.
+ * <p>{@link MeteorologicalTerminalAirReportBuilder} (~30 shared properties, ~90 abstract methods) is
+ * implemented directly here against plain fields rather than by extending a generated builder -
+ * the "detached builder" pattern. {@code build()} itself stays abstract: each subclass assembles
+ * its own {@code ImmutableMETARImpl}/{@code ImmutableSPECIImpl} from these fields.
  *
  * @param <T> the concrete value type ({@link METARImpl} or {@link SPECIImpl})
  * @param <B> the concrete builder type ({@code METARImpl.Builder} or {@code SPECIImpl.Builder})

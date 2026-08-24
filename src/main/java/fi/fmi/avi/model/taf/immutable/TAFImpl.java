@@ -46,18 +46,9 @@ import fi.fmi.avi.model.taf.TAFChangeForecast;
 import fi.fmi.avi.model.taf.TAFReference;
 
 /**
- * See {@code METARImpl}'s javadoc (in {@code fi.fmi.avi.model.metar.immutable}) for the "detached
- * builder" pattern this class (and {@code Builder}) uses instead of extending an
- * Immutables-generated builder directly - needed here not because of a shared generic builder
- * interface (TAFImpl has none), but because {@code Builder} itself reads back its own in-progress
- * state extensively (e.g. {@code onValueOrPartialBuild()}, {@code withCompleteForecastTimes(...)}),
- * which Immutables' generated builders do not support (no builder-side getters at all).
- *
- * <p>One capability intentionally not carried over: FreeBuilder's {@code buildPartial()} (building
- * an instance without all required properties set, for test fixtures) has no Immutables
- * equivalent and is test-only tooling, never used from {@code src/main} - see
- * docs/07-modernization-plan.md. Call sites in tests were rewritten to populate every required
- * property and call {@code build()} instead.
+ * {@code Builder} does not extend an Immutables-generated builder directly - it reads back its own
+ * in-progress state extensively (e.g. {@code onValueOrPartialBuild()},
+ * {@code withCompleteForecastTimes(...)}), which Immutables' generated builders do not support.
  */
 @Value.Immutable
 @Value.Style(init = "set*", get = { "is*", "get*" },
@@ -1009,11 +1000,6 @@ public abstract class TAFImpl implements TAF, Serializable {
                 final Function<PartialDateTime, ZonedDateTime> completion = partial -> toZonedDateTimeSatisfyingConditionOrNear(
                         PartialDateTime.ReferenceCondition.NEAR, false, validityStart, validityEnd).apply(partial, reference);
                 for (final TAFAirTemperatureForecast airTemp : getBaseForecast().get().getTemperatures().get()) {
-                    // NOTE: rewritten as a fresh builder().set...().build() instead of the FreeBuilder-era
-                    // copyOf(...).mutateX(...).mutateX(...).build() chain: Immutables generates no builder-side
-                    // getters and no mutateX(Consumer<T>) convenience methods (see docs/07-modernization-plan.md),
-                    // so the "read current value, transform, set" idiom is done directly against airTemp's own
-                    // (non-builder) getters instead of the builder's.
                     temperatureForecasts.add(TAFAirTemperatureForecastImpl.builder()//
                             .setMaxTemperature(NumericMeasureImpl.immutableCopyOf(airTemp.getMaxTemperature()))//
                             .setMinTemperature(NumericMeasureImpl.immutableCopyOf(airTemp.getMinTemperature()))//

@@ -34,18 +34,11 @@ import fi.fmi.avi.model.metar.TrendForecast;
 import fi.fmi.avi.model.metar.WindShear;
 
 /**
- * Migrated from FreeBuilder to Immutables using the "detached builder" pattern (see
- * docs/07-modernization-plan.md): {@code Builder} no longer extends an Immutables-generated
- * builder directly. Instead it extends {@link AbstractMeteorologicalTerminalAirReportBuilderImpl},
- * a hand-written class implementing {@code MeteorologicalTerminalAirReportBuilder<T,B>} (~30
- * shared properties) against plain fields, and only assembles an {@code ImmutableMETARImpl} - via
- * the normal Immutables builder, used here as an internal implementation detail rather than as a
- * supertype - inside {@link Builder#build()}. This sidesteps two Immutables/FreeBuilder gaps found
- * migrating this class: (1) Immutables' generated builders expose no getters, which
- * {@code MeteorologicalTerminalAirReportBuilder}'s ~27 abstract getter methods require; (2) a
- * generic-builder-self-type conflict specific to combining FreeBuilder's own generated self-type
- * casts with this externally-defined generic builder interface, confirmed present on modern javac
- * (17 and 25) - the actual reason this migration was necessary at all, not just desirable.
+ * {@code Builder} extends {@link AbstractMeteorologicalTerminalAirReportBuilderImpl}, a hand-written
+ * class implementing {@code MeteorologicalTerminalAirReportBuilder<T,B>} (~30 shared properties)
+ * against plain fields, and only assembles an {@code ImmutableMETARImpl} - via the normal Immutables
+ * builder, used here as an internal implementation detail rather than as a supertype - inside
+ * {@link Builder#build()}.
  */
 @Value.Immutable
 @Value.Style(init = "set*", get = { "is*", "get*" },

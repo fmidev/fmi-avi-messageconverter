@@ -64,11 +64,5 @@ public abstract class ElevatedPointImpl implements ElevatedPoint, Serializable {
                         .addAllCoordinates(value.getCoordinates()).setElevationUom(value.getElevationUom()).setElevationValue(value.getElevationValue());
             }
         }
-
-        // A hand-written setCoordinates(List<Double>) used to live here, replacing the whole
-        // collection via clearCoordinates().addAllCoordinates(...) (FreeBuilder-generated methods).
-        // Immutables' own generated "replace the whole collection" setter - setCoordinates(Iterable<Double>),
-        // named to match via this package's init="set*" style - already does exactly this, so the
-        // hand-written wrapper was simply redundant once migrated; see docs/07-modernization-plan.md.
     }
 }
