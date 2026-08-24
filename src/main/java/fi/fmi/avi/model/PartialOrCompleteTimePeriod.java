@@ -140,7 +140,7 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
     }
 
     /*
-     * NOTE: this Builder is a "detached builder" (see docs/07-modernization-plan.md): it does not extend
+     * NOTE: this Builder is a "detached builder" (see doc/immutables-migration.md): it does not extend
      * ImmutablePartialOrCompleteTimePeriod.Builder, but is a standalone class with plain fields. This is
      * needed because completePartial(...)/completePartialBackwards(...) need to read the builder's
      * *current* startTime/endTime mid-construction, and Immutables generates no builder-side getters at all.

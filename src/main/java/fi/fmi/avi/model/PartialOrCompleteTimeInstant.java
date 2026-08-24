@@ -152,7 +152,7 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
     }
 
     /*
-     * NOTE: this Builder is a "detached builder" (see docs/07-modernization-plan.md): it does not extend
+     * NOTE: this Builder is a "detached builder" (see doc/immutables-migration.md): it does not extend
      * ImmutablePartialOrCompleteTimeInstant.Builder, but is a standalone class with plain fields. This is
      * needed because setPartialTime(...)/setCompleteTime(...) each read AND adjust the *other* field
      * (keeping partialTime and completeTime mutually consistent as they're set), which requires

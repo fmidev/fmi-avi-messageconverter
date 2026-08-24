@@ -71,12 +71,12 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
     public abstract Optional<CloudForecast> getCloud();
 
     // NOTE: Immutables generates a final setForecastWeather(...) setter, which cannot be overridden to
-    // carry @JsonDeserialize(contentAs = ...) (see docs/07-modernization-plan.md). The hint moves onto this
+    // carry @JsonDeserialize(contentAs = ...) (see doc/immutables-migration.md). The hint moves onto this
     // abstract getter re-declaration instead; the package's passAnnotations style (see package-info.java)
     // propagates it onto the generated builder setter for Jackson's builder-based deserialization.
     // NOTE: no per-property @JsonDeserialize(contentAs=...) hint here: see SIGMETImpl.getAnalysisGeometries() for why
     // (Optional<List<X>> on a non-detached builder). Weather instead carries its own class-level
-    // @JsonDeserialize(as=...) hint (see docs/07-modernization-plan.md).
+    // @JsonDeserialize(as=...) hint (see doc/immutables-migration.md).
     @Override
     public abstract Optional<List<Weather>> getForecastWeather();
 

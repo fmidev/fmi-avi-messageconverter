@@ -44,7 +44,7 @@ public abstract class AbstractMeteorologicalTerminalAirReportBuilderImpl<T exten
     // the corresponding setter method) whenever a field of that name exists here, regardless of visibility. Fields
     // whose declared type is a plain concrete/enum/primitive type don't need this (Jackson can construct those
     // without a hint), but every field below whose type is an interface needing polymorphic resolution does; see
-    // docs/07-modernization-plan.md.
+    // doc/immutables-migration.md.
     @JsonIgnore
     protected Aerodrome aerodrome;
     protected AviationWeatherMessage.ReportStatus reportStatus;

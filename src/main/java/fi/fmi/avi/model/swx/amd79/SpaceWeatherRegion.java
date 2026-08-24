@@ -12,7 +12,7 @@ import fi.fmi.avi.model.swx.amd79.immutable.SpaceWeatherRegionImpl;
  * The class-level {@link JsonDeserialize} hint is needed because this interface can appear as the element type of a
  * {@code List} property (e.g. {@code List<SpaceWeatherRegion>}); a per-property {@code contentAs} hint placed on an
  * overridden {@code addAllX(...)} method is not reliably picked up by Jackson for builder-style deserialization of
- * such properties (see docs/07-modernization-plan.md).
+ * such properties (see doc/immutables-migration.md).
  */
 @JsonDeserialize(as = SpaceWeatherRegionImpl.class)
 public interface SpaceWeatherRegion {

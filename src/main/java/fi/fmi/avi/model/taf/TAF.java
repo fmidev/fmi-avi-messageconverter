@@ -19,7 +19,7 @@ import fi.fmi.avi.model.taf.immutable.TAFReferenceImpl;
  * <p>The class-level {@link JsonDeserialize} hint is needed because this interface can appear as the element type
  * of a {@code List} property (e.g. {@code TAFBulletin.getMessages(): List<TAF>}); a per-property {@code contentAs}
  * hint placed on an overridden {@code addAllX(...)}/{@code setX(...)} method is not reliably picked up by Jackson
- * for builder-style deserialization of such properties (see docs/07-modernization-plan.md).
+ * for builder-style deserialization of such properties (see doc/immutables-migration.md).
  */
 @JsonDeserialize(as = TAFImpl.class)
 

@@ -74,6 +74,6 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
 
         // A hand-written setExteriorRingPositions(List<Double>) used to live here; Immutables' own
         // generated setExteriorRingPositions(Iterable<Double>) already replaces the whole
-        // collection, so the wrapper was redundant once migrated - see docs/07-modernization-plan.md.
+        // collection, so the wrapper was redundant once migrated - see doc/immutables-migration.md.
     }
 }

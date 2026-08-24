@@ -329,7 +329,7 @@ public final class GTSDataExchangeTranscoder {
     // NOTE: distinct typeImmutable name to avoid colliding with GTSExchangeFileTemplate.ParseResult's
     // generated class: Immutables generates nested @Value.Immutable types as top-level classes in the
     // enclosing package by default, and both classes have a nested type named "ParseResult" (see
-    // docs/07-modernization-plan.md).
+    // doc/immutables-migration.md).
     @Value.Immutable
     @Value.Style(init = "set*", get = { "is*", "get*" }, typeImmutable = "ImmutableGTSDataExchangeTranscoderParseResult")
     public static abstract class ParseResult {

@@ -114,7 +114,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
     public abstract Airspace getAirspace();
 
     // NOTE: Immutables generates final setters for these properties, which cannot be overridden to carry
-    // @JsonDeserialize/@JsonProperty hints (see docs/07-modernization-plan.md). The hints move onto these
+    // @JsonDeserialize/@JsonProperty hints (see doc/immutables-migration.md). The hints move onto these
     // abstract getter re-declarations instead; the package's passAnnotations style (see package-info.java)
     // propagates them onto the generated builder setters for Jackson's builder-based deserialization.
     // NOTE: no per-property @JsonDeserialize(contentAs=...) hint here: for an Optional<List<X>>-shaped property on a
@@ -123,7 +123,7 @@ public abstract class SIGMETImpl implements SIGMET, Serializable {
     // relocate it), and Jackson then misapplies "contentAs" to the Optional's immediate content (List<X>) rather
     // than recursing into the list's own element type X, breaking deserialization. Instead, PhenomenonGeometryWithHeight
     // and PhenomenonGeometry carry their own class-level @JsonDeserialize(as=...) hints (see their javadoc and
-    // docs/07-modernization-plan.md), which Jackson can apply regardless of how deeply nested the property is.
+    // doc/immutables-migration.md), which Jackson can apply regardless of how deeply nested the property is.
     @Override
     public abstract Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
 

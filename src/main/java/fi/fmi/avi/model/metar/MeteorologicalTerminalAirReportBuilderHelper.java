@@ -101,7 +101,7 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
                 if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
                     final RunwayVisualRangeImpl.Builder runwayVisualBuilder = RunwayVisualRangeImpl.immutableCopyOf(range).toBuilder();
                     // Immutables' generated builders expose no getters (see
-                    // docs/07-modernization-plan.md), so read the runway direction from "range"
+                    // doc/immutables-migration.md), so read the runway direction from "range"
                     // (the value runwayVisualBuilder was just populated from) instead of from the
                     // builder itself.
                     runwayVisualBuilder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(range.getRunwayDirection()).toBuilder()//

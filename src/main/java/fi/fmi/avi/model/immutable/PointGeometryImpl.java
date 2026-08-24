@@ -64,6 +64,6 @@ public abstract class PointGeometryImpl implements PointGeometry, Serializable {
 
         // A hand-written setCoordinates(List<Double>) used to live here; Immutables' own generated
         // setCoordinates(Iterable<Double>) already replaces the whole collection, so the wrapper
-        // was redundant once migrated - see docs/07-modernization-plan.md.
+        // was redundant once migrated - see doc/immutables-migration.md.
     }
 }

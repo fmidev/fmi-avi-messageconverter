@@ -60,7 +60,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
 
     // NOTE: no per-property @JsonDeserialize(contentAs=...) hint here: see SIGMETImpl.getAnalysisGeometries() for why
     // (Optional<List<X>> on a non-detached builder). ObservedCloudLayer instead carries its own class-level
-    // @JsonDeserialize(as=...) hint (see docs/07-modernization-plan.md).
+    // @JsonDeserialize(as=...) hint (see doc/immutables-migration.md).
     @Override
     public abstract Optional<List<ObservedCloudLayer>> getLayers();
 

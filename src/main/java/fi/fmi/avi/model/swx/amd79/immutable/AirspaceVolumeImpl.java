@@ -66,7 +66,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
     }
 
     // NOTE: rewritten to return a freshly-built List instead of mutating a builder-owned list in place:
-    // Immutables generates no mutateX(Consumer<List<T>>) convenience method (see docs/07-modernization-plan.md).
+    // Immutables generates no mutateX(Consumer<List<T>>) convenience method (see doc/immutables-migration.md).
     private static List<Double> buildPolygonRingPositions(final double minLat, final double minLon,
                                                 final double maxLat, final double maxLon) {
         final List<Double> coordinates = new ArrayList<>();

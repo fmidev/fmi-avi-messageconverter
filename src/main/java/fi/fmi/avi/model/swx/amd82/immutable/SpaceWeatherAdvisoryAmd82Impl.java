@@ -25,7 +25,7 @@ import java.util.function.UnaryOperator;
 import static java.util.Objects.requireNonNull;
 
 /*
- * NOTE: this Builder is a "detached builder" (see docs/07-modernization-plan.md): it does not extend
+ * NOTE: this Builder is a "detached builder" (see doc/immutables-migration.md): it does not extend
  * ImmutableSpaceWeatherAdvisoryAmd82Impl.Builder, but is a standalone class with plain fields, implementing
  * its own get/set/map/mutate methods, and only calls into ImmutableSpaceWeatherAdvisoryAmd82Impl.internalBuilder()
  * inside build() to assemble the final value. This is needed because withCompleteIssueTimeNear(...),

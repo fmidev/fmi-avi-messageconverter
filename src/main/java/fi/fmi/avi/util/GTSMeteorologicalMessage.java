@@ -361,7 +361,7 @@ public abstract class GTSMeteorologicalMessage implements Serializable {
     }
 
     /*
-     * NOTE: this Builder is a "detached builder" (see docs/07-modernization-plan.md): it does not extend
+     * NOTE: this Builder is a "detached builder" (see doc/immutables-migration.md): it does not extend
      * ImmutableGTSMeteorologicalMessage.Builder, but is a standalone class with plain fields. This is needed
      * because getTransmissionSequenceNumberAsInt() reads the builder's *current* transmissionSequenceNumber
      * mid-construction, and Immutables generates no builder-side getters at all.

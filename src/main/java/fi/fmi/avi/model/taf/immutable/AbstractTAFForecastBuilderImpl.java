@@ -34,7 +34,7 @@ public abstract class AbstractTAFForecastBuilderImpl<T extends TAFForecast, B ex
     // NOTE: these fields carry @JsonIgnore because Jackson's builder-style deserialization otherwise binds JSON
     // properties directly to same-named fields (bypassing the @JsonDeserialize/@JsonProperty hints placed only on
     // the corresponding setter overrides in TAFBaseForecastImpl/TAFChangeForecastImpl), regardless of field
-    // visibility; see docs/07-modernization-plan.md.
+    // visibility; see doc/immutables-migration.md.
     @JsonIgnore
     protected Optional<NumericMeasure> prevailingVisibility = Optional.empty();
     protected Optional<AviationCodeListUser.RelationalOperator> prevailingVisibilityOperator = Optional.empty();

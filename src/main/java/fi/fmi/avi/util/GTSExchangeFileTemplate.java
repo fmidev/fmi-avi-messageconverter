@@ -321,7 +321,7 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
      * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
     /*
-     * NOTE: this Builder is a "detached builder" (see docs/07-modernization-plan.md): it does not extend
+     * NOTE: this Builder is a "detached builder" (see doc/immutables-migration.md): it does not extend
      * ImmutableGTSExchangeFileTemplate.Builder, but is a standalone class with plain fields. This is needed
      * because getTransmissionSequenceNumberAsInt() reads the builder's *current* transmissionSequenceNumber
      * mid-construction, and Immutables generates no builder-side getters at all.
@@ -638,7 +638,7 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
     // NOTE: distinct typeImmutable name to avoid colliding with GTSDataExchangeTranscoder.ParseResult's
     // generated class: Immutables generates nested @Value.Immutable types as top-level classes in the
     // enclosing package by default, and both classes have a nested type named "ParseResult" (see
-    // docs/07-modernization-plan.md).
+    // doc/immutables-migration.md).
     @Deprecated
     @Value.Immutable
     @Value.Style(init = "set*", typeImmutable = "ImmutableGTSExchangeFileTemplateParseResult")
