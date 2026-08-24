@@ -7,15 +7,9 @@ import java.io.InputStream;
 import java.util.Objects;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
 import fi.fmi.avi.converter.json.JSONConverterTest;
-import fi.fmi.avi.converter.json.JSONTestConfiguration;
 import fi.fmi.avi.converter.json.conf.JSONConverter;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.immutable.CoordinateReferenceSystemImpl;
@@ -24,12 +18,10 @@ import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JSONTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class ConversionChainTest {
 
-    @Autowired
-    private AviMessageConverter converter;
+    // No Spring - see docs/07-modernization-plan.md.
+    private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     @Test
     public void testSimpleChain() throws Exception {

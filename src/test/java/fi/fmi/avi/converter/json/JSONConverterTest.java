@@ -26,11 +26,6 @@ import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
 import junit.framework.TestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -42,12 +37,12 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JSONTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class JSONConverterTest {
 
-    @Autowired
-    private AviMessageConverter converter;
+    // No Spring: the converter under test is created directly from the plain factory (see
+    // docs/07-modernization-plan.md). Previously this field was @Autowired from a Spring
+    // application context built by JSONTestConfiguration.
+    private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     private static void assertSuccess(final ConversionResult<?> result) {
         assertEquals("Expected SUCCESS, but had issues: " + result.getConversionIssues(), //

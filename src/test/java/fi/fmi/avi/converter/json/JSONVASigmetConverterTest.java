@@ -17,11 +17,6 @@ import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.VAInfoImpl;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -32,12 +27,10 @@ import java.util.Objects;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JSONVASigmetTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class JSONVASigmetConverterTest {
 
-    @Autowired
-    private AviMessageConverter converter;
+    // No Spring - see docs/07-modernization-plan.md.
+    private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     @Test
     public void testSIGMETParsing() throws Exception {

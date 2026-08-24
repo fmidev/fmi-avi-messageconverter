@@ -16,11 +16,6 @@ import fi.fmi.avi.model.swx.VerticalLimitsImpl;
 import fi.fmi.avi.model.swx.amd82.*;
 import fi.fmi.avi.model.swx.amd82.immutable.*;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -34,8 +29,6 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JSONSpaceWeatherAdvisoryTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
 
     private static final IssuingCenterImpl ISSUING_CENTER = IssuingCenterImpl.builder()
@@ -52,8 +45,8 @@ public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
                     + "THE CURRENT EVENT HAS PEAKED AND LVL SLW RTN TO BACKGROUND LVL."
                     + " SEE WWW.SPACEWEATHERPROVIDER.WEB");
 
-    @Autowired
-    private AviMessageConverter converter;
+    // No Spring - see docs/07-modernization-plan.md.
+    private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     private static AdvisoryNumberImpl advisoryNumber(final int year, final int serialNumber) {
         return AdvisoryNumberImpl.builder().setYear(year).setSerialNumber(serialNumber).build();
