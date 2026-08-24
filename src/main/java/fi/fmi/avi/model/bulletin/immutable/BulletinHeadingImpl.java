@@ -9,13 +9,13 @@ import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.util.BulletinHeadingDecoder;
 import fi.fmi.avi.util.BulletinHeadingEncoder;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = BulletinHeadingImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"geographicalDesignator", "locationIndicator", "bulletinNumber", "bulletinAugmentationNumber", "issueTime", "type",
@@ -32,7 +32,7 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         if (heading instanceof BulletinHeadingImpl) {
             return (BulletinHeadingImpl) heading;
         } else {
-            return Builder.from(heading).build();
+            return Builder.copyOf(heading).build();
         }
     }
 
@@ -65,16 +65,33 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
         }
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends BulletinHeadingImpl_Builder {
+    /**
+     * Derived from {@link #getDataTypeDesignatorT2()} unless explicitly set - see
+     * {@code Builder.setDataTypeDesignatorT2(...)}'s FreeBuilder-era side effect, replaced by this
+     * {@code @Value.Default} (Immutables' generated setters are final and this class's setter for
+     * this property can no longer derive it as a side effect of setting T2 - see
+     * docs/07-modernization-plan.md).
+     */
+    @Override
+    @Value.Default
+    public DataTypeDesignatorT1 getDataTypeDesignatorT1ForTAC() {
+        return getDataTypeDesignatorT2().getT1()
+                .orElseThrow(() -> new IllegalStateException(
+                        "dataTypeDesignatorT1ForTAC was not set explicitly and cannot be derived from dataTypeDesignatorT2 " + getDataTypeDesignatorT2()));
+    }
+
+    public static class Builder extends ImmutableBulletinHeadingImpl.Builder {
 
         Builder() {
             setType(Type.NORMAL);
             setOriginalAugmentationIndicator("");
         }
 
-        public static Builder from(final BulletinHeading value) {
+        public static Builder copyOf(final BulletinHeading value) {
             if (value instanceof BulletinHeadingImpl) {
                 return ((BulletinHeadingImpl) value).toBuilder();
             } else {
@@ -91,17 +108,9 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
             }
         }
 
-        public static Builder from(final String abbreviatedHeading) {
-            return BulletinHeadingImpl.Builder.from(BulletinHeadingDecoder.decode(abbreviatedHeading,
+        public static Builder copyOf(final String abbreviatedHeading) {
+            return BulletinHeadingImpl.Builder.copyOf(BulletinHeadingDecoder.decode(abbreviatedHeading,
                     new ConversionHints(ConversionHints.KEY_BULLETIN_HEADING_SPACING, ConversionHints.VALUE_BULLETIN_HEADING_SPACING_NONE)));
-        }
-
-        @Override
-        public Builder setAugmentationNumber(final int bulletinAugmentationNumber) {
-            if (bulletinAugmentationNumber < 1 || bulletinAugmentationNumber > 26) {
-                throw new IllegalArgumentException("Value must be between 1 and 26, value was " + bulletinAugmentationNumber);
-            }
-            return super.setAugmentationNumber(bulletinAugmentationNumber);
         }
 
         /**
@@ -132,25 +141,27 @@ public abstract class BulletinHeadingImpl implements BulletinHeading, Serializab
                     .setOriginalAugmentationIndicator(BulletinHeadingEncoder.encodeBBBIndicator(type, augmentationNumber));
         }
 
+        /*
+         * FreeBuilder-era code validated setAugmentationNumber(int)'s and setBulletinNumber(int)'s
+         * range as soon as each was set. Immutables' generated setters are final and cannot be
+         * overridden (see docs/07-modernization-plan.md), so both checks moved here, into build(),
+         * validating the finished value instead of eagerly on set(). The setDataTypeDesignatorT2(...)
+         * override that used to derive dataTypeDesignatorT1ForTAC as a side effect is gone entirely -
+         * that derivation is now a @Value.Default on getDataTypeDesignatorT1ForTAC() above, which is
+         * the Immutables-native way to express "derived from another property unless explicitly set".
+         */
         @Override
-        public Builder setBulletinNumber(final int bulletinNumber) {
+        public ImmutableBulletinHeadingImpl build() {
+            final ImmutableBulletinHeadingImpl result = super.build();
+            final int augmentationNumber = result.getAugmentationNumber().orElse(1);
+            if (augmentationNumber < 1 || augmentationNumber > 26) {
+                throw new IllegalArgumentException("Value must be between 1 and 26, value was " + augmentationNumber);
+            }
+            final int bulletinNumber = result.getBulletinNumber();
             if (bulletinNumber < 0 || bulletinNumber > 99) {
                 throw new IllegalArgumentException("Bulletin number must be between 0 and 99");
             }
-            return super.setBulletinNumber(bulletinNumber);
+            return result;
         }
-
-        @Override
-        public Builder setDataTypeDesignatorT2(final fi.fmi.avi.model.bulletin.DataTypeDesignatorT2 t2) {
-            final Optional<DataTypeDesignatorT1> t1 = t2.getT1();
-            t1.ifPresent(this::setDataTypeDesignatorT1ForTAC);
-            return super.setDataTypeDesignatorT2(t2);
-        }
-
-        @Override
-        public Builder setDataTypeDesignatorT1ForTAC(final DataTypeDesignatorT1 t1) {
-            return super.setDataTypeDesignatorT1ForTAC(t1);
-        }
-
     }
 }

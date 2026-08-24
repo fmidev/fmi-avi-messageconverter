@@ -12,6 +12,7 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -606,8 +607,8 @@ public class GTSDataExchangeTranscoderTest {
     public void parseResult_build_fails_when_both_message_and_error_are_empty() {
         final ParseResult.Builder builder = ParseResult.builder()//
                 .setStartIndex(0)//
-                .clearMessage()//
-                .clearError();
+                .setMessage(Optional.empty())//
+                .setError(Optional.empty());
         assertThatIllegalStateException()//
                 .isThrownBy(() -> builder.build())//
                 .withMessageContaining("Message")//

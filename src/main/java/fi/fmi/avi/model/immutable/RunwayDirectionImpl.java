@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -17,7 +17,7 @@ import fi.fmi.avi.model.RunwayDirection;
 /**
  * Created by rinne on 17/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = RunwayDirectionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"designator", "elevationTDZ", "trueBearing", "associatedAirportHeliport"})
@@ -34,7 +34,7 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
         if (runwayDirection instanceof RunwayDirectionImpl) {
             return (RunwayDirectionImpl) runwayDirection;
         } else {
-            return Builder.from(runwayDirection).build();
+            return Builder.copyOf(runwayDirection).build();
         }
     }
 
@@ -44,14 +44,20 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
         return runwayDirection.map(RunwayDirectionImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends RunwayDirectionImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = AerodromeImpl.class)
+    public abstract Optional<Aerodrome> getAssociatedAirportHeliport();
+
+    public static class Builder extends ImmutableRunwayDirectionImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final RunwayDirection value) {
+        public static Builder copyOf(final RunwayDirection value) {
             if (value instanceof RunwayDirectionImpl) {
                 return ((RunwayDirectionImpl) value).toBuilder();
             } else {
@@ -63,10 +69,5 @@ public abstract class RunwayDirectionImpl implements RunwayDirection, Serializab
             }
         }
 
-        @Override
-        @JsonDeserialize(as = AerodromeImpl.class)
-        public Builder setAssociatedAirportHeliport(final Aerodrome associatedAirportHeliport) {
-            return super.setAssociatedAirportHeliport(associatedAirportHeliport);
-        }
     }
 }

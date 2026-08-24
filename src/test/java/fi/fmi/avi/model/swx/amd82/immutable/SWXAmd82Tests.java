@@ -1,23 +1,28 @@
 package fi.fmi.avi.model.swx.amd82.immutable;
 
+import static java.util.Objects.requireNonNull;
+
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import javax.annotation.Nullable;
+
+import org.immutables.value.Value;
+
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.swx.VerticalLimitsImpl;
 import fi.fmi.avi.model.swx.amd82.Intensity;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion;
-import org.inferred.freebuilder.FreeBuilder;
-
-import javax.annotation.Nullable;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.stream.BaseStream;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public final class SWXAmd82Tests {
     public static final int INTENSITY_AND_REGION_COUNT_DEFAULT = 1;
@@ -44,8 +49,15 @@ public final class SWXAmd82Tests {
         return PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinuteZone(completeTime, false), completeTime);
     }
 
-    @FreeBuilder
-    public static abstract class AnalysisBuilderSpec {
+    /**
+     * Test-only fixture value type, migrated off {@code @FreeBuilder} onto Immutables. {@link Builder} is a
+     * hand-written "detached builder" (see docs/07-modernization-plan.md) because {@link Builder#build()} needs to
+     * perform cross-field validation and defaulting that requires reading back already-set builder state, which a
+     * plain Immutables-generated builder (extending {@code ImmutableAnalysisBuilderSpec.Builder}) does not expose.
+     */
+    @Value.Immutable
+    @Value.Style(init = "set*", typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")
+    public abstract static class AnalysisBuilderSpec {
         @Nullable
         private static <E extends Enum<E>> E getNullableElement(final int round, final List<E> elements) {
             return getNullableElement(0, 1, round, elements);
@@ -83,8 +95,9 @@ public final class SWXAmd82Tests {
                         return SpaceWeatherAdvisoryAnalysisImpl.builder()
                                 .setTime(dayHourMinuteZoneAndCompleteTime(analysisTime))
                                 .setAnalysisType(analysisType)
-                                .setNullableNilReason(getNullableElement(analysisIndex, getNilReasons()))
-                                .addAllIntensityAndRegions(generateIntensityAndRegions(analysisIndex, analysisType, analysisTime.toInstant()))
+                                .setNilReason(Optional.ofNullable(getNullableElement(analysisIndex, getNilReasons())))
+                                .addAllIntensityAndRegions(generateIntensityAndRegions(analysisIndex, analysisType, analysisTime.toInstant())
+                                        .collect(Collectors.toList()))
                                 .build();
                     });
         }
@@ -96,7 +109,8 @@ public final class SWXAmd82Tests {
             return IntStream.range(0, getIntensityAndRegionCount())
                     .mapToObj(intensityAndRegionIndex -> SpaceWeatherIntensityAndRegionImpl.builder()
                             .setIntensity(getNullableElement(intensityAndRegionIndex, intensities))
-                            .addAllRegions(generateRegions(analysisIndex, intensityAndRegionIndex, totalRegionsPerAnalysis, analysisTime))
+                            .addAllRegions(generateRegions(analysisIndex, intensityAndRegionIndex, totalRegionsPerAnalysis, analysisTime)
+                                    .collect(Collectors.toList()))
                             .build()
                     );
         }
@@ -112,15 +126,129 @@ public final class SWXAmd82Tests {
                     );
         }
 
-        public static class Builder extends SWXAmd82Tests_AnalysisBuilderSpec_Builder {
+        public static class Builder {
+            private ZonedDateTime baseTime;
+            private final List<SpaceWeatherAdvisoryAnalysis.NilReason> nilReasons = new ArrayList<>();
+            private final List<Intensity> observationIntensities = new ArrayList<>();
+            private final List<Intensity> forecastIntensities = new ArrayList<>();
+            private final List<SpaceWeatherRegion.SpaceWeatherLocation> locationIndicators = new ArrayList<>();
+            private int intensityAndRegionCount = INTENSITY_AND_REGION_COUNT_DEFAULT;
+            private int regionsPerIntensityCount = REGIONS_PER_INTENSITY_COUNT_DEFAULT;
             private boolean regionsPerIntensityFromLocationIndicators;
 
-            Builder() {
-                setIntensityAndRegionCount(INTENSITY_AND_REGION_COUNT_DEFAULT);
-                setRegionsPerIntensityCount(REGIONS_PER_INTENSITY_COUNT_DEFAULT);
+            public Builder setBaseTime(final ZonedDateTime baseTime) {
+                this.baseTime = requireNonNull(baseTime, "baseTime");
+                return this;
             }
 
-            @Override
+            public List<SpaceWeatherAdvisoryAnalysis.NilReason> getNilReasons() {
+                return nilReasons;
+            }
+
+            public Builder addNilReasons(final SpaceWeatherAdvisoryAnalysis.NilReason... elements) {
+                Collections.addAll(nilReasons, elements);
+                return this;
+            }
+
+            public Builder addAllNilReasons(final Iterable<? extends SpaceWeatherAdvisoryAnalysis.NilReason> elements) {
+                for (final SpaceWeatherAdvisoryAnalysis.NilReason element : elements) {
+                    nilReasons.add(element);
+                }
+                return this;
+            }
+
+            public List<Intensity> getObservationIntensities() {
+                return observationIntensities;
+            }
+
+            public Builder addObservationIntensities(final Intensity element) {
+                observationIntensities.add(element);
+                return this;
+            }
+
+            public Builder addObservationIntensities(final Intensity... elements) {
+                Collections.addAll(observationIntensities, elements);
+                return this;
+            }
+
+            public Builder addAllObservationIntensities(final Iterable<? extends Intensity> elements) {
+                for (final Intensity element : elements) {
+                    observationIntensities.add(element);
+                }
+                return this;
+            }
+
+            public Builder clearObservationIntensities() {
+                observationIntensities.clear();
+                return this;
+            }
+
+            public List<Intensity> getForecastIntensities() {
+                return forecastIntensities;
+            }
+
+            public Builder addForecastIntensities(final Intensity element) {
+                forecastIntensities.add(element);
+                return this;
+            }
+
+            public Builder addForecastIntensities(final Intensity... elements) {
+                Collections.addAll(forecastIntensities, elements);
+                return this;
+            }
+
+            public Builder addAllForecastIntensities(final Iterable<? extends Intensity> elements) {
+                for (final Intensity element : elements) {
+                    forecastIntensities.add(element);
+                }
+                return this;
+            }
+
+            public Builder clearForecastIntensities() {
+                forecastIntensities.clear();
+                return this;
+            }
+
+            public List<SpaceWeatherRegion.SpaceWeatherLocation> getLocationIndicators() {
+                return locationIndicators;
+            }
+
+            public Builder addLocationIndicators(final SpaceWeatherRegion.SpaceWeatherLocation... elements) {
+                Collections.addAll(locationIndicators, elements);
+                return this;
+            }
+
+            public Builder addAllLocationIndicators(final Iterable<? extends SpaceWeatherRegion.SpaceWeatherLocation> elements) {
+                for (final SpaceWeatherRegion.SpaceWeatherLocation element : elements) {
+                    locationIndicators.add(element);
+                }
+                return this;
+            }
+
+            public int getIntensityAndRegionCount() {
+                return intensityAndRegionCount;
+            }
+
+            public Builder setIntensityAndRegionCount(final int intensityAndRegionCount) {
+                this.intensityAndRegionCount = intensityAndRegionCount;
+                return this;
+            }
+
+            public int getRegionsPerIntensityCount() {
+                return regionsPerIntensityFromLocationIndicators ? locationIndicators.size() : regionsPerIntensityCount;
+            }
+
+            public Builder setRegionsPerIntensityCount(final int regionsPerIntensityCount) {
+                this.regionsPerIntensityFromLocationIndicators = false;
+                this.regionsPerIntensityCount = regionsPerIntensityCount;
+                return this;
+            }
+
+            public Builder setRegionsPerIntensityFromLocationIndicators() {
+                this.regionsPerIntensityFromLocationIndicators = true;
+                return this;
+            }
+
             public AnalysisBuilderSpec build() {
                 if (getIntensityAndRegionCount() > 0 && !getNilReasons().isEmpty()) {
                     throw new IllegalStateException("Nil reasons are not supported when intensityAndRegionCount > 0");
@@ -134,10 +262,15 @@ public final class SWXAmd82Tests {
                 if (getLocationIndicators().isEmpty()) {
                     addAllLocationIndicators(LATITUDE_BANDS);
                 }
-                if (regionsPerIntensityFromLocationIndicators) {
-                    super.setRegionsPerIntensityCount(getLocationIndicators().size());
-                }
-                return super.build();
+                return ImmutableAnalysisBuilderSpec.internalBuilder()//
+                        .setBaseTime(requireNonNull(baseTime, "baseTime"))//
+                        .addAllNilReasons(nilReasons)//
+                        .addAllObservationIntensities(observationIntensities)//
+                        .addAllForecastIntensities(forecastIntensities)//
+                        .addAllLocationIndicators(locationIndicators)//
+                        .setIntensityAndRegionCount(getIntensityAndRegionCount())//
+                        .setRegionsPerIntensityCount(getRegionsPerIntensityCount())//
+                        .build();
             }
 
             public Stream<SpaceWeatherAdvisoryAnalysisImpl> generateAnalyses() {
@@ -152,44 +285,6 @@ public final class SWXAmd82Tests {
             public Builder addIntensities(final Intensity... elements) {
                 return addObservationIntensities(elements)
                         .addForecastIntensities(elements);
-            }
-
-            public Builder addAllIntensities(final Spliterator<? extends Intensity> elements) {
-                return addAllObservationIntensities(elements)
-                        .addAllForecastIntensities(elements);
-            }
-
-            public Builder addAllIntensities(final BaseStream<? extends Intensity, ?> elements) {
-                return addAllObservationIntensities(elements)
-                        .addAllForecastIntensities(elements);
-            }
-
-            public Builder addAllIntensities(final Iterable<? extends Intensity> elements) {
-                return addAllObservationIntensities(elements)
-                        .addAllForecastIntensities(elements);
-            }
-
-            public Builder clearIntensities() {
-                return clearObservationIntensities()
-                        .clearForecastIntensities();
-            }
-
-            public Builder setRegionsPerIntensityFromLocationIndicators() {
-                regionsPerIntensityFromLocationIndicators = true;
-                return this;
-            }
-
-            @Override
-            public int getRegionsPerIntensityCount() {
-                return regionsPerIntensityFromLocationIndicators
-                        ? getLocationIndicators().size()
-                        : super.getRegionsPerIntensityCount();
-            }
-
-            @Override
-            public Builder setRegionsPerIntensityCount(final int regionsPerIntensityCount) {
-                regionsPerIntensityFromLocationIndicators = false;
-                return super.setRegionsPerIntensityCount(regionsPerIntensityCount);
             }
         }
     }

@@ -15,7 +15,7 @@ import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.amd79.AirspaceVolume;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
 import fi.fmi.avi.util.SubSolarPointUtils;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -26,7 +26,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = AirspaceVolumeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"horizontalProjection", "upperLimit", "upperLimitReference", "lowerLimit", "lowerLimitReference", "maximumLimit", "maximumLimitReference",
@@ -44,7 +44,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         if (airspaceVolume instanceof AirspaceVolumeImpl) {
             return (AirspaceVolumeImpl) airspaceVolume;
         } else {
-            return Builder.from(airspaceVolume).build();
+            return Builder.copyOf(airspaceVolume).build();
         }
     }
 
@@ -60,13 +60,16 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         final double normalizedMaxLongitude = Math.abs(maxLongitude) == 180d ? 180d : maxLongitude;
         return PolygonGeometryImpl.builder()
                 .setCrs(CoordinateReferenceSystemImpl.wgs84())
-                .mutateExteriorRingPositions(coordinates ->
-                        addPolygonRingPositions(coordinates, minLatitude, normalizedMinLongitude, maxLatitude, normalizedMaxLongitude))
+                .setExteriorRingPositions(
+                        buildPolygonRingPositions(minLatitude, normalizedMinLongitude, maxLatitude, normalizedMaxLongitude))
                 .build();
     }
 
-    private static void addPolygonRingPositions(final List<Double> coordinates, final double minLat, final double minLon,
+    // NOTE: rewritten to return a freshly-built List instead of mutating a builder-owned list in place:
+    // Immutables generates no mutateX(Consumer<List<T>>) convenience method (see docs/07-modernization-plan.md).
+    private static List<Double> buildPolygonRingPositions(final double minLat, final double minLon,
                                                 final double maxLat, final double maxLon) {
+        final List<Double> coordinates = new ArrayList<>();
         // Upper left corner:
         coordinates.add(minLat);
         coordinates.add(minLon);
@@ -86,6 +89,7 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         // Upper left corner (again, to close the ring):
         coordinates.add(minLat);
         coordinates.add(minLon);
+        return coordinates;
     }
 
     /**
@@ -181,9 +185,31 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
         throw new IllegalArgumentException("Unable to create AirspaceVolume for location indicator: " + locationIndicator);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends AirspaceVolumeImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getUpperLimit();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getLowerLimit();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getMaximumLimit();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getMinimumLimit();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getWidth();
+
+    public static class Builder extends ImmutableAirspaceVolumeImpl.Builder {
 
         Builder() {
         }
@@ -233,14 +259,14 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
                     }
                 }
 
-                return PolygonGeometryImpl.Builder.from(polygon)
+                return PolygonGeometryImpl.Builder.copyOf(polygon)
                         .setExteriorRingPositions(roundedPositions)
                         .build();
             }
             return geometry;
         }
 
-        public static Builder from(final AirspaceVolume value) {
+        public static Builder copyOf(final AirspaceVolume value) {
             if (value instanceof AirspaceVolumeImpl) {
                 return ((AirspaceVolumeImpl) value).toBuilder();
             } else {
@@ -269,36 +295,6 @@ public abstract class AirspaceVolumeImpl implements AirspaceVolume, Serializable
                     .setMinimumLimit(value.getMinimumLimit())
                     .setMinimumLimitReference(value.getMinimumLimitReference())
                     .setWidth(value.getWidth());
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setUpperLimit(final NumericMeasure limit) {
-            return super.setUpperLimit(limit);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setLowerLimit(final NumericMeasure limit) {
-            return super.setLowerLimit(limit);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMaximumLimit(final NumericMeasure limit) {
-            return super.setMaximumLimit(limit);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMinimumLimit(final NumericMeasure limit) {
-            return super.setMinimumLimit(limit);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setWidth(final NumericMeasure width) {
-            return super.setWidth(width);
         }
 
         public Builder withVerticalLimits(final VerticalLimits verticalLimits) {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -14,7 +14,7 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.sigmet.AirmetWind;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = AirmetWindImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "speed", "direction" })
@@ -26,7 +26,7 @@ public abstract class AirmetWindImpl implements AirmetWind, Serializable {
         if (airmetWind instanceof AirmetWindImpl) {
             return (AirmetWindImpl) airmetWind;
         } else {
-            return Builder.from(airmetWind).build();
+            return Builder.copyOf(airmetWind).build();
         }
     }
 
@@ -40,11 +40,21 @@ public abstract class AirmetWindImpl implements AirmetWind, Serializable {
     }
     */
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends AirmetWindImpl_Builder {
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getSpeed();
 
-        public static Builder from(final AirmetWind value) {
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getDirection();
+
+    public static class Builder extends ImmutableAirmetWindImpl.Builder {
+
+        public static Builder copyOf(final AirmetWind value) {
             if (value instanceof AirmetWindImpl) {
                 return ((AirmetWindImpl) value).toBuilder();
             } else {
@@ -53,17 +63,7 @@ public abstract class AirmetWindImpl implements AirmetWind, Serializable {
             }
         }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setSpeed(final NumericMeasure speed) {
-            return super.setSpeed(NumericMeasureImpl.immutableCopyOf(speed));
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setDirection(final NumericMeasure direction) {
-            return super.setDirection(NumericMeasureImpl.immutableCopyOf(direction));
-        }
 
     }
 }

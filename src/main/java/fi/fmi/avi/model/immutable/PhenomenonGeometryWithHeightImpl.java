@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -14,7 +14,7 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.PhenomenonGeometryWithHeight;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = PhenomenonGeometryWithHeightImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"time", "lowerLimit", "upperLimit", "analysisType", "intensityChange",
@@ -32,7 +32,7 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
         if (phenomenonGeometry instanceof PhenomenonGeometryWithHeightImpl) {
             return (PhenomenonGeometryWithHeightImpl) phenomenonGeometry;
         } else {
-            return Builder.from(phenomenonGeometry).build();
+            return Builder.copyOf(phenomenonGeometry).build();
         }
     }
 
@@ -42,11 +42,33 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
         return phenomenonGeometry.map(PhenomenonGeometryWithHeightImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends PhenomenonGeometryWithHeightImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getUpperLimit();
 
-        public static Builder from(final PhenomenonGeometryWithHeight value) {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getLowerLimit();
+
+    @Override
+    @JsonDeserialize(contentAs = TacOrGeoGeometryImpl.class)
+    public abstract Optional<TacOrGeoGeometry> getGeometry();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getMovingSpeed();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getMovingDirection();
+
+    public static class Builder extends ImmutablePhenomenonGeometryWithHeightImpl.Builder {
+
+        public static Builder copyOf(final PhenomenonGeometryWithHeight value) {
             if (value instanceof PhenomenonGeometryWithHeightImpl) {
                 return ((PhenomenonGeometryWithHeightImpl) value).toBuilder();
             } else {
@@ -65,35 +87,9 @@ public abstract class PhenomenonGeometryWithHeightImpl implements PhenomenonGeom
             }
         }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setUpperLimit(final NumericMeasure upperLimit) {
-            return super.setUpperLimit(upperLimit);
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setLowerLimit(final NumericMeasure lowerLimit) {
-            return super.setLowerLimit(lowerLimit);
-        }
 
-        @Override
-        @JsonDeserialize(as = TacOrGeoGeometryImpl.class)
-        public Builder setGeometry(final TacOrGeoGeometry geom) {
-            return super.setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(geom));
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingSpeed(final NumericMeasure speed) {
-            return super.setMovingSpeed(NumericMeasureImpl.immutableCopyOf(speed));
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMovingDirection(final NumericMeasure dir) {
-            return super.setMovingDirection(NumericMeasureImpl.immutableCopyOf(dir));
-
-        }
     }
 }

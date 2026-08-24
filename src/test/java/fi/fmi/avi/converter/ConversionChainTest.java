@@ -30,8 +30,8 @@ public class ConversionChainTest {
         final String input = IOUtils.toString(is, "UTF-8");
         is.close();
         final ConversionResult<String> result = new ConversionChainBuilder<>(this.converter, JSONConverter.JSON_STRING_TO_TAF_POJO)//
-                .withMutator(TAFImpl.Builder::from, TAF.class, TAFImpl.Builder.class)//
-                .withMutator(tafBuilder -> tafBuilder.setAerodrome(AerodromeImpl.Builder.from(tafBuilder.getAerodrome())
+                .withMutator(TAFImpl.Builder::copyOf, TAF.class, TAFImpl.Builder.class)//
+                .withMutator(tafBuilder -> tafBuilder.setAerodrome(AerodromeImpl.Builder.copyOf(tafBuilder.getAerodrome())
                         .setDesignator("EETN")
                         .setName("Tallinn Airport")
                         .setFieldElevationValue(40.0)

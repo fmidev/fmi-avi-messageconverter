@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -20,7 +20,7 @@ import fi.fmi.avi.model.NumericMeasure;
 /**
  * Created by rinne on 13/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = CloudForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "verticalVisibility", "layers", "noSignificantCloud", "verticalVisibilityMissing" })
@@ -37,7 +37,7 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
         if (cloudForecast instanceof CloudForecastImpl) {
             return (CloudForecastImpl) cloudForecast;
         } else {
-            return Builder.from(cloudForecast).build();
+            return Builder.copyOf(cloudForecast).build();
         }
     }
 
@@ -47,16 +47,28 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
         return cloudForecast.map(CloudForecastImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends CloudForecastImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getVerticalVisibility();
+
+    // NOTE: no per-property @JsonDeserialize(contentAs=...) hint here: see SIGMETImpl.getAnalysisGeometries() for why
+    // (Optional<List<X>> on a non-detached builder). CloudLayer instead carries its own class-level
+    // @JsonDeserialize(as=...) hint (see docs/07-modernization-plan.md).
+    @Override
+    public abstract Optional<List<CloudLayer>> getLayers();
+
+    public static class Builder extends ImmutableCloudForecastImpl.Builder {
 
         Builder() {
             setVerticalVisibilityMissing(false);
             setNoSignificantCloud(false);
         }
 
-        public static Builder from(final CloudForecast value) {
+        public static Builder copyOf(final CloudForecast value) {
             if (value instanceof CloudForecastImpl) {
                 return ((CloudForecastImpl) value).toBuilder();
             } else {
@@ -72,16 +84,5 @@ public abstract class CloudForecastImpl implements CloudForecast, Serializable {
             }
         }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setVerticalVisibility(final NumericMeasure verticalVisibility) {
-            return super.setVerticalVisibility(verticalVisibility);
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = CloudLayerImpl.class)
-        public Builder setLayers(final List<CloudLayer> layers) {
-            return super.setLayers(layers);
-        }
     }
 }

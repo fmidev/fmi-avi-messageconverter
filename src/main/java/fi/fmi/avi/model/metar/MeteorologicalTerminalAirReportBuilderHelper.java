@@ -100,7 +100,11 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
             for (final RunwayVisualRange range : oldRanges) {
                 if (range.getRunwayDirection().getAssociatedAirportHeliport().isPresent()) {
                     final RunwayVisualRangeImpl.Builder runwayVisualBuilder = RunwayVisualRangeImpl.immutableCopyOf(range).toBuilder();
-                    runwayVisualBuilder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(runwayVisualBuilder.getRunwayDirection()).toBuilder()//
+                    // Immutables' generated builders expose no getters (see
+                    // docs/07-modernization-plan.md), so read the runway direction from "range"
+                    // (the value runwayVisualBuilder was just populated from) instead of from the
+                    // builder itself.
+                    runwayVisualBuilder.setRunwayDirection(RunwayDirectionImpl.immutableCopyOf(range.getRunwayDirection()).toBuilder()//
                             .setAssociatedAirportHeliport(aerodrome)//
                             .build());
                     newRanges.add(runwayVisualBuilder.build());
@@ -131,9 +135,9 @@ public final class MeteorologicalTerminalAirReportBuilderHelper {
         for (int i = 0; i < times.size(); i++) {
             final PartialOrCompleteTime time = times.get(i);
             if (time instanceof PartialOrCompleteTimePeriod) {
-                builder.add(TrendForecastImpl.Builder.from(trendForecasts.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
+                builder.add(TrendForecastImpl.Builder.copyOf(trendForecasts.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
             } else if (time instanceof PartialOrCompleteTimeInstant) {
-                builder.add(TrendForecastImpl.Builder.from(trendForecasts.get(i)).setInstantOfChange((PartialOrCompleteTimeInstant) time).build());
+                builder.add(TrendForecastImpl.Builder.copyOf(trendForecasts.get(i)).setInstantOfChange((PartialOrCompleteTimeInstant) time).build());
             }
         }
         return Collections.unmodifiableList(builder);

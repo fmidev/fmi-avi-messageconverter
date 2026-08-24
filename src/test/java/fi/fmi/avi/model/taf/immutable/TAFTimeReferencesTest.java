@@ -28,12 +28,15 @@ import fi.fmi.avi.model.taf.TAFChangeForecast;
 
 public class TAFTimeReferencesTest {
 
+    private static final AerodromeImpl DUMMY_AERODROME = AerodromeImpl.builder().setDesignator("XXXX").build();
+
     @Test
     public void testIssueTimeCompletion() {
         final TAF msg = TAFImpl.builder()//
+                .setAerodrome(DUMMY_AERODROME)//
                 .setIssueTime(PartialOrCompleteTimeInstant.createIssueTime("201004Z"))//
                 .withCompleteIssueTime(YearMonth.of(2017, Month.DECEMBER))//
-                .buildPartial();
+                .build();
 
         assertTrue(msg.getIssueTime().isPresent());
         assertEquals(Optional.of(PartialDateTime.parse("--20T10:04Z")), msg.getIssueTime().get().getPartialTime());
@@ -48,9 +51,10 @@ public class TAFTimeReferencesTest {
     @Test
     public void testCompleteMessageValidTime() {
         final TAF msg = TAFImpl.builder()//
+                .setAerodrome(DUMMY_AERODROME)//
                 .setValidityTime(PartialOrCompleteTimePeriod.createValidityTimeDHDH("3118/0118"))//
                 .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))//
-                .buildPartial();
+                .build();
 
         ZonedDateTime toMatch = ZonedDateTime.of(2017, 12, 31, 18, 0, 0, 0, ZoneId.of("Z"));
 
@@ -90,9 +94,10 @@ public class TAFTimeReferencesTest {
                 .build());
 
         final TAF msg = TAFImpl.builder()//
+                .setAerodrome(DUMMY_AERODROME)//
                 .setChangeForecasts(changeForecasts)//
                 .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))//
-                .buildPartial();
+                .build();
 
         assertTrue(msg.getChangeForecasts().isPresent());
         assertEquals(3, msg.getChangeForecasts().get().size());
@@ -174,7 +179,7 @@ public class TAFTimeReferencesTest {
                                 .build())//
                         .build())//
                 .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 18, ZoneId.of("Z"))//
-                .buildPartial();
+                .build();
 
         assertTrue(msg.getBaseForecast().isPresent());
         assertTrue(msg.getBaseForecast().get().getTemperatures().isPresent());

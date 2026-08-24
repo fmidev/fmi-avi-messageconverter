@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -33,7 +33,7 @@ import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
 import fi.fmi.avi.model.sigmet.Reference;
 import fi.fmi.avi.model.sigmet.AirmetWind;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = AIRMETImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "reportStatus", "cancelMessage", "issuingAirTrafficServicesUnit", "meteorologicalWatchOffice",
@@ -55,7 +55,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         if (airmet instanceof AIRMETImpl) {
             return (AIRMETImpl) airmet;
         } else {
-            return Builder.from(airmet).build();
+            return Builder.copyOf(airmet).build();
         }
     }
 
@@ -71,7 +71,9 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
         return AIRMET.super.getStatus();
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
     @Override
     @JsonIgnore
@@ -92,7 +94,48 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
                 || (this.getCancelledReference().get().getValidityPeriod().isComplete());
     }
 
-    public static class Builder extends AIRMETImpl_Builder {
+    @Override
+    @JsonDeserialize(as = UnitPropertyGroupImpl.class)
+    public abstract UnitPropertyGroup getIssuingAirTrafficServicesUnit();
+
+    @Override
+    @JsonDeserialize(as = UnitPropertyGroupImpl.class)
+    public abstract UnitPropertyGroup getMeteorologicalWatchOffice();
+
+    @Override
+    @JsonDeserialize(contentAs = AirmetReferenceImpl.class)
+    public abstract Optional<Reference> getCancelledReference();
+
+    @Override
+    public abstract Optional<PartialOrCompleteTimeInstant> getIssueTime();
+
+    @Override
+    @JsonDeserialize(contentAs = AirmetCloudLevelsImpl.class)
+    public abstract Optional<AirmetCloudLevels> getCloudLevels();
+
+    @Override
+    @JsonDeserialize(as = AirspaceImpl.class)
+    public abstract Airspace getAirspace();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getVisibility();
+
+    @Override
+    @JsonDeserialize(contentAs = AirmetWindImpl.class)
+    public abstract Optional<AirmetWind> getWind();
+
+    // NOTE: Immutables generates a final setAnalysisGeometries(...) setter, which cannot be overridden to
+    // carry @JsonDeserialize(contentAs = ...) (see docs/07-modernization-plan.md). The hint moves onto this
+    // abstract getter re-declaration instead; the package's passAnnotations style (see package-info.java)
+    // propagates it onto the generated builder setter for Jackson's builder-based deserialization.
+    // NOTE: no per-property @JsonDeserialize(contentAs=...) hint here: see SIGMETImpl.getAnalysisGeometries() for why
+    // (Optional<List<X>> on a non-detached builder). PhenomenonGeometryWithHeight instead carries its own
+    // class-level @JsonDeserialize(as=...) hint (see docs/07-modernization-plan.md).
+    @Override
+    public abstract Optional<List<PhenomenonGeometryWithHeight>> getAnalysisGeometries();
+
+    public static class Builder extends ImmutableAIRMETImpl.Builder {
 
         Builder() {
             setTranslated(false);
@@ -100,7 +143,7 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
             this.setCancelMessage(false);
         }
 
-        public static Builder from(final AIRMET value) {
+        public static Builder copyOf(final AIRMET value) {
             if (value instanceof AIRMETImpl) {
                 return ((AIRMETImpl) value).toBuilder();
             } else {
@@ -142,85 +185,15 @@ public abstract class AIRMETImpl implements AIRMET, Serializable {
             }
         }
 
-        @Override
-        @JsonDeserialize(as = UnitPropertyGroupImpl.class)
-        public Builder setIssuingAirTrafficServicesUnit(final UnitPropertyGroup issuingAirTrafficServicesUnit) {
-            return super.setIssuingAirTrafficServicesUnit(issuingAirTrafficServicesUnit);
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = PhenomenonGeometryWithHeightImpl.class)
-        public Builder setAnalysisGeometries(final List<PhenomenonGeometryWithHeight> analysis) {
-            return super.setAnalysisGeometries(analysis);
-        }
-
-        @Override
-        @JsonDeserialize(as = UnitPropertyGroupImpl.class)
-        public Builder setMeteorologicalWatchOffice(final UnitPropertyGroup meteorologicalWatchOffice) {
-            return super.setMeteorologicalWatchOffice(meteorologicalWatchOffice);
-        }
-
-        @Override
-        @JsonDeserialize(as = AirmetReferenceImpl.class)
-        public Builder setCancelledReference(final Reference cancelledReference) {
-            return super.setCancelledReference(cancelledReference);
-        }
-
-        @Override
-        @JsonDeserialize(as = PartialOrCompleteTimeInstant.class)
-        public Builder setIssueTime(final PartialOrCompleteTimeInstant issueTime) {
-            return super.setIssueTime(issueTime);
-        }
-
-        @Override
-        @JsonDeserialize(as = AirmetCloudLevelsImpl.class)
-        public Builder setCloudLevels(final AirmetCloudLevels cloudLevels) {
-            return super.setCloudLevels(cloudLevels);
-        }
-
-        @Override
-        @JsonDeserialize(as = AirspaceImpl.class)
-        public Builder setAirspace(final Airspace airspace) {
-            return super.setAirspace(airspace);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setVisibility(final NumericMeasure visibility) {
-            return super.setVisibility(visibility);
-        }
-
-        @Override
-        @JsonDeserialize(as = AirmetWindImpl.class)
-        public Builder setWind(final AirmetWind windInfo) {
-            return super.setWind(AirmetWindImpl.immutableCopyOf(windInfo));
-        }
-
-        @Deprecated
-        public Builder mapStatus(final UnaryOperator<SigmetAirmetReportStatus> mapper) {
-            requireNonNull(mapper, "mapper");
-            return setStatus(mapper.apply(getStatus()));
-        }
-
-        /**
-         * Provides the current builder value of the status property.
-         *
-         * Note, this method is provided for backward compatibility with previous
-         * versions of the API. The <code>status</code> is no longer
-         * explicitly stored. This implementation uses
-         * {@link SigmetAirmetReportStatus#fromReportStatus(ReportStatus, boolean)}
-         * instead to determine the
-         * returned value on-the-fly.
-         *
-         * @return the message status
-         *
-         * @deprecated migrate to using a combination of {@link #getReportStatus()} and
-         *             {@link #isCancelMessage()} instead
+        /*
+         * NOTE: the FreeBuilder-era Builder also carried mapStatus(...)/getStatus() convenience methods
+         * reading the builder's current reportStatus/cancelMessage values via FreeBuilder's builder-side
+         * getters. Immutables generates no builder-side getters (see docs/07-modernization-plan.md), so
+         * these two methods - both already @Deprecated, and confirmed unused anywhere in src/main or
+         * src/test - were removed rather than worked around. setStatus(...) (below) needs no builder-side
+         * read and is kept.
          */
-        @Deprecated
-        public SigmetAirmetReportStatus getStatus() {
-            return SigmetAirmetReportStatus.fromReportStatus(getReportStatus(), isCancelMessage());
-        }
+
 
         /**
          * Sets the SIGMET-specific message status.

@@ -108,7 +108,7 @@ public class JSONVASigmetConverterTest {
 
         final VolcanoDescriptionImpl.Builder volcanoBuilder = new VolcanoDescriptionImpl.Builder();
         final ElevatedPointImpl.Builder gpBuilder = ElevatedPointImpl.builder();
-        gpBuilder.addAllCoordinates(Arrays.stream(new Double[] { 52.0, 5.2 }));
+        gpBuilder.addAllCoordinates(Arrays.asList(52.0, 5.2));
         gpBuilder.setCrs(CoordinateReferenceSystemImpl.wgs84());
         volcanoBuilder.setVolcanoPosition(gpBuilder.build());
         volcanoBuilder.setVolcanoName("GRIMSVOTN");

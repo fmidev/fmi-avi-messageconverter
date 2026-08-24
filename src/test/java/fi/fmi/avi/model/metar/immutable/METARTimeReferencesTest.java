@@ -18,17 +18,21 @@ import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.PartialDateTime;
 import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
+import fi.fmi.avi.model.immutable.AerodromeImpl;
 import fi.fmi.avi.model.metar.METAR;
 import fi.fmi.avi.model.metar.TrendForecast;
 
 public class METARTimeReferencesTest {
 
+    private static final AerodromeImpl DUMMY_AERODROME = AerodromeImpl.builder().setDesignator("XXXX").build();
+
     @Test
     public void testIssueTimeCompletion() {
         final METAR msg = METARImpl.builder()//
+                .setAerodrome(DUMMY_AERODROME)//
                 .setIssueTime(PartialOrCompleteTimeInstant.createIssueTime("311004Z"))//
                 .withCompleteIssueTime(YearMonth.of(2017, Month.DECEMBER))//
-                .buildPartial();
+                .build();
         assertTrue(msg.getIssueTime().isPresent());
         assertEquals(Optional.of(PartialDateTime.parse("--31T10:04Z")), msg.getIssueTime().get().getPartialTime());
         final Optional<PartialOrCompleteTimeInstant> it = msg.getIssueTime();
@@ -66,9 +70,10 @@ public class METARTimeReferencesTest {
                 .build());
 
         final METAR msg = METARImpl.builder()//
+                .setAerodrome(DUMMY_AERODROME)//
                 .setTrends(changeForecasts)//
                 .withCompleteForecastTimes(YearMonth.of(2017, Month.DECEMBER), 31, 10, ZoneId.of("Z"))//
-                .buildPartial();
+                .build();
 
         assertTrue(msg.getTrends().isPresent());
         assertEquals(3, msg.getTrends().get().size());

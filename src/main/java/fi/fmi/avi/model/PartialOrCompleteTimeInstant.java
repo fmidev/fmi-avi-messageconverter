@@ -9,8 +9,9 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,7 +24,10 @@ import fi.fmi.avi.model.PartialDateTime.PartialField;
 /**
  * Created by rinne on 27/10/17.
  */
-@FreeBuilder
+@Value.Immutable
+@Value.Style(init = "set*", get = { "is*", "get*" },
+        passAnnotations = { com.fasterxml.jackson.databind.annotation.JsonDeserialize.class, com.fasterxml.jackson.annotation.JsonProperty.class },
+        typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")
 @JsonDeserialize(builder = PartialOrCompleteTimeInstant.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "completeTime", "partialTime" })
@@ -143,19 +147,135 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
                         .orElse(OptionalInt.empty()));
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().mergeFrom(this);
+    }
 
-    public static class Builder extends PartialOrCompleteTimeInstant_Builder {
+    /*
+     * NOTE: this Builder is a "detached builder" (see docs/07-modernization-plan.md): it does not extend
+     * ImmutablePartialOrCompleteTimeInstant.Builder, but is a standalone class with plain fields. This is
+     * needed because setPartialTime(...)/setCompleteTime(...) each read AND adjust the *other* field
+     * (keeping partialTime and completeTime mutually consistent as they're set), which requires
+     * builder-side reads that Immutables' generated builder does not provide at all.
+     */
+    public static class Builder {
+
+        private Optional<PartialDateTime> partialTime = Optional.empty();
+        private Optional<ZonedDateTime> completeTime = Optional.empty();
 
         Builder() {
         }
 
-        @Override
+        public Optional<PartialDateTime> getPartialTime() {
+            return partialTime;
+        }
+
+        /**
+         * If {@link #getCompleteTime() completeTime} exists and differs from provided {@code partialTime}, {@code completeTime}
+         * will be adjusted to nearest instant representing provided {@code partialTime}.
+         *
+         * @param partialTime
+         *         the partial time to set
+         *
+         * @return this builder
+         *
+         * @throws NullPointerException
+         *         if {@code partialTime} is {@code null}
+         */
+        public Builder setPartialTime(final PartialDateTime partialTime) {
+            this.partialTime = Optional.of(requireNonNull(partialTime, "partialTime"));
+            this.completeTime.ifPresent(completeTime -> {
+                if (!partialTime.representsStrict(completeTime)) {
+                    this.completeTime = Optional.of(partialTime.toZonedDateTimeNear(completeTime));
+                }
+            });
+            return this;
+        }
+
+        public Builder setPartialTime(final Optional<? extends PartialDateTime> partialTime) {
+            requireNonNull(partialTime, "partialTime");
+            if (partialTime.isPresent()) {
+                return setPartialTime(partialTime.get());
+            } else {
+                this.partialTime = Optional.empty();
+                return this;
+            }
+        }
+
+        public Builder clearPartialTime() {
+            this.partialTime = Optional.empty();
+            return this;
+        }
+
+        public Builder mapPartialTime(final UnaryOperator<PartialDateTime> mapper) {
+            requireNonNull(mapper, "mapper");
+            return setPartialTime(this.partialTime.map(mapper));
+        }
+
+        public Optional<ZonedDateTime> getCompleteTime() {
+            return completeTime;
+        }
+
+        /**
+         * If {@link #getPartialTime() partialTime} exists and differs from provided {@code completeTime}, present fields and zone of {@code partialTime}
+         * will be set to values of {@code completeTime}.
+         *
+         * @param completeTime
+         *         the complete time to set
+         *
+         * @return this builder
+         *
+         * @throws NullPointerException
+         *         if {@code completeTime} is {@code null}
+         */
+        public Builder setCompleteTime(final ZonedDateTime completeTime) {
+            this.completeTime = Optional.of(requireNonNull(completeTime, "completeTime"));
+            this.partialTime.ifPresent(partialTime -> {
+                if (!partialTime.representsStrict(completeTime)) {
+                    this.partialTime = Optional.of(PartialDateTime.of(completeTime, partialTime.getPresentFields(), partialTime.getZone().isPresent(),
+                            partialTime.isMidnight24h() ? PartialDateTime.MIDNIGHT_24_HOUR : PartialDateTime.MIDNIGHT_0_HOUR));
+                }
+            });
+            return this;
+        }
+
+        public Builder setCompleteTime(final Optional<? extends ZonedDateTime> completeTime) {
+            requireNonNull(completeTime, "completeTime");
+            if (completeTime.isPresent()) {
+                return setCompleteTime(completeTime.get());
+            } else {
+                this.completeTime = Optional.empty();
+                return this;
+            }
+        }
+
+        public Builder clearCompleteTime() {
+            this.completeTime = Optional.empty();
+            return this;
+        }
+
+        public Builder mapCompleteTime(final UnaryOperator<ZonedDateTime> mapper) {
+            requireNonNull(mapper, "mapper");
+            return setCompleteTime(this.completeTime.map(mapper));
+        }
+
+        public Builder mergeFrom(final PartialOrCompleteTimeInstant template) {
+            requireNonNull(template, "template");
+            // NOTE: assigned directly (bypassing the cross-field-adjusting setPartialTime/setCompleteTime
+            // above): template's fields are already mutually consistent, so no re-adjustment is needed.
+            this.partialTime = template.getPartialTime();
+            this.completeTime = template.getCompleteTime();
+            return this;
+        }
+
         public PartialOrCompleteTimeInstant build() {
-            if (!this.getPartialTime().isPresent() && !this.getCompleteTime().isPresent()) {
+            if (!this.partialTime.isPresent() && !this.completeTime.isPresent()) {
                 throw new IllegalStateException("Either complete or partial time must be given");
             }
-            return super.build();
+            final ImmutablePartialOrCompleteTimeInstant.Builder delegate = ImmutablePartialOrCompleteTimeInstant.internalBuilder();
+            this.partialTime.ifPresent(delegate::setPartialTime);
+            this.completeTime.ifPresent(delegate::setCompleteTime);
+            return delegate.build();
         }
 
         public Builder setTrendTimeGroupToken(final String token) {
@@ -205,55 +325,6 @@ public abstract class PartialOrCompleteTimeInstant extends PartialOrCompleteTime
             } else {
                 throw new IllegalStateException("Neither of partialTime or completeTime is present");
             }
-        }
-
-        /**
-         * {@inheritDoc}
-         * If {@link #getCompleteTime() completeTime} exists and differs from provided {@code partialTime}, {@code completeTime}
-         * will be adjusted to nearest instant representing provided {@code partialTime}.
-         *
-         * @param partialTime
-         *         {@inheritDoc}
-         *
-         * @return {@inheritDoc}
-         *
-         * @throws NullPointerException
-         *         {@inheritDoc}
-         */
-        @Override
-        public Builder setPartialTime(final PartialDateTime partialTime) {
-            super.setPartialTime(partialTime);
-            getCompleteTime().ifPresent(completeTime -> {
-                if (!partialTime.representsStrict(completeTime)) {
-                    super.setCompleteTime(partialTime.toZonedDateTimeNear(completeTime));
-                }
-            });
-            return this;
-        }
-
-        /**
-         * {@inheritDoc}
-         * If {@link #getPartialTime() partialTime} exists and differs from provided {@code completeTime}, present fields and zone of {@code partialTime} will
-         * be set to values of {@code completeTime}.
-         *
-         * @param completeTime
-         *         {@inheritDoc}
-         *
-         * @return {@inheritDoc}
-         *
-         * @throws NullPointerException
-         *         {@inheritDoc}
-         */
-        @Override
-        public Builder setCompleteTime(final ZonedDateTime completeTime) {
-            super.setCompleteTime(completeTime);
-            getPartialTime().ifPresent(partialTime -> {
-                if (!partialTime.representsStrict(completeTime)) {
-                    super.setPartialTime(PartialDateTime.of(completeTime, partialTime.getPresentFields(), partialTime.getZone().isPresent(),
-                            partialTime.isMidnight24h() ? PartialDateTime.MIDNIGHT_24_HOUR : PartialDateTime.MIDNIGHT_0_HOUR));
-                }
-            });
-            return this;
         }
     }
 }

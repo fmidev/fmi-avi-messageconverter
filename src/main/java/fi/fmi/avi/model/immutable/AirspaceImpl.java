@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -16,7 +16,7 @@ import fi.fmi.avi.model.Airspace;
  * Created by rinne on 13/04/2018.
  */
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = AirspaceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "designator", "name", "part", "type" })
@@ -32,7 +32,7 @@ public abstract class AirspaceImpl implements Airspace, Serializable {
         if (airspace instanceof AirspaceImpl) {
             return (AirspaceImpl) airspace;
         } else {
-            return Builder.from(airspace).build();
+            return Builder.copyOf(airspace).build();
         }
     }
 
@@ -40,11 +40,13 @@ public abstract class AirspaceImpl implements Airspace, Serializable {
         return airspace.map(AirspaceImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends AirspaceImpl_Builder {
+    public static class Builder extends ImmutableAirspaceImpl.Builder {
 
-        public static Builder from(final Airspace value) {
+        public static Builder copyOf(final Airspace value) {
             if (value instanceof AirspaceImpl) {
                 return ((AirspaceImpl) value).toBuilder();
             } else {

@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.swx.amd79.NextAdvisory;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = NextAdvisoryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "time", "timeSpecifier" })
@@ -27,7 +27,7 @@ public abstract class NextAdvisoryImpl implements NextAdvisory, Serializable {
         if (nextAdvisory instanceof NextAdvisoryImpl) {
             return (NextAdvisoryImpl) nextAdvisory;
         } else {
-            return Builder.from(nextAdvisory).build();
+            return Builder.copyOf(nextAdvisory).build();
         }
     }
 
@@ -37,14 +37,16 @@ public abstract class NextAdvisoryImpl implements NextAdvisory, Serializable {
         return nextAdvisory.map(NextAdvisoryImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends NextAdvisoryImpl_Builder {
+    public static class Builder extends ImmutableNextAdvisoryImpl.Builder {
         @Deprecated
         Builder() {
         }
 
-        public static Builder from(final NextAdvisory value) {
+        public static Builder copyOf(final NextAdvisory value) {
             if (value instanceof NextAdvisoryImpl) {
                 return ((NextAdvisoryImpl) value).toBuilder();
             } else {

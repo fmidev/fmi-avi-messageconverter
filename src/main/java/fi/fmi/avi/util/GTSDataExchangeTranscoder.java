@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import fi.fmi.avi.util.GTSDataExchangeParseException.ErrorCode;
 import fi.fmi.avi.util.GTSMeteorologicalMessage.MessageFormat;
@@ -326,7 +326,12 @@ public final class GTSDataExchangeTranscoder {
         }
     }
 
-    @FreeBuilder
+    // NOTE: distinct typeImmutable name to avoid colliding with GTSExchangeFileTemplate.ParseResult's
+    // generated class: Immutables generates nested @Value.Immutable types as top-level classes in the
+    // enclosing package by default, and both classes have a nested type named "ParseResult" (see
+    // docs/07-modernization-plan.md).
+    @Value.Immutable
+    @Value.Style(init = "set*", get = { "is*", "get*" }, typeImmutable = "ImmutableGTSDataExchangeTranscoderParseResult")
     public static abstract class ParseResult {
         ParseResult() {
         }
@@ -365,24 +370,31 @@ public final class GTSDataExchangeTranscoder {
          */
         public abstract Optional<GTSDataParseException> getError();
 
-        abstract Builder toBuilder();
+        Builder toBuilder() {
+            return new Builder().from(this);
+        }
 
-        static class Builder extends GTSDataExchangeTranscoder_ParseResult_Builder {
+        static class Builder extends ImmutableGTSDataExchangeTranscoderParseResult.Builder {
             Builder() {
             }
 
+            // NOTE: the FreeBuilder-era Builder read the builder's own getMessage()/getError() to validate
+            // mutual exclusivity before completing the build. Immutables generates no builder-side getters
+            // (see docs/07-modernization-plan.md), so this validates against the finished value instead.
             @Override
-            public ParseResult build() {
-                if (getMessage().isPresent() == getError().isPresent()) {
-                    throw new IllegalStateException(
-                            "Message and error are mutually exclusive and cannot be " + (getMessage().isPresent() ? "present" : "empty") + " simultaneously");
+            public ImmutableGTSDataExchangeTranscoderParseResult build() {
+                final ImmutableGTSDataExchangeTranscoderParseResult result = super.build();
+                if (result.getMessage().isPresent() == result.getError().isPresent()) {
+                    throw new IllegalStateException("Message and error are mutually exclusive and cannot be " + (result.getMessage().isPresent()
+                            ? "present"
+                            : "empty") + " simultaneously");
                 }
-                return super.build();
+                return result;
             }
 
             public ParseResult buildError(final GTSDataParseException error) {
                 return setError(error)//
-                        .clearMessage()//
+                        .setMessage(Optional.empty())//
                         .build();
             }
         }

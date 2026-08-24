@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.swx.amd82.AdvisoryNumber;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = AdvisoryNumberImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"year", "serialNumber"})
@@ -29,7 +29,7 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
         if (advisoryNumber instanceof AdvisoryNumberImpl) {
             return (AdvisoryNumberImpl) advisoryNumber;
         } else {
-            return Builder.from(advisoryNumber).build();
+            return Builder.copyOf(advisoryNumber).build();
         }
     }
 
@@ -44,16 +44,18 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
         return getYear() + "/" + getSerialNumber();
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends AdvisoryNumberImpl_Builder {
+    public static class Builder extends ImmutableAdvisoryNumberImpl.Builder {
         private static final Pattern ADVISORY_NO_FORMAT = Pattern.compile("^(?<year>[0-9]{4})/(?<serialNo>[0-9]*)$");
 
         @Deprecated
         Builder() {
         }
 
-        public static Builder from(final AdvisoryNumber value) {
+        public static Builder copyOf(final AdvisoryNumber value) {
             if (value instanceof AdvisoryNumberImpl) {
                 return ((AdvisoryNumberImpl) value).toBuilder();
             } else {
@@ -72,7 +74,7 @@ public abstract class AdvisoryNumberImpl implements AdvisoryNumber, Serializable
          * <p>
          * No strict checking is made, this method may accept more digits than specified.
          */
-        public static Builder from(final String value) {
+        public static Builder copyOf(final String value) {
             final Matcher m = ADVISORY_NO_FORMAT.matcher(value);
             if (m.matches()) {
                 return builder().setYear(Integer.parseInt(m.group("year"))).setSerialNumber(Integer.parseInt(m.group("serialNo")));

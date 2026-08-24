@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.swx.amd79.IssuingCenter;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = IssuingCenterImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"designator", "name", "type"})
@@ -27,7 +27,7 @@ public abstract class IssuingCenterImpl implements IssuingCenter, Serializable {
         if (issuingCenter instanceof IssuingCenterImpl) {
             return (IssuingCenterImpl) issuingCenter;
         } else {
-            return Builder.from(issuingCenter).build();
+            return Builder.copyOf(issuingCenter).build();
         }
     }
 
@@ -37,14 +37,16 @@ public abstract class IssuingCenterImpl implements IssuingCenter, Serializable {
         return issuingCenter.map(IssuingCenterImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends IssuingCenterImpl_Builder {
+    public static class Builder extends ImmutableIssuingCenterImpl.Builder {
         @Deprecated
         Builder() {
         }
 
-        public static Builder from(final IssuingCenter value) {
+        public static Builder copyOf(final IssuingCenter value) {
             if (value instanceof IssuingCenterImpl) {
                 return ((IssuingCenterImpl) value).toBuilder();
             } else {

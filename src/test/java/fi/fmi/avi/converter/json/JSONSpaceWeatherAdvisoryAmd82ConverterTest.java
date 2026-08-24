@@ -84,6 +84,7 @@ public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
                                                 )
                                                 .map(locationIndicator -> SpaceWeatherRegionImpl.fromLocationIndicator(
                                                         locationIndicator, VERTICAL_LIMITS, null, null, null))
+                                                .collect(java.util.stream.Collectors.toList())
                                 )
                                 .build())
                         .setNilReason(SpaceWeatherAdvisoryAnalysis.NilReason.NO_INFORMATION_AVAILABLE)
@@ -105,14 +106,14 @@ public class JSONSpaceWeatherAdvisoryAmd82ConverterTest {
                 .setIssuingCenter(ISSUING_CENTER)
                 .setEffect(Effect.HF_COMMUNICATIONS)
                 .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
-                .addAllAnalyses(generateAnalyses())
+                .addAllAnalyses(generateAnalyses().collect(java.util.stream.Collectors.toList()))
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setAdvisoryNumber(advisoryNumber(2020, 1))
-                .addReplaceAdvisoryNumbers(
+                .addAllReplaceAdvisoryNumbers(java.util.Arrays.asList(
                         advisoryNumber(2019, 40),
                         advisoryNumber(2019, 41),
                         advisoryNumber(2019, 42)
-                )
+                ))
                 .setRemarks(REMARKS)
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();

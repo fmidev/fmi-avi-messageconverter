@@ -3,6 +3,17 @@ package fi.fmi.avi.model;
 import java.util.Map;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fi.fmi.avi.model.immutable.GenericAviationWeatherMessageImpl;
+
+/**
+ * The class-level {@link JsonDeserialize} hint is needed because this interface can appear as the element type of a
+ * {@code List} property (e.g. {@code GenericMeteorologicalBulletin.getMessages()}); a per-property
+ * {@code contentAs} hint placed on an overridden {@code addAllX(...)}/{@code setX(...)} method is not reliably
+ * picked up by Jackson for builder-style deserialization of such properties (see docs/07-modernization-plan.md).
+ */
+@JsonDeserialize(as = GenericAviationWeatherMessageImpl.class)
 public interface GenericAviationWeatherMessage extends AviationWeatherMessage {
     /**
      * Returns the GML identifier (gml:id) of the IWXXM message root element.

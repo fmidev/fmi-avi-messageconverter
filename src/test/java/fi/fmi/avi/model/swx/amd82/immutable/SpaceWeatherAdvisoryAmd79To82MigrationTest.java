@@ -35,13 +35,11 @@ public class SpaceWeatherAdvisoryAmd79To82MigrationTest {
                         .setYear(BASE_TIME.getYear())
                         .setSerialNumber(REPLACE_ADVISORY_NUMBER)
                         .build())
-                .addPhenomena(
-                        fi.fmi.avi.model.swx.amd79.SpaceWeatherPhenomenon.RADIATION_MOD,
-                        // Different intensities are logically not allowed, but this is not enforced by the model
-                        // This is just to ensure we'll use the maximum intensity
-                        fi.fmi.avi.model.swx.amd79.SpaceWeatherPhenomenon.RADIATION_SEV
-                )
-                .addAllAnalyses(SWXAmd79Tests.generateAnalyses(BASE_TIME))
+                .addPhenomena(fi.fmi.avi.model.swx.amd79.SpaceWeatherPhenomenon.RADIATION_MOD)
+                // Different intensities are logically not allowed, but this is not enforced by the model
+                // This is just to ensure we'll use the maximum intensity
+                .addPhenomena(fi.fmi.avi.model.swx.amd79.SpaceWeatherPhenomenon.RADIATION_SEV)
+                .addAllAnalyses(SWXAmd79Tests.generateAnalyses(BASE_TIME).collect(java.util.stream.Collectors.toList()))
                 .setNextAdvisory(fi.fmi.avi.model.swx.amd79.immutable.NextAdvisoryImpl.builder()
                         .setTimeSpecifier(fi.fmi.avi.model.swx.amd79.NextAdvisory.Type.NEXT_ADVISORY_AT)
                         .setTime(nextAdvisoryTime)
@@ -69,7 +67,8 @@ public class SpaceWeatherAdvisoryAmd79To82MigrationTest {
                                 .build())
                         .addAllAnalyses(SWXAmd82Tests.analysisBuilder(BASE_TIME)
                                 .addIntensities(Intensity.SEVERE)
-                                .generateAnalyses())
+                                .generateAnalyses()
+                                .collect(java.util.stream.Collectors.toList()))
                         .setNextAdvisory(NextAdvisoryImpl.builder()
                                 .setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_AT)
                                 .setTime(nextAdvisoryTime)
@@ -94,11 +93,9 @@ public class SpaceWeatherAdvisoryAmd79To82MigrationTest {
                         .setYear(BASE_TIME.getYear())
                         .setSerialNumber(REPLACE_ADVISORY_NUMBER)
                         .build())
-                .addPhenomena(
-                        fi.fmi.avi.model.swx.amd79.SpaceWeatherPhenomenon.RADIATION_MOD,
-                        fi.fmi.avi.model.swx.amd79.SpaceWeatherPhenomenon.GNSS_MOD
-                )
-                .addAllAnalyses(SWXAmd79Tests.generateAnalyses(BASE_TIME))
+                .addPhenomena(fi.fmi.avi.model.swx.amd79.SpaceWeatherPhenomenon.RADIATION_MOD)
+                .addPhenomena(fi.fmi.avi.model.swx.amd79.SpaceWeatherPhenomenon.GNSS_MOD)
+                .addAllAnalyses(SWXAmd79Tests.generateAnalyses(BASE_TIME).collect(java.util.stream.Collectors.toList()))
                 .setNextAdvisory(fi.fmi.avi.model.swx.amd79.immutable.NextAdvisoryImpl.builder()
                         .setTimeSpecifier(fi.fmi.avi.model.swx.amd79.NextAdvisory.Type.NEXT_ADVISORY_AT)
                         .setTime(nextAdvisoryTime)

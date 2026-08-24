@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.ElevatedPoint;
 import fi.fmi.avi.model.VolcanoDescription;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = VolcanoDescriptionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "volcanoPosition", "volcanoName" })
@@ -25,7 +25,7 @@ public abstract class VolcanoDescriptionImpl implements VolcanoDescription, Seri
         if (volcanoDescription instanceof VolcanoDescriptionImpl) {
             return (VolcanoDescriptionImpl) volcanoDescription;
         } else {
-            return Builder.from(volcanoDescription).build();
+            return Builder.copyOf(volcanoDescription).build();
         }
     }
 
@@ -33,11 +33,17 @@ public abstract class VolcanoDescriptionImpl implements VolcanoDescription, Seri
         return volcanoDescription.map(VolcanoDescriptionImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends VolcanoDescriptionImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = ElevatedPointImpl.class)
+    public abstract Optional<ElevatedPoint> getVolcanoPosition();
 
-        public static Builder from(final VolcanoDescription value) {
+    public static class Builder extends ImmutableVolcanoDescriptionImpl.Builder {
+
+        public static Builder copyOf(final VolcanoDescription value) {
             if (value instanceof VolcanoDescriptionImpl) {
                 return ((VolcanoDescriptionImpl) value).toBuilder();
             } else {
@@ -46,11 +52,6 @@ public abstract class VolcanoDescriptionImpl implements VolcanoDescription, Seri
             }
         }
 
-        @Override
-        @JsonDeserialize(as = ElevatedPointImpl.class)
-        public Builder setVolcanoPosition(final ElevatedPoint volcanoPosition) {
-            return super.setVolcanoPosition(volcanoPosition);
-        }
     }
 
 }

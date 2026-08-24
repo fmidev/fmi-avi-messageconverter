@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -20,7 +20,7 @@ import fi.fmi.avi.model.metar.RunwayState;
 /**
  * Created by rinne on 13/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = RunwayStateImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "runwayDirection", "appliedToAllRunways", "deposit", "contamination", "depthOfDeposit", "depthOperator", "depthNotMeasurable",
@@ -39,7 +39,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
         if (runwayState instanceof RunwayStateImpl) {
             return (RunwayStateImpl) runwayState;
         } else {
-            return Builder.from(runwayState).build();
+            return Builder.copyOf(runwayState).build();
         }
     }
 
@@ -49,9 +49,19 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
         return runwayState.map(RunwayStateImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends RunwayStateImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = RunwayDirectionImpl.class)
+    public abstract Optional<RunwayDirection> getRunwayDirection();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getDepthOfDeposit();
+
+    public static class Builder extends ImmutableRunwayStateImpl.Builder {
 
         Builder() {
             setAppliedToAllRunways(false);
@@ -63,7 +73,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
             setCleared(false);
         }
 
-        public static Builder from(final RunwayState value) {
+        public static Builder copyOf(final RunwayState value) {
             if (value instanceof RunwayStateImpl) {
                 return ((RunwayStateImpl) value).toBuilder();
             } else {
@@ -80,17 +90,7 @@ public abstract class RunwayStateImpl implements RunwayState, Serializable {
                         .setRepetition(value.isRepetition());
             }
         }
-        @Override
-        @JsonDeserialize(as = RunwayDirectionImpl.class)
-        public Builder setRunwayDirection(final RunwayDirection runwayDirection) {
-            return super.setRunwayDirection(runwayDirection);
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setDepthOfDeposit(final NumericMeasure depthOfDeposit) {
-            return super.setDepthOfDeposit(depthOfDeposit);
-        }
     }
 
 }

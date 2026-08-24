@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -16,7 +16,7 @@ import fi.fmi.avi.model.ElevatedPoint;
 /**
  * Created by rinne on 17/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = ElevatedPointImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class ElevatedPointImpl implements ElevatedPoint, Serializable {
@@ -32,7 +32,7 @@ public abstract class ElevatedPointImpl implements ElevatedPoint, Serializable {
         if (geoPosition instanceof ElevatedPointImpl) {
             return (ElevatedPointImpl) geoPosition;
         } else {
-            return Builder.from(geoPosition).build();
+            return Builder.copyOf(geoPosition).build();
         }
     }
 
@@ -42,14 +42,20 @@ public abstract class ElevatedPointImpl implements ElevatedPoint, Serializable {
         return geoPosition.map(ElevatedPointImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends ElevatedPointImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = CoordinateReferenceSystemImpl.class)
+    public abstract Optional<CoordinateReferenceSystem> getCrs();
+
+    public static class Builder extends ImmutableElevatedPointImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final ElevatedPoint value) {
+        public static Builder copyOf(final ElevatedPoint value) {
             if (value instanceof ElevatedPointImpl) {
                 return ((ElevatedPointImpl) value).toBuilder();
             } else {
@@ -59,14 +65,10 @@ public abstract class ElevatedPointImpl implements ElevatedPoint, Serializable {
             }
         }
 
-        public Builder setCoordinates(final List<Double> coordinates) {
-            return this.clearCoordinates().addAllCoordinates(coordinates);
-        }
-
-        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
-        @Override
-        public Builder setCrs(final CoordinateReferenceSystem crs) {
-            return super.setCrs(crs);
-        }
+        // A hand-written setCoordinates(List<Double>) used to live here, replacing the whole
+        // collection via clearCoordinates().addAllCoordinates(...) (FreeBuilder-generated methods).
+        // Immutables' own generated "replace the whole collection" setter - setCoordinates(Iterable<Double>),
+        // named to match via this package's init="set*" style - already does exactly this, so the
+        // hand-written wrapper was simply redundant once migrated; see docs/07-modernization-plan.md.
     }
 }

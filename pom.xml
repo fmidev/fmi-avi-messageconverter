@@ -69,23 +69,16 @@
           org.immutables:value is the FreeBuilder replacement (FreeBuilder is unmaintained and, as
           of this modernization pass, its implicit classpath-based annotation-processor discovery no
           longer runs under this project's javac/toolchain - see docs/07-modernization-plan.md for the
-          full finding). Model classes are being migrated one at a time; both processors are wired
-          below until the migration is complete. "provided" because the @Value.* annotations are
-          SOURCE-retention and org.immutables:value is not needed at runtime.
+          full finding). The FreeBuilder-to-Immutables migration is complete: no model class uses
+          @FreeBuilder any more, so org.inferred:freebuilder has been removed entirely. "provided"
+          because the @Value.* annotations are SOURCE-retention and org.immutables:value is not
+          needed at runtime.
         -->
         <dependency>
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
             <version>2.12.2</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- Transitional: still required by model classes not yet migrated to org.immutables:value. -->
-        <dependency>
-            <groupId>org.inferred</groupId>
-            <artifactId>freebuilder</artifactId>
-            <version>2.3.0</version>
-            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -181,12 +174,6 @@
                             <groupId>org.immutables</groupId>
                             <artifactId>value</artifactId>
                             <version>2.12.2</version>
-                        </path>
-                        <!-- Transitional - remove once no model class uses @FreeBuilder any more. -->
-                        <path>
-                            <groupId>org.inferred</groupId>
-                            <artifactId>freebuilder</artifactId>
-                            <version>2.3.0</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

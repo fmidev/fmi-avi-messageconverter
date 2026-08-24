@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.PhenomenonGeometry;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = PhenomenonGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"time", "noVolcanicAshExpected", "analysisType", "intensityChange",
@@ -30,7 +30,7 @@ public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Seri
         if (phenomenonGeometry instanceof PhenomenonGeometryImpl) {
             return (PhenomenonGeometryImpl) phenomenonGeometry;
         } else {
-            return Builder.from(phenomenonGeometry).build();
+            return Builder.copyOf(phenomenonGeometry).build();
         }
     }
 
@@ -39,11 +39,17 @@ public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Seri
         return phenomenonGeometry.map(PhenomenonGeometryImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends PhenomenonGeometryImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = TacOrGeoGeometryImpl.class)
+    public abstract Optional<TacOrGeoGeometry> getGeometry();
 
-        public static Builder from(final PhenomenonGeometry value) {
+    public static class Builder extends ImmutablePhenomenonGeometryImpl.Builder {
+
+        public static Builder copyOf(final PhenomenonGeometry value) {
             if (value instanceof PhenomenonGeometryImpl) {
                 return ((PhenomenonGeometryImpl) value).toBuilder();
             } else {
@@ -55,11 +61,6 @@ public abstract class PhenomenonGeometryImpl implements PhenomenonGeometry, Seri
             }
         }
 
-        @Override
-        @JsonDeserialize(as = TacOrGeoGeometryImpl.class)
-        public Builder setGeometry(final TacOrGeoGeometry geom) {
-            return super.setGeometry(TacOrGeoGeometryImpl.immutableCopyOf(geom));
-        }
     }
 }
 

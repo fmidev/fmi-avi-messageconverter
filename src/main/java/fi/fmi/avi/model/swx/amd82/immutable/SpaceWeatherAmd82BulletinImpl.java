@@ -12,13 +12,13 @@ import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherAmd79Bulletin;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAmd82;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAmd82Bulletin;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = SpaceWeatherAmd82BulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
@@ -35,7 +35,7 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
         if (bulletin instanceof SpaceWeatherAmd82BulletinImpl) {
             return (SpaceWeatherAmd82BulletinImpl) bulletin;
         } else {
-            return Builder.from(bulletin).build();
+            return Builder.copyOf(bulletin).build();
         }
     }
 
@@ -44,13 +44,28 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
         return bulletin.map(SpaceWeatherAmd82BulletinImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends SpaceWeatherAmd82BulletinImpl_Builder {
+    // NOTE: Immutables generates a final addMessages(...)/addAllMessages(...) and getMessages() cannot be
+    // used to carry an override with real logic on the setter (see docs/07-modernization-plan.md); the
+    // @JsonDeserialize/@JsonProperty hints the FreeBuilder-era addMessages(...) override carried move onto
+    // this abstract getter re-declaration instead, and the package's passAnnotations style propagates them
+    // onto the generated builder setter for Jackson's builder-based deserialization.
+    @Override
+    @JsonProperty("messages")
+    public abstract java.util.List<SpaceWeatherAdvisoryAmd82> getMessages();
+
+    @Override
+    @JsonDeserialize(as = BulletinHeadingImpl.class)
+    public abstract BulletinHeading getHeading();
+
+    public static class Builder extends ImmutableSpaceWeatherAmd82BulletinImpl.Builder {
         Builder() {
         }
 
-        public static Builder from(final SpaceWeatherAmd82Bulletin value) {
+        public static Builder copyOf(final SpaceWeatherAmd82Bulletin value) {
             if (value instanceof SpaceWeatherAmd82BulletinImpl) {
                 return ((SpaceWeatherAmd82BulletinImpl) value).toBuilder();
             } else {
@@ -78,9 +93,17 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
             return builder;
         }
 
+        /*
+         * The FreeBuilder-era Builder overrode setHeading(...) to validate the heading's data type
+         * designators as soon as it was set. Immutables' generated setters are final and cannot be
+         * overridden (see docs/07-modernization-plan.md), so this validation moved here, into build(), and
+         * now runs against the finished value instead of eagerly on set(). The @JsonDeserialize(as=...)
+         * hint this setter override used to carry moved onto an abstract getHeading() getter re-declaration.
+         */
         @Override
-        @JsonDeserialize(as = BulletinHeadingImpl.class)
-        public Builder setHeading(final BulletinHeading heading) {
+        public ImmutableSpaceWeatherAmd82BulletinImpl build() {
+            final ImmutableSpaceWeatherAmd82BulletinImpl result = super.build();
+            final BulletinHeading heading = result.getHeading();
             if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML.equals(heading.getDataTypeDesignatorT1ForTAC())) {
                 if (!DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_SPACE_WEATHER_ADVISORY.equals(heading.getDataTypeDesignatorT2())) {
                     throw new IllegalArgumentException(
@@ -98,19 +121,7 @@ public abstract class SpaceWeatherAmd82BulletinImpl implements SpaceWeatherAmd82
                         "Data type designator T1 for TAC of the bulletin heading must be either " + DataTypeDesignatorT1.FORECASTS + " or "
                                 + DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML + " for SpaceWeatherAdvisory");
             }
-            return super.setHeading(heading);
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = SpaceWeatherAdvisoryAmd82Impl.class)
-        @JsonProperty("messages")
-        public Builder addMessages(final SpaceWeatherAdvisoryAmd82... messages) {
-            return super.addMessages(messages);
-        }
-
-        @Override
-        public Builder addMessages(final SpaceWeatherAdvisoryAmd82 message) {
-            return super.addMessages(SpaceWeatherAdvisoryAmd82Impl.immutableCopyOf(message));
+            return result;
         }
     }
 }

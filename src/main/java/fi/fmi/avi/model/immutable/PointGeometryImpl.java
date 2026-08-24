@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.PointGeometry;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = PointGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PointGeometryImpl implements PointGeometry, Serializable {
@@ -29,7 +29,7 @@ public abstract class PointGeometryImpl implements PointGeometry, Serializable {
         if (pointGeometry instanceof PointGeometryImpl) {
             return (PointGeometryImpl) pointGeometry;
         } else {
-            return Builder.from(pointGeometry).build();
+            return Builder.copyOf(pointGeometry).build();
         }
     }
 
@@ -39,14 +39,20 @@ public abstract class PointGeometryImpl implements PointGeometry, Serializable {
         return pointGeometry.map(PointGeometryImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends PointGeometryImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = CoordinateReferenceSystemImpl.class)
+    public abstract Optional<CoordinateReferenceSystem> getCrs();
+
+    public static class Builder extends ImmutablePointGeometryImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final PointGeometry value) {
+        public static Builder copyOf(final PointGeometry value) {
             if (value instanceof PointGeometryImpl) {
                 return ((PointGeometryImpl) value).toBuilder();
             } else {
@@ -56,14 +62,8 @@ public abstract class PointGeometryImpl implements PointGeometry, Serializable {
             }
         }
 
-        public Builder setCoordinates(final List<Double> coordinates) {
-            return this.clearCoordinates().addAllCoordinates(coordinates);
-        }
-
-        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
-        @Override
-        public Builder setCrs(final CoordinateReferenceSystem crs) {
-            return super.setCrs(crs);
-        }
+        // A hand-written setCoordinates(List<Double>) used to live here; Immutables' own generated
+        // setCoordinates(Iterable<Double>) already replaces the whole collection, so the wrapper
+        // was redundant once migrated - see docs/07-modernization-plan.md.
     }
 }

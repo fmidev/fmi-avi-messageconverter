@@ -34,12 +34,11 @@ import fi.fmi.avi.model.NumericMeasure;
  * FreeBuilder. Immutables auto-generates its own <em>instance</em>-level {@code from(NumericMeasure)}
  * method on the builder whenever the annotated class implements an interface exposing matching
  * accessors (which {@code NumericMeasure} does) - a static method of the same name and parameter
- * type cannot coexist with it ("static method cannot override instance method"). No caller in this
- * codebase used {@code NumericMeasureImpl.Builder.from(...)} directly, so nothing else needed to
- * change for this class, but the real migration of any other model class should grep for
- * {@code <Type>Impl.Builder.from(} first and either rename those call sites to {@code copyOf(...)}
- * or switch them to call the generated instance method directly, e.g.
- * {@code SomeImpl.builder().from(value)}.
+ * type cannot coexist with it ("static method cannot override instance method"). Because of this,
+ * every FreeBuilder-era hand-written {@code Builder.from(...)} static factory in this codebase was
+ * renamed to {@code Builder.copyOf(...)} - declarations and call sites, main and test sources, in
+ * one repo-wide sweep - before migrating classes individually, rather than doing the rename
+ * class-by-class as each one's turn came up.
  */
 @Value.Immutable
 @Value.Style(init = "set*")

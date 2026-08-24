@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import fi.fmi.avi.model.TacGeometry;
 
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 /**
  * Created by rinne on 18/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonDeserialize(builder = TacGeometryImpl.Builder.class)
 public abstract class TacGeometryImpl implements TacGeometry, Serializable {
@@ -30,7 +30,7 @@ public abstract class TacGeometryImpl implements TacGeometry, Serializable {
         if (tacGeometry instanceof SurfaceWindImpl) {
             return (TacGeometryImpl) tacGeometry;
         } else {
-            return Builder.from(tacGeometry).build();
+            return Builder.copyOf(tacGeometry).build();
         }
     }
 
@@ -40,15 +40,17 @@ public abstract class TacGeometryImpl implements TacGeometry, Serializable {
         return tacGeometry.map(TacGeometryImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
     @SuppressWarnings("EmptyMethod")
-    public static class Builder extends TacGeometryImpl_Builder {
+    public static class Builder extends ImmutableTacGeometryImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final TacGeometry value) {
+        public static Builder copyOf(final TacGeometry value) {
             if (value instanceof TacGeometryImpl) {
                 return ((TacGeometryImpl) value).toBuilder();
             } else {

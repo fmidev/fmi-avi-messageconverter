@@ -9,13 +9,14 @@ import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.GenericMeteorologicalBulletin;
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.immutable.GenericAviationWeatherMessageImpl;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = GenericMeteorologicalBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
@@ -32,7 +33,7 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
         if (bulletin instanceof GenericMeteorologicalBulletinImpl) {
             return (GenericMeteorologicalBulletinImpl) bulletin;
         } else {
-            return Builder.from(bulletin).build();
+            return Builder.copyOf(bulletin).build();
         }
     }
 
@@ -41,13 +42,23 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
         return bulletin.map(GenericMeteorologicalBulletinImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends GenericMeteorologicalBulletinImpl_Builder {
+    @Override
+    @JsonDeserialize(as = BulletinHeadingImpl.class)
+    public abstract BulletinHeading getHeading();
+
+    @Override
+    @JsonProperty("messages")
+    public abstract List<GenericAviationWeatherMessage> getMessages();
+
+    public static class Builder extends ImmutableGenericMeteorologicalBulletinImpl.Builder {
         Builder() {
         }
 
-        public static Builder from(final GenericMeteorologicalBulletin value) {
+        public static Builder copyOf(final GenericMeteorologicalBulletin value) {
             if (value instanceof GenericMeteorologicalBulletinImpl) {
                 return ((GenericMeteorologicalBulletinImpl) value).toBuilder();
             } else {
@@ -61,19 +72,6 @@ public abstract class GenericMeteorologicalBulletinImpl implements GenericMeteor
                         Builder::setCollectIdentifier);
                 return builder;
             }
-        }
-
-        @Override
-        @JsonDeserialize(as = BulletinHeadingImpl.class)
-        public Builder setHeading(final BulletinHeading heading) {
-            return super.setHeading(heading);
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = GenericAviationWeatherMessageImpl.class)
-        @JsonProperty("messages")
-        public Builder addMessages(final GenericAviationWeatherMessage... messages) {
-            return super.addMessages(messages);
         }
     }
 }

@@ -206,7 +206,7 @@ public class JSONConverterTest {
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
                         .build());
 
-        builder.addMessages(SIGMETImpl.Builder.from(result.getConvertedMessage().get()).setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
+        builder.addMessages(SIGMETImpl.Builder.copyOf(result.getConvertedMessage().get()).setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
                 + "EFIN FINLAND FIR SEV TURB FCST AT 0740Z\n"//
                 + "S OF LINE N5953 E01931 -\n"//
                 + "N6001 E02312 - N6008 E02606 - N6008\n"//

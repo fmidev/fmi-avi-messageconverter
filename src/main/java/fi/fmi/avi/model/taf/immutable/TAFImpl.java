@@ -18,15 +18,18 @@ import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.Aerodrome;
 import fi.fmi.avi.model.AerodromeWeatherMessageBuilderHelper;
+import fi.fmi.avi.model.AviationCodeListUser;
+import fi.fmi.avi.model.AviationWeatherMessage;
 import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.BuilderHelper;
 import fi.fmi.avi.model.PartialDateTime;
@@ -35,6 +38,7 @@ import fi.fmi.avi.model.PartialOrCompleteTimeInstant;
 import fi.fmi.avi.model.PartialOrCompleteTimePeriod;
 import fi.fmi.avi.model.PartialOrCompleteTimes;
 import fi.fmi.avi.model.immutable.AerodromeImpl;
+import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 import fi.fmi.avi.model.taf.TAFBaseForecast;
@@ -42,9 +46,23 @@ import fi.fmi.avi.model.taf.TAFChangeForecast;
 import fi.fmi.avi.model.taf.TAFReference;
 
 /**
- * Created by rinne on 18/04/2018.
+ * See {@code METARImpl}'s javadoc (in {@code fi.fmi.avi.model.metar.immutable}) for the "detached
+ * builder" pattern this class (and {@code Builder}) uses instead of extending an
+ * Immutables-generated builder directly - needed here not because of a shared generic builder
+ * interface (TAFImpl has none), but because {@code Builder} itself reads back its own in-progress
+ * state extensively (e.g. {@code onValueOrPartialBuild()}, {@code withCompleteForecastTimes(...)}),
+ * which Immutables' generated builders do not support (no builder-side getters at all).
+ *
+ * <p>One capability intentionally not carried over: FreeBuilder's {@code buildPartial()} (building
+ * an instance without all required properties set, for test fixtures) has no Immutables
+ * equivalent and is test-only tooling, never used from {@code src/main} - see
+ * docs/07-modernization-plan.md. Call sites in tests were rewritten to populate every required
+ * property and call {@code build()} instead.
  */
-@FreeBuilder
+@Value.Immutable
+@Value.Style(init = "set*", get = { "is*", "get*" },
+        passAnnotations = { com.fasterxml.jackson.databind.annotation.JsonDeserialize.class, com.fasterxml.jackson.annotation.JsonProperty.class },
+        typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")
 @JsonDeserialize(builder = TAFImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "reportStatus", "cancelMessage", "missingMessage", "aerodrome", "issueTime", "validityTime", "baseForecast", "changeForecasts",
@@ -63,7 +81,7 @@ public abstract class TAFImpl implements TAF, Serializable {
         if (taf instanceof TAFImpl) {
             return (TAFImpl) taf;
         } else {
-            return Builder.from(taf).build();
+            return Builder.copyOf(taf).build();
         }
     }
 
@@ -111,7 +129,9 @@ public abstract class TAFImpl implements TAF, Serializable {
         return TAF.super.getReferredReport();
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().mergeFrom(this);
+    }
 
     /**
      * Returns true if issue time, valid time and all other time references contained in this
@@ -144,10 +164,472 @@ public abstract class TAFImpl implements TAF, Serializable {
         return this.getAerodrome().getReferencePoint().isPresent();
     }
 
-    public static class Builder extends TAFImpl_Builder {
+    public static class Builder {
         @Nullable
         private Aerodrome referredReportAerodrome;
         private boolean missingMessage;
+
+    @JsonIgnore
+    protected Aerodrome aerodrome;
+    protected AviationWeatherMessage.ReportStatus reportStatus;
+    protected boolean cancelMessage;
+    protected boolean translated;
+    protected Optional<PartialOrCompleteTimeInstant> issueTime = Optional.empty();
+    protected Optional<List<String>> remarks = Optional.empty();
+    protected Optional<AviationCodeListUser.PermissibleUsage> permissibleUsage = Optional.empty();
+    protected Optional<AviationCodeListUser.PermissibleUsageReason> permissibleUsageReason = Optional.empty();
+    protected Optional<String> permissibleUsageSupplementary = Optional.empty();
+    protected Optional<String> translatedBulletinID = Optional.empty();
+    protected Optional<ZonedDateTime> translatedBulletinReceptionTime = Optional.empty();
+    protected Optional<String> translationCentreDesignator = Optional.empty();
+    protected Optional<String> translationCentreName = Optional.empty();
+    protected Optional<ZonedDateTime> translationTime = Optional.empty();
+    protected Optional<String> translatedTAC = Optional.empty();
+    protected Optional<PartialOrCompleteTimePeriod> validityTime = Optional.empty();
+    @JsonIgnore
+    protected Optional<TAFBaseForecast> baseForecast = Optional.empty();
+    @JsonIgnore
+    protected Optional<List<TAFChangeForecast>> changeForecasts = Optional.empty();
+    protected Optional<PartialOrCompleteTimePeriod> referredReportValidPeriod = Optional.empty();
+
+    public Aerodrome getAerodrome() {
+        return requireAerodrome();
+    }
+
+    private Aerodrome requireAerodrome() {
+        if (aerodrome == null) {
+            throw new IllegalStateException("aerodrome not set");
+        }
+        return aerodrome;
+    }
+
+    public AviationWeatherMessage.ReportStatus getReportStatus() {
+        if (reportStatus == null) {
+            throw new IllegalStateException("reportStatus not set");
+        }
+        return reportStatus;
+    }
+
+    public Builder setReportStatus(final AviationWeatherMessage.ReportStatus reportStatus) {
+        this.reportStatus = requireNonNull(reportStatus, "reportStatus");
+        missingMessage = false;
+        return this;
+    }
+
+    public boolean isCancelMessage() {
+        return cancelMessage;
+    }
+
+    public Builder setCancelMessage(final boolean cancelMessage) {
+        this.cancelMessage = cancelMessage;
+        missingMessage = false;
+        return this;
+    }
+
+    public boolean isTranslated() {
+        return translated;
+    }
+
+    public Builder setTranslated(final boolean translated) {
+        this.translated = translated;
+        return this;
+    }
+
+    public Optional<PartialOrCompleteTimeInstant> getIssueTime() {
+        return issueTime;
+    }
+
+    public Builder setIssueTime(final PartialOrCompleteTimeInstant issueTime) {
+        this.issueTime = Optional.of(requireNonNull(issueTime, "issueTime"));
+        return this;
+    }
+
+    public Builder setIssueTime(final Optional<? extends PartialOrCompleteTimeInstant> issueTime) {
+        requireNonNull(issueTime, "issueTime");
+        this.issueTime = issueTime.isPresent() ? Optional.of(issueTime.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearIssueTime() {
+        this.issueTime = Optional.empty();
+        return this;
+    }
+
+    public Builder mapIssueTime(final UnaryOperator<PartialOrCompleteTimeInstant> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.issueTime = this.issueTime.map(mapper);
+        return this;
+    }
+
+    public Optional<List<String>> getRemarks() {
+        return remarks;
+    }
+
+    public Builder setRemarks(final List<String> remarks) {
+        this.remarks = Optional.of(requireNonNull(remarks, "remarks"));
+        return this;
+    }
+
+    public Builder setRemarks(final Optional<? extends List<String>> remarks) {
+        requireNonNull(remarks, "remarks");
+        this.remarks = remarks.isPresent() ? Optional.of(remarks.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearRemarks() {
+        this.remarks = Optional.empty();
+        return this;
+    }
+
+    public Builder mapRemarks(final UnaryOperator<List<String>> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.remarks = this.remarks.map(mapper);
+        return this;
+    }
+
+    public Optional<AviationCodeListUser.PermissibleUsage> getPermissibleUsage() {
+        return permissibleUsage;
+    }
+
+    public Builder setPermissibleUsage(final AviationCodeListUser.PermissibleUsage permissibleUsage) {
+        this.permissibleUsage = Optional.of(requireNonNull(permissibleUsage, "permissibleUsage"));
+        return this;
+    }
+
+    public Builder setPermissibleUsage(final Optional<? extends AviationCodeListUser.PermissibleUsage> permissibleUsage) {
+        requireNonNull(permissibleUsage, "permissibleUsage");
+        this.permissibleUsage = permissibleUsage.isPresent() ? Optional.of(permissibleUsage.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearPermissibleUsage() {
+        this.permissibleUsage = Optional.empty();
+        return this;
+    }
+
+    public Builder mapPermissibleUsage(final UnaryOperator<AviationCodeListUser.PermissibleUsage> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.permissibleUsage = this.permissibleUsage.map(mapper);
+        return this;
+    }
+
+    public Optional<AviationCodeListUser.PermissibleUsageReason> getPermissibleUsageReason() {
+        return permissibleUsageReason;
+    }
+
+    public Builder setPermissibleUsageReason(final AviationCodeListUser.PermissibleUsageReason permissibleUsageReason) {
+        this.permissibleUsageReason = Optional.of(requireNonNull(permissibleUsageReason, "permissibleUsageReason"));
+        return this;
+    }
+
+    public Builder setPermissibleUsageReason(final Optional<? extends AviationCodeListUser.PermissibleUsageReason> permissibleUsageReason) {
+        requireNonNull(permissibleUsageReason, "permissibleUsageReason");
+        this.permissibleUsageReason = permissibleUsageReason.isPresent() ? Optional.of(permissibleUsageReason.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearPermissibleUsageReason() {
+        this.permissibleUsageReason = Optional.empty();
+        return this;
+    }
+
+    public Builder mapPermissibleUsageReason(final UnaryOperator<AviationCodeListUser.PermissibleUsageReason> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.permissibleUsageReason = this.permissibleUsageReason.map(mapper);
+        return this;
+    }
+
+    public Optional<String> getPermissibleUsageSupplementary() {
+        return permissibleUsageSupplementary;
+    }
+
+    public Builder setPermissibleUsageSupplementary(final String permissibleUsageSupplementary) {
+        this.permissibleUsageSupplementary = Optional.of(requireNonNull(permissibleUsageSupplementary, "permissibleUsageSupplementary"));
+        return this;
+    }
+
+    public Builder setPermissibleUsageSupplementary(final Optional<? extends String> permissibleUsageSupplementary) {
+        requireNonNull(permissibleUsageSupplementary, "permissibleUsageSupplementary");
+        this.permissibleUsageSupplementary = permissibleUsageSupplementary.isPresent() ? Optional.of(permissibleUsageSupplementary.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearPermissibleUsageSupplementary() {
+        this.permissibleUsageSupplementary = Optional.empty();
+        return this;
+    }
+
+    public Builder mapPermissibleUsageSupplementary(final UnaryOperator<String> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.permissibleUsageSupplementary = this.permissibleUsageSupplementary.map(mapper);
+        return this;
+    }
+
+    public Optional<String> getTranslatedBulletinID() {
+        return translatedBulletinID;
+    }
+
+    public Builder setTranslatedBulletinID(final String translatedBulletinID) {
+        this.translatedBulletinID = Optional.of(requireNonNull(translatedBulletinID, "translatedBulletinID"));
+        return this;
+    }
+
+    public Builder setTranslatedBulletinID(final Optional<? extends String> translatedBulletinID) {
+        requireNonNull(translatedBulletinID, "translatedBulletinID");
+        this.translatedBulletinID = translatedBulletinID.isPresent() ? Optional.of(translatedBulletinID.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearTranslatedBulletinID() {
+        this.translatedBulletinID = Optional.empty();
+        return this;
+    }
+
+    public Builder mapTranslatedBulletinID(final UnaryOperator<String> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.translatedBulletinID = this.translatedBulletinID.map(mapper);
+        return this;
+    }
+
+    public Optional<ZonedDateTime> getTranslatedBulletinReceptionTime() {
+        return translatedBulletinReceptionTime;
+    }
+
+    public Builder setTranslatedBulletinReceptionTime(final ZonedDateTime translatedBulletinReceptionTime) {
+        this.translatedBulletinReceptionTime = Optional.of(requireNonNull(translatedBulletinReceptionTime, "translatedBulletinReceptionTime"));
+        return this;
+    }
+
+    public Builder setTranslatedBulletinReceptionTime(final Optional<? extends ZonedDateTime> translatedBulletinReceptionTime) {
+        requireNonNull(translatedBulletinReceptionTime, "translatedBulletinReceptionTime");
+        this.translatedBulletinReceptionTime = translatedBulletinReceptionTime.isPresent() ? Optional.of(translatedBulletinReceptionTime.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearTranslatedBulletinReceptionTime() {
+        this.translatedBulletinReceptionTime = Optional.empty();
+        return this;
+    }
+
+    public Builder mapTranslatedBulletinReceptionTime(final UnaryOperator<ZonedDateTime> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.translatedBulletinReceptionTime = this.translatedBulletinReceptionTime.map(mapper);
+        return this;
+    }
+
+    public Optional<String> getTranslationCentreDesignator() {
+        return translationCentreDesignator;
+    }
+
+    public Builder setTranslationCentreDesignator(final String translationCentreDesignator) {
+        this.translationCentreDesignator = Optional.of(requireNonNull(translationCentreDesignator, "translationCentreDesignator"));
+        return this;
+    }
+
+    public Builder setTranslationCentreDesignator(final Optional<? extends String> translationCentreDesignator) {
+        requireNonNull(translationCentreDesignator, "translationCentreDesignator");
+        this.translationCentreDesignator = translationCentreDesignator.isPresent() ? Optional.of(translationCentreDesignator.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearTranslationCentreDesignator() {
+        this.translationCentreDesignator = Optional.empty();
+        return this;
+    }
+
+    public Builder mapTranslationCentreDesignator(final UnaryOperator<String> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.translationCentreDesignator = this.translationCentreDesignator.map(mapper);
+        return this;
+    }
+
+    public Optional<String> getTranslationCentreName() {
+        return translationCentreName;
+    }
+
+    public Builder setTranslationCentreName(final String translationCentreName) {
+        this.translationCentreName = Optional.of(requireNonNull(translationCentreName, "translationCentreName"));
+        return this;
+    }
+
+    public Builder setTranslationCentreName(final Optional<? extends String> translationCentreName) {
+        requireNonNull(translationCentreName, "translationCentreName");
+        this.translationCentreName = translationCentreName.isPresent() ? Optional.of(translationCentreName.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearTranslationCentreName() {
+        this.translationCentreName = Optional.empty();
+        return this;
+    }
+
+    public Builder mapTranslationCentreName(final UnaryOperator<String> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.translationCentreName = this.translationCentreName.map(mapper);
+        return this;
+    }
+
+    public Optional<ZonedDateTime> getTranslationTime() {
+        return translationTime;
+    }
+
+    public Builder setTranslationTime(final ZonedDateTime translationTime) {
+        this.translationTime = Optional.of(requireNonNull(translationTime, "translationTime"));
+        return this;
+    }
+
+    public Builder setTranslationTime(final Optional<? extends ZonedDateTime> translationTime) {
+        requireNonNull(translationTime, "translationTime");
+        this.translationTime = translationTime.isPresent() ? Optional.of(translationTime.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearTranslationTime() {
+        this.translationTime = Optional.empty();
+        return this;
+    }
+
+    public Builder mapTranslationTime(final UnaryOperator<ZonedDateTime> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.translationTime = this.translationTime.map(mapper);
+        return this;
+    }
+
+    public Optional<String> getTranslatedTAC() {
+        return translatedTAC;
+    }
+
+    public Builder setTranslatedTAC(final String translatedTAC) {
+        this.translatedTAC = Optional.of(requireNonNull(translatedTAC, "translatedTAC"));
+        return this;
+    }
+
+    public Builder setTranslatedTAC(final Optional<? extends String> translatedTAC) {
+        requireNonNull(translatedTAC, "translatedTAC");
+        this.translatedTAC = translatedTAC.isPresent() ? Optional.of(translatedTAC.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearTranslatedTAC() {
+        this.translatedTAC = Optional.empty();
+        return this;
+    }
+
+    public Builder mapTranslatedTAC(final UnaryOperator<String> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.translatedTAC = this.translatedTAC.map(mapper);
+        return this;
+    }
+
+    public Optional<PartialOrCompleteTimePeriod> getValidityTime() {
+        return validityTime;
+    }
+
+    public Builder setValidityTime(final PartialOrCompleteTimePeriod validityTime) {
+        this.validityTime = Optional.of(requireNonNull(validityTime, "validityTime"));
+        return this;
+    }
+
+    public Builder setValidityTime(final Optional<? extends PartialOrCompleteTimePeriod> validityTime) {
+        requireNonNull(validityTime, "validityTime");
+        this.validityTime = validityTime.isPresent() ? Optional.of(validityTime.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearValidityTime() {
+        this.validityTime = Optional.empty();
+        return this;
+    }
+
+    public Builder mapValidityTime(final UnaryOperator<PartialOrCompleteTimePeriod> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.validityTime = this.validityTime.map(mapper);
+        return this;
+    }
+
+    public Optional<TAFBaseForecast> getBaseForecast() {
+        return baseForecast;
+    }
+
+    @JsonProperty("baseForecast")
+    @JsonDeserialize(as = TAFBaseForecastImpl.class)
+    public Builder setBaseForecast(final TAFBaseForecast baseForecast) {
+        this.baseForecast = Optional.of(requireNonNull(baseForecast, "baseForecast"));
+        return this;
+    }
+
+    public Builder setBaseForecast(final Optional<? extends TAFBaseForecast> baseForecast) {
+        requireNonNull(baseForecast, "baseForecast");
+        this.baseForecast = baseForecast.isPresent() ? Optional.of(baseForecast.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearBaseForecast() {
+        this.baseForecast = Optional.empty();
+        return this;
+    }
+
+    public Builder mapBaseForecast(final UnaryOperator<TAFBaseForecast> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.baseForecast = this.baseForecast.map(mapper);
+        return this;
+    }
+
+    public Optional<List<TAFChangeForecast>> getChangeForecasts() {
+        return changeForecasts;
+    }
+
+    @JsonProperty("changeForecasts")
+    @JsonDeserialize(contentAs = TAFChangeForecastImpl.class)
+    public Builder setChangeForecasts(final List<TAFChangeForecast> changeForecasts) {
+        this.changeForecasts = Optional.of(requireNonNull(changeForecasts, "changeForecasts"));
+        return this;
+    }
+
+    public Builder setChangeForecasts(final Optional<? extends List<TAFChangeForecast>> changeForecasts) {
+        requireNonNull(changeForecasts, "changeForecasts");
+        this.changeForecasts = changeForecasts.isPresent() ? Optional.of(changeForecasts.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearChangeForecasts() {
+        this.changeForecasts = Optional.empty();
+        return this;
+    }
+
+    public Builder mapChangeForecasts(final UnaryOperator<List<TAFChangeForecast>> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.changeForecasts = this.changeForecasts.map(mapper);
+        return this;
+    }
+
+    public Optional<PartialOrCompleteTimePeriod> getReferredReportValidPeriod() {
+        return referredReportValidPeriod;
+    }
+
+    public Builder setReferredReportValidPeriod(final PartialOrCompleteTimePeriod referredReportValidPeriod) {
+        this.referredReportValidPeriod = Optional.of(requireNonNull(referredReportValidPeriod, "referredReportValidPeriod"));
+        return this;
+    }
+
+    public Builder setReferredReportValidPeriod(final Optional<? extends PartialOrCompleteTimePeriod> referredReportValidPeriod) {
+        requireNonNull(referredReportValidPeriod, "referredReportValidPeriod");
+        this.referredReportValidPeriod = referredReportValidPeriod.isPresent() ? Optional.of(referredReportValidPeriod.get()) : Optional.empty();
+        return this;
+    }
+
+    public Builder clearReferredReportValidPeriod() {
+        this.referredReportValidPeriod = Optional.empty();
+        return this;
+    }
+
+    public Builder mapReferredReportValidPeriod(final UnaryOperator<PartialOrCompleteTimePeriod> mapper) {
+        requireNonNull(mapper, "mapper");
+        this.referredReportValidPeriod = this.referredReportValidPeriod.map(mapper);
+        return this;
+    }
+
+
 
         Builder() {
             setCancelMessage(false);
@@ -155,7 +637,14 @@ public abstract class TAFImpl implements TAF, Serializable {
             setTranslated(false);
         }
 
-        public static Builder from(final TAF value) {
+        @JsonProperty("aerodrome")
+        @JsonDeserialize(as = AerodromeImpl.class)
+        public Builder setAerodrome(final Aerodrome aerodrome) {
+            this.aerodrome = requireNonNull(aerodrome, "aerodrome");
+            return this;
+        }
+
+        public static Builder copyOf(final TAF value) {
             if (value instanceof TAFImpl) {
                 return ((TAFImpl) value).toBuilder();
             } else {
@@ -186,16 +675,53 @@ public abstract class TAFImpl implements TAF, Serializable {
             }
         }
 
-        @Override
-        public TAFImpl build() {
-            onValueOrPartialBuild();
-            return super.build();
+        public Builder mergeFrom(final TAFImpl template) {
+            requireNonNull(template, "template");
+            this.aerodrome = template.getAerodrome();
+            this.reportStatus = template.getReportStatus();
+            this.cancelMessage = template.isCancelMessage();
+            this.translated = template.isTranslated();
+            this.issueTime = template.getIssueTime();
+            this.remarks = template.getRemarks();
+            this.permissibleUsage = template.getPermissibleUsage();
+            this.permissibleUsageReason = template.getPermissibleUsageReason();
+            this.permissibleUsageSupplementary = template.getPermissibleUsageSupplementary();
+            this.translatedBulletinID = template.getTranslatedBulletinID();
+            this.translatedBulletinReceptionTime = template.getTranslatedBulletinReceptionTime();
+            this.translationCentreDesignator = template.getTranslationCentreDesignator();
+            this.translationCentreName = template.getTranslationCentreName();
+            this.translationTime = template.getTranslationTime();
+            this.translatedTAC = template.getTranslatedTAC();
+            this.validityTime = template.getValidityTime();
+            this.baseForecast = template.getBaseForecast();
+            this.changeForecasts = template.getChangeForecasts();
+            this.referredReportValidPeriod = template.getReferredReportValidPeriod();
+            return this;
         }
 
-        @Override
-        public TAFImpl buildPartial() {
+        public ImmutableTAFImpl build() {
             onValueOrPartialBuild();
-            return super.buildPartial();
+            final ImmutableTAFImpl.Builder delegate = ImmutableTAFImpl.internalBuilder()//
+                    .setAerodrome(getAerodrome())//
+                    .setReportStatus(getReportStatus())//
+                    .setCancelMessage(isCancelMessage())//
+                    .setTranslated(isTranslated());
+            getIssueTime().ifPresent(delegate::setIssueTime);
+            getRemarks().ifPresent(delegate::setRemarks);
+            getPermissibleUsage().ifPresent(delegate::setPermissibleUsage);
+            getPermissibleUsageReason().ifPresent(delegate::setPermissibleUsageReason);
+            getPermissibleUsageSupplementary().ifPresent(delegate::setPermissibleUsageSupplementary);
+            getTranslatedBulletinID().ifPresent(delegate::setTranslatedBulletinID);
+            getTranslatedBulletinReceptionTime().ifPresent(delegate::setTranslatedBulletinReceptionTime);
+            getTranslationCentreDesignator().ifPresent(delegate::setTranslationCentreDesignator);
+            getTranslationCentreName().ifPresent(delegate::setTranslationCentreName);
+            getTranslationTime().ifPresent(delegate::setTranslationTime);
+            getTranslatedTAC().ifPresent(delegate::setTranslatedTAC);
+            getValidityTime().ifPresent(delegate::setValidityTime);
+            getBaseForecast().ifPresent(delegate::setBaseForecast);
+            getChangeForecasts().ifPresent(delegate::setChangeForecasts);
+            getReferredReportValidPeriod().ifPresent(delegate::setReferredReportValidPeriod);
+            return delegate.build();
         }
 
         private void onValueOrPartialBuild() {
@@ -257,11 +783,7 @@ public abstract class TAFImpl implements TAF, Serializable {
         }
 
         private Aerodrome getNullableAerodrome() {
-            try {
-                return getAerodrome();
-            } catch (final IllegalStateException ignored) {
-                return null;
-            }
+            return aerodrome;
         }
 
         @Deprecated
@@ -303,7 +825,7 @@ public abstract class TAFImpl implements TAF, Serializable {
          *     <dd>
          *         <code>reportStatus = {@link fi.fmi.avi.model.AviationWeatherMessage.ReportStatus#NORMAL NORMAL}</code><br>
          *         <code>cancelMessage = false</code><br>
-         *         <code>baseForecast = Optional.empty()</code> ; postponed until {@link #build()} / {@link #buildPartial()} by setting internal
+         *         <code>baseForecast = Optional.empty()</code> ; postponed until {@link #build()} by setting internal
          *         {@link #isMissingMessage()} missingMessage} flag.<br>
          *     </dd>
          *
@@ -338,8 +860,8 @@ public abstract class TAFImpl implements TAF, Serializable {
         public Builder setStatus(final TAFStatus status) {
             requireNonNull(status);
             missingMessage = status.isMissingMessage();
-            super.setReportStatus(status.getReportStatus());
-            super.setCancelMessage(status.isCancelMessage());
+            this.reportStatus = status.getReportStatus();
+            this.cancelMessage = status.isCancelMessage();
             return this;
         }
 
@@ -370,26 +892,6 @@ public abstract class TAFImpl implements TAF, Serializable {
          */
         public boolean isMissingMessage() {
             return missingMessage || (!isCancelMessage() && !getBaseForecast().isPresent());
-        }
-
-        @Override
-        @JsonDeserialize(as = AerodromeImpl.class)
-        public Builder setAerodrome(final Aerodrome aerodrome) {
-            super.setAerodrome(aerodrome);
-            return this;
-        }
-
-        @Override
-        @JsonDeserialize(as = TAFBaseForecastImpl.class)
-        public Builder setBaseForecast(final TAFBaseForecast baseForecast) {
-            super.setBaseForecast(baseForecast);
-            return this;
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = TAFChangeForecastImpl.class)
-        public Builder setChangeForecasts(final List<TAFChangeForecast> changeForecasts) {
-            return super.setChangeForecasts(changeForecasts);
         }
 
         /**
@@ -493,42 +995,6 @@ public abstract class TAFImpl implements TAF, Serializable {
             }
         }
 
-        /**
-         * {@inheritDoc}
-         *
-         * <p>
-         * Additionally this method clears the <em>internal</em> {@code missingMessage} flag (see {@link #isMissingMessage()} for details).
-         * </p>
-         *
-         * @param cancelMessage
-         *         {@inheritDoc}
-         *
-         * @return {@inheritDoc}
-         */
-        @Override
-        public Builder setCancelMessage(final boolean cancelMessage) {
-            missingMessage = false;
-            return super.setCancelMessage(cancelMessage);
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * <p>
-         * Additionally this method clears the <em>internal</em> {@code missingMessage} flag (see {@link #isMissingMessage()} for details).
-         * </p>
-         *
-         * @param reportStatus
-         *         {@inheritDoc}
-         *
-         * @return {@inheritDoc}
-         */
-        @Override
-        public Builder setReportStatus(final ReportStatus reportStatus) {
-            missingMessage = false;
-            return super.setReportStatus(reportStatus);
-        }
-
         private void completeValidityTime(final ZonedDateTime reference) {
             mapValidityTime(validityTime -> validityTime.toBuilder().completePartialStartingNear(reference).build());
         }
@@ -543,12 +1009,19 @@ public abstract class TAFImpl implements TAF, Serializable {
                 final Function<PartialDateTime, ZonedDateTime> completion = partial -> toZonedDateTimeSatisfyingConditionOrNear(
                         PartialDateTime.ReferenceCondition.NEAR, false, validityStart, validityEnd).apply(partial, reference);
                 for (final TAFAirTemperatureForecast airTemp : getBaseForecast().get().getTemperatures().get()) {
-                    temperatureForecasts.add(TAFAirTemperatureForecastImpl.Builder.from(airTemp)
-                            .mutateMinTemperatureTime(time -> time.completePartial(completion).build())
-                            .mutateMaxTemperatureTime(time -> time.completePartial(completion).build())
+                    // NOTE: rewritten as a fresh builder().set...().build() instead of the FreeBuilder-era
+                    // copyOf(...).mutateX(...).mutateX(...).build() chain: Immutables generates no builder-side
+                    // getters and no mutateX(Consumer<T>) convenience methods (see docs/07-modernization-plan.md),
+                    // so the "read current value, transform, set" idiom is done directly against airTemp's own
+                    // (non-builder) getters instead of the builder's.
+                    temperatureForecasts.add(TAFAirTemperatureForecastImpl.builder()//
+                            .setMaxTemperature(NumericMeasureImpl.immutableCopyOf(airTemp.getMaxTemperature()))//
+                            .setMinTemperature(NumericMeasureImpl.immutableCopyOf(airTemp.getMinTemperature()))//
+                            .setMaxTemperatureTime(airTemp.getMaxTemperatureTime().toBuilder().completePartial(completion).build())//
+                            .setMinTemperatureTime(airTemp.getMinTemperatureTime().toBuilder().completePartial(completion).build())//
                             .build());
                 }
-                mapBaseForecast(fct -> TAFBaseForecastImpl.Builder.from(fct).setTemperatures(Collections.unmodifiableList(temperatureForecasts)).build());
+                mapBaseForecast(fct -> TAFBaseForecastImpl.Builder.copyOf(fct).setTemperatures(Collections.unmodifiableList(temperatureForecasts)).build());
             }
         }
 
@@ -562,7 +1035,7 @@ public abstract class TAFImpl implements TAF, Serializable {
                 for (int i = 0; i < times.size(); i++) {
                     final PartialOrCompleteTime time = times.get(i);
                     completedForecasts.add(
-                            TAFChangeForecastImpl.Builder.from(changeForecasts.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
+                            TAFChangeForecastImpl.Builder.copyOf(changeForecasts.get(i)).setPeriodOfChange((PartialOrCompleteTimePeriod) time).build());
                 }
                 setChangeForecasts(Collections.unmodifiableList(completedForecasts));
             }

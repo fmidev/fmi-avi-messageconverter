@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -15,7 +15,7 @@ import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.immutable.VolcanoDescriptionImpl;
 import fi.fmi.avi.model.sigmet.VAInfo;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = VAInfoImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class VAInfoImpl implements VAInfo, Serializable {
@@ -26,7 +26,7 @@ public abstract class VAInfoImpl implements VAInfo, Serializable {
         if (vaInfo instanceof VAInfoImpl) {
             return (VAInfoImpl) vaInfo;
         } else {
-            return Builder.from(vaInfo).build();
+            return Builder.copyOf(vaInfo).build();
         }
     }
 
@@ -35,11 +35,21 @@ public abstract class VAInfoImpl implements VAInfo, Serializable {
         return vaInfo.map(VAInfoImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends VAInfoImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = VolcanoDescriptionImpl.class)
+    public abstract Optional<VolcanoDescription> getVolcano();
 
-        public static Builder from(final VAInfo value) {
+    @Override
+    @JsonDeserialize(contentAs = UnitPropertyGroupImpl.class)
+    public abstract Optional<UnitPropertyGroup> getVolcanicAshMovedToFIR();
+
+    public static class Builder extends ImmutableVAInfoImpl.Builder {
+
+        public static Builder copyOf(final VAInfo value) {
             if (value instanceof VAInfoImpl) {
                 return ((VAInfoImpl) value).toBuilder();
             } else {
@@ -47,17 +57,7 @@ public abstract class VAInfoImpl implements VAInfo, Serializable {
             }
         }
 
-        @Override
-        @JsonDeserialize(as = VolcanoDescriptionImpl.class)
-        public Builder setVolcano(final VolcanoDescription volcano) {
-            return super.setVolcano(volcano);
-        }
 
-        @Override
-        @JsonDeserialize(as = UnitPropertyGroupImpl.class)
-        public Builder setVolcanicAshMovedToFIR(final UnitPropertyGroup issuingAirTrafficServicesUnit) {
-            return super.setVolcanicAshMovedToFIR(issuingAirTrafficServicesUnit);
-        }
     }
 }
 

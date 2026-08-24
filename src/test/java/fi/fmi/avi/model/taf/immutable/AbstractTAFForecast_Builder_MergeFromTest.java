@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -369,9 +369,33 @@ public abstract class AbstractTAFForecast_Builder_MergeFromTest<T extends TAFFor
         };
     }
 
-    @FreeBuilder
+    /**
+     * Test-only fixture value type, migrated off {@code @FreeBuilder} onto Immutables. {@link Builder} is a
+     * "detached builder" (see docs/07-modernization-plan.md) that simply extends the shared, hand-written
+     * {@link AbstractTAFForecastBuilderImpl}, which already implements every {@link TAFForecast.Builder} method
+     * this fixture needs (all its properties are the ones {@code AbstractTAFForecastBuilderImpl} already covers) -
+     * only {@code build()} needs implementing here.
+     */
+    @Value.Immutable
+    @Value.Style(init = "set*", get = { "is*", "get*" }, typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")
     abstract static class TestTAFForecast implements TAFForecast {
-        public static class Builder extends AbstractTAFForecast_Builder_MergeFromTest_TestTAFForecast_Builder {
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static class Builder extends AbstractTAFForecastBuilderImpl<TestTAFForecast, Builder> {
+            @Override
+            public TestTAFForecast build() {
+                final ImmutableTestTAFForecast.Builder delegate = ImmutableTestTAFForecast.internalBuilder()//
+                        .setCeilingAndVisibilityOk(isCeilingAndVisibilityOk())//
+                        .setNoSignificantWeather(isNoSignificantWeather());
+                getPrevailingVisibility().ifPresent(delegate::setPrevailingVisibility);
+                getPrevailingVisibilityOperator().ifPresent(delegate::setPrevailingVisibilityOperator);
+                getSurfaceWind().ifPresent(delegate::setSurfaceWind);
+                getForecastWeather().ifPresent(delegate::setForecastWeather);
+                getCloud().ifPresent(delegate::setCloud);
+                return delegate.build();
+            }
         }
     }
 

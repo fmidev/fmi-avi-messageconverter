@@ -32,6 +32,6 @@ public class TAFChangeForecastImpl_Builder_MergeFromTest
     protected TAFChangeForecastImpl.Builder copyOptionalSpecializedValues(final TAFChangeForecastImpl.Builder from, final TAFChangeForecastImpl.Builder to) {
         return to//
                 .setChangeIndicator(from.getChangeIndicator())//
-                .setPeriodOfChange(from.getPeriodOfChangeBuilder());
+                .setPeriodOfChange(from.getPeriodOfChange());
     }
 }

@@ -2,7 +2,6 @@ package fi.fmi.avi.util;
 
 import java.util.Locale;
 
-import org.inferred.freebuilder.shaded.com.google.common.annotations.VisibleForTesting;
 
 /**
  * Deprecated.
@@ -69,7 +68,8 @@ public class GTSExchangeFileParseException extends RuntimeException {
             this.messageTemplate = message + " starting at index %d";
         }
 
-        @VisibleForTesting
+        // NOTE: package-private, previously annotated @VisibleForTesting (org.inferred.freebuilder's shaded
+        // Guava annotation, removed along with the FreeBuilder dependency; see docs/07-modernization-plan.md).
         String getMessage(final int index) {
             return String.format(Locale.ROOT, messageTemplate, index);
         }
