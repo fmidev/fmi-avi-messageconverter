@@ -26,11 +26,6 @@ import fi.fmi.avi.model.taf.immutable.TAFChangeForecastImpl;
 import fi.fmi.avi.model.taf.immutable.TAFImpl;
 import junit.framework.TestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -42,12 +37,9 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JSONTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class JSONConverterTest {
 
-    @Autowired
-    private AviMessageConverter converter;
+    private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     private static void assertSuccess(final ConversionResult<?> result) {
         assertEquals("Expected SUCCESS, but had issues: " + result.getConversionIssues(), //
@@ -211,7 +203,7 @@ public class JSONConverterTest {
                         .setIssueTime(PartialOrCompleteTimeInstant.of(PartialDateTime.ofDayHourMinute(2, 5, 0)))//
                         .build());
 
-        builder.addMessages(SIGMETImpl.Builder.from(result.getConvertedMessage().get()).setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
+        builder.addMessages(SIGMETImpl.Builder.copyOf(result.getConvertedMessage().get()).setTranslatedTAC("EFIN SIGMET 1 VALID 170750/170950 EFKL-\n"//
                 + "EFIN FINLAND FIR SEV TURB FCST AT 0740Z\n"//
                 + "S OF LINE N5953 E01931 -\n"//
                 + "N6001 E02312 - N6008 E02606 - N6008\n"//

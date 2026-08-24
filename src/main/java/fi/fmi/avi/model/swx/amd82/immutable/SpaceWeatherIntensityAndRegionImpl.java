@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.swx.amd82.Intensity;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = SpaceWeatherIntensityAndRegionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"intensity", "regions"})
@@ -28,7 +28,7 @@ public abstract class SpaceWeatherIntensityAndRegionImpl implements SpaceWeather
         if (intensityAndRegion instanceof SpaceWeatherIntensityAndRegionImpl) {
             return (SpaceWeatherIntensityAndRegionImpl) intensityAndRegion;
         } else {
-            return SpaceWeatherIntensityAndRegionImpl.Builder.from(intensityAndRegion).build();
+            return SpaceWeatherIntensityAndRegionImpl.Builder.copyOf(intensityAndRegion).build();
         }
     }
 
@@ -42,13 +42,15 @@ public abstract class SpaceWeatherIntensityAndRegionImpl implements SpaceWeather
         return new Builder();
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends SpaceWeatherIntensityAndRegionImpl_Builder {
+    public static class Builder extends ImmutableSpaceWeatherIntensityAndRegionImpl.Builder {
         Builder() {
         }
 
-        public static Builder from(final SpaceWeatherIntensityAndRegion value) {
+        public static Builder copyOf(final SpaceWeatherIntensityAndRegion value) {
             if (value instanceof SpaceWeatherIntensityAndRegionImpl) {
                 return ((SpaceWeatherIntensityAndRegionImpl) value).toBuilder();
             }
@@ -62,7 +64,8 @@ public abstract class SpaceWeatherIntensityAndRegionImpl implements SpaceWeather
             return builder()
                     .setIntensity(intensity)
                     .addAllRegions(values.stream()
-                            .map(value -> SpaceWeatherRegionImpl.Builder.fromAmd79(value).build()));
+                            .map(value -> SpaceWeatherRegionImpl.Builder.fromAmd79(value).build())
+                            .collect(java.util.stream.Collectors.toList()));
         }
 
         @JsonDeserialize(contentAs = SpaceWeatherRegionImpl.class)

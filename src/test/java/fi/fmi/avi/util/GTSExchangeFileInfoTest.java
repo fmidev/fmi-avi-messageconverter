@@ -61,7 +61,7 @@ public class GTSExchangeFileInfoTest {
     @Test
     public void testFileNameParser() {
         final String filename = "AM_FTFI12ABCD091000CCA_C_ABCD_201901091005--_foobar12345_-.met.gz";
-        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from(filename).build();
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.copyOf(filename).build();
 
         assertThat(info.getPFlag()).isSameAs(GTSExchangeFileInfo.GTSExchangePFlag.A);
         assertThat(info.isMetadataFile()).isTrue();
@@ -88,7 +88,7 @@ public class GTSExchangeFileInfoTest {
                         ChronoField.HOUR_OF_DAY, ChronoField.MINUTE_OF_HOUR, ChronoField.SECOND_OF_MINUTE))
                 .build();
 
-        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from(bulletin)
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.copyOf(bulletin)
                 .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.XML)
                 .build();
 
@@ -113,7 +113,7 @@ public class GTSExchangeFileInfoTest {
                 .addAllTimeStampFields(EnumSet.of(ChronoField.YEAR, ChronoField.MONTH_OF_YEAR, ChronoField.DAY_OF_MONTH))
                 .build();
 
-        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.from(bulletin)
+        final GTSExchangeFileInfo info = GTSExchangeFileInfo.Builder.copyOf(bulletin)
                 .setFileType(GTSExchangeFileInfo.GTSExchangeFileType.TEXT)
                 .build();
 

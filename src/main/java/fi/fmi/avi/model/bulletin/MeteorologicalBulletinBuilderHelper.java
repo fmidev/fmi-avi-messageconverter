@@ -5,11 +5,12 @@ import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -41,7 +42,7 @@ public final class MeteorologicalBulletinBuilderHelper {
             final B builder,
             final T value,
             final BiConsumer<B, BulletinHeading> setHeading,
-            final BiConsumer<B, Stream<M>> addAllMessages,
+            final BiConsumer<B, List<M>> addAllMessages,
             final Function<M, ? extends M> toImmutableMessage,
             final BiConsumer<B, Optional<ZonedDateTime>> setTimeStamp,
             final BiConsumer<B, Set<ChronoField>> addAllTimeStampFields,
@@ -76,7 +77,7 @@ public final class MeteorologicalBulletinBuilderHelper {
             final B builder,
             final T value,
             final BiConsumer<B, BulletinHeading> setHeading,
-            final BiConsumer<B, Stream<I>> addAllMessages,
+            final BiConsumer<B, List<I>> addAllMessages,
             final Function<M, ? extends I> toImmutableMessage,
             final BiConsumer<B, Optional<ZonedDateTime>> setTimeStamp,
             final BiConsumer<B, Set<ChronoField>> addAllTimeStampFields,
@@ -84,7 +85,7 @@ public final class MeteorologicalBulletinBuilderHelper {
         requireNonNull(value, "value");
         requireNonNull(builder, "builder");
         setHeading.accept(builder, BulletinHeadingImpl.immutableCopyOf(value.getHeading()));
-        addAllMessages.accept(builder, value.getMessages().stream().map(toImmutableMessage));
+        addAllMessages.accept(builder, value.getMessages().stream().map(toImmutableMessage).collect(Collectors.toList()));
         setTimeStamp.accept(builder, value.getTimeStamp());
         addAllTimeStampFields.accept(builder, value.getTimeStampFields());
         setCollectIdentifier.accept(builder, value.getCollectIdentifier());

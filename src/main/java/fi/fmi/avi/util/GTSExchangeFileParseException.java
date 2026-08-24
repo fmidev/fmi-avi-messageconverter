@@ -2,7 +2,6 @@ package fi.fmi.avi.util;
 
 import java.util.Locale;
 
-import org.inferred.freebuilder.shaded.com.google.common.annotations.VisibleForTesting;
 
 /**
  * Deprecated.
@@ -69,7 +68,6 @@ public class GTSExchangeFileParseException extends RuntimeException {
             this.messageTemplate = message + " starting at index %d";
         }
 
-        @VisibleForTesting
         String getMessage(final int index) {
             return String.format(Locale.ROOT, messageTemplate, index);
         }

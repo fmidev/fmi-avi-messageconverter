@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.swx.VerticalLimits;
 import fi.fmi.avi.model.swx.amd82.AirspaceVolume;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherRegion;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = SpaceWeatherRegionImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"airSpaceVolume", "locationIndicator", "longitudeLimitMinimum", "longitudeLimitMaximum"})
@@ -32,7 +32,7 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
         if (region instanceof SpaceWeatherRegionImpl) {
             return (SpaceWeatherRegionImpl) region;
         } else {
-            return Builder.from(region).build();
+            return Builder.copyOf(region).build();
         }
     }
 
@@ -52,19 +52,25 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
                 .setLocationIndicator(locationIndicator)
                 .setAirSpaceVolume(AirspaceVolumeImpl.fromLocationIndicator(
                         locationIndicator, verticalLimits, analysisTime, minLongitude, maxLongitude))
-                .setNullableLongitudeLimitMinimum(minLongitude)
-                .setNullableLongitudeLimitMaximum(maxLongitude)
+                .setLongitudeLimitMinimum(Optional.ofNullable(minLongitude))
+                .setLongitudeLimitMaximum(Optional.ofNullable(maxLongitude))
                 .build();
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends SpaceWeatherRegionImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = AirspaceVolumeImpl.class)
+    public abstract Optional<AirspaceVolume> getAirSpaceVolume();
+
+    public static class Builder extends ImmutableSpaceWeatherRegionImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final SpaceWeatherRegion value) {
+        public static Builder copyOf(final SpaceWeatherRegion value) {
             if (value instanceof SpaceWeatherRegionImpl) {
                 return ((SpaceWeatherRegionImpl) value).toBuilder();
             } else {
@@ -94,10 +100,5 @@ public abstract class SpaceWeatherRegionImpl implements SpaceWeatherRegion, Seri
             }
         }
 
-        @Override
-        @JsonDeserialize(as = AirspaceVolumeImpl.class)
-        public Builder setAirSpaceVolume(final AirspaceVolume airSpaceVolume) {
-            return super.setAirSpaceVolume(airSpaceVolume);
-        }
     }
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -17,7 +17,7 @@ import fi.fmi.avi.model.ElevatedPoint;
  * Created by rinne on 13/04/2018.
  */
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = AerodromeImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "designator", "name", "locationIndicatorICAO", "fieldElevationValue", "fieldElevationUom", "referencePoint" })
@@ -34,7 +34,7 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
         if (aerodrome instanceof AerodromeImpl) {
             return (AerodromeImpl) aerodrome;
         } else {
-            return Builder.from(aerodrome).build();
+            return Builder.copyOf(aerodrome).build();
         }
     }
 
@@ -43,14 +43,20 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
         return aerodrome.map(AerodromeImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends AerodromeImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = ElevatedPointImpl.class)
+    public abstract Optional<ElevatedPoint> getReferencePoint();
+
+    public static class Builder extends ImmutableAerodromeImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final Aerodrome value) {
+        public static Builder copyOf(final Aerodrome value) {
             if (value instanceof AerodromeImpl) {
                 return ((AerodromeImpl) value).toBuilder();
             } else {
@@ -65,10 +71,5 @@ public abstract class AerodromeImpl implements Aerodrome, Serializable {
             }
         }
 
-        @Override
-        @JsonDeserialize(as = ElevatedPointImpl.class)
-        public Builder setReferencePoint(final ElevatedPoint referencePoint) {
-            return super.setReferencePoint(referencePoint);
-        }
     }
 }

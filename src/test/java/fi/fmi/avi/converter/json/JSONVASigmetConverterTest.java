@@ -17,11 +17,6 @@ import fi.fmi.avi.model.sigmet.SigmetIntensityChange;
 import fi.fmi.avi.model.sigmet.immutable.SIGMETImpl;
 import fi.fmi.avi.model.sigmet.immutable.VAInfoImpl;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -32,12 +27,9 @@ import java.util.Objects;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JSONVASigmetTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class JSONVASigmetConverterTest {
 
-    @Autowired
-    private AviMessageConverter converter;
+    private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     @Test
     public void testSIGMETParsing() throws Exception {
@@ -115,7 +107,7 @@ public class JSONVASigmetConverterTest {
 
         final VolcanoDescriptionImpl.Builder volcanoBuilder = new VolcanoDescriptionImpl.Builder();
         final ElevatedPointImpl.Builder gpBuilder = ElevatedPointImpl.builder();
-        gpBuilder.addAllCoordinates(Arrays.stream(new Double[] { 52.0, 5.2 }));
+        gpBuilder.addAllCoordinates(Arrays.asList(52.0, 5.2));
         gpBuilder.setCrs(CoordinateReferenceSystemImpl.wgs84());
         volcanoBuilder.setVolcanoPosition(gpBuilder.build());
         volcanoBuilder.setVolcanoName("GRIMSVOTN");

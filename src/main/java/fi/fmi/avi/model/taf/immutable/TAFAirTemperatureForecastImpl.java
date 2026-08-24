@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,7 +18,7 @@ import fi.fmi.avi.model.taf.TAFAirTemperatureForecast;
 /**
  * Created by rinne on 18/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = TAFAirTemperatureForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "maxTemperature", "maxTemperatureTime", "minTemperature", "minTemperatureTime" })
@@ -35,7 +35,7 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
         if (airTemperatureForecast instanceof TAFAirTemperatureForecastImpl) {
             return (TAFAirTemperatureForecastImpl) airTemperatureForecast;
         } else {
-            return Builder.from(airTemperatureForecast).build();
+            return Builder.copyOf(airTemperatureForecast).build();
         }
     }
 
@@ -50,14 +50,24 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
         return getMinTemperatureTime().getCompleteTime().isPresent() && getMaxTemperatureTime().getCompleteTime().isPresent();
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends TAFAirTemperatureForecastImpl_Builder {
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getMaxTemperature();
+
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getMinTemperature();
+
+    public static class Builder extends ImmutableTAFAirTemperatureForecastImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final TAFAirTemperatureForecast value) {
+        public static Builder copyOf(final TAFAirTemperatureForecast value) {
             if (value instanceof TAFAirTemperatureForecastImpl) {
                 return ((TAFAirTemperatureForecastImpl) value).toBuilder();
             } else {
@@ -69,16 +79,6 @@ public abstract class TAFAirTemperatureForecastImpl implements TAFAirTemperature
             }
         }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMaxTemperature(final NumericMeasure maxTemperature) {
-            return super.setMaxTemperature(maxTemperature);
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMinTemperature(final NumericMeasure minTemperature) {
-            return super.setMinTemperature(minTemperature);
-        }
     }
 }

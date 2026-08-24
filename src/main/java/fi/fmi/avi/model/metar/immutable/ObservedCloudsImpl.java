@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -23,7 +23,7 @@ import fi.fmi.avi.model.metar.ObservedClouds;
  * Created by rinne on 13/04/2018.
  */
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = ObservedCloudsImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "layers", "verticalVisibility", "noSignificantCloud", "noCloudsDetectedByAutoSystem", "verticalVisibilityUnobservableByAutoSystem" })
@@ -40,7 +40,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
         if (observedClouds instanceof ObservedCloudsImpl) {
             return (ObservedCloudsImpl) observedClouds;
         } else {
-            return Builder.from(observedClouds).build();
+            return Builder.copyOf(observedClouds).build();
         }
     }
 
@@ -50,9 +50,21 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
         return observedClouds.map(ObservedCloudsImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends ObservedCloudsImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getVerticalVisibility();
+
+    // NOTE: no per-property @JsonDeserialize(contentAs=...) hint here: see SIGMETImpl.getAnalysisGeometries() for why
+    // (Optional<List<X>> on a non-detached builder). ObservedCloudLayer instead carries its own class-level
+    // @JsonDeserialize(as=...) hint (see doc/immutables-migration.md).
+    @Override
+    public abstract Optional<List<ObservedCloudLayer>> getLayers();
+
+    public static class Builder extends ImmutableObservedCloudsImpl.Builder {
 
         Builder() {
             setNoCloudsDetectedByAutoSystem(false);
@@ -60,7 +72,7 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
             setVerticalVisibilityUnobservableByAutoSystem(false);
         }
 
-        public static Builder from(final ObservedClouds value) {
+        public static Builder copyOf(final ObservedClouds value) {
             if (value instanceof ObservedCloudsImpl) {
                 return ((ObservedCloudsImpl) value).toBuilder();
             } else {
@@ -74,19 +86,6 @@ public abstract class ObservedCloudsImpl implements ObservedClouds, Serializable
                                 Collections.unmodifiableList(layers.stream().map(ObservedCloudLayerImpl::immutableCopyOf).collect(Collectors.toList()))));
                 return retval;
             }
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setVerticalVisibility(final NumericMeasure verticalVisibility) {
-            return super.setVerticalVisibility(verticalVisibility);
-        }
-
-
-        @Override
-        @JsonDeserialize(contentAs = ObservedCloudLayerImpl.class)
-        public Builder setLayers(final List<ObservedCloudLayer> layers) {
-            return super.setLayers(layers);
         }
     }
 }

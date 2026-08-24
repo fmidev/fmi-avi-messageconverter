@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.PolygonGeometry;
 import fi.fmi.avi.model.Winding;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = PolygonGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializable {
@@ -28,7 +28,7 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
         if (polygon instanceof PolygonGeometryImpl) {
             return (PolygonGeometryImpl) polygon;
         } else {
-            return Builder.from(polygon).build();
+            return Builder.copyOf(polygon).build();
         }
     }
 
@@ -49,14 +49,20 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
         return Winding.enforceWinding(getExteriorRingPositions(), winding);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends PolygonGeometryImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = CoordinateReferenceSystemImpl.class)
+    public abstract Optional<CoordinateReferenceSystem> getCrs();
+
+    public static class Builder extends ImmutablePolygonGeometryImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final PolygonGeometry value) {
+        public static Builder copyOf(final PolygonGeometry value) {
             if (value instanceof PolygonGeometryImpl) {
                 return ((PolygonGeometryImpl) value).toBuilder();
             } else {
@@ -66,15 +72,8 @@ public abstract class PolygonGeometryImpl implements PolygonGeometry, Serializab
             }
         }
 
-        public Builder setExteriorRingPositions(final List<Double> positions) {
-            return clearExteriorRingPositions().addAllExteriorRingPositions(positions);
-        }
-
-        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
-        @Override
-        public Builder setCrs(final CoordinateReferenceSystem crs) {
-            return super.setCrs(crs);
-        }
-
+        // A hand-written setExteriorRingPositions(List<Double>) used to live here; Immutables' own
+        // generated setExteriorRingPositions(Iterable<Double>) already replaces the whole
+        // collection, so the wrapper was redundant once migrated - see doc/immutables-migration.md.
     }
 }

@@ -7,9 +7,11 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -21,7 +23,6 @@ import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.immutable.WeatherImpl;
 import fi.fmi.avi.model.metar.HorizontalVisibility;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReport;
-import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReportBuilder;
 import fi.fmi.avi.model.metar.MeteorologicalTerminalAirReportBuilderHelper;
 import fi.fmi.avi.model.metar.ObservedClouds;
 import fi.fmi.avi.model.metar.ObservedSurfaceWind;
@@ -32,7 +33,14 @@ import fi.fmi.avi.model.metar.SeaState;
 import fi.fmi.avi.model.metar.TrendForecast;
 import fi.fmi.avi.model.metar.WindShear;
 
-@FreeBuilder
+/**
+ * See {@link METARImpl}'s javadoc for the "detached builder" pattern this class (and
+ * {@code Builder}) uses instead of extending an Immutables-generated builder directly.
+ */
+@Value.Immutable
+@Value.Style(init = "set*", get = { "is*", "get*" },
+        passAnnotations = { com.fasterxml.jackson.databind.annotation.JsonDeserialize.class, com.fasterxml.jackson.annotation.JsonProperty.class },
+        typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")
 @JsonDeserialize(builder = SPECIImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "reportStatus", "missingMessage", "aerodrome", "issueTime", "automatedStation", "surfaceWind", "visibility", "runwayVisualRanges",
@@ -51,7 +59,7 @@ public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportI
         if (speci instanceof SPECIImpl) {
             return (SPECIImpl) speci;
         } else {
-            return Builder.from(speci).build();
+            return Builder.copyOf(speci).build();
         }
     }
 
@@ -62,9 +70,11 @@ public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportI
     }
 
     @Override
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().mergeFrom(this);
+    }
 
-    public static class Builder extends SPECIImpl_Builder implements MeteorologicalTerminalAirReportBuilder<SPECIImpl, Builder> {
+    public static class Builder extends AbstractMeteorologicalTerminalAirReportBuilderImpl<SPECIImpl, Builder> {
 
         Builder() {
             setTranslated(false);
@@ -76,7 +86,7 @@ public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportI
             setNoSignificantChanges(false);
         }
 
-        public static Builder from(final SPECI value) {
+        public static Builder copyOf(final SPECI value) {
             if (value instanceof SPECIImpl) {
                 return ((SPECIImpl) value).toBuilder();
             }
@@ -92,95 +102,143 @@ public abstract class SPECIImpl extends AbstractMeteorologicalTerminalAirReportI
             return this;
         }
 
-        @Override
         public Builder withCompleteForecastTimes(final ZonedDateTime reference) {
             requireNonNull(reference, "reference");
             return mapTrends(trends -> MeteorologicalTerminalAirReportBuilderHelper.completeTrendTimes(trends, reference));
         }
 
         @Override
-        @JsonDeserialize(as = AerodromeImpl.class)
-        public SPECIImpl.Builder setAerodrome(final Aerodrome aerodrome) {
-            final SPECIImpl.Builder retval = super.setAerodrome(aerodrome);
-            MeteorologicalTerminalAirReportBuilderHelper.afterSetAerodrome(this, aerodrome);
-            return retval;
+        public ImmutableSPECIImpl build() {
+            final ImmutableSPECIImpl.Builder delegate = ImmutableSPECIImpl.internalBuilder()//
+                    .setAerodrome(getAerodrome())//
+                    .setReportStatus(getReportStatus())//
+                    .setMissingMessage(isMissingMessage())//
+                    .setAutomatedStation(isAutomatedStation())//
+                    .setCeilingAndVisibilityOk(isCeilingAndVisibilityOk())//
+                    .setSnowClosure(isSnowClosure())//
+                    .setNoSignificantChanges(isNoSignificantChanges())//
+                    .setTranslated(isTranslated());
+            getIssueTime().ifPresent(delegate::setIssueTime);
+            getRemarks().ifPresent(delegate::setRemarks);
+            getPermissibleUsage().ifPresent(delegate::setPermissibleUsage);
+            getPermissibleUsageReason().ifPresent(delegate::setPermissibleUsageReason);
+            getPermissibleUsageSupplementary().ifPresent(delegate::setPermissibleUsageSupplementary);
+            getTranslatedBulletinID().ifPresent(delegate::setTranslatedBulletinID);
+            getTranslatedBulletinReceptionTime().ifPresent(delegate::setTranslatedBulletinReceptionTime);
+            getTranslationCentreDesignator().ifPresent(delegate::setTranslationCentreDesignator);
+            getTranslationCentreName().ifPresent(delegate::setTranslationCentreName);
+            getTranslationTime().ifPresent(delegate::setTranslationTime);
+            getTranslatedTAC().ifPresent(delegate::setTranslatedTAC);
+            getAirTemperature().ifPresent(delegate::setAirTemperature);
+            getDewpointTemperature().ifPresent(delegate::setDewpointTemperature);
+            getAltimeterSettingQNH().ifPresent(delegate::setAltimeterSettingQNH);
+            getSurfaceWind().ifPresent(delegate::setSurfaceWind);
+            getVisibility().ifPresent(delegate::setVisibility);
+            getRunwayVisualRanges().ifPresent(delegate::setRunwayVisualRanges);
+            getPresentWeather().ifPresent(delegate::setPresentWeather);
+            getClouds().ifPresent(delegate::setClouds);
+            getRecentWeather().ifPresent(delegate::setRecentWeather);
+            getWindShear().ifPresent(delegate::setWindShear);
+            getSeaState().ifPresent(delegate::setSeaState);
+            getRunwayStates().ifPresent(delegate::setRunwayStates);
+            getTrends().ifPresent(delegate::setTrends);
+            getColorState().ifPresent(delegate::setColorState);
+            return delegate.build();
         }
 
         @Override
+        @JsonProperty("aerodrome")
+        @JsonDeserialize(as = AerodromeImpl.class)
+        public Builder setAerodrome(final Aerodrome aerodrome) {
+            super.setAerodrome(aerodrome);
+            MeteorologicalTerminalAirReportBuilderHelper.afterSetAerodrome(this, aerodrome);
+            return this;
+        }
+
+        @Override
+        @JsonProperty("airTemperature")
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public SPECIImpl.Builder setAirTemperature(final NumericMeasure airTemperature) {
+        public Builder setAirTemperature(final NumericMeasure airTemperature) {
             return super.setAirTemperature(airTemperature);
         }
 
         @Override
+        @JsonProperty("dewpointTemperature")
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public SPECIImpl.Builder setDewpointTemperature(final NumericMeasure dewpointTemperature) {
+        public Builder setDewpointTemperature(final NumericMeasure dewpointTemperature) {
             return super.setDewpointTemperature(dewpointTemperature);
         }
 
         @Override
+        @JsonProperty("altimeterSettingQNH")
         @JsonDeserialize(as = NumericMeasureImpl.class)
-        public SPECIImpl.Builder setAltimeterSettingQNH(final NumericMeasure altimeterSettingQNH) {
+        public Builder setAltimeterSettingQNH(final NumericMeasure altimeterSettingQNH) {
             return super.setAltimeterSettingQNH(altimeterSettingQNH);
         }
 
         @Override
+        @JsonProperty("surfaceWind")
         @JsonDeserialize(as = ObservedSurfaceWindImpl.class)
-        public SPECIImpl.Builder setSurfaceWind(final ObservedSurfaceWind surfaceWind) {
+        public Builder setSurfaceWind(final ObservedSurfaceWind surfaceWind) {
             return super.setSurfaceWind(surfaceWind);
         }
 
         @Override
         @JsonDeserialize(as = HorizontalVisibilityImpl.class)
-        public SPECIImpl.Builder setVisibility(final HorizontalVisibility visibility) {
+        public Builder setVisibility(final HorizontalVisibility visibility) {
             return super.setVisibility(visibility);
         }
 
         @Override
+        @JsonProperty("runwayVisualRanges")
         @JsonDeserialize(contentAs = RunwayVisualRangeImpl.class)
-        public SPECIImpl.Builder setRunwayVisualRanges(final List<RunwayVisualRange> runwayVisualRanges) {
+        public Builder setRunwayVisualRanges(final List<RunwayVisualRange> runwayVisualRanges) {
             return super.setRunwayVisualRanges(runwayVisualRanges);
         }
 
         @Override
         @JsonDeserialize(contentAs = WeatherImpl.class)
-        public SPECIImpl.Builder setPresentWeather(final List<Weather> weather) {
+        public Builder setPresentWeather(final List<Weather> weather) {
             return super.setPresentWeather(weather);
         }
 
         @Override
+        @JsonProperty("clouds")
         @JsonDeserialize(as = ObservedCloudsImpl.class)
-        public SPECIImpl.Builder setClouds(final ObservedClouds clouds) {
+        public Builder setClouds(final ObservedClouds clouds) {
             return super.setClouds(clouds);
         }
 
         @Override
+        @JsonProperty("recentWeather")
         @JsonDeserialize(contentAs = WeatherImpl.class)
-        public SPECIImpl.Builder setRecentWeather(final List<Weather> weather) {
+        public Builder setRecentWeather(final List<Weather> weather) {
             return super.setRecentWeather(weather);
         }
 
         @Override
+        @JsonProperty("windShear")
         @JsonDeserialize(as = WindShearImpl.class)
-        public SPECIImpl.Builder setWindShear(final WindShear windShear) {
+        public Builder setWindShear(final WindShear windShear) {
             return super.setWindShear(windShear);
         }
 
         @Override
+        @JsonProperty("seaState")
         @JsonDeserialize(as = SeaStateImpl.class)
-        public SPECIImpl.Builder setSeaState(final SeaState seaState) {
+        public Builder setSeaState(final SeaState seaState) {
             return super.setSeaState(seaState);
         }
 
         @Override
         @JsonDeserialize(contentAs = RunwayStateImpl.class)
-        public SPECIImpl.Builder setRunwayStates(final List<RunwayState> runwayStates) {
+        public Builder setRunwayStates(final List<RunwayState> runwayStates) {
             return super.setRunwayStates(runwayStates);
         }
 
         @Override
         @JsonDeserialize(contentAs = TrendForecastImpl.class)
-        public SPECIImpl.Builder setTrends(final List<TrendForecast> trends) {
+        public Builder setTrends(final List<TrendForecast> trends) {
             return super.setTrends(trends);
         }
     }

@@ -2,6 +2,7 @@ package fi.fmi.avi.model.taf.immutable;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.runner.RunWith;
 
@@ -18,7 +19,7 @@ public class TAFBaseForecastImpl_Builder_MergeFromTest extends AbstractTAFForeca
 
     @Override
     protected TAFBaseForecastImpl.Builder clearOptionalSpecializedValues(final TAFBaseForecastImpl.Builder builder) {
-        return builder.clearTemperatures();
+        return builder.setTemperatures(Optional.empty());
     }
 
     @Override

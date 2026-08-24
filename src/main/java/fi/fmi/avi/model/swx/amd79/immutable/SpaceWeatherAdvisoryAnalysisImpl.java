@@ -5,14 +5,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherRegion;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAnalysisImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"time", "analysisType", "regions", "nilPhenomenonReason"})
@@ -29,7 +30,7 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
         if (analysis instanceof SpaceWeatherAdvisoryAnalysisImpl) {
             return (SpaceWeatherAdvisoryAnalysisImpl) analysis;
         } else {
-            return Builder.from(analysis).build();
+            return Builder.copyOf(analysis).build();
         }
     }
 
@@ -39,9 +40,11 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
         return analysis.map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends SpaceWeatherAdvisoryAnalysisImpl_Builder {
+    public static class Builder extends ImmutableSpaceWeatherAdvisoryAnalysisImpl.Builder {
         private static final Comparator<fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion> AMD82_INTENSITY_AND_REGION_COMPARATOR =
                 Comparator.comparing(fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion::getIntensity,
                                 fi.fmi.avi.model.swx.amd82.Intensity.comparator())
@@ -50,14 +53,14 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
         Builder() {
         }
 
-        public static Builder from(final SpaceWeatherAdvisoryAnalysis value) {
+        public static Builder copyOf(final SpaceWeatherAdvisoryAnalysis value) {
             if (value instanceof SpaceWeatherAdvisoryAnalysisImpl) {
                 return ((SpaceWeatherAdvisoryAnalysisImpl) value).toBuilder();
             } else {
                 return builder()//
                         .setTime(value.getTime())//
                         .setAnalysisType(value.getAnalysisType())//
-                        .addAllRegions(value.getRegions().stream().map(SpaceWeatherRegionImpl::immutableCopyOf))//
+                        .addAllRegions(value.getRegions().stream().map(SpaceWeatherRegionImpl::immutableCopyOf).collect(Collectors.toList()))//
                         .setNilPhenomenonReason(value.getNilPhenomenonReason());
             }
         }
@@ -103,7 +106,8 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
                     .setTime(value.getTime())//
                     .setAnalysisType(Type.valueOf(value.getAnalysisType().name()))
                     .addAllRegions(firstConvertibleMostSevereAmd82Regions.stream()
-                            .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd82(region).build()))
+                            .map(region -> SpaceWeatherRegionImpl.Builder.fromAmd82(region).build())
+                            .collect(Collectors.toList()))
                     .setNilPhenomenonReason(value.getNilReason().map(Builder::nilPhenomenonReasonFromAmd82));
         }
 

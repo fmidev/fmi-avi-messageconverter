@@ -1,5 +1,6 @@
 package fi.fmi.avi.converter.json.conf;
 
+import fi.fmi.avi.converter.AviMessageConverter;
 import fi.fmi.avi.converter.AviMessageSpecificConverter;
 import fi.fmi.avi.converter.ConversionSpecification;
 import fi.fmi.avi.converter.json.*;
@@ -12,15 +13,15 @@ import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAmd79;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAmd82;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
- * Spring configuration for Java POJO and JSON conversion.
+ * Java POJO and JSON conversions.
  */
-@SuppressWarnings("SpringFacetCodeInspection")
-@Configuration
-public class JSONConverter {
+public final class JSONConverter {
+
+    private JSONConverter() {
+        throw new AssertionError("JSONConverter is a static factory and is not meant to be instantiated");
+    }
 
     /**
      * Pre-configured spec for {@link TAF} to fmi-avi-messageconverter JSON TAF document String.
@@ -133,93 +134,113 @@ public class JSONConverter {
     public static final ConversionSpecification<String, GenericMeteorologicalBulletin> JSON_STRING_TO_GENERIC_BULLETIN_POJO = new ConversionSpecification<>(String.class,
             GenericMeteorologicalBulletin.class, "GenericMeteorologicalBulletin, fmi-avi-messageconverter JSON", null);
 
-    @Bean
-    public AviMessageSpecificConverter<METAR, String> metarJSONSerializer() {
+    public static AviMessageSpecificConverter<METAR, String> metarJSONSerializer() {
         return new METARJSONSerializer();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<TAF, String> tafJSONSerializer() {
+    public static AviMessageSpecificConverter<TAF, String> tafJSONSerializer() {
         return new TAFJSONSerializer();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<SIGMET, String> sigmetJSONSerializer() {
+    public static AviMessageSpecificConverter<SIGMET, String> sigmetJSONSerializer() {
         return new SIGMETJSONSerializer();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<SpaceWeatherAdvisoryAmd79, String> swxAmd79JSONSerializer() {
+    public static AviMessageSpecificConverter<SpaceWeatherAdvisoryAmd79, String> swxAmd79JSONSerializer() {
         return new SpaceWeatherAdvisoryAmd79JSONSerializer();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<SpaceWeatherAdvisoryAmd82, String> swxAmd82JSONSerializer() {
+    public static AviMessageSpecificConverter<SpaceWeatherAdvisoryAmd82, String> swxAmd82JSONSerializer() {
         return new SpaceWeatherAdvisoryAmd82JSONSerializer();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<SIGMETBulletin, String> sigmetBulletinJSONSerializer() {
+    public static AviMessageSpecificConverter<SIGMETBulletin, String> sigmetBulletinJSONSerializer() {
         return new SIGMETBulletinJSONSerializer();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<GenericMeteorologicalBulletin, String> genericBulletinJSONSerializer() {
+    public static AviMessageSpecificConverter<GenericMeteorologicalBulletin, String> genericBulletinJSONSerializer() {
         return new GenericMeteorologicalBulletinJSONSerializer();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<TAFBulletin, String> tafBulletinJSONSerializer() {
+    public static AviMessageSpecificConverter<TAFBulletin, String> tafBulletinJSONSerializer() {
         return new TAFBulletinJSONSerializer();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<String, TAF> tafJSONParser() {
+    public static AviMessageSpecificConverter<String, TAF> tafJSONParser() {
         return new TAFJSONParser();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<String, METAR> metarJSONParser() {
+    public static AviMessageSpecificConverter<String, METAR> metarJSONParser() {
         return new METARJSONParser();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser() {
+    public static AviMessageSpecificConverter<String, SIGMET> sigmetJSONParser() {
         return new SIGMETJSONParser();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<String, SpaceWeatherAdvisoryAmd79> swxAmd79JSONParser() {
+    public static AviMessageSpecificConverter<String, SpaceWeatherAdvisoryAmd79> swxAmd79JSONParser() {
         return new SpaceWeatherAdvisoryAmd79JSONParser();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<String, SpaceWeatherAdvisoryAmd82> swxAmd82JSONParser() {
+    public static AviMessageSpecificConverter<String, SpaceWeatherAdvisoryAmd82> swxAmd82JSONParser() {
         return new SpaceWeatherAdvisoryAmd82JSONParser();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<String, AIRMET> airmetJSONParser() {return new AIRMETJSONParser();}
+    public static AviMessageSpecificConverter<String, AIRMET> airmetJSONParser() {
+        return new AIRMETJSONParser();
+    }
 
-    @Bean
-    public AviMessageSpecificConverter<String, TAFBulletin> tafBulletinJSONParser() {
+    public static AviMessageSpecificConverter<String, TAFBulletin> tafBulletinJSONParser() {
         return new TAFBulletinJSONParser();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<String, SIGMETBulletin> sigmetBulletinJSONParser() {
+    public static AviMessageSpecificConverter<String, SIGMETBulletin> sigmetBulletinJSONParser() {
         return new SIGMETBulletinJSONParser();
     }
 
-    @Bean
-    public AviMessageSpecificConverter<String, GenericMeteorologicalBulletin> genericBulletinJSONParser() {
+    public static AviMessageSpecificConverter<String, GenericMeteorologicalBulletin> genericBulletinJSONParser() {
         return new GenericMeteorologicalBulletinJSONParser();
     }
 
-
-    @Bean(name = "airmetJSONSerializer")
-    public AviMessageSpecificConverter<AIRMET, String> airmetJSONSerializer() {
+    public static AviMessageSpecificConverter<AIRMET, String> airmetJSONSerializer() {
         return new AIRMETJSONSerializer();
     }
 
+    /**
+     * Registers every JSON conversion spec declared above onto {@code target}, using
+     * {@link AviMessageConverter#setMessageSpecificConverter}.
+     *
+     * @param target the converter to register the JSON conversions on; returned for chaining
+     * @return {@code target}, for convenience
+     */
+    public static AviMessageConverter addTo(final AviMessageConverter target) {
+        target.setMessageSpecificConverter(JSON_STRING_TO_TAF_POJO, tafJSONParser());
+        target.setMessageSpecificConverter(JSON_STRING_TO_METAR_POJO, metarJSONParser());
+        target.setMessageSpecificConverter(JSON_STRING_TO_SIGMET_POJO, sigmetJSONParser());
+        target.setMessageSpecificConverter(JSON_STRING_TO_AIRMET_POJO, airmetJSONParser());
+        target.setMessageSpecificConverter(JSON_STRING_TO_SWX_AMD79_POJO, swxAmd79JSONParser());
+        target.setMessageSpecificConverter(JSON_STRING_TO_SWX_AMD82_POJO, swxAmd82JSONParser());
+        target.setMessageSpecificConverter(JSON_STRING_TO_TAF_BULLETIN_POJO, tafBulletinJSONParser());
+        target.setMessageSpecificConverter(JSON_STRING_TO_SIGMET_BULLETIN_POJO, sigmetBulletinJSONParser());
+        target.setMessageSpecificConverter(JSON_STRING_TO_GENERIC_BULLETIN_POJO, genericBulletinJSONParser());
+
+        target.setMessageSpecificConverter(TAF_POJO_TO_JSON_STRING, tafJSONSerializer());
+        target.setMessageSpecificConverter(METAR_POJO_TO_JSON_STRING, metarJSONSerializer());
+        target.setMessageSpecificConverter(SIGMET_POJO_TO_JSON_STRING, sigmetJSONSerializer());
+        target.setMessageSpecificConverter(AIRMET_POJO_TO_JSON_STRING, airmetJSONSerializer());
+        target.setMessageSpecificConverter(SWX_AMD79_POJO_TO_JSON_STRING, swxAmd79JSONSerializer());
+        target.setMessageSpecificConverter(SWX_AMD82_POJO_TO_JSON_STRING, swxAmd82JSONSerializer());
+        target.setMessageSpecificConverter(TAF_BULLETIN_POJO_TO_JSON_STRING, tafBulletinJSONSerializer());
+        target.setMessageSpecificConverter(SIGMET_BULLETIN_POJO_TO_JSON_STRING, sigmetBulletinJSONSerializer());
+        target.setMessageSpecificConverter(GENERIC_METEOROLOGICAL_BULLETIN_POJO_TO_JSON_STRING, genericBulletinJSONSerializer());
+        return target;
+    }
+
+    /**
+     * Convenience method: builds a new {@link AviMessageConverter} wired with every JSON conversion
+     * this module supports. Equivalent to {@code JSONConverter.addTo(new AviMessageConverter())}.
+     */
+    public static AviMessageConverter createAviMessageConverter() {
+        return addTo(new AviMessageConverter());
+    }
 }

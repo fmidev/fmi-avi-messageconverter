@@ -47,7 +47,7 @@ public class TAFIWXXM21_30_ResilienceTest {
             .setAerodrome(AERODROME)//
             .setValidityTime(REFERRED_REPORT_VALID_PERIOD)//
             .build();
-    private static final TAFBaseForecastImpl BASE_FORECAST = TAFBaseForecastImpl.builder().buildPartial();
+    private static final TAFBaseForecastImpl BASE_FORECAST = TAFBaseForecastImpl.builder().build();
 
     private static <E> Optional<E> last(final List<E> list) {
         final int size = list.size();
@@ -65,9 +65,10 @@ public class TAFIWXXM21_30_ResilienceTest {
     @Test
     public void testTAFStatus() {
         TAF t = TAFImpl.builder()//
+                .setAerodrome(AERODROME)//
                 .setStatus(TAFStatus.NORMAL)//
-                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
-                .buildPartial();
+                .setBaseForecast(TAFBaseForecastImpl.builder().build())//
+                .build();
         assertEquals(TAFStatus.NORMAL, t.getStatus());
         assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus());
         assertFalse(t.isCancelMessage());
@@ -76,9 +77,10 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder()//
+                .setAerodrome(AERODROME)//
                 .setStatus(TAFStatus.CANCELLATION)//
-                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
-                .buildPartial();
+                .setBaseForecast(TAFBaseForecastImpl.builder().build())//
+                .build();
         assertEquals(TAFStatus.CANCELLATION, t.getStatus());
         assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus());
         assertTrue(t.isCancelMessage());
@@ -87,9 +89,10 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder()//
+                .setAerodrome(AERODROME)//
                 .setStatus(TAFStatus.AMENDMENT)//
-                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
-                .buildPartial();
+                .setBaseForecast(TAFBaseForecastImpl.builder().build())//
+                .build();
         assertEquals(TAFStatus.AMENDMENT, t.getStatus());
         assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus());
         assertFalse(t.isCancelMessage());
@@ -97,8 +100,8 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getReferredReportValidPeriod().isPresent());
         assertFalse(t.getReferredReport().isPresent());
 
-        t = TAFImpl.builder().setStatus(TAFStatus.CORRECTION).setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
-                .buildPartial();
+        t = TAFImpl.builder().setAerodrome(AERODROME).setStatus(TAFStatus.CORRECTION).setBaseForecast(TAFBaseForecastImpl.builder().build())//
+                .build();
         assertEquals(TAFStatus.CORRECTION, t.getStatus());
         assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus());
         assertFalse(t.isCancelMessage());
@@ -109,22 +112,22 @@ public class TAFIWXXM21_30_ResilienceTest {
 
     @Test
     public void testMissingMessage() {
-        TAFImpl t = TAFImpl.builder().setBaseForecast(TAFBaseForecastImpl.builder().buildPartial()).buildPartial();
+        TAFImpl t = TAFImpl.builder().setAerodrome(AERODROME).setBaseForecast(TAFBaseForecastImpl.builder().build()).build();
         assertEquals(TAFStatus.NORMAL, t.getStatus());
 
-        t = TAFImpl.builder().buildPartial();
+        t = TAFImpl.builder().setAerodrome(AERODROME).build();
         assertEquals(TAFStatus.MISSING, t.getStatus());
 
-        t = TAFImpl.builder().setBaseForecast(TAFBaseForecastImpl.builder().buildPartial()).setStatus(TAFStatus.MISSING).buildPartial();
+        t = TAFImpl.builder().setAerodrome(AERODROME).setBaseForecast(TAFBaseForecastImpl.builder().build()).setStatus(TAFStatus.MISSING).build();
         assertEquals(TAFStatus.MISSING, t.getStatus());
         assertFalse(t.getBaseForecast().isPresent());
 
         // Expect not to mix old and new API; baseForecast gets omitted
-        t = TAFImpl.builder().setStatus(TAFStatus.MISSING).setBaseForecast(TAFBaseForecastImpl.builder().buildPartial()).buildPartial();
+        t = TAFImpl.builder().setAerodrome(AERODROME).setStatus(TAFStatus.MISSING).setBaseForecast(TAFBaseForecastImpl.builder().build()).build();
         assertEquals(TAFStatus.MISSING, t.getStatus());
         assertFalse(t.getBaseForecast().isPresent());
 
-        t = TAFImpl.builder().setStatus(TAFStatus.MISSING).buildPartial();
+        t = TAFImpl.builder().setAerodrome(AERODROME).setStatus(TAFStatus.MISSING).build();
         assertEquals(TAFStatus.MISSING, t.getStatus());
 
     }
@@ -132,9 +135,10 @@ public class TAFIWXXM21_30_ResilienceTest {
     @Test
     public void testReportStatus() {
         TAF t = TAFImpl.builder()//
-                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .setAerodrome(AERODROME)//
+                .setBaseForecast(TAFBaseForecastImpl.builder().build())//
                 .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)//
-                .buildPartial();
+                .build();
         assertEquals(TAFStatus.NORMAL, t.getStatus());
         assertEquals(AviationWeatherMessage.ReportStatus.NORMAL, t.getReportStatus());
         assertFalse(t.isCancelMessage());
@@ -143,9 +147,10 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder()//
-                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .setAerodrome(AERODROME)//
+                .setBaseForecast(TAFBaseForecastImpl.builder().build())//
                 .setReportStatus(AviationWeatherMessage.ReportStatus.AMENDMENT)//
-                .buildPartial();
+                .build();
         assertEquals(TAFStatus.AMENDMENT, t.getStatus());
         assertEquals(AviationWeatherMessage.ReportStatus.AMENDMENT, t.getReportStatus());
         assertFalse(t.isCancelMessage());
@@ -154,9 +159,10 @@ public class TAFIWXXM21_30_ResilienceTest {
         assertFalse(t.getReferredReport().isPresent());
 
         t = TAFImpl.builder()//
-                .setBaseForecast(TAFBaseForecastImpl.builder().buildPartial())//
+                .setAerodrome(AERODROME)//
+                .setBaseForecast(TAFBaseForecastImpl.builder().build())//
                 .setReportStatus(AviationWeatherMessage.ReportStatus.CORRECTION)//
-                .buildPartial();
+                .build();
         assertEquals(TAFStatus.CORRECTION, t.getStatus());
         assertEquals(AviationWeatherMessage.ReportStatus.CORRECTION, t.getReportStatus());
         assertFalse(t.isCancelMessage());
@@ -226,7 +232,7 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setReferredReportValidPeriod(tp1)//
                 .setCancelMessage(true)//
                 .setAerodrome(AerodromeImpl.builder().setDesignator("FOO").build())//
-                .buildPartial();
+                .build();
         assertTrue(t.getReferredReport().isPresent());
         assertTrue(t.getReferredReport().get().getValidityTime().isPresent());
         assertEquals(tp2, t.getReferredReport().get().getValidityTime().get());
@@ -246,8 +252,8 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setReferredReport(TAFReferenceImpl.builder()//
                         .setAerodrome(aerodrome)//
                         .setValidityTime(tp1)//
-                        .buildPartial())//
-                .buildPartial();
+                        .build())//
+                .build();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
 
         t = TAFImpl.builder()//
@@ -255,8 +261,8 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setReferredReport(TAFReferenceImpl.builder()//
                         .setAerodrome(aerodrome)//
                         .setValidityTime(tp1)//
-                        .buildPartial())//
-                .buildPartial();
+                        .build())//
+                .build();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
         assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
@@ -264,9 +270,9 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setReferredReport(TAFReferenceImpl.builder()//
                         .setAerodrome(aerodrome)//
                         .setValidityTime(tp1)//
-                        .buildPartial())//
+                        .build())//
                 .setStatus(TAFStatus.CANCELLATION)//
-                .buildPartial();
+                .build();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
         assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
@@ -281,39 +287,39 @@ public class TAFIWXXM21_30_ResilienceTest {
         TAF t = TAFImpl.builder().setCancelMessage(true)//
                 .setReferredReportValidPeriod(tp1)//
                 .setAerodrome(ad)//
-                .buildPartial();
+                .build();
         assertTrue(t.getReferredReport().isPresent());
         assertTrue(t.getReferredReport().get().getValidityTime().isPresent());
         assertEquals(tp1, t.getReferredReport().get().getValidityTime().get());
         assertEquals(ad, t.getReferredReport().get().getAerodrome());
 
-        t = TAFImpl.builder().setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build()).buildPartial();
+        t = TAFImpl.builder().setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build()).build();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
 
         t = TAFImpl.builder()//
                 .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())//
                 .setStatus(TAFStatus.CANCELLATION)//
-                .buildPartial();
+                .build();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
         assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
         t = TAFImpl.builder()//
                 .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())//
                 .setStatus(TAFStatus.AMENDMENT)//
-                .buildPartial();
+                .build();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
         assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
         t = TAFImpl.builder()//
                 .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad).setValidityTime(tp1).build())//
                 .setStatus(TAFStatus.CORRECTION)//
-                .buildPartial();
+                .build();
         assertTrue(t.getReferredReportValidPeriod().isPresent());
         assertEquals(tp1, t.getReferredReportValidPeriod().get());
 
         assertThrows("setReferredReport should throw an IllegalStateException when given a conflicting aerodrome", IllegalStateException.class,
                 () -> TAFImpl.builder().setAerodrome(ad)//
-                        .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad2).setValidityTime(tp1).build()).buildPartial());
+                        .setReferredReport(TAFReferenceImpl.builder().setAerodrome(ad2).setValidityTime(tp1).build()).build());
     }
 
     @Test
@@ -348,7 +354,7 @@ public class TAFIWXXM21_30_ResilienceTest {
                 .setBaseForecast(BASE_FORECAST)//
                 .setReferredReport(REFERRED_REPORT);
         statusesLast.forEach(builder::setStatus);
-        final TAFImpl taf = builder.buildPartial();
+        final TAFImpl taf = builder.build();
 
         assertion.assertStatus(statusesFirst + ", " + statusesLast, taf, REFERRED_REPORT, BASE_FORECAST);
     }
@@ -359,9 +365,9 @@ public class TAFIWXXM21_30_ResilienceTest {
         final TAFIWXXM21_30_ResilienceTest.StatusAssertion assertion = TAFIWXXM21_30_ResilienceTest.StatusAssertion.of(last(statusesFirst, statusesLast).orElse(TAFStatus.NORMAL));
         final TAFImpl.Builder builder = TAFImpl.builder();
         statusesFirst.forEach(builder::setStatus);
-        builder.setBaseForecast(BASE_FORECAST);
+        builder.setAerodrome(AERODROME).setBaseForecast(BASE_FORECAST);
         statusesLast.forEach(builder::setStatus);
-        final TAFImpl taf = builder.buildPartial();
+        final TAFImpl taf = builder.build();
 
         assertion.assertStatus(statusesFirst + ", " + statusesLast, taf, null, BASE_FORECAST);
     }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import fi.fmi.avi.model.UnitPropertyGroup;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = UnitPropertyGroupImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "name", "type", "designator" })
@@ -25,7 +25,7 @@ public abstract class UnitPropertyGroupImpl implements UnitPropertyGroup, Serial
         if (unitPropertyGroup instanceof UnitPropertyGroupImpl) {
             return (UnitPropertyGroupImpl) unitPropertyGroup;
         } else {
-            return Builder.from(unitPropertyGroup).build();
+            return Builder.copyOf(unitPropertyGroup).build();
         }
     }
 
@@ -33,11 +33,13 @@ public abstract class UnitPropertyGroupImpl implements UnitPropertyGroup, Serial
         return unitPropertyGroup.map(UnitPropertyGroupImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends UnitPropertyGroupImpl_Builder {
+    public static class Builder extends ImmutableUnitPropertyGroupImpl.Builder {
 
-        public static Builder from(final UnitPropertyGroup value) {
+        public static Builder copyOf(final UnitPropertyGroup value) {
             if (value instanceof UnitPropertyGroupImpl) {
                 return ((UnitPropertyGroupImpl) value).toBuilder();
             } else {

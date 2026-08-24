@@ -3,7 +3,7 @@ package fi.fmi.avi.util;
 import fi.fmi.avi.model.bulletin.BulletinHeading;
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletin;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@FreeBuilder
+@Value.Immutable
 public abstract class GTSExchangeFileInfo implements Serializable {
 
     private static final Set<TimeStampField> DEFAULT_TIME_FIELDS = new HashSet<>(Arrays.asList(TimeStampField.YEAR, //
@@ -32,7 +32,9 @@ public abstract class GTSExchangeFileInfo implements Serializable {
             + "(?<yyyy>[0-9]{4}|----)(?<MM>[0-9]{2}|--)(?<dd>[0-9]{2}|--)(?<hh>[0-9]{2}|--)(?<mm>[0-9]{2}|--)(?<ss>[0-9]{2}|--)"
             + "(_(?<freeForm>[a-zA-Z0-9_-]*))?.(?<type>[a-z]{2,3})(.(?<compression>[a-zA_Z0-9]{1,3}))?$");
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
     public static Builder builder() {
         return new Builder();
@@ -283,13 +285,13 @@ public abstract class GTSExchangeFileInfo implements Serializable {
         }
     }
 
-    public static class Builder extends GTSExchangeFileInfo_Builder {
+    public static class Builder extends ImmutableGTSExchangeFileInfo.Builder {
 
         Builder() {
             this.setMetadataFile(false);
         }
 
-        public static Builder from(final MeteorologicalBulletin<?> bulletin) {
+        public static Builder copyOf(final MeteorologicalBulletin<?> bulletin) {
             final Builder builder = new Builder()
                     .setPFlag(GTSExchangePFlag.A) // TODO: support P flags other than A
                     .setHeading(bulletin.getHeading());
@@ -320,7 +322,7 @@ public abstract class GTSExchangeFileInfo implements Serializable {
             return builder;
         }
 
-        public static Builder from(final String gtsExchangeFilename) {
+        public static Builder copyOf(final String gtsExchangeFilename) {
             //TODO: support other P flags than A
             if (!gtsExchangeFilename.startsWith("A")) {
                 throw new IllegalArgumentException("Only file names for pflag value 'A' are currently supported");
@@ -369,7 +371,7 @@ public abstract class GTSExchangeFileInfo implements Serializable {
                     .setFileType(GTSExchangeFileType.fromExtension(m.group("type")))//
                     .setFreeFormPart(Optional.ofNullable(m.group("freeForm")))//
                     .setCompressionType(Optional.ofNullable(compressionType))//
-                    .setHeading(BulletinHeadingImpl.Builder.from(abbreviatedHeading).build())//
+                    .setHeading(BulletinHeadingImpl.Builder.copyOf(abbreviatedHeading).build())//
                     .setTimeStampYear(timeStampYear)//
                     .setTimeStampMonth(timeStampMonth)//
                     .setTimeStampDay(timeStampDay)//

@@ -9,13 +9,14 @@ import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.sigmet.AIRMET;
 import fi.fmi.avi.model.sigmet.AIRMETBulletin;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = AIRMETBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
@@ -32,7 +33,7 @@ public abstract class AIRMETBulletinImpl implements AIRMETBulletin, Serializable
         if (bulletin instanceof AIRMETBulletinImpl) {
             return (AIRMETBulletinImpl) bulletin;
         } else {
-            return Builder.from(bulletin).build();
+            return Builder.copyOf(bulletin).build();
         }
     }
 
@@ -41,14 +42,24 @@ public abstract class AIRMETBulletinImpl implements AIRMETBulletin, Serializable
         return bulletin.map(AIRMETBulletinImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends AIRMETBulletinImpl_Builder {
+    @Override
+    @JsonDeserialize(as = BulletinHeadingImpl.class)
+    public abstract BulletinHeading getHeading();
+
+    @Override
+    @JsonProperty("messages")
+    public abstract List<AIRMET> getMessages();
+
+    public static class Builder extends ImmutableAIRMETBulletinImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final AIRMETBulletin value) {
+        public static Builder copyOf(final AIRMETBulletin value) {
             if (value instanceof AIRMETBulletinImpl) {
                 return ((AIRMETBulletinImpl) value).toBuilder();
             } else {
@@ -62,19 +73,6 @@ public abstract class AIRMETBulletinImpl implements AIRMETBulletin, Serializable
                         Builder::setCollectIdentifier);
                 return builder;
             }
-        }
-
-        @Override
-        @JsonDeserialize(as = BulletinHeadingImpl.class)
-        public Builder setHeading(final BulletinHeading heading) {
-            return super.setHeading(heading);
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = AIRMETImpl.class)
-        @JsonProperty("messages")
-        public Builder addMessages(final AIRMET... messages) {
-            return super.addMessages(messages);
         }
     }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -21,7 +21,7 @@ import fi.fmi.avi.model.Weather;
 /**
  * Created by rinne on 17/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = WeatherImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"code", "description"})
@@ -469,7 +469,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
         if (weather instanceof WeatherImpl) {
             return (WeatherImpl) weather;
         } else {
-            return Builder.from(weather).build();
+            return Builder.copyOf(weather).build();
         }
     }
 
@@ -492,14 +492,16 @@ public abstract class WeatherImpl implements Weather, Serializable {
         return retval;
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends WeatherImpl_Builder {
+    public static class Builder extends ImmutableWeatherImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final Weather value) {
+        public static Builder copyOf(final Weather value) {
             if (value instanceof WeatherImpl) {
                 return ((WeatherImpl) value).toBuilder();
             } else {

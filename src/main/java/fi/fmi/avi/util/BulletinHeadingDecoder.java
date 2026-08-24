@@ -8,6 +8,7 @@ import fi.fmi.avi.model.bulletin.DataTypeDesignatorT1;
 import fi.fmi.avi.model.bulletin.DataTypeDesignatorT2;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,7 +68,7 @@ public final class BulletinHeadingDecoder {
                 .setGeographicalDesignator(m.group("AA"))//
                 .setBulletinNumber(Integer.parseInt(m.group("ii")))//
                 .setType(type)//
-                .setNullableAugmentationNumber(bulletinAugmentationNumber)//
+                .setAugmentationNumber(Optional.ofNullable(bulletinAugmentationNumber))//
                 .setOriginalAugmentationIndicator(originalBbb)//
                 .setDataTypeDesignatorT1ForTAC(t1)//
                 .setDataTypeDesignatorT2(t2)//

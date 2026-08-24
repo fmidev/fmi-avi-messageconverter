@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.MultiPolygonGeometry;
 import fi.fmi.avi.model.Winding;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = MultiPolygonGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, Serializable {
@@ -29,7 +29,7 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
         if (polygon instanceof MultiPolygonGeometryImpl) {
             return (MultiPolygonGeometryImpl) polygon;
         } else {
-            return Builder.from(polygon).build();
+            return Builder.copyOf(polygon).build();
         }
     }
 
@@ -49,14 +49,20 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
         return newPolygons;
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends MultiPolygonGeometryImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = CoordinateReferenceSystemImpl.class)
+    public abstract Optional<CoordinateReferenceSystem> getCrs();
+
+    public static class Builder extends ImmutableMultiPolygonGeometryImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final MultiPolygonGeometry value) {
+        public static Builder copyOf(final MultiPolygonGeometry value) {
             if (value instanceof MultiPolygonGeometryImpl) {
                 return ((MultiPolygonGeometryImpl) value).toBuilder();
             } else {
@@ -66,12 +72,5 @@ public abstract class MultiPolygonGeometryImpl implements MultiPolygonGeometry, 
 
             }
         }
-
-        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
-        @Override
-        public Builder setCrs(final CoordinateReferenceSystem crs) {
-            return super.setCrs(crs);
-        }
-
     }
 }

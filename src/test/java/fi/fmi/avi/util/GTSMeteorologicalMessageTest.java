@@ -394,7 +394,7 @@ public class GTSMeteorologicalMessageTest {
     public void getTransmissionSequenceNumberAsInt_returns_empty_when_getTransmissionSequenceNumber_is_empty() {
         final GTSMeteorologicalMessage.Builder builder = builder()//
                 .clearTransmissionSequenceNumber();
-        final GTSMeteorologicalMessage value = builder.buildPartial();
+        final GTSMeteorologicalMessage value = builder.build();
         assertThat(builder.getTransmissionSequenceNumber()).as("builder.getTransmissionSequenceNumber()").isEmpty();
         assertThat(builder.getTransmissionSequenceNumberAsInt()).as("builder.getTransmissionSequenceNumberAsInt()").isEmpty();
         assertThat(value.getTransmissionSequenceNumberAsInt()).as("value.getTransmissionSequenceNumberAsInt()").isEmpty();
@@ -404,7 +404,7 @@ public class GTSMeteorologicalMessageTest {
     public void getTransmissionSequenceNumberAsInt_returns_empty_when_getTransmissionSequenceNumber_is_text() {
         final GTSMeteorologicalMessage.Builder builder = builder()//
                 .setTransmissionSequenceNumber("ABC");
-        final GTSMeteorologicalMessage value = builder.buildPartial();
+        final GTSMeteorologicalMessage value = builder.build();
         assertThat(builder.getTransmissionSequenceNumber()).as("builder.getTransmissionSequenceNumber()").isEqualTo("ABC");
         assertThat(builder.getTransmissionSequenceNumberAsInt()).as("builder.getTransmissionSequenceNumberAsInt()").isEmpty();
         assertThat(value.getTransmissionSequenceNumberAsInt()).as("value.getTransmissionSequenceNumberAsInt()").isEmpty();
@@ -414,7 +414,7 @@ public class GTSMeteorologicalMessageTest {
     public void getTransmissionSequenceNumberAsInt_returns_int_when_getTransmissionSequenceNumber_is_numeric() {
         final GTSMeteorologicalMessage.Builder builder = builder()//
                 .setTransmissionSequenceNumber("00073");
-        final GTSMeteorologicalMessage value = builder.buildPartial();
+        final GTSMeteorologicalMessage value = builder.build();
         assertThat(builder.getTransmissionSequenceNumber()).as("builder.getTransmissionSequenceNumber()").isEqualTo("00073");
         assertThat(builder.getTransmissionSequenceNumberAsInt()).as("builder.getTransmissionSequenceNumberAsInt()").hasValue(73);
         assertThat(value.getTransmissionSequenceNumberAsInt()).as("value.getTransmissionSequenceNumberAsInt()").hasValue(73);
@@ -424,7 +424,7 @@ public class GTSMeteorologicalMessageTest {
     public void setTransmissionSequenceNumberAsInt_sets_value_with_three_digits() {
         final GTSMeteorologicalMessage.Builder builder = builder()//
                 .setTransmissionSequenceNumberAsInt(32);
-        final GTSMeteorologicalMessage value = builder.buildPartial();
+        final GTSMeteorologicalMessage value = builder.build();
         assertThat(builder.getTransmissionSequenceNumberAsInt()).as("builder.getTransmissionSequenceNumberAsInt()").hasValue(32);
         assertThat(builder.getTransmissionSequenceNumber()).as("builder.getTransmissionSequenceNumber()").isEqualTo("032");
         assertThat(value.getTransmissionSequenceNumberAsInt()).as("value.getTransmissionSequenceNumberAsInt()").hasValue(32);

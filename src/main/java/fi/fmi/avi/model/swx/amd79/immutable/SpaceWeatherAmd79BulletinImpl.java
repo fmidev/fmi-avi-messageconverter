@@ -12,13 +12,13 @@ import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherAdvisoryAmd79;
 import fi.fmi.avi.model.swx.amd79.SpaceWeatherAmd79Bulletin;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAmd82Bulletin;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = SpaceWeatherAmd79BulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
@@ -35,7 +35,7 @@ public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79
         if (bulletin instanceof SpaceWeatherAmd79BulletinImpl) {
             return (SpaceWeatherAmd79BulletinImpl) bulletin;
         } else {
-            return Builder.from(bulletin).build();
+            return Builder.copyOf(bulletin).build();
         }
     }
 
@@ -44,13 +44,23 @@ public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79
         return bulletin.map(SpaceWeatherAmd79BulletinImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends SpaceWeatherAmd79BulletinImpl_Builder {
+    @Override
+    @JsonProperty("messages")
+    public abstract java.util.List<SpaceWeatherAdvisoryAmd79> getMessages();
+
+    @Override
+    @JsonDeserialize(as = BulletinHeadingImpl.class)
+    public abstract BulletinHeading getHeading();
+
+    public static class Builder extends ImmutableSpaceWeatherAmd79BulletinImpl.Builder {
         Builder() {
         }
 
-        public static Builder from(final SpaceWeatherAmd79Bulletin value) {
+        public static Builder copyOf(final SpaceWeatherAmd79Bulletin value) {
             if (value instanceof SpaceWeatherAmd79BulletinImpl) {
                 return ((SpaceWeatherAmd79BulletinImpl) value).toBuilder();
             } else {
@@ -89,8 +99,9 @@ public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79
         }
 
         @Override
-        @JsonDeserialize(as = BulletinHeadingImpl.class)
-        public Builder setHeading(final BulletinHeading heading) {
+        public ImmutableSpaceWeatherAmd79BulletinImpl build() {
+            final ImmutableSpaceWeatherAmd79BulletinImpl result = super.build();
+            final BulletinHeading heading = result.getHeading();
             if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML.equals(heading.getDataTypeDesignatorT1ForTAC())) {
                 if (!DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_SPACE_WEATHER_ADVISORY.equals(heading.getDataTypeDesignatorT2())) {
                     throw new IllegalArgumentException(
@@ -108,19 +119,7 @@ public abstract class SpaceWeatherAmd79BulletinImpl implements SpaceWeatherAmd79
                         "Data type designator T1 for TAC of the bulletin heading must be either " + DataTypeDesignatorT1.FORECASTS + " or "
                                 + DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML + " for SpaceWeatherAdvisory");
             }
-            return super.setHeading(heading);
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = SpaceWeatherAdvisoryAmd79Impl.class)
-        @JsonProperty("messages")
-        public Builder addMessages(final SpaceWeatherAdvisoryAmd79... messages) {
-            return super.addMessages(messages);
-        }
-
-        @Override
-        public Builder addMessages(final SpaceWeatherAdvisoryAmd79 message) {
-            return super.addMessages(SpaceWeatherAdvisoryAmd79Impl.immutableCopyOf(message));
+            return result;
         }
     }
 }

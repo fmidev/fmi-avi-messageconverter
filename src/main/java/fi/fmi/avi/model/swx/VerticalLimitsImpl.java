@@ -1,12 +1,12 @@
 package fi.fmi.avi.model.swx;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 public abstract class VerticalLimitsImpl implements VerticalLimits, Serializable {
 
     private static final long serialVersionUID = 456150576462009061L;
@@ -26,7 +26,7 @@ public abstract class VerticalLimitsImpl implements VerticalLimits, Serializable
         if (verticalLimits instanceof VerticalLimitsImpl) {
             return (VerticalLimitsImpl) verticalLimits;
         } else {
-            return Builder.from(verticalLimits).build();
+            return Builder.copyOf(verticalLimits).build();
         }
     }
 
@@ -36,15 +36,17 @@ public abstract class VerticalLimitsImpl implements VerticalLimits, Serializable
         return verticalLimits.map(VerticalLimitsImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends VerticalLimitsImpl_Builder {
+    public static class Builder extends ImmutableVerticalLimitsImpl.Builder {
 
         Builder() {
             setVerticalReference(STANDARD_ATMOSPHERE);
         }
 
-        public static Builder from(final VerticalLimits value) {
+        public static Builder copyOf(final VerticalLimits value) {
             if (value instanceof VerticalLimitsImpl) {
                 return ((VerticalLimitsImpl) value).toBuilder();
             } else {

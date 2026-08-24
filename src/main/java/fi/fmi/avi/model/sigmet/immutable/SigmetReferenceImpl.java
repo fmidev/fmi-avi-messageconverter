@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,7 +14,7 @@ import fi.fmi.avi.model.UnitPropertyGroup;
 import fi.fmi.avi.model.immutable.UnitPropertyGroupImpl;
 import fi.fmi.avi.model.sigmet.Reference;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = SigmetReferenceImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class SigmetReferenceImpl implements Reference, Serializable {
@@ -25,7 +25,7 @@ public abstract class SigmetReferenceImpl implements Reference, Serializable {
         if (sigmetReference instanceof SigmetReferenceImpl) {
             return (SigmetReferenceImpl) sigmetReference;
         } else {
-            return Builder.from(sigmetReference).build();
+            return Builder.copyOf(sigmetReference).build();
         }
     }
 
@@ -34,11 +34,25 @@ public abstract class SigmetReferenceImpl implements Reference, Serializable {
         return sigmetReference.map(SigmetReferenceImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends SigmetReferenceImpl_Builder {
+    @Override
+    @JsonDeserialize(as = UnitPropertyGroupImpl.class)
+    public abstract UnitPropertyGroup getIssuingAirTrafficServicesUnit();
 
-        public static Builder from(final Reference value) {
+    @Override
+    @JsonDeserialize(as = UnitPropertyGroupImpl.class)
+    public abstract UnitPropertyGroup getMeteorologicalWatchOffice();
+
+    @Override
+    @JsonDeserialize(as = PartialOrCompleteTimePeriod.class)
+    public abstract PartialOrCompleteTimePeriod getValidityPeriod();
+
+    public static class Builder extends ImmutableSigmetReferenceImpl.Builder {
+
+        public static Builder copyOf(final Reference value) {
             if (value instanceof SigmetReferenceImpl) {
                 return ((SigmetReferenceImpl) value).toBuilder();
             } else {
@@ -47,22 +61,7 @@ public abstract class SigmetReferenceImpl implements Reference, Serializable {
             }
         }
 
-        @Override
-        @JsonDeserialize(as = UnitPropertyGroupImpl.class)
-        public Builder setIssuingAirTrafficServicesUnit(final UnitPropertyGroup issuingAirTrafficServicesUnit) {
-            return super.setIssuingAirTrafficServicesUnit(issuingAirTrafficServicesUnit);
-        }
 
-        @Override
-        @JsonDeserialize(as = UnitPropertyGroupImpl.class)
-        public Builder setMeteorologicalWatchOffice(final UnitPropertyGroup meteorologicalWatchOffice) {
-            return super.setMeteorologicalWatchOffice(meteorologicalWatchOffice);
-        }
 
-        @Override
-        @JsonDeserialize(as = PartialOrCompleteTimePeriod.class)
-        public Builder setValidityPeriod(final PartialOrCompleteTimePeriod validityPeriod) {
-            return super.setValidityPeriod(validityPeriod);
-        }
     }
 }

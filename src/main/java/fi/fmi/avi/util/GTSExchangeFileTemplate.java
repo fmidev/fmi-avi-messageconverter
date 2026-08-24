@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import fi.fmi.avi.model.bulletin.MeteorologicalBulletinSpecialCharacter;
 import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
@@ -28,7 +28,8 @@ import fi.fmi.avi.util.GTSExchangeFileParseException.ParseErrorCode;
  * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
  */
 @Deprecated
-@FreeBuilder
+@Value.Immutable
+@Value.Style(init = "set*", typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")
 public abstract class GTSExchangeFileTemplate implements Serializable {
     public static final String STARTING_LINE_PREFIX = stringOf(START_OF_HEADING, CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
     public static final String HEADING_PREFIX = stringOf(CARRIAGE_RETURN, CARRIAGE_RETURN, LINE_FEED);
@@ -268,7 +269,9 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
      * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
     @Deprecated
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().mergeFrom(this);
+    }
 
     /**
      * Deprecated.
@@ -317,16 +320,68 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
      *
      * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
+    /*
+     * NOTE: this Builder is a "detached builder" (see doc/immutables-migration.md): it does not extend
+     * ImmutableGTSExchangeFileTemplate.Builder, but is a standalone class with plain fields. This is needed
+     * because getTransmissionSequenceNumberAsInt() reads the builder's *current* transmissionSequenceNumber
+     * mid-construction, and Immutables generates no builder-side getters at all.
+     */
     @Deprecated
-    public static class Builder extends GTSExchangeFileTemplate_Builder {
+    public static class Builder {
         private static final int MESSAGE_LENGTH_LENGTH = 8;
         private static final int FORMAT_IDENTIFIER_LENGTH = 2;
 
         private static final Pattern ANY_SEQUENCE_OF_LINE_BREAKS = Pattern.compile(
                 String.format(Locale.ROOT, "[%s]+", Pattern.quote(stringOf(CARRIAGE_RETURN, LINE_FEED))));
 
+        private String transmissionSequenceNumber = "";
+        private String heading;
+        private String text;
+
         Builder() {
-            setTransmissionSequenceNumber("");
+        }
+
+        public String getTransmissionSequenceNumber() {
+            return transmissionSequenceNumber;
+        }
+
+        public Builder setTransmissionSequenceNumber(final String transmissionSequenceNumber) {
+            this.transmissionSequenceNumber = requireNonNull(transmissionSequenceNumber, "transmissionSequenceNumber");
+            return this;
+        }
+
+        public String getHeading() {
+            return heading;
+        }
+
+        public Builder setHeading(final String heading) {
+            this.heading = requireNonNull(heading, "heading");
+            return this;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public Builder setText(final String text) {
+            this.text = requireNonNull(text, "text");
+            return this;
+        }
+
+        public Builder mergeFrom(final GTSExchangeFileTemplate template) {
+            requireNonNull(template, "template");
+            this.transmissionSequenceNumber = template.getTransmissionSequenceNumber();
+            this.heading = template.getHeading();
+            this.text = template.getText();
+            return this;
+        }
+
+        public GTSExchangeFileTemplate build() {
+            return ImmutableGTSExchangeFileTemplate.internalBuilder()//
+                    .setTransmissionSequenceNumber(getTransmissionSequenceNumber())//
+                    .setHeading(getHeading())//
+                    .setText(getText())//
+                    .build();
         }
 
         private static int indexOfAnyLineBreak(final CharSequence content) {
@@ -580,8 +635,13 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
      *
      * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
      */
+    // NOTE: distinct typeImmutable name to avoid colliding with GTSDataExchangeTranscoder.ParseResult's
+    // generated class: Immutables generates nested @Value.Immutable types as top-level classes in the
+    // enclosing package by default, and both classes have a nested type named "ParseResult" (see
+    // doc/immutables-migration.md).
     @Deprecated
-    @FreeBuilder
+    @Value.Immutable
+    @Value.Style(init = "set*", typeImmutable = "ImmutableGTSExchangeFileTemplateParseResult")
     public static abstract class ParseResult {
         ParseResult() {
         }
@@ -624,7 +684,7 @@ public abstract class GTSExchangeFileTemplate implements Serializable {
          * @deprecated in favor of {@link GTSDataExchangeTranscoder} and {@link GTSMeteorologicalMessage}.
          */
         @Deprecated
-        public static class Builder extends GTSExchangeFileTemplate_ParseResult_Builder {
+        public static class Builder extends ImmutableGTSExchangeFileTemplateParseResult.Builder {
             Builder() {
             }
         }

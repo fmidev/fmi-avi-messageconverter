@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -15,7 +15,7 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.metar.ObservedCloudLayer;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = ObservedCloudLayerImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "amount", "base", "cloudType", "amountNotDetectedByAutoSystem", "amountUnobservableByAutoSystem", "heightNotDetectedByAutoSystem",
@@ -33,9 +33,9 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
         if (layer instanceof ObservedCloudLayerImpl) {
             return (ObservedCloudLayerImpl) layer;
         } else if (layer instanceof ObservedCloudLayer) {
-            return ObservedCloudLayerImpl.Builder.from((ObservedCloudLayer) layer).build();
+            return ObservedCloudLayerImpl.Builder.copyOf((ObservedCloudLayer) layer).build();
         } else {
-            return ObservedCloudLayerImpl.Builder.from(layer).build();
+            return ObservedCloudLayerImpl.Builder.copyOf(layer).build();
         }
     }
 
@@ -45,9 +45,15 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
         return layer.map(ObservedCloudLayerImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends ObservedCloudLayerImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getBase();
+
+    public static class Builder extends ImmutableObservedCloudLayerImpl.Builder {
 
         Builder() {
             setAmountNotDetectedByAutoSystem(false);
@@ -57,11 +63,11 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
             setCloudTypeUnobservableByAutoSystem(false);
         }
 
-        public static Builder from(final ObservedCloudLayer value) {
+        public static Builder copyOf(final ObservedCloudLayer value) {
             if (value instanceof ObservedCloudLayerImpl) {
                 return ((ObservedCloudLayerImpl) value).toBuilder();
             } else {
-                return from((CloudLayer) value)//
+                return copyOf((CloudLayer) value)//
                         .setAmountNotDetectedByAutoSystem(value.isAmountNotDetectedByAutoSystem())//
                         .setAmountUnobservableByAutoSystem(value.isAmountUnobservableByAutoSystem())//
                         .setHeightNotDetectedByAutoSystem(value.isHeightNotDetectedByAutoSystem())//
@@ -70,7 +76,7 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
             }
         }
 
-        public static Builder from(final CloudLayer value) {
+        public static Builder copyOf(final CloudLayer value) {
             if (value instanceof ObservedCloudLayerImpl) {
                 return ((ObservedCloudLayerImpl) value).toBuilder();
             } else {
@@ -78,12 +84,6 @@ public abstract class ObservedCloudLayerImpl implements fi.fmi.avi.model.metar.O
                         .setCloudType(value.getCloudType())//
                         .setBase(NumericMeasureImpl.immutableCopyOf(value.getBase()));
             }
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public ObservedCloudLayerImpl.Builder setBase(final NumericMeasure base) {
-            return super.setBase(base);
         }
     }
 }

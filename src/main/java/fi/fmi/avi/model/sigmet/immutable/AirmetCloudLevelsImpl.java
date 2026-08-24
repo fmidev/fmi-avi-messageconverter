@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -14,7 +14,7 @@ import fi.fmi.avi.model.NumericMeasure;
 import fi.fmi.avi.model.immutable.NumericMeasureImpl;
 import fi.fmi.avi.model.sigmet.AirmetCloudLevels;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = AirmetCloudLevelsImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.USE_DEFAULTS)
 @JsonPropertyOrder({ "base", "top", "topabove" })
@@ -30,7 +30,7 @@ public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serial
         if (airmetCloudLevels instanceof AirmetCloudLevelsImpl) {
             return (AirmetCloudLevelsImpl) airmetCloudLevels;
         } else {
-            return Builder.from(airmetCloudLevels).build();
+            return Builder.copyOf(airmetCloudLevels).build();
         }
     }
 
@@ -38,16 +38,26 @@ public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serial
         return airmetWind.map(AirmetCloudLevelsImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends AirmetCloudLevelsImpl_Builder {
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getCloudBase();
+
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getCloudTop();
+
+    public static class Builder extends ImmutableAirmetCloudLevelsImpl.Builder {
 
         Builder() {
             this.setCloudBase(NumericMeasureImpl.of(0, ""));
             this.setCloudTop(NumericMeasureImpl.of(0, ""));
         }
 
-        public static Builder from(final AirmetCloudLevels value) {
+        public static Builder copyOf(final AirmetCloudLevels value) {
             if (value instanceof AirmetCloudLevelsImpl) {
                 return ((AirmetCloudLevelsImpl) value).toBuilder();
             } else {
@@ -57,23 +67,5 @@ public abstract class AirmetCloudLevelsImpl implements AirmetCloudLevels, Serial
                         .setTopAbove(value.getTopAbove());
             }
         }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setCloudBase(final NumericMeasure base) {
-            return super.setCloudBase(NumericMeasureImpl.immutableCopyOf(base));
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setCloudTop(final NumericMeasure top) {
-            return super.setCloudTop(NumericMeasureImpl.immutableCopyOf(top));
-        }
-
-        @Override
-        public Builder setTopAbove(final boolean topAbove) {
-            return super.setTopAbove(topAbove);
-        }
-
     }
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.Geometry;
 import fi.fmi.avi.model.TacOrGeoGeometry;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = TacOrGeoGeometryImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializable {
@@ -31,7 +31,7 @@ public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializ
         if (tacOrGeoGeometry instanceof TacOrGeoGeometryImpl) {
             return (TacOrGeoGeometryImpl) tacOrGeoGeometry;
         } else {
-            return Builder.from(tacOrGeoGeometry).build();
+            return Builder.copyOf(tacOrGeoGeometry).build();
         }
     }
 
@@ -40,15 +40,17 @@ public abstract class TacOrGeoGeometryImpl implements TacOrGeoGeometry, Serializ
         return tacOrGeoGeometry.map(TacOrGeoGeometryImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends TacOrGeoGeometryImpl_Builder {
+    public static class Builder extends ImmutableTacOrGeoGeometryImpl.Builder {
 
         Builder() {
             this.setEntireArea(false);
         }
 
-        public static Builder from(final TacOrGeoGeometry value) {
+        public static Builder copyOf(final TacOrGeoGeometry value) {
             if (value instanceof TacOrGeoGeometryImpl) {
                 return ((TacOrGeoGeometryImpl) value).toBuilder();
             } else {

@@ -425,7 +425,9 @@ public class GTSExchangeFileTemplateTest {
     public void getFormatIdentifier_returns_0_if_transmissionSequenceNumber_is_not_empty() {
         final GTSExchangeFileTemplate message = builder()//
                 .setTransmissionSequenceNumber("123")//
-                .buildPartial();
+                .setHeading("")//
+                .setText("")//
+                .build();
         assertThat(message.getFormatIdentifier()).isEqualTo(0);
     }
 
@@ -433,7 +435,9 @@ public class GTSExchangeFileTemplateTest {
     public void getFormatIdentifier_returns_1_if_transmissionSequenceNumber_is_empty() {
         final GTSExchangeFileTemplate message = builder()//
                 .setTransmissionSequenceNumber("")//
-                .buildPartial();
+                .setHeading("")//
+                .setText("")//
+                .build();
         assertThat(message.getFormatIdentifier()).isEqualTo(1);
     }
 
@@ -455,8 +459,10 @@ public class GTSExchangeFileTemplateTest {
     @Test
     public void getTransmissionSequenceNumberAsInt_returns_empty_when_getTransmissionSequenceNumber_is_empty() {
         final GTSExchangeFileTemplate.Builder builder = builder()//
-                .clearTransmissionSequenceNumber();
-        final GTSExchangeFileTemplate value = builder.buildPartial();
+                .clearTransmissionSequenceNumber()//
+                .setHeading("")//
+                .setText("");
+        final GTSExchangeFileTemplate value = builder.build();
         assertThat(builder.getTransmissionSequenceNumber()).as("builder.getTransmissionSequenceNumber()").isEmpty();
         assertThat(builder.getTransmissionSequenceNumberAsInt()).as("builder.getTransmissionSequenceNumberAsInt()").isEmpty();
         assertThat(value.getTransmissionSequenceNumberAsInt()).as("value.getTransmissionSequenceNumberAsInt()").isEmpty();
@@ -465,8 +471,10 @@ public class GTSExchangeFileTemplateTest {
     @Test
     public void getTransmissionSequenceNumberAsInt_returns_empty_when_getTransmissionSequenceNumber_is_text() {
         final GTSExchangeFileTemplate.Builder builder = builder()//
-                .setTransmissionSequenceNumber("ABC");
-        final GTSExchangeFileTemplate value = builder.buildPartial();
+                .setTransmissionSequenceNumber("ABC")//
+                .setHeading("")//
+                .setText("");
+        final GTSExchangeFileTemplate value = builder.build();
         assertThat(builder.getTransmissionSequenceNumber()).as("builder.getTransmissionSequenceNumber()").isEqualTo("ABC");
         assertThat(builder.getTransmissionSequenceNumberAsInt()).as("builder.getTransmissionSequenceNumberAsInt()").isEmpty();
         assertThat(value.getTransmissionSequenceNumberAsInt()).as("value.getTransmissionSequenceNumberAsInt()").isEmpty();
@@ -475,8 +483,10 @@ public class GTSExchangeFileTemplateTest {
     @Test
     public void getTransmissionSequenceNumberAsInt_returns_int_when_getTransmissionSequenceNumber_is_numeric() {
         final GTSExchangeFileTemplate.Builder builder = builder()//
-                .setTransmissionSequenceNumber("00073");
-        final GTSExchangeFileTemplate value = builder.buildPartial();
+                .setTransmissionSequenceNumber("00073")//
+                .setHeading("")//
+                .setText("");
+        final GTSExchangeFileTemplate value = builder.build();
         assertThat(builder.getTransmissionSequenceNumber()).as("builder.getTransmissionSequenceNumber()").isEqualTo("00073");
         assertThat(builder.getTransmissionSequenceNumberAsInt()).as("builder.getTransmissionSequenceNumberAsInt()").hasValue(73);
         assertThat(value.getTransmissionSequenceNumberAsInt()).as("value.getTransmissionSequenceNumberAsInt()").hasValue(73);
@@ -485,8 +495,10 @@ public class GTSExchangeFileTemplateTest {
     @Test
     public void setTransmissionSequenceNumberAsInt_sets_value_with_three_digits() {
         final GTSExchangeFileTemplate.Builder builder = builder()//
-                .setTransmissionSequenceNumberAsInt(32);
-        final GTSExchangeFileTemplate value = builder.buildPartial();
+                .setTransmissionSequenceNumberAsInt(32)//
+                .setHeading("")//
+                .setText("");
+        final GTSExchangeFileTemplate value = builder.build();
         assertThat(builder.getTransmissionSequenceNumberAsInt()).as("builder.getTransmissionSequenceNumberAsInt()").hasValue(32);
         assertThat(builder.getTransmissionSequenceNumber()).as("builder.getTransmissionSequenceNumber()").isEqualTo("032");
         assertThat(value.getTransmissionSequenceNumberAsInt()).as("value.getTransmissionSequenceNumberAsInt()").hasValue(32);

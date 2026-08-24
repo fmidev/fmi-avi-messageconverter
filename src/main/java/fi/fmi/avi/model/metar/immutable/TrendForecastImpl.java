@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -26,7 +26,7 @@ import fi.fmi.avi.model.metar.TrendForecast;
 /**
  * Created by rinne on 13/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = TrendForecastImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"changeIndicator", "periodOfChange", "instantOfChange", "surfaceWind", "ceilingAndVisibilityOk",
@@ -45,7 +45,7 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
         if (trendForecast instanceof TrendForecastImpl) {
             return (TrendForecastImpl) trendForecast;
         } else {
-            return Builder.from(trendForecast).build();
+            return Builder.copyOf(trendForecast).build();
         }
     }
 
@@ -54,16 +54,40 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
         return trendForecast.map(TrendForecastImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends TrendForecastImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getPrevailingVisibility();
+
+    @Override
+    @JsonDeserialize(contentAs = SurfaceWindImpl.class)
+    public abstract Optional<SurfaceWind> getSurfaceWind();
+
+    @Override
+    @JsonDeserialize(contentAs = CloudForecastImpl.class)
+    public abstract Optional<CloudForecast> getCloud();
+
+    // NOTE: Immutables generates a final setForecastWeather(...) setter, which cannot be overridden to
+    // carry @JsonDeserialize(contentAs = ...) (see doc/immutables-migration.md). The hint moves onto this
+    // abstract getter re-declaration instead; the package's passAnnotations style (see package-info.java)
+    // propagates it onto the generated builder setter for Jackson's builder-based deserialization.
+    // NOTE: no per-property @JsonDeserialize(contentAs=...) hint here: see SIGMETImpl.getAnalysisGeometries() for why
+    // (Optional<List<X>> on a non-detached builder). Weather instead carries its own class-level
+    // @JsonDeserialize(as=...) hint (see doc/immutables-migration.md).
+    @Override
+    public abstract Optional<List<Weather>> getForecastWeather();
+
+    public static class Builder extends ImmutableTrendForecastImpl.Builder {
 
         Builder() {
             setCeilingAndVisibilityOk(false);
             setNoSignificantWeather(false);
         }
 
-        public static Builder from(final TrendForecast value) {
+        public static Builder copyOf(final TrendForecast value) {
             if (value instanceof TrendForecastImpl) {
                 return ((TrendForecastImpl) value).toBuilder();
             } else {
@@ -85,36 +109,14 @@ public abstract class TrendForecastImpl implements TrendForecast, Serializable {
             }
         }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setPrevailingVisibility(final NumericMeasure prevailingVisibility) {
-            return super.setPrevailingVisibility(prevailingVisibility);
-        }
 
         @Override
-        @JsonDeserialize(as = SurfaceWindImpl.class)
-        public Builder setSurfaceWind(final SurfaceWind surfaceWind) {
-            return super.setSurfaceWind(surfaceWind);
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = WeatherImpl.class)
-        public Builder setForecastWeather(final List<Weather> forecastWeather) {
-            return super.setForecastWeather(forecastWeather);
-        }
-
-        @Override
-        @JsonDeserialize(as = CloudForecastImpl.class)
-        public Builder setCloud(final CloudForecast cloud) {
-            return super.setCloud(cloud);
-        }
-
-        @Override
-        public TrendForecastImpl build() {
-            if (getPeriodOfChange().isPresent() && getInstantOfChange().isPresent()) {
+        public ImmutableTrendForecastImpl build() {
+            final ImmutableTrendForecastImpl result = super.build();
+            if (result.getPeriodOfChange().isPresent() && result.getInstantOfChange().isPresent()) {
                 throw new IllegalStateException("Both the period and the instant of change cannot be set");
             }
-            return super.build();
+            return result;
         }
 
     }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -15,18 +15,22 @@ import fi.fmi.avi.model.NumericMeasure;
 /**
  * Created by rinne on 17/04/2018.
  */
-
-@FreeBuilder
+@Value.Immutable
+@Value.Style(init = "set*")
 @JsonDeserialize(builder = NumericMeasureImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.ALWAYS)
 //TODO @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonPropertyOrder({"value", "uom"})
+@JsonPropertyOrder({ "value", "uom" })
 public abstract class NumericMeasureImpl implements NumericMeasure, Serializable {
 
     private static final long serialVersionUID = 8955711992731295488L;
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public Builder toBuilder() {
+        return builder().setUom(getUom()).setValue(getValue());
     }
 
     public static NumericMeasureImpl of(final Integer value, final String uom) {
@@ -42,7 +46,7 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
         if (numericMeasure instanceof NumericMeasureImpl) {
             return (NumericMeasureImpl) numericMeasure;
         } else {
-            return Builder.from(numericMeasure).build();
+            return Builder.copyOf(numericMeasure).build();
         }
     }
 
@@ -51,14 +55,12 @@ public abstract class NumericMeasureImpl implements NumericMeasure, Serializable
         return numericMeasure.map(NumericMeasureImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
-
-    public static class Builder extends NumericMeasureImpl_Builder {
+    public static class Builder extends ImmutableNumericMeasureImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final NumericMeasure value) {
+        public static Builder copyOf(final NumericMeasure value) {
             if (value instanceof NumericMeasureImpl) {
                 return ((NumericMeasureImpl) value).toBuilder();
             } else {

@@ -43,7 +43,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
         final NextAdvisoryImpl.Builder next = NextAdvisoryImpl.builder();
 
         if (hasNext) {
-            final PartialOrCompleteTimeInstant nextAdvisoryTime = PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]"));
+            final PartialOrCompleteTimeInstant nextAdvisoryTime = PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z"));
             next.setTime(nextAdvisoryTime);
             next.setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_AT);
         } else {
@@ -129,7 +129,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
     public void buildSWXWithCircleByCenterPoint() throws Exception {
         final NextAdvisoryImpl.Builder nextAdvisory = NextAdvisoryImpl.builder()
                 .setTimeSpecifier(NextAdvisory.Type.NEXT_ADVISORY_BY)
-                .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")));
+                .setTime(PartialOrCompleteTimeInstant.of(ZonedDateTime.parse("2020-02-27T01:00Z")));
 
         final int day = 27;
         final int hour = 1;
@@ -159,7 +159,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
 
         final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
@@ -184,7 +184,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
     @Test
     public void buildSWXWithDaylightSideRegion() throws Exception {
         final Instant analysisTime = Instant.parse("2025-10-31T11:00:00Z");
-        final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z[UTC]");
+        final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z");
 
         final List<SpaceWeatherRegion> regions = new ArrayList<>();
         regions.add(SpaceWeatherRegionImpl.builder()
@@ -234,7 +234,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
     public void buildSWXWithoutNextAdvisory() throws Exception {
         final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
                         SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/GNSS_MOD")))
@@ -262,7 +262,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
     public void buildSWXWithoutObservation() throws Exception {
         final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllAnalyses(getAnalyses(false))
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),
@@ -290,7 +290,7 @@ public class SpaceWeatherAdvisoryAmd79Test {
     public void swxSerializationTest() throws Exception {
         final SpaceWeatherAdvisoryAmd79Impl advisory = SpaceWeatherAdvisoryAmd79Impl.builder()
                 .setIssuingCenter(getIssuingCenter())
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setReplaceAdvisoryNumber(getAdvisoryNumber())
                 .addAllPhenomena(Arrays.asList(SpaceWeatherPhenomenon.fromWMOCodeListValue("http://codes.wmo.int/49-2/SpaceWxPhenomena/HF_COM_MOD"),

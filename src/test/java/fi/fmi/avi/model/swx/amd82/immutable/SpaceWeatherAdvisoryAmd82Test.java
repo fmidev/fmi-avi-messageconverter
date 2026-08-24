@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,7 +80,7 @@ public class SpaceWeatherAdvisoryAmd82Test {
     @Test
     public void buildSWXWithDaysideRegion() throws Exception {
         final ZonedDateTime analysisTime = ZonedDateTime.parse("2025-10-31T11:00:00Z");
-        final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z[UTC]");
+        final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z");
 
         final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(ISSUING_CENTER)
@@ -90,7 +91,8 @@ public class SpaceWeatherAdvisoryAmd82Test {
                 .addAllAnalyses(SWXAmd82Tests.analysisBuilder(analysisTime)
                         .setRegionsPerIntensityFromLocationIndicators()
                         .addLocationIndicators(SpaceWeatherRegion.SpaceWeatherLocation.DAYSIDE)
-                        .generateAnalyses())
+                        .generateAnalyses()
+                        .collect(Collectors.toList()))
                 .setRemarks(REMARKS)
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();
@@ -116,7 +118,7 @@ public class SpaceWeatherAdvisoryAmd82Test {
     @Test
     public void buildSWXWithNightsideRegion() throws Exception {
         final ZonedDateTime analysisTime = ZonedDateTime.parse("2025-10-31T11:00:00Z");
-        final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z[UTC]");
+        final ZonedDateTime issueTime = ZonedDateTime.parse("2025-10-31T09:23:11Z");
 
         final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(ISSUING_CENTER)
@@ -127,7 +129,8 @@ public class SpaceWeatherAdvisoryAmd82Test {
                 .addAllAnalyses(SWXAmd82Tests.analysisBuilder(analysisTime)
                         .setRegionsPerIntensityFromLocationIndicators()
                         .addLocationIndicators(SpaceWeatherRegion.SpaceWeatherLocation.NIGHTSIDE)
-                        .generateAnalyses())
+                        .generateAnalyses()
+                        .collect(Collectors.toList()))
                 .setRemarks(REMARKS)
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();
@@ -155,10 +158,10 @@ public class SpaceWeatherAdvisoryAmd82Test {
         final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(ISSUING_CENTER)
                 .setEffect(Effect.HF_COMMUNICATIONS)
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setAdvisoryNumber(ADVISORY_NUMBER)
-                .addAllAnalyses(generateAnalyses())
+                .addAllAnalyses(generateAnalyses().collect(Collectors.toList()))
                 .setRemarks(REMARKS)
                 .setNextAdvisory(getNextAdvisory(false))
                 .build();
@@ -181,14 +184,15 @@ public class SpaceWeatherAdvisoryAmd82Test {
         final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(ISSUING_CENTER)
                 .setEffect(Effect.HF_COMMUNICATIONS)
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .addAllAnalyses(generateAnalyses()
                         .map(analysis -> analysis.getAnalysisType() == SpaceWeatherAdvisoryAnalysis.Type.OBSERVATION
                                 ? analysis.toBuilder()
                                 .setAnalysisType(SpaceWeatherAdvisoryAnalysis.Type.FORECAST)
                                 .build()
-                                : analysis))
+                                : analysis)
+                        .collect(Collectors.toList()))
                 .setAdvisoryNumber(ADVISORY_NUMBER)
                 .setRemarks(REMARKS)
                 .setNextAdvisory(getNextAdvisory(false))
@@ -212,10 +216,10 @@ public class SpaceWeatherAdvisoryAmd82Test {
         final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(ISSUING_CENTER)
                 .setEffect(Effect.HF_COMMUNICATIONS)
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setAdvisoryNumber(ADVISORY_NUMBER)
-                .addAllAnalyses(generateAnalyses())
+                .addAllAnalyses(generateAnalyses().collect(Collectors.toList()))
                 .setRemarks(REMARKS)
                 .setNextAdvisory(getNextAdvisory(true))
                 .setReportStatus(AviationWeatherMessage.ReportStatus.NORMAL)
@@ -242,8 +246,9 @@ public class SpaceWeatherAdvisoryAmd82Test {
                 .setAdvisoryNumber(ADVISORY_NUMBER)
                 .addAllAnalyses(generateAnalyses()
                         .map(analysis -> analysis.toBuilder()
-                                .mutateTime(time -> time.clearCompleteTime())
+                                .setTime(analysis.getTime().toBuilder().clearCompleteTime().build())
                                 .build())
+                        .collect(Collectors.toList())
                 )
                 .setRemarks(REMARKS)
                 .setNextAdvisory(partialNextAdvisory)
@@ -269,11 +274,11 @@ public class SpaceWeatherAdvisoryAmd82Test {
         final SpaceWeatherAdvisoryAmd82Impl advisory = SpaceWeatherAdvisoryAmd82Impl.builder()
                 .setIssuingCenter(ISSUING_CENTER)
                 .setEffect(Effect.HF_COMMUNICATIONS)
-                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z[UTC]")).build())
+                .setIssueTime(PartialOrCompleteTimeInstant.builder().setCompleteTime(ZonedDateTime.parse("2020-02-27T01:00Z")).build())
                 .setPermissibleUsageReason(AviationCodeListUser.PermissibleUsageReason.TEST)
                 .setAdvisoryNumber(ADVISORY_NUMBER)
-                .addAllReplaceAdvisoryNumbers(getReplacementNumbers(13, 14, 15))
-                .addAllAnalyses(generateAnalyses())
+                .addAllReplaceAdvisoryNumbers(getReplacementNumbers(13, 14, 15).collect(Collectors.toList()))
+                .addAllAnalyses(generateAnalyses().collect(Collectors.toList()))
                 .setRemarks(REMARKS)
                 .setNextAdvisory(getNextAdvisory(true))
                 .build();

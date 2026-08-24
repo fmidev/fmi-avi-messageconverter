@@ -11,13 +11,14 @@ import fi.fmi.avi.model.bulletin.MeteorologicalBulletinBuilderHelper;
 import fi.fmi.avi.model.bulletin.immutable.BulletinHeadingImpl;
 import fi.fmi.avi.model.taf.TAF;
 import fi.fmi.avi.model.taf.TAFBulletin;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = TAFBulletinImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"timeStamp", "timeStampFields", "heading", "collectIdentifier", "messages"})
@@ -34,7 +35,7 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
         if (bulletin instanceof TAFBulletinImpl) {
             return (TAFBulletinImpl) bulletin;
         } else {
-            return Builder.from(bulletin).build();
+            return Builder.copyOf(bulletin).build();
         }
     }
 
@@ -43,14 +44,24 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
         return bulletin.map(TAFBulletinImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends TAFBulletinImpl_Builder {
+    @Override
+    @JsonDeserialize(as = BulletinHeadingImpl.class)
+    public abstract BulletinHeading getHeading();
+
+    @Override
+    @JsonProperty("messages")
+    public abstract List<TAF> getMessages();
+
+    public static class Builder extends ImmutableTAFBulletinImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final TAFBulletin value) {
+        public static Builder copyOf(final TAFBulletin value) {
             if (value instanceof TAFBulletinImpl) {
                 return ((TAFBulletinImpl) value).toBuilder();
             } else {
@@ -93,8 +104,9 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
         */
 
         @Override
-        @JsonDeserialize(as = BulletinHeadingImpl.class)
-        public Builder setHeading(final BulletinHeading heading) {
+        public ImmutableTAFBulletinImpl build() {
+            final ImmutableTAFBulletinImpl result = super.build();
+            final BulletinHeading heading = result.getHeading();
             if (DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML.equals(heading.getDataTypeDesignatorT1ForTAC())) {
                 if (!DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_AERODROME_VT_LONG.equals(heading.getDataTypeDesignatorT2())
                         && !DataTypeDesignatorT2.XMLDataTypeDesignatorT2.XML_AERODROME_VT_SHORT.equals(heading.getDataTypeDesignatorT2())) {
@@ -114,14 +126,7 @@ public abstract class TAFBulletinImpl implements TAFBulletin, Serializable {
                         "Data type designator T1 for TAC of the bulletin heading must be either " + DataTypeDesignatorT1.AVIATION_INFORMATION_IN_XML + " or "
                                 + DataTypeDesignatorT1.FORECASTS + " for TAF");
             }
-            return super.setHeading(heading);
-        }
-
-        @Override
-        @JsonDeserialize(contentAs = TAFImpl.class)
-        @JsonProperty("messages")
-        public Builder addMessages(final TAF... messages) {
-            return super.addMessages(messages);
+            return result;
         }
     }
 }

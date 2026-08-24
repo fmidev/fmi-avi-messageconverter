@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -18,7 +18,7 @@ import fi.fmi.avi.model.metar.ObservedSurfaceWind;
  * Created by rinne on 13/04/2018.
  */
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = ObservedSurfaceWindImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"meanWindDirection", "variableDirection", "meanWindSpeed", "meanWindSpeedOperator", "widnGust",
@@ -36,7 +36,7 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
         if (observedSurfaceWind instanceof ObservedSurfaceWindImpl) {
             return (ObservedSurfaceWindImpl) observedSurfaceWind;
         } else {
-            return Builder.from(observedSurfaceWind).build();
+            return Builder.copyOf(observedSurfaceWind).build();
         }
     }
 
@@ -46,23 +46,46 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
         return observedSurfaceWind.map(ObservedSurfaceWindImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends ObservedSurfaceWindImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getMeanWindDirection();
+
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getMeanWindSpeed();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getWindGust();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getExtremeClockwiseWindDirection();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getExtremeCounterClockwiseWindDirection();
+
+    public static class Builder extends ImmutableObservedSurfaceWindImpl.Builder {
 
         Builder() {
             setVariableDirection(false);
         }
 
         @Override
-        public ObservedSurfaceWindImpl build() {
-            if (!isVariableDirection() && !getMeanWindDirection().isPresent()) {
+        public ImmutableObservedSurfaceWindImpl build() {
+            final ImmutableObservedSurfaceWindImpl result = super.build();
+            if (!result.isVariableDirection() && !result.getMeanWindDirection().isPresent()) {
                 throw new IllegalStateException("MeanWindDirection must be present if variableDirection is false");
             }
-            return super.build();
+            return result;
         }
 
-        public static Builder from(final ObservedSurfaceWind value) {
+        public static Builder copyOf(final ObservedSurfaceWind value) {
             if (value instanceof ObservedSurfaceWindImpl) {
                 return ((ObservedSurfaceWindImpl) value).toBuilder();
             } else {
@@ -79,35 +102,10 @@ public abstract class ObservedSurfaceWindImpl implements ObservedSurfaceWind, Se
         }
 
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMeanWindDirection(final NumericMeasure meanWindDirection) {
-            return super.setMeanWindDirection(meanWindDirection);
-        }
 
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMeanWindSpeed(final NumericMeasure meanWindSpeed) {
-            return super.setMeanWindSpeed(meanWindSpeed);
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setWindGust(final NumericMeasure windGust) {
-            return super.setWindGust(windGust);
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setExtremeClockwiseWindDirection(final NumericMeasure extremeClockwiseWindDirection) {
-            return super.setExtremeClockwiseWindDirection(extremeClockwiseWindDirection);
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setExtremeCounterClockwiseWindDirection(final NumericMeasure extremeCounterClockwiseWindDirection) {
-            return super.setExtremeCounterClockwiseWindDirection(extremeCounterClockwiseWindDirection);
-        }
     }
 }

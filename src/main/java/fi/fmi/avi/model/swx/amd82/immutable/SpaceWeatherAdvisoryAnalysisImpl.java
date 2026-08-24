@@ -6,14 +6,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.swx.amd82.Intensity;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherAdvisoryAnalysis;
 import fi.fmi.avi.model.swx.amd82.SpaceWeatherIntensityAndRegion;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = SpaceWeatherAdvisoryAnalysisImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"time", "analysisType", "intensityAndRegions", "nilReason"})
@@ -30,7 +30,7 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
         if (analysis instanceof SpaceWeatherAdvisoryAnalysisImpl) {
             return (SpaceWeatherAdvisoryAnalysisImpl) analysis;
         } else {
-            return Builder.from(analysis).build();
+            return Builder.copyOf(analysis).build();
         }
     }
 
@@ -40,13 +40,15 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
         return analysis.map(SpaceWeatherAdvisoryAnalysisImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends SpaceWeatherAdvisoryAnalysisImpl_Builder {
+    public static class Builder extends ImmutableSpaceWeatherAdvisoryAnalysisImpl.Builder {
         Builder() {
         }
 
-        public static Builder from(final SpaceWeatherAdvisoryAnalysis value) {
+        public static Builder copyOf(final SpaceWeatherAdvisoryAnalysis value) {
             if (value instanceof SpaceWeatherAdvisoryAnalysisImpl) {
                 return ((SpaceWeatherAdvisoryAnalysisImpl) value).toBuilder();
             } else {
@@ -54,7 +56,8 @@ public abstract class SpaceWeatherAdvisoryAnalysisImpl implements SpaceWeatherAd
                         .setTime(value.getTime())//
                         .setAnalysisType(value.getAnalysisType())//
                         .addAllIntensityAndRegions(value.getIntensityAndRegions().stream()
-                                .map(SpaceWeatherIntensityAndRegionImpl::immutableCopyOf))//
+                                .map(SpaceWeatherIntensityAndRegionImpl::immutableCopyOf)
+                                .collect(java.util.stream.Collectors.toList()))//
                         .setNilReason(value.getNilReason());
             }
         }

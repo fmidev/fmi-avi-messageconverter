@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -18,7 +18,7 @@ import fi.fmi.avi.model.metar.HorizontalVisibility;
 /**
  * Created by rinne on 13/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = HorizontalVisibilityImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"prevailingVisibility", "prevailingVisibilityOperator", "minimumVisibility", "minimumVisibilityDirection"})
@@ -35,7 +35,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
         if (horizontalVisibility instanceof HorizontalVisibilityImpl) {
             return (HorizontalVisibilityImpl) horizontalVisibility;
         } else {
-            return Builder.from(horizontalVisibility).build();
+            return Builder.copyOf(horizontalVisibility).build();
         }
     }
 
@@ -45,14 +45,28 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
         return horizontalVisibility.map(HorizontalVisibilityImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends HorizontalVisibilityImpl_Builder {
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getPrevailingVisibility();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getMinimumVisibility();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getMinimumVisibilityDirection();
+
+    public static class Builder extends ImmutableHorizontalVisibilityImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final HorizontalVisibility value) {
+        public static Builder copyOf(final HorizontalVisibility value) {
             if (value instanceof HorizontalVisibilityImpl) {
                 return ((HorizontalVisibilityImpl) value).toBuilder();
             } else {
@@ -63,22 +77,7 @@ public abstract class HorizontalVisibilityImpl implements HorizontalVisibility, 
             }
         }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setPrevailingVisibility(final NumericMeasure prevailingVisibility) {
-            return super.setPrevailingVisibility(prevailingVisibility);
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMinimumVisibility(final NumericMeasure minimumVisibility) {
-            return super.setMinimumVisibility(minimumVisibility);
-        }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMinimumVisibilityDirection(final NumericMeasure minimumVisibilityDirection) {
-            return super.setMinimumVisibilityDirection(minimumVisibilityDirection);
-        }
     }
 }

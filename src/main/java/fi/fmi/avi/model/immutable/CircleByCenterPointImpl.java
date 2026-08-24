@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.CircleByCenterPoint;
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 import fi.fmi.avi.model.NumericMeasure;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = CircleByCenterPointImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class CircleByCenterPointImpl implements CircleByCenterPoint, Serializable {
@@ -28,7 +28,7 @@ public abstract class CircleByCenterPointImpl implements CircleByCenterPoint, Se
         if (geom instanceof CircleByCenterPointImpl) {
             return (CircleByCenterPointImpl) geom;
         } else {
-            return CircleByCenterPointImpl.Builder.from(geom).build();
+            return CircleByCenterPointImpl.Builder.copyOf(geom).build();
         }
     }
 
@@ -38,13 +38,23 @@ public abstract class CircleByCenterPointImpl implements CircleByCenterPoint, Se
         return geom.map(CircleByCenterPointImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends CircleByCenterPointImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = CoordinateReferenceSystemImpl.class)
+    public abstract Optional<CoordinateReferenceSystem> getCrs();
+
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getRadius();
+
+    public static class Builder extends ImmutableCircleByCenterPointImpl.Builder {
         Builder() {
         }
 
-        public static Builder from(final CircleByCenterPoint value) {
+        public static Builder copyOf(final CircleByCenterPoint value) {
             if (value instanceof CircleByCenterPointImpl) {
                 return ((CircleByCenterPointImpl) value).toBuilder();
             } else {
@@ -54,21 +64,9 @@ public abstract class CircleByCenterPointImpl implements CircleByCenterPoint, Se
             }
         }
 
-        @JsonDeserialize(as = CoordinateReferenceSystemImpl.class)
-        @Override
-        public Builder setCrs(final CoordinateReferenceSystem crs) {
-            return super.setCrs(crs);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setRadius(final NumericMeasure radius) {
-            return super.setRadius(radius);
-        }
-
-        public Builder setCenterPointCoordinates(final List<Double> coordinates) {
-            return this.clearCenterPointCoordinates().addAllCenterPointCoordinates(coordinates);
-        }
+        // A hand-written setCenterPointCoordinates(List<Double>) used to live here; Immutables'
+        // own generated setCenterPointCoordinates(Iterable<Double>) already replaces the whole
+        // collection, so the wrapper was redundant once migrated - see doc/immutables-migration.md.
     }
 
 }

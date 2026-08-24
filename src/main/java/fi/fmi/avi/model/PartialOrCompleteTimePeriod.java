@@ -8,10 +8,11 @@ import java.time.ZonedDateTime;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,7 +24,10 @@ import fi.fmi.avi.model.PartialDateTime.PartialField;
 /**
  * Created by rinne on 04/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
+@Value.Style(init = "set*", get = { "is*", "get*" },
+        passAnnotations = { com.fasterxml.jackson.databind.annotation.JsonDeserialize.class, com.fasterxml.jackson.annotation.JsonProperty.class },
+        typeInnerBuilder = "InternalImmutableBuilder", builder = "internalBuilder")
 @JsonDeserialize(builder = PartialOrCompleteTimePeriod.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "startTime", "endTime" })
@@ -78,7 +82,9 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
 
     public abstract Optional<PartialOrCompleteTimeInstant> getEndTime();
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().mergeFrom(this);
+    }
 
     /**
      * Indicates whether present startTime and/or endTime are complete. Empty startTime or endTime is considered as complete.
@@ -133,9 +139,87 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
         }
     }
 
-    public static class Builder extends PartialOrCompleteTimePeriod_Builder {
+    /*
+     * NOTE: this Builder is a "detached builder" (see doc/immutables-migration.md): it does not extend
+     * ImmutablePartialOrCompleteTimePeriod.Builder, but is a standalone class with plain fields. This is
+     * needed because completePartial(...)/completePartialBackwards(...) need to read the builder's
+     * *current* startTime/endTime mid-construction, and Immutables generates no builder-side getters at all.
+     */
+    public static class Builder {
+
+        private Optional<PartialOrCompleteTimeInstant> startTime = Optional.empty();
+        private Optional<PartialOrCompleteTimeInstant> endTime = Optional.empty();
 
         Builder() {
+        }
+
+        public Optional<PartialOrCompleteTimeInstant> getStartTime() {
+            return startTime;
+        }
+
+        public Builder setStartTime(final PartialOrCompleteTimeInstant startTime) {
+            this.startTime = Optional.of(requireNonNull(startTime, "startTime"));
+            return this;
+        }
+
+        public Builder setStartTime(final Optional<? extends PartialOrCompleteTimeInstant> startTime) {
+            requireNonNull(startTime, "startTime");
+            this.startTime = startTime.isPresent() ? Optional.of(startTime.get()) : Optional.empty();
+            return this;
+        }
+
+        public Builder clearStartTime() {
+            this.startTime = Optional.empty();
+            return this;
+        }
+
+        public Builder mapStartTime(final UnaryOperator<PartialOrCompleteTimeInstant> mapper) {
+            requireNonNull(mapper, "mapper");
+            this.startTime = this.startTime.map(mapper);
+            return this;
+        }
+
+        public Optional<PartialOrCompleteTimeInstant> getEndTime() {
+            return endTime;
+        }
+
+        public Builder setEndTime(final PartialOrCompleteTimeInstant time) {
+            this.endTime = Optional.of(tryToMidnight24h(requireNonNull(time, "time")));
+            return this;
+        }
+
+        public Builder setEndTime(final Optional<? extends PartialOrCompleteTimeInstant> endTime) {
+            requireNonNull(endTime, "endTime");
+            if (endTime.isPresent()) {
+                return setEndTime(endTime.get());
+            } else {
+                this.endTime = Optional.empty();
+                return this;
+            }
+        }
+
+        public Builder clearEndTime() {
+            this.endTime = Optional.empty();
+            return this;
+        }
+
+        public Builder mapEndTime(final UnaryOperator<PartialOrCompleteTimeInstant> mapper) {
+            requireNonNull(mapper, "mapper");
+            return setEndTime(this.endTime.map(mapper));
+        }
+
+        public Builder mergeFrom(final PartialOrCompleteTimePeriod template) {
+            requireNonNull(template, "template");
+            this.startTime = template.getStartTime();
+            this.endTime = template.getEndTime();
+            return this;
+        }
+
+        public PartialOrCompleteTimePeriod build() {
+            final ImmutablePartialOrCompleteTimePeriod.Builder delegate = ImmutablePartialOrCompleteTimePeriod.internalBuilder();
+            this.startTime.ifPresent(delegate::setStartTime);
+            this.endTime.ifPresent(delegate::setEndTime);
+            return delegate.build();
         }
 
         public Builder setTrendTimeGroupToken(final String token) {
@@ -151,11 +235,6 @@ public abstract class PartialOrCompleteTimePeriod extends PartialOrCompleteTime 
             } else {
                 throw new IllegalArgumentException("token does not begin with FM or TL: " + token);
             }
-        }
-
-        @Override
-        public Builder setEndTime(final PartialOrCompleteTimeInstant time) {
-            return super.setEndTime(tryToMidnight24h(time));
         }
 
         private PartialOrCompleteTimeInstant tryToMidnight24h(final PartialOrCompleteTimeInstant time) {

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.AviationCodeListUser;
 import fi.fmi.avi.model.CoordinateReferenceSystem;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = CoordinateReferenceSystemImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({ "name", "dimension", "axisLabels", "uomLabels" })
@@ -37,7 +37,7 @@ public abstract class CoordinateReferenceSystemImpl implements CoordinateReferen
         if (crs instanceof CoordinateReferenceSystemImpl) {
             return (CoordinateReferenceSystemImpl) crs;
         }
-        return Builder.from(requireNonNull(crs, "crs")).build();
+        return Builder.copyOf(requireNonNull(crs, "crs")).build();
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -50,13 +50,15 @@ public abstract class CoordinateReferenceSystemImpl implements CoordinateReferen
         return WGS_84;
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends CoordinateReferenceSystemImpl_Builder {
+    public static class Builder extends ImmutableCoordinateReferenceSystemImpl.Builder {
         Builder() {
         }
 
-        public static Builder from(final CoordinateReferenceSystem value) {
+        public static Builder copyOf(final CoordinateReferenceSystem value) {
             if (value instanceof CoordinateReferenceSystemImpl) {
                 return ((CoordinateReferenceSystemImpl) value).toBuilder();
             }
@@ -66,22 +68,5 @@ public abstract class CoordinateReferenceSystemImpl implements CoordinateReferen
                     .addAllAxisLabels(value.getAxisLabels())//
                     .addAllUomLabels(value.getUomLabels());
         }
-
-        public final Builder setAxisLabels(final List<String> axisLabels) {
-            requireNonNull(axisLabels, "axisLabels");
-            return mutateAxisLabels(labels -> {
-                labels.clear();
-                labels.addAll(axisLabels);
-            });
-        }
-
-        public final Builder setUomLabels(final List<String> uomLabels) {
-            requireNonNull(uomLabels, "uomLabels");
-            return mutateUomLabels(labels -> {
-                labels.clear();
-                labels.addAll(uomLabels);
-            });
-        }
-
     }
 }

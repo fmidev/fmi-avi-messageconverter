@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -16,7 +16,7 @@ import fi.fmi.avi.model.SurfaceWind;
 /**
  * Created by rinne on 18/04/2018.
  */
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = SurfaceWindImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"meanWindDirection", "variableDirection", "meanWindSpeed", "meanWindSpeedOperator",
@@ -34,7 +34,7 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
         if (surfaceWind instanceof SurfaceWindImpl) {
             return (SurfaceWindImpl) surfaceWind;
         } else {
-            return Builder.from(surfaceWind).build();
+            return Builder.copyOf(surfaceWind).build();
         }
     }
 
@@ -44,16 +44,30 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
         return surfaceWind.map(SurfaceWindImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getMeanWindDirection();
+
+    @Override
+    @JsonDeserialize(as = NumericMeasureImpl.class)
+    public abstract NumericMeasure getMeanWindSpeed();
+
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getWindGust();
 
     @SuppressWarnings("EmptyMethod")
-    public static class Builder extends SurfaceWindImpl_Builder {
+    public static class Builder extends ImmutableSurfaceWindImpl.Builder {
 
         Builder() {
             setVariableDirection(false);
         }
 
-        public static Builder from(final SurfaceWind value) {
+        public static Builder copyOf(final SurfaceWind value) {
             if (value instanceof SurfaceWindImpl) {
                 return ((SurfaceWindImpl) value).toBuilder();
             } else {
@@ -68,29 +82,12 @@ public abstract class SurfaceWindImpl implements SurfaceWind, Serializable {
         }
 
         @Override
-        public SurfaceWindImpl build() {
-            if (!isVariableDirection() && !getMeanWindDirection().isPresent()) {
+        public ImmutableSurfaceWindImpl build() {
+            final ImmutableSurfaceWindImpl result = super.build();
+            if (!result.isVariableDirection() && !result.getMeanWindDirection().isPresent()) {
                 throw new IllegalStateException("MeanWindDirection must be present if variableDirection is false");
             }
-            return super.build();
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMeanWindDirection(final NumericMeasure meanWindDirection) {
-            return super.setMeanWindDirection(meanWindDirection);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setMeanWindSpeed(final NumericMeasure meanWindSpeed) {
-            return super.setMeanWindSpeed(meanWindSpeed);
-        }
-
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setWindGust(final NumericMeasure windGust) {
-            return super.setWindGust(windGust);
+            return result;
         }
     }
 }

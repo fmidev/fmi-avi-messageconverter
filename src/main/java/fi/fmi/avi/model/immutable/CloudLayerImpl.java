@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -17,7 +17,7 @@ import fi.fmi.avi.model.NumericMeasure;
  * Created by rinne on 17/04/2018.
  */
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = CloudLayerImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"amount", "base", "cloudType"})
@@ -34,7 +34,7 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
         if (cloudLayer instanceof CloudLayerImpl) {
             return (CloudLayerImpl) cloudLayer;
         } else {
-            return Builder.from(cloudLayer).build();
+            return Builder.copyOf(cloudLayer).build();
         }
     }
 
@@ -44,14 +44,20 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
         return cloudLayer.map(CloudLayerImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
-    public static class Builder extends CloudLayerImpl_Builder {
+    @Override
+    @JsonDeserialize(contentAs = NumericMeasureImpl.class)
+    public abstract Optional<NumericMeasure> getBase();
+
+    public static class Builder extends ImmutableCloudLayerImpl.Builder {
 
         Builder() {
         }
 
-        public static Builder from(final CloudLayer value) {
+        public static Builder copyOf(final CloudLayer value) {
             if (value instanceof CloudLayerImpl) {
                 return ((CloudLayerImpl) value).toBuilder();
             } else {
@@ -62,10 +68,5 @@ public abstract class CloudLayerImpl implements CloudLayer, Serializable {
             }
         }
 
-        @Override
-        @JsonDeserialize(as = NumericMeasureImpl.class)
-        public Builder setBase(final NumericMeasure base) {
-            return super.setBase(base);
-        }
     }
 }

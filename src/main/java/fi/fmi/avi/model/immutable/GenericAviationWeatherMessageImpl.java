@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.fmi.avi.model.AviationWeatherMessageBuilderHelper;
 import fi.fmi.avi.model.GenericAviationWeatherMessage;
-import org.inferred.freebuilder.FreeBuilder;
+import org.immutables.value.Value;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-@FreeBuilder
+@Value.Immutable
 @JsonDeserialize(builder = GenericAviationWeatherMessageImpl.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @JsonPropertyOrder({"gmlId", "messageType", "messageFormat", "originalMessage", "issueTime", "validityTime", "targetAerodrome"})
@@ -29,7 +29,7 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
         if (message instanceof GenericAviationWeatherMessageImpl) {
             return (GenericAviationWeatherMessageImpl) message;
         } else {
-            return Builder.from(message).build();
+            return Builder.copyOf(message).build();
         }
     }
 
@@ -39,7 +39,9 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
         return geoPosition.map(GenericAviationWeatherMessageImpl::immutableCopyOf);
     }
 
-    public abstract Builder toBuilder();
+    public Builder toBuilder() {
+        return new Builder().from(this);
+    }
 
     @Override
     @JsonIgnore
@@ -60,14 +62,14 @@ public abstract class GenericAviationWeatherMessageImpl implements GenericAviati
         return true;
     }
 
-    public static class Builder extends GenericAviationWeatherMessageImpl_Builder {
+    public static class Builder extends ImmutableGenericAviationWeatherMessageImpl.Builder {
         Builder() {
             setReportStatus(ReportStatus.NORMAL);
             setTranslated(false);
             setNil(false);
         }
 
-        public static Builder from(final GenericAviationWeatherMessage value) {
+        public static Builder copyOf(final GenericAviationWeatherMessage value) {
             if (value instanceof GenericAviationWeatherMessageImpl) {
                 return ((GenericAviationWeatherMessageImpl) value).toBuilder();
             } else {

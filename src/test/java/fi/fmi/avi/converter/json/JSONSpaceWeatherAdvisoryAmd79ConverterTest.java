@@ -15,11 +15,6 @@ import fi.fmi.avi.model.immutable.PolygonGeometryImpl;
 import fi.fmi.avi.model.swx.amd79.*;
 import fi.fmi.avi.model.swx.amd79.immutable.*;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.unitils.thirdparty.org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -28,12 +23,9 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = JSONSpaceWeatherAdvisoryTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class JSONSpaceWeatherAdvisoryAmd79ConverterTest {
 
-    @Autowired
-    private AviMessageConverter converter;
+    private final AviMessageConverter converter = JSONConverter.createAviMessageConverter();
 
     private AdvisoryNumberImpl getAdvisoryNumber() {
         final AdvisoryNumberImpl.Builder advisory = AdvisoryNumberImpl.builder().setYear(2020).setSerialNumber(1);
