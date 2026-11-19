@@ -25,7 +25,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- ...
+- Add the missing +FC weather code for well-developed funnel clouds (tornado or waterspout).
 
 ### Security
 

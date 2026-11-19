@@ -45,6 +45,7 @@ public abstract class WeatherImpl implements Weather, Serializable {
         _WEATHER_CODES.put("+DZSGRA", "Heavy precipitation of drizzle, snow grains and rain");
         _WEATHER_CODES.put("+DZSN", "Heavy precipitation of drizzle and snow");
         _WEATHER_CODES.put("+DZSNRA", "Heavy precipitation of drizzle, snow and rain");
+        _WEATHER_CODES.put("+FC", "Well-developed funnel cloud(s) (tornado or waterspout)");
         _WEATHER_CODES.put("+FZDZ", "Heavy precipitation of freezing drizzle");
         _WEATHER_CODES.put("+FZDZRA", "Heavy precipitation of freezing drizzle and rain");
         _WEATHER_CODES.put("+FZRA", "Heavy precipitation of freezing rain");
